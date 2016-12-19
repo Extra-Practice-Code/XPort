@@ -39,7 +39,7 @@ Infrastructures entrelacées, an exhibition by the collective Artivistic at SKOL
 
 Requires Django 1.5
 First create and install a virtual environment [1]. Then:
-    sudo aptitude install python-dev libxml2-dev libxslt-dev
+    sudo aptitude install python-dev libxml2-dev libxslt-dev libz-dev
     pip install "django<1.6" south Markdown html5tidy python-dateutil rdflib pytz six isodate lxml
     pip install https://github.com/devjones/PyEtherpadLite/archive/master.zip
     pip install https://github.com/aleray/markdown-figures/archive/master.zip
