@@ -78,6 +78,10 @@ And then do the following (replace the "domain" and "name" with your own info):
     git clone https://github.com/ether/etherpad-lite.git
     
 # --> install node js
+Install Make:
+
+    sudo aptitude install build-essentials
+
 Linux Binaries (.tar.gz) from http://nodejs.org/download/
 
 run Etherpad with:
