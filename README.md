@@ -46,7 +46,9 @@ First create and install a virtual environment [1]. Then:
 
     mkdir -p ~/src/
     cd ~/src
-    git clone git@gitlab.constantvzw.org:osp/tools.ethertoff.git
+    git clone http://gitlab.constantvzw.org/osp/tools.ethertoff.git
+    # Or use cloning over ssh (requires account):
+    # git@gitlab.constantvzw.org:osp/tools.ethertoff.git
     cd relearn.be      # [2]
     cd relearn
     cp local_settings.py.example local_settings.py
