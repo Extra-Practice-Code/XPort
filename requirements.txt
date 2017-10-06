@@ -6,3 +6,7 @@ distribute>0.6.24
 MySQL-python
 gunicorn
 https://github.com/aleray/markdown-figures/archive/master.zip
+python-dateutil
+rdflib
+lxml
+html5lib=="0.9999999"
