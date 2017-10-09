@@ -9,4 +9,5 @@ https://github.com/aleray/markdown-figures/archive/master.zip
 python-dateutil
 rdflib
 lxml
-html5lib=="0.9999999"
+html5lib==0.9999999
+pytz
