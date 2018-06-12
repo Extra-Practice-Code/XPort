@@ -23,7 +23,7 @@ from django.template.loader import render_to_string
 
 from django.contrib.sites.models import Site
 from etherpadlite.models import Pad, PadAuthor
-from relearn.settings import BACKUP_DIR
+from ethertoff.settings import BACKUP_DIR
 
 """
 We scrape all the pages, construct a graph, and ask the RDF store to return us all the metadata.

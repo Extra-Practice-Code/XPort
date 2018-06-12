@@ -10,7 +10,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 # This is to allow the website to work under a subfolder
-# i.e. http://relearn.be/2015/
+# i.e. http://ethertoff.be/2015/
 # Define SUBFOLDER in your local_settings.py
 BASE_URL = '^'
 try:
@@ -24,23 +24,23 @@ base_urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^all/$', TemplateView.as_view(template_name = 'all.html'), name='all'),
-    url(r'^css/$', 'relearn.views.css', name='css'),
-    url(r'^publish/$', 'relearn.views.publish', name='publish'),
-    url(r'^css-print/$', 'relearn.views.cssprint', name='css-print'),
-    url(r'^offset-print/$', 'relearn.views.offsetprint', name='offset-print'),
-    url(r'^css-slide/$', 'relearn.views.css_slide', name='css-slide'),
-    url(r'^$', 'relearn.views.home', name='home'),
-    url(r'^(?P<slug>[^/]+)\.xhtml$', 'relearn.views.xhtml', name='xhtml'),
+    url(r'^css/$', 'ethertoff.views.css', name='css'),
+    url(r'^publish/$', 'ethertoff.views.publish', name='publish'),
+    url(r'^css-print/$', 'ethertoff.views.cssprint', name='css-print'),
+    url(r'^offset-print/$', 'ethertoff.views.offsetprint', name='offset-print'),
+    url(r'^css-slide/$', 'ethertoff.views.css_slide', name='css-slide'),
+    url(r'^$', 'ethertoff.views.home', name='home'),
+    url(r'^(?P<slug>[^/]+)\.xhtml$', 'ethertoff.views.xhtml', name='xhtml'),
     url(r'^accounts/login$', 'django.contrib.auth.views.login',
         {'template_name': 'login.html'}, name='login'),
     url(r'^accounts/logout$', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html'}, name='logout'),
-    url(r'^create/$', 'relearn.views.padCreate', name='pad-create'),
-    url(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', 'relearn.views.pad_read', name='pad-read'),
-    #url(r'r/(?P<slug>[^/]+)$', 'relearn.views.pad', name='pad-read'),
-    #url(r's/(?P<slug>[^/]+)$', 'relearn.views.pad', name='pad-slide'),
-    #url(r'p/(?P<slug>[^/]+)$', 'relearn.views.pad', name='pad-print'),
-    url(r'w/(?P<slug>[^/]+)$', 'relearn.views.pad', name='pad-write'),
+    url(r'^create/$', 'ethertoff.views.padCreate', name='pad-create'),
+    url(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', 'ethertoff.views.pad_read', name='pad-read'),
+    #url(r'r/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-read'),
+    #url(r's/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-slide'),
+    #url(r'p/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-print'),
+    url(r'w/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-write'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = patterns('',

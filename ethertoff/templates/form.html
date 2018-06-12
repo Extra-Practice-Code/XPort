@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Relearn</title>
-    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/relearn.less" type="text/css" media="screen" charset="utf-8">
+    <title>ethertoff</title>
+    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/ethertoff.less" type="text/css" media="screen" charset="utf-8">
     <script src="{{ STATIC_URL }}js/less-1.4.1.min.js" type="text/javascript" charset="utf-8"></script>
     <style type="text/css" media="screen">
         body {
@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<form id="email-form" action="{% url 'relearn-issue-send' %}" method="post" accept-charset="utf-8">
+<form id="email-form" action="{% url 'ethertoff-issue-send' %}" method="post" accept-charset="utf-8">
     {% csrf_token %}
     <div>
         <input style="width: 45%; display: inline; margin-right: 10px;" id="id_name" maxlength="50" name="name" type="text" value="{{ user.get_full_name }}"/>

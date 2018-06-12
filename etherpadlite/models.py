@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from py_etherpad import EtherpadLiteClient
 
-from relearn.templatetags.wikify import dewikify
+from ethertoff.templatetags.wikify import dewikify
 
 import string
 import random
@@ -174,7 +174,7 @@ class Pad(models.Model):
         return self.display_slug
 
     def get_absolute_url(self):
-        return reverse('relearn.views.xhtml', args=[self.display_slug.replace('.md','')])
+        return reverse('ethertoff.views.xhtml', args=[self.display_slug.replace('.md','')])
 
     @property
     def padid(self):

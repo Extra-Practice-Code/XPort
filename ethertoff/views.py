@@ -36,15 +36,15 @@ from etherpadlite import forms
 from etherpadlite import config
 from django.contrib.sites.models import get_current_site
 
-from relearn.management.commands.index import snif
+from ethertoff.management.commands.index import snif
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
-    from relearn.settings import HOME_PAD
+    from ethertoff.settings import HOME_PAD
 except ImportError:
     HOME_PAD = 'About.md'
 try:
-    from relearn.settings import BACKUP_DIR
+    from ethertoff.settings import BACKUP_DIR
 except ImportError:
     BACKUP_DIR = None
 
@@ -381,7 +381,7 @@ def css(request):
         return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
     except:
         # If there is no pad called "css", loads a default css file
-        f = open('relearn/static/css/screen.css', 'r')
+        f = open('ethertoff/static/css/screen.css', 'r')
         css = f.read()
         f.close()
         return HttpResponse(css, mimetype="text/css")
@@ -394,7 +394,7 @@ def cssprint(request):
         return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
     except:
         # If there is no pad called "css", loads a default css file
-        f = open('relearn/static/css/laser.css', 'r')
+        f = open('ethertoff/static/css/laser.css', 'r')
         css = f.read()
         f.close()
         return HttpResponse(css, mimetype="text/css")
@@ -407,7 +407,7 @@ def offsetprint(request):
         return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
     except:
         # If there is no pad called "css", loads a default css file
-        f = open('relearn/static/css/offset.css', 'r')
+        f = open('ethertoff/static/css/offset.css', 'r')
         css = f.read()
         f.close()
         return HttpResponse(css, mimetype="text/css")
@@ -420,7 +420,7 @@ def css_slide(request):
         return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
     except:
         # If there is no pad called "css", loads a default css file
-        f = open('relearn/static/css/slidy.css', 'r')
+        f = open('ethertoff/static/css/slidy.css', 'r')
         css = f.read()
         f.close()
         return HttpResponse(css, mimetype="text/css")

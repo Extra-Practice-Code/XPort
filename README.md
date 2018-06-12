@@ -51,7 +51,7 @@ First create and install a virtual environment [1]. Then:
     # Or use cloning over ssh (requires account):
     # git@gitlab.constantvzw.org:osp/tools.ethertoff.git
     cd tools.ethertoff      # [2]
-    cd relearn
+    cd ethertoff
     cp local_settings.py.example local_settings.py
     # Change database details in local_settings.py
     cd ..
@@ -120,23 +120,19 @@ to the group you just created
 Go back to the admin home, and then create an Etherpad Group based upon the group and the server you just created.
     Etherpadlite > Groups > Add
     
-Now relearn is served at http://127.0.0.1:8000/ locally, or on your domain
+Now Ethertoff is served at http://127.0.0.1:8000/ locally, or on your domain
 name on a server.
 
 You can set the site name, that appears on the header, in the ‘sites’ app in the admin.
 
 - - -
 
-[1] Something like:
+[^1]: Something like:
 
     mkdir -p ~/venvs/
     cd ~/venvs/
-    virtualenv relearn
-    source ~/venvs/relearn/bin/activate
-
-[2] For those running the Virtual Machine from the relearn summer school:
-
-    cd ~/relearn/relearn.be/
+    virtualenv ethertoff
+    source ~/venvs/ethertoff/bin/activate
 
 - - -
 
@@ -173,10 +169,10 @@ folder /static/.
     pip install gunicorn
     cd /etc/nginx/sites-available/
     # (edit nginx config file)
-    sudo vim relearn/
+    sudo vim ethertoff.conf
     cd ../sites-enabled/
-    sudo ln -s ../sites-available/relearn
-    cd relearn_directory/
+    sudo ln -s ../sites-available/ethertoff
+    cd ethertoff_directory/
     # (edit gunicorn config file)
     vim run.sh 
     chmod +x run.sh

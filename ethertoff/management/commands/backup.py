@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand, CommandError
 # Django Apps import
 
 from etherpadlite.models import Pad, PadAuthor
-from relearn.settings import BACKUP_DIR
+from ethertoff.settings import BACKUP_DIR
 
 class Command(BaseCommand):
     args = ''

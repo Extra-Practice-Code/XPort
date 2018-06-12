@@ -1,4 +1,4 @@
-# Django settings for relearn project.
+# Django settings for ethertoff project.
 import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 
@@ -78,9 +78,9 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'relearn.middleware.ErrorHandlingMiddleware',
+    'ethertoff.middleware.ErrorHandlingMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'relearn.middleware.TidyMiddleware',
+    'ethertoff.middleware.TidyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,22 +89,22 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'relearn.urls'
+ROOT_URLCONF = 'ethertoff.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'relearn.wsgi.application'
+WSGI_APPLICATION = 'ethertoff.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR, 'relearn/templates'),
+    os.path.join(PROJECT_DIR, 'ethertoff/templates'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
-    "relearn.context_processors.site_name",
-    "relearn.context_processors.pads",
-    "relearn.context_processors.local",
+    "ethertoff.context_processors.site_name",
+    "ethertoff.context_processors.pads",
+    "ethertoff.context_processors.local",
 )
 
 INSTALLED_APPS = (
@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'etherpadlite',
     'example_theme',
-    'relearn',
+    'ethertoff',
     'south'
 )
 
