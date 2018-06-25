@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.core.context_processors import csrf
+from django.templates.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 

@@ -1,8 +1,12 @@
-from django.conf.urls import patterns, include, url
+from django.contrib.auth import views as auth_views
+from django.urls import path, re_path
+from . import views
+#from django.conf.urls import *
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 
 from django.conf import settings
+from django.conf.urls import include
 from django.conf.urls.static import static
 
 # Uncomment the next two lines to enable the admin:
@@ -20,29 +24,30 @@ try:
 except AttributeError:
     pass
 
-base_urlpatterns = patterns(
-    '',
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^all/$', TemplateView.as_view(template_name = 'all.html'), name='all'),
-    url(r'^css/$', 'ethertoff.views.css', name='css'),
-    url(r'^publish/$', 'ethertoff.views.publish', name='publish'),
-    url(r'^css-print/$', 'ethertoff.views.cssprint', name='css-print'),
-    url(r'^offset-print/$', 'ethertoff.views.offsetprint', name='offset-print'),
-    url(r'^css-slide/$', 'ethertoff.views.css_slide', name='css-slide'),
-    url(r'^$', 'ethertoff.views.home', name='home'),
-    url(r'^(?P<slug>[^/]+)\.xhtml$', 'ethertoff.views.xhtml', name='xhtml'),
-    url(r'^accounts/login$', 'django.contrib.auth.views.login',
-        {'template_name': 'login.html'}, name='login'),
-    url(r'^accounts/logout$', 'django.contrib.auth.views.logout',
-        {'template_name': 'logout.html'}, name='logout'),
-    url(r'^create/$', 'ethertoff.views.padCreate', name='pad-create'),
-    url(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', 'ethertoff.views.pad_read', name='pad-read'),
-    #url(r'r/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-read'),
-    #url(r's/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-slide'),
-    #url(r'p/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-print'),
-    url(r'w/(?P<slug>[^/]+)$', 'ethertoff.views.pad', name='pad-write'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+app_name = "ethertoff"
 
-urlpatterns = patterns('',
-    url(BASE_URL , include(base_urlpatterns)),
-)
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('admin/', admin.site.urls),
+    path('all/', TemplateView.as_view(template_name = 'all.html'), name='all'),
+    path('publish/', views.publish, name='publish'),
+    path('css-screen/', views.css, name='css-screen'),
+    path('css-print/', views.cssprint, name='css-print'),
+    path('css-offset/', views.offsetprint, name='css-offset'),
+    path('css-slide/', views.css_slide, name='css-slide'),
+    re_path(r'^(?P<slug>[^/]+)\.xhtml$', views.xhtml, name='xhtml'),
+    path('accounts/login', auth_views.LoginView.as_view(),
+        {'template_name': 'login.html'}, name='login'),
+    path('accounts/logout', auth_views.LogoutView.as_view(),
+        {'template_name': 'logout.html'}, name='logout'),
+    path('create/', views.padCreate, name='pad-create'),
+    re_path(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', views.pad_read, name='pad-read'),
+    #re_path(r'r/(?P<slug>[^/]+)$', views.pad, name='pad-read'),
+    #re_path(r's/(?P<slug>[^/]+)$', views.pad, name='pad-slide'),
+    #re_path(r'p/(?P<slug>[^/]+)$', views.pad, name='pad-print'),
+    re_path(r'w/(?P<slug>[^/]+)$', views.pad, name='pad-write'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+#urlpatterns = [
+    #path(BASE_URL , include(base_urlpatterns)),
+#]

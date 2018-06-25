@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>ethertoff</title>
-    <link rel="stylesheet/less" href="{{ STATIC_URL }}less/ethertoff.less" type="text/css" media="screen" charset="utf-8">
-    <script src="{{ STATIC_URL }}js/less-1.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet/less" href="{% static 'less/ethertoff.less' %}" type="text/css" media="screen" charset="utf-8">
+    <script src="{% static 'js/less-1.4.1.min.js' %}" type="text/javascript" charset="utf-8"></script>
     <style type="text/css" media="screen">
         body {
             background: none;

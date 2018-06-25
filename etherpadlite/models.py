@@ -3,7 +3,7 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from py_etherpad import EtherpadLiteClient
@@ -41,15 +41,15 @@ class PadServer(models.Model):
 class PadGroup(models.Model):
     """Schema and methods for etherpad-lite groups
     """
-    group = models.ForeignKey(Group)
+    group = models.ForeignKey(Group, models.PROTECT)
     groupID = models.CharField(max_length=256, blank=True)
-    server = models.ForeignKey(PadServer)
+    server = models.ForeignKey(PadServer, models.PROTECT)
 
     class Meta:
         verbose_name = _('group')
 
     def __unicode__(self):
-        return self.group.__unicode__()
+        return self.group
 
     @property
     def epclient(self):
@@ -62,8 +62,9 @@ class PadGroup(models.Model):
         return ''.join(random.choice(chars) for x in range(size))    
 
     def EtherMap(self):
+        print(self.group)
         result = self.epclient.createGroupIfNotExistsFor(
-            self.group.__unicode__() + self._get_random_id() +
+            u"%s" % (self.group) + self._get_random_id() +
             self.group.id.__str__()
         )
         self.groupID = result['groupID']
@@ -104,9 +105,9 @@ pre_delete.connect(groupDel, sender=Group)
 class PadAuthor(models.Model):
     """Schema and methods for etherpad-lite authors
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, models.PROTECT)
     authorID = models.CharField(max_length=256, blank=True)
-    server = models.ForeignKey(PadServer)
+    server = models.ForeignKey(PadServer, models.PROTECT)
     group = models.ManyToManyField(
         PadGroup,
         blank=True,
@@ -167,8 +168,8 @@ class Pad(models.Model):
     # more hassle then it’s worth
     display_name = models.CharField(max_length=256, blank=True, verbose_name=u"Name as used in Display (use → for namespacing)")
     
-    server = models.ForeignKey(PadServer)
-    group = models.ForeignKey(PadGroup)
+    server = models.ForeignKey(PadServer, models.PROTECT)
+    group = models.ForeignKey(PadGroup, models.PROTECT)
 
     def __unicode__(self):
         return self.display_slug

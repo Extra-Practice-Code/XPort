@@ -5,7 +5,6 @@ import dateutil.parser
 
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -68,7 +67,7 @@ def natural_join(val, cjn="and"):
 def markdown_filter(value):
     extensions = ["extra", ]
 
-    return mark_safe(markdown.markdown(force_unicode(value),
+    return mark_safe(markdown.markdown(force_text(value),
                                        extensions))
 
 p_surrounds = re.compile(r'<p>(.*)</p>')

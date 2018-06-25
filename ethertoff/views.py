@@ -4,8 +4,8 @@
 import datetime
 import time
 import urllib
-from urlparse import urlparse
-import HTMLParser
+from urllib.parse import urlparse
+from html.parser import HTMLParser
 import json
 import re
 import os
@@ -18,13 +18,13 @@ import dateutil.parser
 import pytz
 
 # Framework imports
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
-from django.core.urlresolvers import reverse
-from django.core.context_processors import csrf
+from django.urls import reverse
+from django.template.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from etherpadlite.models import *
 from etherpadlite import forms
 from etherpadlite import config
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 
 from ethertoff.management.commands.index import snif
 
@@ -54,7 +54,7 @@ Etherpad’s HTML entities.
 cf http://fredericiana.com/2010/10/08/decoding-html-entities-to-text-in-python/
 """
 
-h = HTMLParser.HTMLParser()
+h = HTMLParser()
 unescape = h.unescape
 
 """
@@ -92,13 +92,13 @@ def padCreate(request):
     con = {
         'form': form,
         'pk': group.pk,
-        'title': _('Create pad in %(grp)s') % {'grp': group.__unicode__()}
+        'title': _('Create pad in %(grp)s') % {'grp': group}
     }
     con.update(csrf(request))
-    return render_to_response(
+    return render(
+        request,
         'pad-create.html',
         con,
-        context_instance=RequestContext(request)
     )
 
 
@@ -112,22 +112,22 @@ def pad(request, pk=None, slug=None): # pad_write
         pad = get_object_or_404(Pad, display_slug=slug)
     else:
         pad = get_object_or_404(Pad, pk=pk)
-    padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
-        urllib.quote_plus(pad.name)
+    padLink = pad.server.url + '/p/' + pad.group.groupID + '$' + \
+        urllib.parse.quote(pad.name)
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
 
     if author not in pad.group.authors.all():
-        response = render_to_response(
+        response = render(
+            request,
             'pad.html',
             {
                 'pad': pad,
                 'link': padLink,
                 'server': server,
-                'uname': author.user.__unicode__(),
+                'uname': u"%s" % author.user,
                 'error': _('You are not allowed to view or edit this pad')
-            },
-            context_instance=RequestContext(request)
+            }
         )
         return response
 
@@ -143,33 +143,33 @@ def pad(request, pk=None, slug=None): # pad_write
             author.authorID,
             time.mktime(expires.timetuple()).__str__()
         )
-    except Exception, e:
-        response = render_to_response(
+    except(Exception, e):
+        response = render(
+            request,
             'pad.html',
             {
                 'pad': pad,
                 'link': padLink,
                 'server': server,
-                'uname': author.user.__unicode__(),
+                'uname': u"%s" % author.user,
                 'error': _('etherpad-lite session request returned:') +
                 ' "' + e.reason + '"'
-            },
-            context_instance=RequestContext(request)
+            }
         )
         return response
 
     # Set up the response
-    response = render_to_response(
+    response = render(
+        request,
         'pad.html',
         {
             'pad': pad,
             'link': padLink,
             'server': server,
-            'uname': author.user.__unicode__(),
+            'uname': u"%s" % author.user,
             'error': False,
             'mode' : 'write'
-        },
-        context_instance=RequestContext(request)
+        }
     )
 
     # Delete the existing session first
@@ -226,7 +226,7 @@ def pad_read(request, mode="r", slug=None):
     # Initialize some needed values
     pad = get_object_or_404(Pad, display_slug=slug)
 
-    padID = pad.group.groupID + '$' + urllib.quote_plus(pad.name.replace('::', '_'))
+    padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
     epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     # Etherpad gives us authorIDs in the form ['a.5hBzfuNdqX6gQhgz', 'a.tLCCEnNVJ5aXkyVI']
@@ -313,11 +313,11 @@ def pad_read(request, mode="r", slug=None):
         tpl_params['next'] = reverse('pad-write', args=(slug,) )
 
     if mode == "r":
-        return render_to_response("pad-read.html", tpl_params, context_instance = RequestContext(request))
+        return render(request, "pad-read.html", tpl_params)
     elif mode == "s":
-        return render_to_response("pad-slide.html", tpl_params, context_instance = RequestContext(request))
+        return render(request, "pad-slide.html", tpl_params)
     elif mode == "p":
-        return render_to_response("pad-print.html", tpl_params, context_instance = RequestContext(request))
+        return render(request, "pad-print.html", tpl_params)
 
 
 
@@ -360,7 +360,7 @@ def home(request):
 
     tpl_params = { 'articles': tpl_articles,
                    'sort': sort }
-    return render_to_response("home.html", tpl_params, context_instance = RequestContext(request))
+    return render(request, "home.html", tpl_params)
 
 @login_required(login_url='/accounts/login')
 def publish(request):
@@ -371,56 +371,56 @@ def publish(request):
     else:
         tpl_params['published'] = False
         tpl_params['message'] = ""
-    return render_to_response("publish.html", tpl_params, context_instance = RequestContext(request))
+    return render(request, "publish.html", tpl_params)
 
 def css(request):
     try:
         pad = Pad.objects.get(display_slug='screen.css')
-        padID = pad.group.groupID + '$' + urllib.quote_plus(pad.name.replace('::', '_'))
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
+        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
     except:
         # If there is no pad called "css", loads a default css file
         f = open('ethertoff/static/css/screen.css', 'r')
         css = f.read()
         f.close()
-        return HttpResponse(css, mimetype="text/css")
+        return HttpResponse(css, content_type="text/css")
 
 def cssprint(request):
     try:
         pad = Pad.objects.get(display_slug='laser.css')
-        padID = pad.group.groupID + '$' + urllib.quote_plus(pad.name.replace('::', '_'))
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
+        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
     except:
         # If there is no pad called "css", loads a default css file
         f = open('ethertoff/static/css/laser.css', 'r')
         css = f.read()
         f.close()
-        return HttpResponse(css, mimetype="text/css")
+        return HttpResponse(css, content_type="text/css")
 
 def offsetprint(request):
     try:
         pad = Pad.objects.get(display_slug='offset.css')
-        padID = pad.group.groupID + '$' + urllib.quote_plus(pad.name.replace('::', '_'))
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
+        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
     except:
         # If there is no pad called "css", loads a default css file
         f = open('ethertoff/static/css/offset.css', 'r')
         css = f.read()
         f.close()
-        return HttpResponse(css, mimetype="text/css")
+        return HttpResponse(css, content_type="text/css")
 
 def css_slide(request):
     try:
         pad = Pad.objects.get(display_slug='slidy.css')
-        padID = pad.group.groupID + '$' + urllib.quote_plus(pad.name.replace('::', '_'))
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], mimetype="text/css")
+        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
     except:
         # If there is no pad called "css", loads a default css file
         f = open('ethertoff/static/css/slidy.css', 'r')
         css = f.read()
         f.close()
-        return HttpResponse(css, mimetype="text/css")
+        return HttpResponse(css, content_type="text/css")

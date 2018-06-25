@@ -7,7 +7,7 @@ import re
 import sys
 import codecs
 import json
-from urllib2 import HTTPError
+from urllib import error
 from time import clock
 
 # PyPi imports
@@ -21,7 +21,7 @@ from django.template.loader import render_to_string
 
 # Django Apps import
 
-from django.contrib.sites.models import Site
+#from django.contrib.sites.models import Site
 from etherpadlite.models import Pad, PadAuthor
 from ethertoff.settings import BACKUP_DIR
 
@@ -99,9 +99,9 @@ short_names = {
 }
 
 HOST = None
-if Site.objects.count() > 0:
-    site = Site.objects.all()[0]
-    HOST = site.domain
+#if Site.objects.count() > 0:
+    #site = Site.objects.all()[0]
+    #HOST = site.domain
 
 def query_results_to_template_articles(query_results):
     """
@@ -115,7 +115,7 @@ def query_results_to_template_articles(query_results):
         return template_articles
     
     for s, p, o in query_results:
-        print s.encode('utf-8'), p.encode('utf-8'), o.encode('utf-8')
+        print(s.encode('utf-8'), p.encode('utf-8'), o.encode('utf-8'))
         uri   = unicode(s).strip()
         key   = unicode(p).strip()
         value = unicode(o).strip()
@@ -172,22 +172,22 @@ def snif():
     for pad in Pad.objects.all():
         i += 1
         txt = "checking pad %s of %s: %s" % (i, total, pad.display_slug)
-        print txt.encode('utf-8')
+        print(txt.encode('utf-8'))
         # We only want to index the articles—
         # For now we can distinguish them because they have url’s
         # ending in ‘.md’
         if not pad.display_slug.endswith('.md'):
-            print "no *.md extension, probably not meant for publication"
+            print("no *.md extension, probably not meant for publication")
             continue
         try:
             result = g.parse(host + pad.get_absolute_url())
-            print "succesfully parsed"
-        except HTTPError, e:
+            print("succesfully parsed")
+        except(HTTPError, e):
             if e.code == 403:
                 # Some of the pads will not be public yet—
                 # They gives a ‘403 FORBIDDEN’ response
                 # this is expected, and we don’t need to scrape them
-                print "pad not public"
+                print("pad not public")
                 continue
             else:
                 raise
@@ -207,7 +207,7 @@ class Command(BaseCommand):
     args = ''
     help = 'Create an index of all the articles’ metadata'
 
-    print "Starting to index, this might take some time..."
+    print("Starting to index, this might take some time...")
     def handle(self, *args, **options):
         return snif()
 

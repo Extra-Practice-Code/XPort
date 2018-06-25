@@ -37,26 +37,25 @@ Infrastructures entrelacées, an exhibition by the collective Artivistic at SKOL
 
 ## Installation instructions
 
-Requires Django 1.5
+Requires Django 2.0
 First create and install a virtual environment [1]. Then:
 
     sudo aptitude install python-dev libxml2-dev libxslt-dev libz-dev
-    pip install "django<1.6" south Markdown html5tidy python-dateutil rdflib pytz six isodate lxml
+    pip install "django<2.1" django-markdown python-dateutil rdflib 
+    # old pip install html5tidy pytz six isodate lxml
     pip install https://github.com/devjones/PyEtherpadLite/archive/master.zip
     pip install https://github.com/aleray/markdown-figures/archive/master.zip
 
     mkdir -p ~/src/
     cd ~/src
     git clone http://gitlab.constantvzw.org/osp/tools.ethertoff.git
-    # Or use cloning over ssh (requires account):
-    # git@gitlab.constantvzw.org:osp/tools.ethertoff.git
     cd tools.ethertoff      # [2]
     cd ethertoff
     cp local_settings.py.example local_settings.py
     # Change database details in local_settings.py
     cd ..
-    python manage.py syncdb
-    python manage.py migrate etherpadlite
+    # python manage.py syncdb
+    python manage.py migrate 
 
 Change the info of your domain name and website name in the Sites section on
 <http://localhost:8000/admin>. **Do not add "http://" in your domain name,
@@ -74,18 +73,24 @@ And then do the following (replace the "domain" and "name" with your own info):
     site = Site.objects.create(domain='example.com', name='example.com')
     site.save()
     
---> and then install etherpad
+
+
+## Install Etherpad-lite
     
     mkdir -p ~/src
     cd ~/src
     git clone https://github.com/ether/etherpad-lite.git
     
-# --> install node js
+## --> install node js
 Install Make:
 
     sudo aptitude install build-essentials
 
 Linux Binaries (.tar.gz) from http://nodejs.org/download/
+
+
+
+## Launch Etherpad-lite
 
 run Etherpad with:
     
@@ -95,7 +100,11 @@ Your Etherpad is running at http://127.0.0.1:9001/
     
 In Etherpad’s folder, you will find a file called APIKEY.txt
 you need its contents later 
-    
+
+
+
+## Launch Ethertoff
+
 Run the server:
     python manage.py runserver
 
@@ -108,20 +117,18 @@ Now, on the Django admin:
         url: http://127.0.0.1:9001/
         # if on a server
         url: http://domainname/ether/
-        api_key: the contents of the file APIKEY.txt
+        api_key: the contents of the file APIKEY.txt in Etherpad files
 
 Go back to the admin home, and then add a new group:
     Auth > Groups > Add
     
-Go back to the admin home, and then add the superuser (and all needed users)
-to the group you just created
+Go back to the admin home, and then add the superuser (and all needed users) to the group you just created
     Auth > Users
 
 Go back to the admin home, and then create an Etherpad Group based upon the group and the server you just created.
     Etherpadlite > Groups > Add
     
-Now Ethertoff is served at http://127.0.0.1:8000/ locally, or on your domain
-name on a server.
+Now Ethertoff is served at http://127.0.0.1:8000/ locally, or on your domain name on a server.
 
 You can set the site name, that appears on the header, in the ‘sites’ app in the admin.
 
@@ -144,15 +151,15 @@ example.com /        -> django
             /ether/  -> etherpad
             /static/ -> django static files
 
-To test if everything is working, you can use screen to run gunicorn and
-etherpad scripts at the same time, and then use a daemon like Supervisor to run them in the
-background.
+To test if everything is working, you can use screen to run gunicorn and Etherpad scripts at the same time, and then use a daemon like Supervisor to run them in the background.
+
+
 
 ## MYSQL
 
-pip install "distribute>0.6.24"
-sudo aptitude install libmysqlclient-dev python-dev
-pip install MySQL-python
+    # pip install "distribute>0.6.24"
+    sudo aptitude install libmysqlclient-dev python-dev
+    pip install MySQL-python mysqlclient
 
 
 ## DJANGO
@@ -182,6 +189,8 @@ folder /static/.
 
 To run the server in the background, use Supervisor daemon.
 
+
+
 ## ETHERPAD
 Etherpad, finally, runs as its own server. You probably need to use
 a supervisor such as supervisord to make sure it keeps running.
@@ -189,6 +198,8 @@ You will also need to set up a database, because its default database
 is not intended for use on servers. Finally, you will need to reverse
 proxy the Etherpad process from your main web server, mapping it to
 a folder such as /ether/.
+
+
 
 ## SUPERVISOR
 To run django and etherpad in the background.
