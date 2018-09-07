@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django.contrib.sites',
+    'django.contrib.sites',
     'etherpadlite',
     'ethertoff',
     #'south'
@@ -66,6 +66,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ethertoff.context_processors.site_name',
+                'ethertoff.context_processors.pads',
+                'ethertoff.context_processors.local',
             ],
         },
     },

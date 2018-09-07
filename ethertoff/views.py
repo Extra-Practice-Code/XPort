@@ -66,7 +66,7 @@ include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
 def padCreate(request):
     """
     Create a pad
-    """
+    """    
     
     # normally the ‘pads’ context processor should have made sure that these objects exist:
     author = PadAuthor.objects.get(user=request.user)
