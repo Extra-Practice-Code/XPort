@@ -6,6 +6,7 @@ import dateutil.parser
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
 
 register = template.Library()
 
@@ -47,10 +48,10 @@ def natural_join(val, cjn="and"):
     """
     
     def to_string(object):
-        if isinstance(object, str) or isinstance(object, unicode):
+        if isinstance(object, str):
             return object
         try:
-            return object.__unicode__()
+            return object.__str__()
         except AttributeError:
             return repr(object)
     

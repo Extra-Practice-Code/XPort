@@ -27,7 +27,7 @@ class PadServer(models.Model):
     class Meta:
         verbose_name = _('server')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url
 
     @property
@@ -48,7 +48,7 @@ class PadGroup(models.Model):
     class Meta:
         verbose_name = _('group')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.group
 
     @property
@@ -131,14 +131,14 @@ class PadAuthor(models.Model):
             return full_name
         return self.user.username
     
-    def __unicode__(self):
+    def __str__(self):
         return self.full_name_with_prefix()
 
     def EtherMap(self):
         epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
         result = epclient.createAuthorIfNotExistsFor(
             self.user.id.__str__(),
-            name=self.__unicode__()
+            name=self.__str__()
         )
         self.authorID = result['authorID']
         return result
@@ -171,7 +171,7 @@ class Pad(models.Model):
     server = models.ForeignKey(PadServer, models.PROTECT)
     group = models.ForeignKey(PadGroup, models.PROTECT)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_slug
 
     def get_absolute_url(self):

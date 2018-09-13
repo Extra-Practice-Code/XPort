@@ -25,7 +25,7 @@ class PadServerTestCase(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(isinstance(self.server, PadServer))
-        self.assertEqual(self.server.__unicode__(), TS['url'])
+        self.assertEqual(self.server.__str__(), TS['url'])
 
 
 class PadGroupTestCase(unittest.TestCase):
@@ -46,7 +46,7 @@ class PadGroupTestCase(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(isinstance(self.padGroup, PadGroup))
-        self.assertEqual(self.padGroup.__unicode__(), self.group.__unicode__())
+        self.assertEqual(self.padGroup.__str__(), self.group.__str__())
 
     def tearDown(self):
         self.padGroup.delete()
@@ -75,7 +75,7 @@ class PadAuthorTestCase(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(isinstance(self.author, PadAuthor))
-        self.assertEqual(self.author.__unicode__(), self.user.__unicode__())
+        self.assertEqual(self.author.__str__(), self.user.__str__())
 
     def tearDown(self):
         self.padGroup.delete()
@@ -109,7 +109,7 @@ class PadTestCase(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(isinstance(self.pad, Pad))
-        self.assertEqual(self.pad.__unicode__(), self.pad.name)
+        self.assertEqual(self.pad.__str__(), self.pad.name)
 
     def tearDown(self):
         self.padGroup.delete()

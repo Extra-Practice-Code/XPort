@@ -278,7 +278,7 @@ def pad_read(request, mode="r", slug=None):
 
     # One needs to set the ‘Static’ metadata to ‘Public’ for the page to be accessible to outside visitors
     if not meta or not 'status' in meta or not meta['status'][0] or not meta['status'][0].lower() in ['public']:
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             pass #raise PermissionDenied
     
     if meta and len(meta.keys()) > 0:
@@ -294,8 +294,10 @@ def pad_read(request, mode="r", slug=None):
                     date_parsed = pytz.timezone('Europe/Brussels').localize(date_parsed) 
                 meta['date_parsed'].append(date_parsed)
                 meta['date_iso'].append( date_parsed.isoformat() )
-        
-        meta_list = list(meta.iteritems())
+
+        meta_list = list(meta.items())
+
+        print(meta_list)
 
     tpl_params = { 'pad'                : pad,
                    'meta'               : meta,      # to access by hash, like meta.author
@@ -308,7 +310,7 @@ def pad_read(request, mode="r", slug=None):
                    'authorship_authors_json' : authorship_authors_json,
                    'authors'            : authors }
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         request.session.set_test_cookie()
         tpl_params['next'] = reverse('pad-write', args=(slug,) )
 
@@ -373,54 +375,31 @@ def publish(request):
         tpl_params['message'] = ""
     return render(request, "publish.html", tpl_params)
 
-def css(request):
+@login_required(login_url='/accounts/login')
+def all(request):
+    return render(request, "all.html")
+
+def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
-        pad = Pad.objects.get(display_slug='screen.css')
+        pad = Pad.objects.get(display_slug=slug)
         padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
+        return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
     except:
         # If there is no pad called "css", loads a default css file
-        f = open('ethertoff/static/css/screen.css', 'r')
-        css = f.read()
+        f = open(fallbackPath, 'r')
+        contents = f.read()
         f.close()
-        return HttpResponse(css, content_type="text/css")
+        return HttpResponse(contents, content_type=mimeType)
+
+def css(request):
+    return padOrFallbackPath(request, 'screen.css', 'ethertoff/static/css/screen.css', 'text/css')
 
 def cssprint(request):
-    try:
-        pad = Pad.objects.get(display_slug='laser.css')
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
-    except:
-        # If there is no pad called "css", loads a default css file
-        f = open('ethertoff/static/css/laser.css', 'r')
-        css = f.read()
-        f.close()
-        return HttpResponse(css, content_type="text/css")
+    return padOrFallbackPath(request, 'laser.css', 'ethertoff/static/css/laser.css', 'text/css')
 
 def offsetprint(request):
-    try:
-        pad = Pad.objects.get(display_slug='offset.css')
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
-    except:
-        # If there is no pad called "css", loads a default css file
-        f = open('ethertoff/static/css/offset.css', 'r')
-        css = f.read()
-        f.close()
-        return HttpResponse(css, content_type="text/css")
+    return padOrFallbackPath(request, 'offset.css', 'ethertoff/static/css/offset.css', 'text/css')
 
 def css_slide(request):
-    try:
-        pad = Pad.objects.get(display_slug='slidy.css')
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], content_type="text/css")
-    except:
-        # If there is no pad called "css", loads a default css file
-        f = open('ethertoff/static/css/slidy.css', 'r')
-        css = f.read()
-        f.close()
-        return HttpResponse(css, content_type="text/css")
+    return padOrFallbackPath(request, 'slidy.css', 'ethertoff/static/css/slidy.css', 'text/css')

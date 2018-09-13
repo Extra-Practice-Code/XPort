@@ -29,7 +29,7 @@ app_name = "ethertoff"
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('all/', TemplateView.as_view(template_name = 'all.html'), name='all'),
+    path('all/', views.all, name='all'), # TemplateView.as_view(template_name = 'all.html')
     path('publish/', views.publish, name='publish'),
     path('css-screen/', views.css, name='css-screen'),
     path('css-print/', views.cssprint, name='css-print'),
