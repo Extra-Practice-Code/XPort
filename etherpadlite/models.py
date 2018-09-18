@@ -49,7 +49,7 @@ class PadGroup(models.Model):
         verbose_name = _('group')
 
     def __str__(self):
-        return self.group
+        return self.group.__str__()
 
     @property
     def epclient(self):
