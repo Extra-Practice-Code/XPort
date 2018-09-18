@@ -142,7 +142,7 @@ def padCreate(request):
 
 @login_required(login_url='/accounts/login')
 def pad(request, pk=None, slug=None): # pad_write
-    """Create and session and display an embedded pad
+   """Create and session and display an embedded pad
     """
 
     # Initialize some needed values
@@ -150,7 +150,7 @@ def pad(request, pk=None, slug=None): # pad_write
         pad = get_object_or_404(Pad, display_slug=slug)
     else:
         pad = get_object_or_404(Pad, pk=pk)
-    padLink = pad.server.url + '/p/' + pad.group.groupID + '$' + \
+    padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.parse.quote(pad.name)
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
@@ -165,7 +165,8 @@ def pad(request, pk=None, slug=None): # pad_write
                 'server': server,
                 'uname': u"%s" % author.user,
                 'error': _('You are not allowed to view or edit this pad')
-            }
+            },
+            context_instance=RequestContext(request)
         )
         return response
 
@@ -175,14 +176,20 @@ def pad(request, pk=None, slug=None): # pad_write
     )
     epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
+    # Try to use existing session as to allow editing multiple pads at once
+    newSessionID = False
+
     try:
-        result = epclient.createSession(
-            pad.group.groupID,
-            author.authorID,
-            time.mktime(expires.timetuple()).__str__()
-        )
-    except(Exception, e):
-        response = render(
+        if not 'sessionID' in request.COOKIES:
+            newSessionID = True
+
+            result = epclient.createSession(
+                pad.group.groupID,
+                author.authorID,
+                time.mktime(expires.timetuple()).__str__()
+            )
+    except Exception, e:
+        response =  render(
             request,
             'pad.html',
             {
@@ -207,32 +214,34 @@ def pad(request, pk=None, slug=None): # pad_write
             'uname': u"%s" % author.user,
             'error': False,
             'mode' : 'write'
-        }
+        },
     )
 
-    # Delete the existing session first
-    if ('padSessionID' in request.COOKIES):
-        if 'sessionID' in request.COOKIES.keys():
-            try:
-                epclient.deleteSession(request.COOKIES['sessionID'])
-            except ValueError:
-                response.delete_cookie('sessionID', server.hostname)
-        response.delete_cookie('padSessionID')
+    if newSessionID:
+        # Delete the existing session first
+        if ('padSessionID' in request.COOKIES):
+            if 'sessionID' in request.COOKIES.keys():
+                try:
+                    epclient.deleteSession(request.COOKIES['sessionID'])
+                except ValueError:
+                    response.delete_cookie('sessionID', server.hostname)
+            response.delete_cookie('padSessionID')
 
-    # Set the new session cookie for both the server and the local site
-    response.set_cookie(
-        'sessionID',
-        value=result['sessionID'],
-        expires=expires,
-        domain=server.hostname,
-        httponly=False
-    )
-    response.set_cookie(
-        'padSessionID',
-        value=result['sessionID'],
-        expires=expires,
-        httponly=False
-    )
+        # Set the new session cookie for both the server and the local site
+        response.set_cookie(
+            'sessionID',
+            value=result['sessionID'],
+            expires=expires,
+            domain=server.hostname,
+            httponly=False
+        )
+        response.set_cookie(
+            'padSessionID',
+            value=result['sessionID'],
+            expires=expires,
+            httponly=False
+        )
+        
     return response
 
 def xhtml(request, slug):
