@@ -145,7 +145,8 @@ def padCreate(request):
 
 @login_required(login_url='/accounts/login')
 def pad(request, pk=None, slug=None): # pad_write
-   """Create and session and display an embedded pad
+    """
+     Create and session and display an embedded pad
     """
 
     # Initialize some needed values
