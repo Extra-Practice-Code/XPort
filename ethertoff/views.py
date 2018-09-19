@@ -28,6 +28,7 @@ from django.template.context_processors import csrf
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
+from django.db import IntegrityError
 
 # Django Apps import
 
@@ -62,6 +63,43 @@ Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
 
+def savePad(pad, slug, n=0):
+    if n < 25:
+        try:
+            if n > 0:
+                base, ext = os.path.splitext(slug)
+                pad.display_slug = '{base}-{n}{ext}'.format(base=base, ext=ext, n=n)
+                pad.name=slugify(pad.display_slug)[:42]
+            pad.save()
+        except IntegrityError:
+            savePad(pad, slug, n+1)
+        return pad
+    return False
+
+def createPad (slug, server, group, n=0):
+    if n < 25:
+        try:
+            if n > 0:
+                base, ext = os.path.splitext(slug)
+                safe_slug = '{base}-{n}{ext}'.format(base=base, ext=ext, n=n)
+            else:
+                safe_slug = slug
+
+            pad = Pad(
+                name=slugify(safe_slug)[:42], # This is the slug internally used by etherpad
+                display_slug=safe_slug, # This is the slug we get to change afterwards
+                display_name=safe_slug,     # this is just for backwards compatibility
+                server=group.server,
+                group=group
+            )
+
+            pad.save()
+            return pad
+        except IntegrityError:
+            return createPad(slug=slug, server=server, group=group, n=n+1)
+
+    return False
+
 @login_required(login_url='/accounts/login')
 def padCreate(request):
     """
@@ -75,16 +113,16 @@ def padCreate(request):
     if request.method == 'POST':  # Process the form
         form = forms.PadCreate(request.POST)
         if form.is_valid():
-            n = form.cleaned_data['name']
-            n = re.sub(r'\s+', u'_', n)
-            pad = Pad(
-                name=slugify(n)[:42], # This is the slug internally used by etherpad
-                display_slug=n, # This is the slug we get to change afterwards
-                display_name=n,     # this is just for backwards compatibility
-                server=group.server,
-                group=group
-            )
-            pad.save()
+            n, ext = os.path.splitext(form.cleaned_data['name'])
+            n = re.sub(r'\s+', '_', n)
+
+            if ext in allowed_extensions:
+                n = '{}{}'.format(n, ext)
+            else:
+                n = '{}{}'.format(n, default_extension)
+
+            pad = createPad(slug=n, server=group.server, group=group)
+
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else:  # No form to process so create a fresh one
         form = forms.PadCreate({'group': group.groupID})

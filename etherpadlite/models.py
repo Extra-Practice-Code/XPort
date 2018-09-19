@@ -162,7 +162,7 @@ class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
     name = models.CharField(max_length=50)
-    display_slug = models.CharField(max_length=256, blank=True, verbose_name="Name as used in URL (use :: for namespacing)")
+    display_slug = models.CharField(max_length=255, blank=True, verbose_name="Name as used in URL (use :: for namespacing)", unique=True)
     
     # I’m putting this back. We don’t use it anymore, but putting in the migration is
     # more hassle then it’s worth
