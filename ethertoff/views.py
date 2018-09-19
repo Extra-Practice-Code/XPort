@@ -58,6 +58,9 @@ cf http://fredericiana.com/2010/10/08/decoding-html-entities-to-text-in-python/
 h = HTMLParser()
 unescape = h.unescape
 
+allowed_extensions = ['.md', '.html', '.css']
+default_extension = '.md'
+
 """
 Create a regex for our include template tag
 """
@@ -163,7 +166,7 @@ def pad(request, pk=None, slug=None): # pad_write
                 'pad': pad,
                 'link': padLink,
                 'server': server,
-                'uname': u"%s" % author.user,
+                'uname': "{}".format(author.user),
                 'error': _('You are not allowed to view or edit this pad')
             },
             context_instance=RequestContext(request)
@@ -188,7 +191,7 @@ def pad(request, pk=None, slug=None): # pad_write
                 author.authorID,
                 time.mktime(expires.timetuple()).__str__()
             )
-    except Exception, e:
+    except Exception as e:
         response =  render(
             request,
             'pad.html',
@@ -196,9 +199,9 @@ def pad(request, pk=None, slug=None): # pad_write
                 'pad': pad,
                 'link': padLink,
                 'server': server,
-                'uname': u"%s" % author.user,
+                'uname': "{}".format(author.user),
                 'error': _('etherpad-lite session request returned:') +
-                ' "' + e.reason + '"'
+                ' "' + e.reason if isinstance(e, UnicodeError) else str(e) + '"'
             }
         )
         return response
@@ -211,7 +214,7 @@ def pad(request, pk=None, slug=None): # pad_write
             'pad': pad,
             'link': padLink,
             'server': server,
-            'uname': u"%s" % author.user,
+            'uname': "{}".format(author.user),
             'error': False,
             'mode' : 'write'
         },
@@ -387,7 +390,7 @@ def home(request):
     hash = {}
     for article in articles:
         if sort in article:
-            if isinstance(article[sort], basestring):
+            if isinstance(article[sort], str):
                 subject = article[sort]
                 if not subject in hash:
                     hash[subject] = [article]
