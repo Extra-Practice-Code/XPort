@@ -12,6 +12,7 @@
 @font-size: 17px;
 @font-size-small: 12px;
 @line-height: 21px;
+@highlight-color: #f2f2ff;
 /* BLOCKS -------------------------------------  */
 * {
     -webkit-box-sizing: border-box;
@@ -513,4 +514,43 @@ div#go-up {
         vertical-align: middle;
         background-color: white;
         padding: 30px;
+}
+
+.manage_list li {
+    border-bottom: 1px solid #c6c6fe;
+    padding: 0.5em 0 0.5em 0;
+}
+
+.manage_list li:hover {
+    background-color: @highlight-color;
+}
+
+.manage_list li .actions {
+    float: right;
+}
+
+.manage_list li .actions .button {
+    border: 1px solid;
+    padding: 3px 15px;
+    letter-spacing: 1px;
+    font-size: 60%;
+    text-transform: uppercase;
+    font-family: @sans;
+}
+
+.manage_list li .actions .button--delete:hover {
+    color: crimson;
+}
+
+.pagination {
+    text-align: center;
+    padding-top: .5em;
+}
+
+.pagination .step-links.previous {
+    float: left;
+}
+
+.pagination .step-links.next {
+    float: right;
 }

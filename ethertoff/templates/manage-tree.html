@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load wikify %}
+
+{% block content %}
+    <ul id="pads_list" class="manage_list">
+        {% for name, folder in tree.folders.items %}
+            <li><a href="{% url 'manage' name|addPath:folderPath %}">🗀 {{ name }}</a></li>
+        {% endfor %}
+        {% if folderPath %}
+            <li><a href="{% url 'pad-create' folderPath|pathString %}">+ create pad</a></li>
+        {% else %}
+            <li><a href="{% url 'pad-create' %}">+ create pad</a></li>
+        {% endif %}
+        {% for pad in tree.pads %}
+            <li>
+              <a data-uid="{{ pad.display_slug }}" href="{% if mode == 'write' %}{% url 'pad-write' slug=pad.display_slug %}{% else %}{% url 'pad-read' 'r' pad.display_slug %}{% endif %}" class="pad-link">
+                {{ pad.display_slug|stripPath:folderPath|dewikify }}
+              </a>
+              <section class="actions">
+                <a href="{% url 'pad-delete' pad.pk %}" class="button button--delete">delete</a>
+              </section>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

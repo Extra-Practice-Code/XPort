@@ -4,7 +4,7 @@
 import datetime
 import time
 import urllib
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 # Framework imports
 from django.shortcuts import render_to_response, get_object_or_404
@@ -193,7 +193,7 @@ def pad(request, pk):
             author.authorID,
             time.mktime(expires.timetuple()).__str__()
         )
-    except Exception, e:
+    except Exception as e:
         response = render_to_response(
             'etherpad-lite/pad.html',
             {

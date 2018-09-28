@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load wikify %}
+
+{% block content %}
+    <ul id="pads_list" class="manage_list">
+        {% for pad in pads %}
+            <li>
+              <a data-uid="{{ pad.display_slug }}" href="{% if mode == 'write' %}{% url 'pad-write' slug=pad.display_slug %}{% else %}{% url 'pad-read' 'r' pad.display_slug %}{% endif %}" class="pad-link">{{ pad.display_slug|dewikify }}</a>
+              <section class="actions">
+                <a href="{% url 'pad-delete' pad.pk %}" class="button button--delete">delete</a>
+              </section>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <section class="pagination">
+      <section class="step-links previous">
+        {% if pads.has_previous %}
+            <a href="{% url 'manage' 1 %}">&laquo; first</a>
+            <a href="{% url 'manage' pads.previous_page_number %}">previous</a>
+        {% endif %}
+      </section>
+    
+      Page {{ pads.number }} of {{ pads.paginator.num_pages }}
+    
+      <section class="step-links next">
+          {% if pads.has_next %}
+              <a href="{% url 'manage' pads.next_page_number %}">next</a>
+              <a href="{% url 'manage' pads.paginator.num_pages %}">last &raquo;</a>
+          {% endif %}
+      </section>
+    </section>
+{% endblock %}

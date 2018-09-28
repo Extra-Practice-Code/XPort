@@ -132,8 +132,18 @@ STATIC_URL = '/static/'
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
 
+PADS_PER_PAGE = 25
+
+PAD_FORCE_EXTENSION = True
+
+PAD_ALLOWED_EXTENSIONS = ['.md', '.css', '.html']
+
+PAD_DEFAULT_EXTENSION = '.md'
 
 SITE_ID = 1
+
+PAD_NAMESPACE_SEPARATOR = '::'
+PAD_NAMESPACE_SEPARATOR_DISPLAY = ' → '
 
 try:
     LOCAL_SETTINGS

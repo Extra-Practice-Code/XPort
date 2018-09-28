@@ -175,7 +175,7 @@ class Pad(models.Model):
         return self.display_slug
 
     def get_absolute_url(self):
-        return reverse('ethertoff.views.xhtml', args=[self.display_slug.replace('.md','')])
+        return reverse('xhtml', kwargs={'slug': self.display_slug.replace('.md','')})
 
     @property
     def padid(self):

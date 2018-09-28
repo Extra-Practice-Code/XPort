@@ -21,7 +21,7 @@ from django.template.loader import render_to_string
 
 # Django Apps import
 
-#from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site
 from etherpadlite.models import Pad, PadAuthor
 from ethertoff.settings import BACKUP_DIR
 
@@ -99,9 +99,9 @@ short_names = {
 }
 
 HOST = None
-#if Site.objects.count() > 0:
-    #site = Site.objects.all()[0]
-    #HOST = site.domain
+if Site.objects.count() > 0:
+    site = Site.objects.all()[0]
+    HOST = site.domain
 
 def query_results_to_template_articles(query_results):
     """
@@ -115,10 +115,9 @@ def query_results_to_template_articles(query_results):
         return template_articles
     
     for s, p, o in query_results:
-        print(s.encode('utf-8'), p.encode('utf-8'), o.encode('utf-8'))
-        uri   = unicode(s).strip()
-        key   = unicode(p).strip()
-        value = unicode(o).strip()
+        uri   = s.strip()
+        key   = p.strip()
+        value = o.strip()
         
         if uri != current_uri:
             if article:
@@ -172,7 +171,8 @@ def snif():
     for pad in Pad.objects.all():
         i += 1
         txt = "checking pad %s of %s: %s" % (i, total, pad.display_slug)
-        print(txt.encode('utf-8'))
+        print(txt)
+        print(host + pad.get_absolute_url())
         # We only want to index the articles—
         # For now we can distinguish them because they have url’s
         # ending in ‘.md’
@@ -182,7 +182,7 @@ def snif():
         try:
             result = g.parse(host + pad.get_absolute_url())
             print("succesfully parsed")
-        except(HTTPError, e):
+        except error.HTTPError as e:
             if e.code == 403:
                 # Some of the pads will not be public yet—
                 # They gives a ‘403 FORBIDDEN’ response
@@ -195,7 +195,7 @@ def snif():
     d = query_results_to_template_articles(g.query(sparql_query))
     
     with open(os.path.join(BACKUP_DIR, "index.json"), 'w') as f:
-        f.write(json.dumps(d, indent=2, ensure_ascii=False).encode('utf-8'))
+        json.dump(d, f, indent=2, ensure_ascii=False)
         # with open(os.path.join(BACKUP_DIR, "index.html"), 'w') as f:
         #    f.write(render_to_string("home.html", {"articles" : d}).encode('utf-8'))
     

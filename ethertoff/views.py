@@ -29,6 +29,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
+from django.core.paginator import Paginator
 
 # Django Apps import
 
@@ -38,6 +39,7 @@ from etherpadlite import config
 from django.contrib.sites.shortcuts import get_current_site
 
 from ethertoff.management.commands.index import snif
+from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
@@ -49,6 +51,8 @@ try:
 except ImportError:
     BACKUP_DIR = None
 
+from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR
+
 """
 Set up an HTMLParser for the sole purpose of unescaping
 Etherpad’s HTML entities.
@@ -58,36 +62,54 @@ cf http://fredericiana.com/2010/10/08/decoding-html-entities-to-text-in-python/
 h = HTMLParser()
 unescape = h.unescape
 
-allowed_extensions = ['.md', '.html', '.css']
-default_extension = '.md'
-
 """
 Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
 
-def savePad(pad, slug, n=0):
-    if n < 25:
-        try:
-            if n > 0:
-                base, ext = os.path.splitext(slug)
-                pad.display_slug = '{base}-{n}{ext}'.format(base=base, ext=ext, n=n)
-                pad.name=slugify(pad.display_slug)[:42]
-            pad.save()
-        except IntegrityError:
-            savePad(pad, slug, n+1)
-        return pad
-    return False
+def makeLeaf ():
+    return { 'folders': {}, 'pads': [] }
+
+def insertAt (path=[], tree=[], pad=''):
+    if len(path) > 1:
+        key = path.pop(0)
+        if not key in tree['folders']:
+            tree['folders'][key] = makeLeaf()
+
+        tree['folders'][key] = insertAt(path, tree['folders'][key], pad)
+    else:
+        tree['pads'].append(pad)
+
+    return tree
+
+def insertPad (pad, tree):
+    if PAD_NAMESPACE_SEPARATOR in pad.display_slug:
+        path = pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)
+    else:
+        path = []
+    
+    return insertAt(path, tree, pad)
+    
+
+# FIXME: better name
+def treatPadName (name, n=0):
+    name, ext = os.path.splitext(name)
+
+    if n > 0:
+        name = '{}-{}'.format(name, n)
+
+    if PAD_FORCE_EXTENSION:
+        if ext not in PAD_ALLOWED_EXTENSIONS:
+            ext = PAD_DEFAULT_EXTENSION
+
+        name = '{}{}'.format(name, ext)
+    
+    return name
 
 def createPad (slug, server, group, n=0):
     if n < 25:
         try:
-            if n > 0:
-                base, ext = os.path.splitext(slug)
-                safe_slug = '{base}-{n}{ext}'.format(base=base, ext=ext, n=n)
-            else:
-                safe_slug = slug
-
+            safe_slug = treatPadName(slug, n)
             pad = Pad(
                 name=slugify(safe_slug)[:42], # This is the slug internally used by etherpad
                 display_slug=safe_slug, # This is the slug we get to change afterwards
@@ -104,7 +126,7 @@ def createPad (slug, server, group, n=0):
     return False
 
 @login_required(login_url='/accounts/login')
-def padCreate(request):
+def padCreate(request, prefix=''):
     """
     Create a pad
     """    
@@ -116,19 +138,12 @@ def padCreate(request):
     if request.method == 'POST':  # Process the form
         form = forms.PadCreate(request.POST)
         if form.is_valid():
-            n, ext = os.path.splitext(form.cleaned_data['name'])
-            n = re.sub(r'\s+', '_', n)
-
-            if ext in allowed_extensions:
-                n = '{}{}'.format(n, ext)
-            else:
-                n = '{}{}'.format(n, default_extension)
-
-            pad = createPad(slug=n, server=group.server, group=group)
+            slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
+            pad = createPad(slug=slug, server=group.server, group=group)
 
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else:  # No form to process so create a fresh one
-        form = forms.PadCreate({'group': group.groupID})
+        form = forms.PadCreate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix))})
 
     con = {
         'form': form,
@@ -140,6 +155,31 @@ def padCreate(request):
         request,
         'pad-create.html',
         con,
+    )
+
+
+@login_required(login_url='/etherpad')
+def padDelete(request, pk):
+    """Delete a given pad
+    """
+    pad = get_object_or_404(Pad, pk=pk)
+
+    # Any form submissions will send us back to the profile
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            pad.delete()
+        return HttpResponseRedirect('/manage/')
+
+    con = {
+        'action': reverse('pad-delete', kwargs={'pk': pk}),
+        'question': _('Really delete the pad {}?'.format(str(pad))),
+        'title': _('Deleting {}'.format(str(pad))),
+    }
+    con.update(csrf(request))
+    return render(
+        request,
+        'pads/confirm.html',
+        con
     )
 
 
@@ -263,8 +303,11 @@ def pad_read(request, mode="r", slug=None):
         articles = []
     
     SITE = get_current_site(request)
-    href = "http://%s" % SITE.domain + request.path
+    # FIXME: construct url based on settings?
+    #href = "http://%s" % SITE.domain + request.path
     
+    href = request.path
+
     prev = None
     next = None
     for i, article in enumerate(articles):
@@ -427,8 +470,33 @@ def publish(request):
     return render(request, "publish.html", tpl_params)
 
 @login_required(login_url='/accounts/login')
+# def manage(request, page=1):
+def manage(request, path=[]):
+    if len(path) > 0:
+        path = path.split('/')
+        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::')
+    else:
+        pads = Pad.objects.all()
+    # paginator = Paginator(pads, PADS_PER_PAGE)
+
+    tree = makeLeaf()
+
+    for pad in pads:
+        tree = insertPad(pad, tree)
+    
+    if len(path) > 0:
+        for key in path:
+            tree = tree['folders'][key]
+
+        return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
+    else:
+        # return render(request, "manage.html", {'pads': paginator.get_page(page)})
+        return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
+
+@login_required(login_url='/accounts/login')
 def all(request):
     return render(request, "all.html")
+
 
 def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
