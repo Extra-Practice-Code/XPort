@@ -143,7 +143,7 @@ def padCreate(request, prefix=''):
 
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else:  # No form to process so create a fresh one
-        form = forms.PadCreate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix))})
+        form = forms.PadCreate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix) if prefix else '')})
 
     con = {
         'form': form,
