@@ -4,7 +4,7 @@
 {% block content %}
     <ul id="pads_list" class="manage_list">
         {% for name, folder in tree.folders.items %}
-            <li><a href="{% url 'manage' name|addPath:folderPath %}">🗀 {{ name }}</a></li>
+            <li><a href="{% url 'manage' name|addPath:folderPath %}">&#128448; {{ name }}</a></li>
         {% endfor %}
         {% if folderPath %}
             <li><a href="{% url 'pad-create' folderPath|pathString %}">+ create pad</a></li>
