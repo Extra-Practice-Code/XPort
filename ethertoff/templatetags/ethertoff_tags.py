@@ -69,7 +69,7 @@ def markdown_filter(value):
     extensions = ["extra", ]
 
     return mark_safe(markdown.markdown(force_text(value),
-                                       extensions))
+                                       extensions=extensions))
 
 p_surrounds = re.compile(r'<p>(.*)</p>')
 

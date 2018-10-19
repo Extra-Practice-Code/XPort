@@ -350,8 +350,7 @@ def pad_read(request, mode="r", slug=None):
         # we don’t want Etherpads automatically generated HTML, we want plain text.
         text = epclient.getText(padID)['text']
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
-            text = md.convert(text)
+            text = markdown.markdown(text, extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
             try:
                 meta = md.Meta
             except AttributeError:   # Edge-case: this happens when the pad is completely empty
