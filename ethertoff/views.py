@@ -13,6 +13,7 @@ import os
 # PyPi imports
 
 import markdown
+from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 import dateutil.parser
 import pytz
@@ -349,7 +350,7 @@ def pad_read(request, mode="r", slug=None):
         # we don’t want Etherpads automatically generated HTML, we want plain text.
         text = epclient.getText(padID)['text']
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', 'TocExtension(baselevel=2)', 'attr_list', 'figcaption'])
+            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', 'figcaption'])
             text = md.convert(text)
             try:
                 meta = md.Meta
