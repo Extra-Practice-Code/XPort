@@ -475,9 +475,9 @@ def publish(request):
 def manage(request, path=[]):
     if len(path) > 0:
         path = path.split('/')
-        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::').sort_by('name')
+        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::').order_by('name')
     else:
-        pads = Pad.objects.all().sort_by('name')
+        pads = Pad.objects.all().order_by('name')
     # paginator = Paginator(pads, PADS_PER_PAGE)
 
     tree = makeLeaf()
