@@ -45,6 +45,7 @@ urlpatterns = [
     path('accounts/logout', auth_views.LogoutView.as_view(),
         {'template_name': 'logout.html'}, name='logout'),
     path('accounts/password_change', auth_views.PasswordChangeView.as_view(), name="password_change"),
+    path('accounts/password_change_done', auth_views.PasswordChangeDoneView.as_view(), name="password_change_done"),
     path('create/', views.padCreate, name='pad-create'),
     path('create/<path:prefix>', views.padCreate, name='pad-create'),
     re_path('^delete/(?P<pk>\d+)/$', views.padDelete, name='pad-delete'),
