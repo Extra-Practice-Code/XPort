@@ -56,10 +56,10 @@
             <a class="button screen-only read-button" href="{% url 'pad-read' 'r' pad.display_slug %}">Read</a>
             <a class="button screen-only slide-button" href="{% url 'pad-read' 's' pad.display_slug %}">Slide</a>
             <a class="button screen-only" href="{% url 'pad-read' 'p' pad.display_slug %}">Print</a>
-            {% if user.is_authenticated %}
+            {% if pad.is_public or user.is_authenticated %}
                 <a class="button screen-only write-button" href="{% url 'pad-write' pad.display_slug %}">Write</a>
             {% else %}
-                <a class="button screen-only write-button" href="{% url 'login' %}">Write</a>
+                <a class="button screen-only write-button login-required" href="{% url 'login' %}">Write</a>
             {% endif %}
         {% endif %}
     </nav>

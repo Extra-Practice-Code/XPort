@@ -171,6 +171,9 @@ class Pad(models.Model):
     server = models.ForeignKey(PadServer, models.PROTECT)
     group = models.ForeignKey(PadGroup, models.PROTECT)
 
+    is_public = models.BooleanField(default=False)
+    publicpadid = models.CharField(max_length=100, blank=True, null=True)
+
     def __str__(self):
         return self.display_slug
 

@@ -90,7 +90,36 @@ def insertPad (pad, tree):
         path = []
     
     return insertAt(path, tree, pad)
-    
+
+# Perhaps move to the model?
+def makePadPublic (pad, n=0):
+    if not pad.is_public:
+        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+        tail = '' if n == 0 else '-{}'.format(n)
+        publicid = pad.name+tail
+
+        try:
+            res = epclient.sendClientsMessage(pad.padid, "Please continue editing in the publicversion of this pad")
+            print(res)
+            res = epclient.copyPad(pad.padid, publicid)
+            pad.is_public = True
+            pad.publicpadid = publicid
+            pad.save()
+
+            return pad
+
+        except ValueError:
+            return makePadPublic(pad, n+1)
+
+def makePadPrivate(pad):
+    if pad.is_public:
+        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+        res = epclient.movePad(pad.publicpadid, pad.padid, force=True)
+
+        pad.is_public = False
+        pad.publicpadid = ''
+        pad.save()
+        return pad
 
 # FIXME: better name
 def treatPadName (name, n=0):
@@ -175,6 +204,32 @@ def padDelete(request, pk):
         'action': reverse('pad-delete', kwargs={'pk': pk}),
         'question': _('Really delete the pad {}?'.format(str(pad))),
         'title': _('Deleting {}'.format(str(pad))),
+        'label': _('Delete')
+    }
+    con.update(csrf(request))
+    return render(
+        request,
+        'pads/confirm.html',
+        con
+    )
+
+@login_required(login_url='/etherpad')
+def padPublic(request, pk):
+    """Delete a given pad
+    """
+    pad = get_object_or_404(Pad, pk=pk)
+
+    # Any form submissions will send us back to the profile
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            makePadPublic(pad)
+        return HttpResponseRedirect('/manage/')
+
+    con = {
+        'action': reverse('pad-public', kwargs={'pk': pk}),
+        'question': _('Really make {} public?'.format(str(pad))),
+        'title': _('Making {} public'.format(str(pad))),
+        'label': _('Make public')
     }
     con.update(csrf(request))
     return render(
@@ -184,17 +239,73 @@ def padDelete(request, pk):
     )
 
 
-@login_required(login_url='/accounts/login')
-def pad(request, pk=None, slug=None): # pad_write
+@login_required(login_url='/etherpad')
+def padPrivate(request, pk):
+    """Delete a given pad
     """
-     Create and session and display an embedded pad
-    """
+    pad = get_object_or_404(Pad, pk=pk)
 
-    # Initialize some needed values
+    # Any form submissions will send us back to the profile
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            makePadPrivate(pad)
+        return HttpResponseRedirect('/manage/')
+
+    con = {
+        'action': reverse('pad-private', kwargs={'pk': pk}),
+        'question': _('Really make {} private?'.format(str(pad))),
+        'title': _('Making {} private'.format(str(pad))),
+        'label': _('Make private')
+    }
+    con.update(csrf(request))
+    return render(
+        request,
+        'pads/confirm.html',
+        con
+    )
+
+def pad(request, pk=None, slug=None):
     if slug:
         pad = get_object_or_404(Pad, display_slug=slug)
     else:
         pad = get_object_or_404(Pad, pk=pk)
+
+    if pad.is_public:
+        return pad_write_public(request, pad)
+    else:
+        return pad_write(request, pad)
+
+def pad_write_public(request, pad): # pad_write
+    padLink = pad.server.url + 'p/' + pad.publicpadid
+    server = urlparse(pad.server.url)
+    
+    if request.user.is_authenticated:
+        author = PadAuthor.objects.get(user=request.user)
+        uname = str(author.user)
+    else:
+        uname = None
+
+    # Set up the response
+    return render(
+        request,
+        'pad-public.html',
+        {
+            'pad': pad,
+            'link': padLink,
+            'server': server,
+            'error': False,
+            'mode' : 'write-public',
+            'uname': None
+        },
+    )
+
+@login_required(login_url='/accounts/login')
+def pad_write(request, pad):
+    # pad_write
+    
+    """
+     Create and session and display an embedded pad
+    """
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.parse.quote(pad.name)
     server = urlparse(pad.server.url)
@@ -321,7 +432,7 @@ def pad_read(request, mode="r", slug=None):
     # Initialize some needed values
     pad = get_object_or_404(Pad, display_slug=slug)
 
-    padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
+    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
     epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     # Etherpad gives us authorIDs in the form ['a.5hBzfuNdqX6gQhgz', 'a.tLCCEnNVJ5aXkyVI']
@@ -475,9 +586,9 @@ def publish(request):
 def manage(request, path=[]):
     if len(path) > 0:
         path = path.split('/')
-        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::').order_by('display_slug')
+        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::').order_by('name')
     else:
-        pads = Pad.objects.all().order_by('display_slug')
+        pads = Pad.objects.all().order_by('name')
     # paginator = Paginator(pads, PADS_PER_PAGE)
 
     tree = makeLeaf()
@@ -489,11 +600,8 @@ def manage(request, path=[]):
         for key in path:
             tree = tree['folders'][key]
 
-        return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
-    else:
-        # return render(request, "manage.html", {'pads': paginator.get_page(page)})
-        return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
-
+    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
+    
 @login_required(login_url='/accounts/login')
 def all(request):
     return render(request, "all.html")

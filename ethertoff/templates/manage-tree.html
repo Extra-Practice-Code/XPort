@@ -13,10 +13,16 @@
         {% endif %}
         {% for pad in tree.pads %}
             <li>
-              <a data-uid="{{ pad.display_slug }}" href="{% if mode == 'write' %}{% url 'pad-write' slug=pad.display_slug %}{% else %}{% url 'pad-read' 'r' pad.display_slug %}{% endif %}" class="pad-link">
+              <a data-uid="{{ pad.display_slug }}" href="{% url 'pad-write' slug=pad.display_slug %}" class="pad-link">
                 {{ pad.display_slug|stripPath:folderPath|dewikify }}
+                {% if pad.is_public %}(public){% endif %}
               </a>
               <section class="actions">
+                {% if pad.is_public %}
+                    <a href="{% url 'pad-private' pad.pk %}" class="button button--private">make private</a>
+                {% else %}
+                    <a href="{% url 'pad-public' pad.pk %}" class="button button--public">make public</a>
+                {% endif %}
                 <a href="{% url 'pad-delete' pad.pk %}" class="button button--delete">delete</a>
               </section>
             </li>

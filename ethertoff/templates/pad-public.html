@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load ethertoff_tags %}
+
+{% block extra_styles %}
+  <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
+  <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
+{% endblock %}
+
+{% block title %}
+    <header>
+    {% if meta.authors %}
+        <p class="authors">{{ meta.authors|natural_join:'et' }}</p>
+    {% endif %}
+    <h1>
+        {{ meta.title.0|default:pad.display_slug }}
+    </h1>
+    </header>
+{% endblock %}
+
+{% block content %}
+  {% if error %}
+  <div id="main">
+    <div id="errors">
+      <h2>Errors:</h2>
+      <p>{{error}}</p>
+    </div>
+  </div>
+  {% else %}
+  <iframe id="ether" src="{{link}}{% if uname %}?userName={{uname}}{% endif %}" style="height: 95%; width: 100%; min-height: 500px; display: block;"> </iframe>
+
+  <script type="text/javascript">
+      /**
+       * This little script is necessary for some browsers that don't respect the
+       * height css attribute on iframes.
+       */
+      function resizeEtherpad() {
+        height = jQuery(window).height()*94/100;
+        jQuery('#wrapper iframe').height(height);
+      }
+
+      jQuery(document).ready( function() {
+        resizeEtherpad()
+        jQuery(window).resize(resizeEtherpad);
+      });
+  </script>
+  {% endif %}
+
+{% endblock %}

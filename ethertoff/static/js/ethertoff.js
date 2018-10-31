@@ -81,7 +81,7 @@ $("a[href]").each(
 
 
 
-$(".logged-out a.write-button").click(function(e) {
+$(".logged-out a.write-button.login-required").click(function(e) {
     e.preventDefault();
     $(".popup-wrapper").removeClass("hidden");
 });
