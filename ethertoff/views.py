@@ -530,6 +530,8 @@ def pad_read(request, mode="r", slug=None):
 
 
 def home(request):
+    return all(request)
+    
     try:
         articles = json.load(open(os.path.join(BACKUP_DIR, 'index.json')))
     except IOError: # If there is no index.json generated, we go to the defined homepage
@@ -602,10 +604,19 @@ def manage(request, path=[]):
 
     return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
     
-@login_required(login_url='/accounts/login')
 def all(request):
-    return render(request, "all.html")
+    if request.user.is_authenticated:
+        return manage(request)
+    else:
+        return all_public(request)
 
+def all_public(request):
+    publicpads = Pad.objects.filter(is_public=True)
+    return render(request, "all-public.html", { 'publicpads': publicpads })
+
+@login_required(login_url='/accounts/login')
+def all_private(request):
+    return render(request, "all.html")
 
 def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
