@@ -1,20 +1,43 @@
-@import url(http://fonts.googleapis.com/css?family=Domine:400,700);
-@import url(http://fonts.googleapis.com/css?family=Quattrocento+Sans:400italic,700,400,700italic);
-@font-face {
-    font-family: "Young Serif";
-    src: url(https://github.com/bsozoo/YoungSerif/raw/master/YoungSerif-Regular.otf);
-}
-
 :root {
-    --color: blue;
-    --serif: Domine;
-    --sans: "Quattrocento Sans";
+    --color: black;
+    --serif: "Junicode-Condensed";
+    --sans: "U001";
+    --body-font: var(--sans);
+    --header-font: var(--serif);
     --mono: Monospace;
     --font-lettrine: "Young Serif";
-    --font-size: 17px;
+    --font-size: 1.4em;
+    --line-height: 1.2em;
     --font-size-small: 12px;
-    --line-height: 21px;
     --highlight-color: #f2f2ff;
+    --bleu-bille: #112B92;
+    --vert-karel: #00B788;
+    --orange-karel: #ff5900;
+    --rose-karel: #FCBFC4;
+    --rose-pale: #ffe1e4;
+    --red-question: #ff3f00;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #d6d6d6;;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #000;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    color: rgb(0, 71, 171);
+
 }
 
 /* BLOCKS -------------------------------------  */
@@ -29,11 +52,8 @@
     -o-font-feature-settings: "liga", "dlig", "clig", "kern";
 }
 body {
-    background-size: 100%;
-    background-attachment: fixed; 
-    background-repeat: no-repeat;
-    color: blue;
-    font-family: var(--serif);
+    color: var(--color);
+    font-family: var(--body-font);
     font-size: var(--font-size);
     line-height: var(--line-height);
     padding: calc(var(--line-height) / 2);
@@ -51,7 +71,7 @@ iframe#ether {
 h1, h2, h3, h4, h5, h6 {
     font-size: var(--font-size); 
     font-weight: bold;
-    font-family: var(--serif);
+    font-family: var(--header-font);
     margin: 0;
     margin-top: calc(2 * var(--line-height));
     margin-bottom: var(--line-height);
@@ -62,8 +82,7 @@ h1 {
     font-size: var(--font-size);
     line-height: var(--line-height);
     margin: var(--line-height) 0;
-    text-align: center;
-    font-family: var(--font-lettrine);
+    font-family: var(--header-font);
     font-weight: normal;
 }
 #content h1 {
@@ -74,14 +93,13 @@ h1 {
 h2 {
     font-size: calc(var(--font-size) * 1.5);
     text-transform: uppercase;
-    text-align: center;
-    font-family: var(--font-lettrine);
+    font-family: var(--header-font);
     font-weight: normal;
 }
 h3 {
     text-transform: uppercase;
     margin: var(--line-height) 0;
-    font-family: var(--font-lettrine);
+    font-family: var(--header-font);
     font-weight: normal;
 }
 h4 {
@@ -113,11 +131,8 @@ blockquote {
     margin: var(--line-height) calc(2 * var(--line-height));
 }
 p {
-    margin-bottom: 0;
+    margin-bottom: var(--line-height);
     clear: both;
-}
-p + p {
-    text-indent: calc(2 * var(--line-height));
 }
 hr {
     border: 0;
@@ -364,7 +379,6 @@ form input[type=submit]:hover {
 nav {
     font-family: var(--sans);
     line-height: var(--line-height);
-    font-size: var(--font-size-small);
     position: fixed;
     top: 0;
     background-color: white;
