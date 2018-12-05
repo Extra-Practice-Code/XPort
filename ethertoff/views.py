@@ -606,7 +606,7 @@ def manage(request, path=[]):
 
     folders = [key for key in tree['folders'].keys()]
 
-    folders.sort()
+    folders.sort(key=str.lower)
 
     return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path, 'crumbs': crumbs, 'folders': folders })
     
