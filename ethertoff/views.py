@@ -602,7 +602,13 @@ def manage(request, path=[]):
         for key in path:
             tree = tree['folders'][key]
 
-    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path })
+    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+
+    folders = [key for key in tree['folders'].keys()]
+
+    folders.sort()
+
+    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path, 'crumbs': crumbs, 'folders': folders })
     
 def all(request):
     if request.user.is_authenticated:

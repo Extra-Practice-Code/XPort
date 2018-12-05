@@ -572,3 +572,18 @@ div#go-up a:hover {
 .pagination .step-links.next {
     float: right;
 }
+
+
+.pad-list--path, .pad-list--actions {
+    background: white;
+    position: sticky;
+    padding: .5em .2em;
+}
+
+.pad-list--path {
+    top: 2em;
+}
+
+.pad-list--actions {
+    bottom : 0;
+}

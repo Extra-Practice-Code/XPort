@@ -2,15 +2,16 @@
 {% load wikify %}
 
 {% block content %}
-    <ul id="pads_list" class="manage_list">
-        {% for name, folder in tree.folders.items %}
-            <li><a href="{% url 'manage' name|addPath:folderPath %}">&#128448; {{ name }}</a></li>
+    <section class="pad-list--path">
+        <a href="{% url 'manage' %}">root</a>
+        {% for name, path in crumbs %}
+            > <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
         {% endfor %}
-        {% if folderPath %}
-            <li><a href="{% url 'pad-create' folderPath|pathString %}">+ create pad</a></li>
-        {% else %}
-            <li><a href="{% url 'pad-create' %}">+ create pad</a></li>
-        {% endif %}
+    </section>
+    <ul id="pads_list" class="manage_list">
+        {% for folder in folders %}
+            <li><a href="{% url 'manage' folder|addPath:folderPath %}">&#128448; {{ folder }}</a></li>
+        {% endfor %}
         {% for pad in tree.pads %}
             <li>
               <a data-uid="{{ pad.display_slug }}" href="{% url 'pad-write' slug=pad.display_slug %}" class="pad-link">
@@ -28,4 +29,7 @@
             </li>
         {% endfor %}
     </ul>
+    <section class="pad-list--actions">
+        <a href="{% url 'pad-create' %}">+ create pad</a>
+    </section>
 {% endblock %}

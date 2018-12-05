@@ -28,15 +28,16 @@ def stripPath(value, path):
 
 @register.filter
 def addPath(value, path):
-    return '{}{}'.format(pathString(path), value)
+    return '{}{}'.format(ensureTrailingSlash(pathString(path)), value)
 
 @register.filter   
 def pathString(path):
     if path is not None and len(path) > 0:
-        return '{}/'.format('/'.join(path))
+        return '{}'.format('/'.join(path))
     return ''
 
 def ensureTrailingSlash(path):
-    if path[-1] != '/':
-        return '{}/'.format(path)
+    if len(path) > 0:
+        if path[-1] != '/':
+            return '{}/'.format(path)
     return path
