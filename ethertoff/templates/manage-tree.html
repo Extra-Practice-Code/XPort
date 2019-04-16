@@ -24,6 +24,7 @@
                 {% else %}
                     <a href="{% url 'pad-public' pad.pk %}" class="button button--public">make public</a>
                 {% endif %}
+                <a href="{% url 'pad-rename' pad.pk %}" class="button button--rename">rename</a>
                 <a href="{% url 'pad-delete' pad.pk %}" class="button button--delete">delete</a>
               </section>
             </li>

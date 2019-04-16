@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
@@ -162,11 +162,9 @@ class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
     name = models.CharField(max_length=50)
-    display_slug = models.CharField(max_length=255, blank=True, verbose_name="Name as used in URL (use :: for namespacing)", unique=True)
-    
-    # I’m putting this back. We don’t use it anymore, but putting in the migration is
-    # more hassle then it’s worth
-    display_name = models.CharField(max_length=256, blank=True, verbose_name=u"Name as used in Display (use → for namespacing)")
+    # As a precursor to using  utf8mb4 also reduce the size of the display slug
+    # otherwise the charfield will be too long
+    display_slug = models.CharField(max_length=191, blank=True, verbose_name="Name as used in URL (use :: for namespacing)", unique=True)
     
     server = models.ForeignKey(PadServer, models.PROTECT)
     group = models.ForeignKey(PadGroup, models.PROTECT)
@@ -202,13 +200,12 @@ class Pad(models.Model):
         return self.epclient.getReadOnlyID(self.padid)
 
     def save(self, *args, **kwargs):
-        # see above
-        self.display_name = self.display_slug
-        
-        try:
-            self.Create()
-        except ValueError: # already exists (need a better check for that)
-            pass
+        if not self.pk:
+            try:
+                self.Create()
+            except ValueError: # already exists (need a better check for that)
+                raise ValueError('Pad already exsists')
+                
         super(Pad, self).save(*args, **kwargs)
 
     class Meta:

@@ -19,7 +19,7 @@ import dateutil.parser
 import pytz
 
 # Framework imports
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
@@ -42,6 +42,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
+from . import forms as ethertoffForms
+
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
     from ethertoff.settings import HOME_PAD
@@ -52,7 +54,7 @@ try:
 except ImportError:
     BACKUP_DIR = None
 
-from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR
+from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR, MAX_PAD_SAVE_TRIES
 
 """
 Set up an HTMLParser for the sole purpose of unescaping
@@ -107,7 +109,7 @@ def makePadPublic (pad, n=0):
             pad.save()
 
             return pad
-
+        
         except ValueError:
             return makePadPublic(pad, n+1)
 
@@ -121,20 +123,37 @@ def makePadPrivate(pad):
         pad.save()
         return pad
 
+# Filter out forbidden
+def filterPadSlug(slug):
+    # Replace spaces by '_'
+    slug = re.sub(r'\s', '_', slug)
+    # Replace forbidden characters
+    slug = re.sub(r'[/]', '', slug)
+
+    return slug 
+
+def ensurePadExtension(slug):
+    name, ext = os.path.splitext(slug)
+
+    if PAD_FORCE_EXTENSION:
+        if ext.lower() not in PAD_ALLOWED_EXTENSIONS:
+            ext = PAD_DEFAULT_EXTENSION
+
+        return '{}{}'.format(name, ext.lower())
+
+    return '{}{}'.format(name, ext.lower()) 
+
 # FIXME: better name
-def treatPadName (name, n=0):
+def numerizePadName (name, n=0):
     name, ext = os.path.splitext(name)
 
     if n > 0:
         name = '{}-{}'.format(name, n)
 
-    if PAD_FORCE_EXTENSION:
-        if ext not in PAD_ALLOWED_EXTENSIONS:
-            ext = PAD_DEFAULT_EXTENSION
+    return '{}{}'.format(name, ext)
 
-        name = '{}{}'.format(name, ext)
-    
-    return name
+def treatPadName(slug, n):
+    return numerizePadName(ensurePadExtension(filterPadSlug(slug)), n)
 
 def createPad (slug, server, group, n=0):
     if n < 25:
@@ -143,17 +162,29 @@ def createPad (slug, server, group, n=0):
             pad = Pad(
                 name=slugify(safe_slug)[:42], # This is the slug internally used by etherpad
                 display_slug=safe_slug, # This is the slug we get to change afterwards
-                display_name=safe_slug,     # this is just for backwards compatibility
                 server=group.server,
                 group=group
             )
 
             pad.save()
             return pad
+        except ValueError:
+            # Pad already exists on the server
+            return createPad(slug=slug, server=server, group=group, n=n+1)
         except IntegrityError:
+            # Pad existed in the database, but not on the server
+            # delete the created pad
+            pad.Destroy()
             return createPad(slug=slug, server=server, group=group, n=n+1)
 
     return False
+
+# Move as a property to the model ?
+def getFolderName (slug):
+    if PAD_NAMESPACE_SEPARATOR in slug:
+        return slug.rsplit(PAD_NAMESPACE_SEPARATOR, 1)[0]
+    else:
+        return None
 
 @login_required(login_url='/accounts/login')
 def padCreate(request, prefix=''):
@@ -172,7 +203,9 @@ def padCreate(request, prefix=''):
             pad = createPad(slug=slug, server=group.server, group=group)
 
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
-    else:  # No form to process so create a fresh one
+    else: 
+        # No form to process so create a fresh one
+        # prefix should contain the name of the folder
         form = forms.PadCreate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix) if prefix else '')})
 
     con = {
@@ -211,6 +244,46 @@ def padDelete(request, pk):
         request,
         'pads/confirm.html',
         con
+    )
+
+
+def renamePad(pad, slug, n=0):
+    pad.display_slug = treatPadName(slug, n)
+    
+    while n < MAX_PAD_SAVE_TRIES:
+        try:
+            return pad.save()
+        except IntegrityError:
+            return renamePad(pad, slug, n+1)
+
+@login_required(login_url='/etherpad')
+def padRename(request, pk):
+    pad = get_object_or_404(Pad, pk=pk)
+
+    if request.method == 'POST':
+        form = ethertoffForms.PadRename(request.POST)
+        if form.is_valid():
+            renamePad(pad, form.cleaned_data['name'])
+            return redirect('manage', path=getFolderName(pad.display_slug).replace(PAD_NAMESPACE_SEPARATOR, '/'))
+    else:
+        form = ethertoffForms.PadRename({
+            'pk': pad.pk,
+            'name': pad.display_slug
+        })
+
+    context = {
+        'form': form,
+        'pk': pad.pk,
+        'name': pad.display_slug,
+        'title': _('Rename pad {}').format(str(pad))
+    }
+
+    context.update(csrf(request))
+
+    return render(
+        request,
+        'pad-rename.html',
+        context
     )
 
 @login_required(login_url='/etherpad')
@@ -333,11 +406,11 @@ def pad_write(request, pad):
     epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     # Try to use existing session as to allow editing multiple pads at once
-    newSessionID = False
+    makeNewSessionID = False
 
     try:
         if not 'sessionID' in request.COOKIES:
-            newSessionID = True
+            makeNewSessionID = True
 
             result = epclient.createSession(
                 pad.group.groupID,
@@ -373,7 +446,7 @@ def pad_write(request, pad):
         },
     )
 
-    if newSessionID:
+    if makeNewSessionID:
         # Delete the existing session first
         if ('padSessionID' in request.COOKIES):
             if 'sessionID' in request.COOKIES.keys():
@@ -432,7 +505,7 @@ def pad_read(request, mode="r", slug=None):
     # Initialize some needed values
     pad = get_object_or_404(Pad, display_slug=slug)
 
-    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
+    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
     epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     # Etherpad gives us authorIDs in the form ['a.5hBzfuNdqX6gQhgz', 'a.tLCCEnNVJ5aXkyVI']
@@ -478,7 +551,7 @@ def pad_read(request, mode="r", slug=None):
     
     # Create namespaces from the url of the pad
     # 'pedagogy::methodology' -> ['pedagogy', 'methodology']
-    namespaces = [p.rstrip('-') for p in pad.display_slug.split('::')]
+    namespaces = [p.rstrip('-') for p in pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)]
 
     meta_list = []
 
@@ -588,7 +661,7 @@ def publish(request):
 def manage(request, path=[]):
     if len(path) > 0:
         path = path.split('/')
-        pads = Pad.objects.filter(display_slug__startswith='::'.join(path) + '::').order_by('name')
+        pads = Pad.objects.filter(display_slug__startswith=PAD_NAMESPACE_SEPARATOR.join(path) + PAD_NAMESPACE_SEPARATOR).order_by('name')
     else:
         pads = Pad.objects.all().order_by('name')
     # paginator = Paginator(pads, PADS_PER_PAGE)
@@ -627,7 +700,7 @@ def all_private(request):
 def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
         pad = Pad.objects.get(display_slug=slug)
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace('::', '_'))
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
         return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
     except:

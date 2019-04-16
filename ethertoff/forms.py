@@ -7,3 +7,8 @@ class ContactForm(forms.Form):
     email        = forms.EmailField(label=_("E-Mail"))
     subject      = forms.CharField(max_length=100, label=_("Subject"))
     message      = forms.CharField(widget=forms.Textarea(), label=_("Message"))
+
+
+class PadRename(forms.Form):
+    pk = forms.HiddenInput()
+    name = forms.CharField(label=_("Name"))
