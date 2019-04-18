@@ -102,6 +102,7 @@ class Command(BaseCommand):
         
         meta = md.Meta
         parser.read(meta, body) 
+      print('Read {}'.format(pad.display_slug))
 
     print('Read pads')
     print('Generating output')
