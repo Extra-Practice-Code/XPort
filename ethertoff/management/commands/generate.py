@@ -144,8 +144,6 @@ class Command(BaseCommand):
     print('Read pads')
     print('Generating output')
 
-    print(parser.data)
-
     output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(parser.data['produser'], key=lambda r: r['key']) })
 
     if not DEBUG:
