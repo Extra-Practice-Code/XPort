@@ -25,7 +25,7 @@ from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
 
 def output (path, template, context):
-  with open(path, 'w') as w:
+  with open(path, 'w', encoding='utf-8') as w:
     w.write(loader.render_to_string(template, context))
 
 class Parser(object):
@@ -87,6 +87,7 @@ class Command(BaseCommand):
     parser = Parser()
     epclient = None
 
+
     for pad in Pad.objects.all():
       if not epclient:
         epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
@@ -101,6 +102,9 @@ class Command(BaseCommand):
         
         meta = md.Meta
         parser.read(meta, body) 
+
+    print('Read pads')
+    print('Generating output')
 
     output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': parser.data['produser'] })
 
