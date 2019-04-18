@@ -54,7 +54,7 @@ class Parser(object):
     for targetName in self.linkTargets:
       if targetName in meta:
         for target in meta[targetName]:
-          targetObj = self.findTarget(targetName, target)
+          targetObj = self.findTarget(targetName, target.strip(' ;'))
 
           if contentFragment['type'] not in targetObj:
             targetObj[contentFragment['type']] = []
