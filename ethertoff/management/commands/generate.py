@@ -19,6 +19,9 @@ from etherpadlite.models import Pad
 
 from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
+FIELD_SINGLE = 'FIELD_SINGLE'
+FIELD_ITERABLE = 'FIELD_ITERABLE'
+
 # List pads
 # Go through them, record information
 # Feed content to templates
@@ -30,8 +33,17 @@ def output (path, template, context):
 
 class Parser(object):
   def __init__ (self):
+    self.fields = {
+      'produser': {
+        'role': FIELD_SINGLE,
+        'biography': FIELD_SINGLE,
+        'event': FIELD_ITERABLE
+      }
+    }
+
     self.linkTargets = ['produser', 'event']
-    self.contentTypes = ['biography', 'bibliography', 'event', 'meeting', 'notes']
+    
+    self.contentTypes = ['biography', 'bibliography', 'event', 'meeting', 'notes', 'role']
 
     self.data = { target: [] for target in self.linkTargets }
     self.index = { target: {} for target in self.linkTargets }
@@ -41,25 +53,49 @@ class Parser(object):
       if key in self.index[targetName]:
         return self.index[targetName][key]
       else:
-        target = { 'key': key }
+        target = { '__type__': targetName, 'key': key }
         self.data[targetName].append(target)
         self.index[targetName][key] = target
         
     return target
-  def makeContentFragment (self, contentType, body):
+  def makeContentFragment (self, contentType, value):
     ## Could be more intricate later on
-    return { 'type': contentType, 'body': body }
+    return { 'type': contentType, 'value': value }
 
+  def setProperty(self, obj, prop, val):
+    # If there is a description for the property
+    # follow the description: single or plural
+    # to extend: overwrite / datafilter
+    if obj['__type__'] in self.fields:
+      desc = self.fields[obj['__type__']]
+      if prop in desc:
+        if desc[prop] == FIELD_SINGLE:
+          obj[prop] = val
+        else:
+          if prop not in obj:
+            obj[prop] = []
+
+          obj[prop].append(val)
+
+    else:
+      if prop not in obj:
+        obj[prop] = []
+
+      obj[prop].append(val)
+
+  # Rename function
   def makeLinks(self, meta, contentFragment):
     for targetName in self.linkTargets:
       if targetName in meta:
         for target in meta[targetName]:
           targetObj = self.findTarget(targetName, target.strip(' ;'))
+          self.setProperty(targetObj, contentFragment['type'], contentFragment['value'])
 
-          if contentFragment['type'] not in targetObj:
-            targetObj[contentFragment['type']] = []
-
-          targetObj[contentFragment['type']].append(contentFragment['body'])
+          for key in meta:
+            if key != targetName:
+              for val in meta[key]:
+                self.setProperty(targetObj, key, val)
+          
 
   def read (self, meta, body):
     if 'type' in meta and meta['type']:
@@ -67,6 +103,7 @@ class Parser(object):
         if contentType in self.contentTypes:
           contentFragment = self.makeContentFragment(contentType, body)
           self.makeLinks(meta, contentFragment)
+
           # return obj
 
     return None
@@ -107,7 +144,9 @@ class Command(BaseCommand):
     print('Read pads')
     print('Generating output')
 
-    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': parser.data['produser'] })
+    print(parser.data)
+
+    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(parser.data['produser'], key=lambda r: r['key']) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)
