@@ -1,4 +1,4 @@
-{% regroup produsers by role as role_list %}
+{% regroup produsers|dictsort:"role" by role as role_list %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
