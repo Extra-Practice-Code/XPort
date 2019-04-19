@@ -196,7 +196,7 @@ class Command(BaseCommand):
     print('Read pads')
     print('Generating output')
 
-    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(parser.data['produser'], key=lambda r: r['key']) })
+    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(parser.data['produser'], key=lambda r: str(r['key'])) })
 
     for produser in parser.data['produser']:
       output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser['key'])), 'generated/produser.html', { 'produser': produser })
