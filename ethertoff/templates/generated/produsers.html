@@ -11,8 +11,7 @@
   {% for role in role_list %}
     <h2>{{ role.grouper }}</h2>
     {% for produser in role.list %}
-      <h3>{{ produser.key }}</h3>
-      {{ produser.biography }}
+      <h3><a href="produsers/{{ produser.key }}.html">{{ produser.produser }}</a></h3>
     {% endfor %}
   {% endfor %}
   <!-- {% for produser in produsers %}

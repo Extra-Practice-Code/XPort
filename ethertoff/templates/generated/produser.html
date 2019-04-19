@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Produsers</title>
+</head>
+<body>
+  <h1>{{ produser.produser }}</h1>
+  {% if produser.trajectory %}
+    <h2>Trajectory</h2>
+    {{ produser.trajectory.body}}
+  {% endif %}
+  <h2>Biography</h2>
+  {{ produser.body }}
+  {% if produser.event %}
+    <h2>Events</h2>
+    <ul>
+      {% for event in produser.event %}
+        <li>{{ event.event }}
+          {{ event.body }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</body>
+</html>
