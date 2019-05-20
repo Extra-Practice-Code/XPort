@@ -23,14 +23,54 @@ from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
 
+FIELD_DATE_FORMAT = '%d-%m-%Y'
+FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
+FIELD_TIME_FORMAT = '%H:%M'
+
+import datetime
+
 # List pads
 # Go through them, record information
 # Feed content to templates
 
-
 def output (path, template, context):
   with open(path, 'w', encoding='utf-8') as w:
     w.write(loader.render_to_string(template, context))
+
+class Model(object):
+  fields = {}
+  
+  def __init__ (self, key, **kwargs):
+    self.key = key
+    self.data = {}
+    self._parse_data(kwargs)
+
+  def _parse_data (self, data):
+    for key in data:
+      if key in self.fields:
+        self.data[key] = self.fields[key](data[key])
+
+
+class Collection(object):
+  model = Model
+  def get (self, key, invoke=True):
+    if key in self.index:
+      return self.index[key]
+    elif invoke:
+      return self.invoke(key)
+    else:
+      return None
+
+  def register (self, obj):
+    self.data.append(obj)
+    self.index[obj.key] = obj
+
+  def invoke (self, key):
+    obj = self.model(key)
+    self.register(obj)
+    return obj
+
+
 
 class Parser(object):
   def __init__ (self):
@@ -153,6 +193,81 @@ class Parser(object):
 
     return None
 
+
+class Field (object):
+  def __init__ (self, raw):
+    self.value = raw
+
+  def __repr__ (self):
+    return self.value
+
+  @property
+  def value (self):
+    return self._value
+
+  @value.setter
+  def value (self, value):
+    self._value = self.parse(value)
+
+  def parse (self, raw):
+    return raw
+
+class SingleField (Field):
+  def __init__ (self, raw):
+    if type(raw) is list:
+      self.value = raw[0]
+    else:
+      self.value = raw
+
+class DateField (SingleField):
+  def parse (self, value):
+    return datetime.datetime.strptime(value, FIELD_DATE_FORMAT).date()
+
+class DateTimeField (SingleField):
+  def parse (self, value):
+    return datetime.datetime.strptime(value, FIELD_DATETIME_FORMAT)
+
+class TimeField (SingleField):
+  def parse (self, value):
+    return datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time()
+
+class LookupField (SingleField):
+  def __init__ (self, index):
+    self.type = contentType
+
+  def parse (self, value):
+    if value:
+      return index(self.contentType).get(v), value[0])
+    else:
+      return None
+
+class IntField (SingleField):
+  def parse (self, value):
+    return int(value)
+
+class MultiLookupField (Field):
+  def parse (self, value):
+    if value and type(value) is list:
+      return [ index(self.contentType).get(v) for v in value ]
+    else:
+      return None
+
+def lookupField(contentType):
+  return lambda **d: return LookupField(contentType, **d)
+
+class Event (Model):
+  self.fields = {
+    'date': 
+  }
+
+class Produser (Model):
+  self.fields = {
+    'role': ,
+    'trajectory': lookupField('trajectory')
+  }
+
+  pass
+
 class Command(BaseCommand):
   args = ''
   help = 'Generate a static interpretation of the pads'
@@ -203,3 +318,16 @@ class Command(BaseCommand):
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)
+
+
+"""
+Produser:
+  fields: {
+    'event': multiLookupField('event')
+  }
+
+
+class ProduserCollection(Collection):
+  model = Produser
+
+"""
