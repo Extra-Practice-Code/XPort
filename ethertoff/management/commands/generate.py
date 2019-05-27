@@ -67,12 +67,12 @@ class Command(BaseCommand):
     events = collectionFor('event')
 
     # output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
-    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(filter(lambda obj: hasattr(obj, 'date'), produsers.models), key=lambda r: str(r.key)) })
+    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': produsers.models, key=lambda r: str(r.key)) })
 
     for produser in produsers.models:
       output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
 
-    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda r: str(r.date), reverse=True) })
+    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(filter(lambda obj: hasattr(obj, 'date'), events.models), key=lambda r: str(r.date), reverse=True) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)
