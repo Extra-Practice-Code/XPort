@@ -1,0 +1,223 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" media="all" href="static/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 10px;
+      overflow-x: hidden;
+      position: relative;
+    }
+  </style>
+  <title>caveat</title>
+</head>
+
+<body>
+  <div id="container">
+    <main>
+      <aside class="left">
+        <nav id="menu">
+          <p class="logo"><a href="index.html"><img class="logo" src="img/logos/logo-caveat-90.png" /></span></a></p>
+
+          <ul>
+            <li><a href="caveat-about.html">About</span></a></li>
+            <li><a href="caveat-contact.html">Contact</span></a></li>
+            <li><a href="produsers.layout.html">Produsers</span></a></li>
+
+            <!-- <li><a href="" class="artist"><span>Activities</span></a></li>
+                  <li><a href="" class="artist"><span>Documents</span></a></li> -->
+          </ul>
+        </nav>
+        <div id="prolog">
+          <!--<span><a href="caveat-agenda-detail.html">&nbsp;</a></span>-->
+          <!-- <p class= "question-quote">Giving the situation the power to make things</p> -->
+        </div>
+        <div class="about">
+          <p class="intro"><strong>Caveat</strong> tries to find more sustainable, balanced ways of operating within
+            the existing legal frameworks. And when the limits of the existing system are reached, it tries to come up
+            with possible new narratives that open up space for reflection.</p>
+        </div>
+      </aside>
+      <aside class="right">
+        <div class="agenda">
+          {% for event in events %}
+            <div id="{{ event.key }}" class="event presentation">
+                <div class="event-detail-header">
+                  <p class="event-date"><time datetime="2019-05-24">{{ event.date }}</time></p>
+                  <h2 class="event-title">{{ event.event }}</h2>
+                  {{ event.summary }}
+
+                  <span class="event-detail">
+                    <p class="event-infos">{{ event.location }}</p>
+                    {% for line in event.address %}
+                      <p class="event-infos">{{ line }}</p>
+                    {% endfor %}
+                    {{ event.content }}
+                  </span>
+              </div>
+            </div>
+          {% endfor %}
+          <div id="reading-room-8" class="event presentation">
+            <div class="event-detail-header">
+
+              <p class="event-date"><time datetime="2019-05-24">24 May 2019</time></p>
+
+              <p class="event-title">Reading Room #8</p>
+              <p class="event-exerpt">Collective reading and discussion of texts about APG (Artist Placement Group)
+                with <a href="" class="artist"><span>Scott William Raby</span></a>. Fragments from Nick Srnicek and
+                Alex Williams, 'Inventing the Future: Postcapitalism and a World Without Work'. Verso, 2015.</p>
+
+              <span class="event-detail">
+                <p class="event-infos">16:00 ─ 18:00</p>
+                <p class="event-infos">Former Actiris building, 6<sup>th</sup> floor</p>
+                <p class="event-infos">Rue Paul Devauxstraat 3, Brussels</p>
+                <p class="event-infos">Street access: 15:45 ─ 16.00</p>
+
+                <p>Collective reading and discussion of texts about APG (Artist Placement Group) with <a href="http://gold.ac.uk/art/research/current-mphil--phd-research/raby-scott-william"
+                    class="artist"><span>Scott William Raby</span></a>. Fragments from Nick Srnicek and Alex Williams,
+                  'Inventing the Future: Postcapitalism and a World Without Work'. Verso, 2015.</p>
+                <p>The texts are selected by <a href="http://gold.ac.uk/art/research/current-mphil--phd-research/raby-scott-william"
+                    class="artist"><span>Scott William Raby</span></a>: an artist, writer, teacher, and researcher who
+                  works on art projects in a multitude of international contexts. He is currently researching the
+                  relationship between art and law under the specter of neoliberalism, primarily examining contracts in
+                  art. More specifically, his research is exploring artist-authored contracts, their radical history,
+                  present status, and future potential as a site of production for and within art as both written
+                  research and as artworks in and of themselves. His broader artistic practice consists of on-site
+                  hybrid discursive installations, pedagogical projects that seek critical, aware, and self-reflexive
+                  outcomes, and site and context specific discussions, writings, and readings, among other forms of art
+                  making. These projects often work between the (im)material intersections of art, architecture,
+                  infrastructure, and public spaces, and often seek to reframe, repurpose, and reconfigure
+                  socio-economic and geopolitical frameworks toward a multitude of exploratory, ameliorative, and
+                  aesthetic outcomes. He is currently a PhD researcher in the Art department at Goldsmiths in London
+                  and previously earned an MFA from Otis College of Art and Design in Los Angeles in 2012.</p>
+                <p>Copies will be available. <strong>Caveat</strong>'s reading rooms are free of charge, and everybody
+                  is welcome.</p>
+
+              </span>
+
+            </div>
+          </div>
+
+        </div>
+        <div id="detail-container">
+          <div class="chrome"><span class="close-button">x</span></div>
+          <div class="content"></div>
+        </div>
+      </aside>
+    </main>
+    <aside class="partners">
+      <p class=""><img class="logo-partners" style="" src="img/logos/inoviris.svg" /><strong>Caveat</strong> is a
+        co-create research project convened by the Brussels-based artists’ initiative Jubilee, in partnership with Open
+        Source Publishing, No New Enemies and Été 78 and supported by Innoviris, Brussels Institute for Research and
+        Innovation.</p>
+    </aside>
+  </div>
+</body>
+
+<script>
+  function setHash(hash) {
+    if (hash) {
+      hash = '#' + hash;
+    }
+    else {
+      hash = '/';
+    }
+
+    if (history.pushState) {
+      history.pushState(null, null, hash);
+    }
+    else {
+      location.hash = hash;
+    }
+  }
+
+  var entries = document.querySelectorAll('.event');
+  var first = entries[0];
+  var eventCloseButton = document.querySelector('#detail-container .close-button');
+  eventCloseButton.addEventListener('click', function () {
+    setHash(null);
+    document.body.className = document.body.className.replace(/\s*event-active-through-click/, '');
+  });
+
+  function activate(entry, entries) {
+    for (var e = 0; e < entries.length; e++) {
+      entries[e].classList.remove('active');
+    }
+
+    entry.classList.add('active');
+    var clone = entry.cloneNode(true);
+    var container = document.querySelector('#detail-container .content');
+
+    container.classList.add('active');
+    while (container.hasChildNodes()) {
+      container.removeChild(container.lastChild);
+    }
+
+    container.appendChild(clone);
+    var question = document.getElementById('prolog');
+    if (question) {
+      question.classList.add('blink');
+    }
+  }
+
+  function show(entry, entries) {
+    document.body.className += ' event-active-through-click';
+    activate(entry, entries);
+  }
+
+  for (var i = 0; i < entries.length; i++) {
+    (function (entry, entries) {
+      entry.addEventListener('click', function () {
+        setHash(entry.id);
+        show(entry, entries)
+      });
+    })(entries[i], entries);
+  }
+
+  function getEntryByHash(hash) {
+    var id = window.location.hash.substr(1);
+    var entry = document.getElementById(id);
+
+    if (entry && entry.className.indexOf('event') > -1) {
+      return entry;
+    }
+
+    return false
+  }
+
+  if (window.location.hash) {
+    var entry = getEntryByHash(window.location.hash);
+
+    if (entry) {
+      show(entry, entries);
+    } else {
+      activate(first, entries);
+    }
+  }
+  else {
+    activate(first, entries);
+  }
+
+  window.onhashchange = function () {
+    var entry = getEntryByHash(window.location.hash);
+
+    if (entry) {
+      show(entry, entries);
+    } else {
+      document.body.className = document.body.className.replace(/\s*event-active-through-click/, '');
+    }
+  };
+
+  document.getElementById('prolog').addEventListener('click', function () {
+    var body = document.body;
+
+    if (body.className.indexOf('prolog-expanded') == -1) {
+      body.className += ' prolog-expanded';
+    } else {
+      body.className = body.className.replace(/\s*prolog-expanded/, '');
+    }
+  });
+
+</script>

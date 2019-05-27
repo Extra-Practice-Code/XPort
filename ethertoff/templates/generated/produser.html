@@ -8,18 +8,19 @@
 </head>
 <body>
   <h1>{{ produser.produser }}</h1>
+  <p>{{ produser.role }}</p>
   {% if produser.trajectory %}
     <h2>Trajectory</h2>
-    {{ produser.trajectory.body}}
+    {{ produser.trajectory.content}}
   {% endif %}
   <h2>Biography</h2>
-  {{ produser.body }}
-  {% if produser.event %}
+  {{ produser.content }}
+  {% if produser.events %}
     <h2>Events</h2>
     <ul>
-      {% for event in produser.event %}
+      {% for event in produser.events %}
         <li>{{ event.event }}
-          {{ event.body }}
+          {{ event.content }}
         </li>
       {% endfor %}
     </ul>
