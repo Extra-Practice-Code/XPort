@@ -24,6 +24,8 @@ def parse_pads ():
     padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
     source = epclient.getText(padID)['text']
 
+    print('Reading {}'.format(pad.display_slug))
+
     if extension in ['.md', '.markdown']:
       md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
       content = mark_safe(md.convert(source))
