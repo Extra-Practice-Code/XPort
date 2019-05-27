@@ -67,7 +67,7 @@ class Command(BaseCommand):
     events = collectionFor('event')
 
     # output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
-    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
+    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(filter(lambda obj: hasattr(obj, 'date'), produsers.models), key=lambda r: str(r.key)) })
 
     for produser in produsers.models:
       output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
