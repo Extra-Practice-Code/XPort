@@ -1,5 +1,5 @@
 FIELD_DATE_FORMAT = '%d-%m-%Y'
-FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
+FIELD_DATE_FORMAT_ALT = '%d %b %Y'
 FIELD_TIME_FORMAT = '%H:%M'
 
 import datetime
@@ -39,11 +39,17 @@ class Single(object):
 
 class DateField (Field):
   def parse (self, value):
-    return datetime.datetime.strptime(value, FIELD_DATE_FORMAT).date()
+    try:
+      return datetime.datetime.strptime(value, FIELD_DATE_FORMAT).date()
+    except ValueError:
+      return datetime.datetime.strptime(value, FIELD_DATE_FORMAT_ALT).date()
 
 class DateTimeField (Field):
   def parse (self, value):
-    return datetime.datetime.strptime(value, FIELD_DATETIME_FORMAT)
+    try:
+      return datetime.datetime.strptime(value, '{} {}'.format(FIELD_DATE_FORMAT, FIELD_TIME_FORMAT))
+    except ValueError:
+      return datetime.datetime.strptime(value, '{} {}'.format(FIELD_DATE_FORMAT_ALT, FIELD_TIME_FORMAT))
 
 class TimeField (Field):
   def parse (self, value):
