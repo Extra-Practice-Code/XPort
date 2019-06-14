@@ -1,5 +1,5 @@
 from . import fields
-from .utils import info, debug
+from .utils import info, debug, CMAGENTA
 
 import datetime
 import re
@@ -39,6 +39,7 @@ class Link(object):
     self.reverse = reverse
   
   def __call__ (self, targetKey, source): 
+    debug('Link target {}'.format(targetKey), color=CMAGENTA)
     target = collectionFor(self.contentType).get(targetKey)
     if self.reverse:
       self.reverse(target, source)
@@ -46,6 +47,7 @@ class Link(object):
 
 class MultiLink(Link):
   def __call__ (self, targetKeys, source):
+    debug('Link target keys', targetKeys, color=CMAGENTA)
     targets = [ collectionFor(self.contentType).get(targetKey) for targetKey in targetKeys ]
 
     if self.reverse:
