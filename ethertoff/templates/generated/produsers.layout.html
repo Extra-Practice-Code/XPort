@@ -124,7 +124,7 @@
     var images = clone.querySelectorAll('img');
       
     for (var i=0; i < images.length; i++) {
-      img.addEventListener('click', function () { this.classList.toggle('full'); });
+      images[i].addEventListener('click', function () { this.classList.toggle('full'); });
     }
     
     var container = document.querySelector('#detail-container .content');
