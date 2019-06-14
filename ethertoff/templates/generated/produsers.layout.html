@@ -120,6 +120,13 @@
 
     entry.classList.add('active');
     var clone = entry.cloneNode(true);
+    
+    clone.querySelectorAll('.content img');
+      
+    for (var i=0; i < images.length; i++) {
+      img.addEventListener('click', function () { this.classList.toggle('full'); });
+    }
+    
     var container = document.querySelector('#detail-container .content');
 
     container.classList.add('active');
@@ -191,13 +198,5 @@
       body.className = body.className.replace(/\s*prolog-expanded/, '');
     }
   });
-
-  (function () {
-    var images = document.querySelectorAll('.content img');
-    
-    for (var i=0; i < images.length; i++) {
-      img.addEventListener('click', function () { this.classList.toggle('full'); });
-    }
-  })();
 
 </script>
