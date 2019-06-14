@@ -39,7 +39,7 @@ class Link(object):
   def __call__ (self, targetKey, source): 
     target = collectionFor(self.contentType).get(targetKey)
     if self.reverse:
-      self.reverse(obj=target, target=source)
+      self.reverse(target, source)
     return target
 
 class MultiLink(Link):
@@ -49,7 +49,7 @@ class MultiLink(Link):
     if self.reverse:
       for target in targets:
         # Set the property
-        self.reverse(source=target, target=source)
+        self.reverse(target, source)
 
     return targets
 
@@ -93,7 +93,7 @@ class Model(object):
     print('Keyfield {}'.format(self.keyField))
     if key: 
       self.key = key
-    else:
+    elif metadata:
       self.key = keyFilter(metadata[self.keyField]) if self.keyField in metadata else keyFilter(metadata['pk']) if 'pk' in metadata else None
     self.metadata = {}
     if metadata:
@@ -164,7 +164,7 @@ class Collection(object):
     key = keyFilter(key)
     if key in self.index:
       return self.index[key]
-    elif instantiate:
+    elif key and instantiate:
       return self.instantiate(key)
     else:
       return None
