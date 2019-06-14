@@ -8,7 +8,7 @@ import re
 import markdown
 from django.utils.safestring import mark_safe
 
-from settings import GENERATED_SITE_PREFIX
+from ethertoff.settings import GENERATED_SITE_PREFIX
 
 def keyFilter (value):
   if type(value) is list:
