@@ -41,31 +41,36 @@
       </aside>
       <aside class="right">
         <div class="agenda">
-          {% for produser in produsers %}
-              <div id="{{ produser.key }}" class="event presentation">
-                  <div class="event-detail-header">
-                    <h2 class="event-title">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h2>
-                    <span class="event-detail">
-                      <h1>{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
-                      {% if produser.trajectory %}
-                        <h2>Trajectory</h2>
-                        {{ produser.trajectory.content}}
-                      {% endif %}
-                      <h2>Biography</h2>
-                      {{ produser.content }}
-                      {% if produser.events %}
-                        <h2>Events</h2>
-                        <ul>
-                          {% for event in produser.events %}
-                            <li>{{ event.event }}
-                              {{ event.content }}
-                            </li>
-                          {% endfor %}
-                        </ul>
-                      {% endif %}
-                    </span>
-                </div>
+          {% for role, produser in grouped_produsers %}
+              <div class="grouper">
+                <h2 class="grouper-header">{{ role }}</h2>
               </div>
+              {% for produser in produsers %}
+                <div id="{{ produser.key }}" class="event presentation">
+                    <div class="event-detail-header">
+                      <h2 class="event-title">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h2>
+                      <span class="event-detail">
+                        <h1>{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
+                        {% if produser.trajectory %}
+                          <h2>Trajectory</h2>
+                          {{ produser.trajectory.content}}
+                        {% endif %}
+                        <h2>Biography</h2>
+                        {{ produser.content }}
+                        {% if produser.events %}
+                          <h2>Events</h2>
+                          <ul>
+                            {% for event in produser.events %}
+                              <li>{{ event.event }}
+                                {{ event.content }}
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                      </span>
+                  </div>
+                </div>
+              {% endfor %}
             {% endfor %}
         </div>
         <div id="detail-container">
@@ -186,5 +191,13 @@
       body.className = body.className.replace(/\s*prolog-expanded/, '');
     }
   });
+
+  (function () {
+    var images = document.querySelectorAll('.content img');
+    
+    for (var i=0; i < images.length; i++) {
+      img.addEventListener('click', function () { this.classList.toggle('full'); });
+    }
+  })();
 
 </script>

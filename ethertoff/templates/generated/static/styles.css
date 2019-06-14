@@ -400,11 +400,15 @@ blockquote+p, .event-infos+blockquote {
 
 /* events */
 
-.event {
+.event, .grouper {
   padding: 20px;
   /* padding-bottom: 27px; */
   border-bottom: 2px solid black;
   clear: both;
+}
+
+.grouper {
+  padding-bottom: 0;
 }
 
 #detail-container .event.active {
@@ -424,13 +428,17 @@ blockquote+p, .event-infos+blockquote {
   line-height: 1.1em;
 }
 
-.event-title, .event-detail-title {
+.event-title, .event-detail-title, .grouper-header {
   font-size: 0.8em;
   line-height: 1.3em;
   text-transform: uppercase;
   /* color: black; */
   font-weight: bold;
   letter-spacing: 0.025em;
+}
+
+.grouper-header {
+  color:#112B92;
 }
 
 .event-detail-schedule {
@@ -740,6 +748,8 @@ div .pad {
 .content img {
   width: 33%;
   float: left;
+  margin-right: .5em;
+  cursor: zoom-in;
 }
 
 .content img.full, 

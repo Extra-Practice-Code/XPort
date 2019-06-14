@@ -43,7 +43,7 @@ def output (path, template, context):
     w.write(loader.render_to_string(template, context))
 
 
-produser_role_sorting = ['artist', 'partner']
+produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', ' qpartner']
 
 def regroup (iterable, field):
   index = {}
@@ -99,7 +99,7 @@ class Command(BaseCommand):
     grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
     output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
-    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
+    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
 
     for produser in produsers.models:
       output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
