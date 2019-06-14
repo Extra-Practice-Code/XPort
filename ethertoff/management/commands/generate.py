@@ -23,7 +23,7 @@ from django.core.management import call_command
 
 from etherpadlite.models import Pad
 
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG, GENERATED_SITE_PREFIX
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -40,8 +40,10 @@ import datetime
 # Feed content to templates
 
 def output (path, template, context):
+  context['BASE_URL'] = GENERATED_SITE_PREFIX
+  
   with open(path, 'w', encoding='utf-8') as w:
-    info('Writing {} → {}'.format(template, path))
+    info('Writing {} -> {}'.format(template, path))
     w.write(loader.render_to_string(template, context))
 
 

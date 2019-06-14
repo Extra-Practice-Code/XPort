@@ -4,22 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" media="all" href="{{ BASE_URL }}static/styles.simple.css" />
   <title>Caveat → Produsers → {% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</title>
 </head>
 <body>
-  <h1>{% if event.event %}{{ event.event }}{% else %}{{ event.title }}{% endif %}</h1>
-  <time datetime="2019-05-24">{{ event.date }}</time>
-  <p class="event-infos">{{ event.location }}</p>
-  {% for line in event.address %}
-    <p class="event-infos">{{ line }}</p>
-  {% endfor %}
-  <p class="event-infos">
-    {% for produser in event.produser %}
-    <a href="{{ produser.link }}">{{ produser }}</a>
+  <main>
+    <h1>{% if event.event %}{{ event.event }}{% else %}{{ event.title }}{% endif %}</h1>
+    <time datetime="2019-05-24">{{ event.date }}</time>
+    <p class="event-infos">{{ event.location }}</p>
+    {% for line in event.address %}
+      <p class="event-infos">{{ line }}</p>
     {% endfor %}
-  </p>
-  {{ event.summary }}
-  {{ event.content }}
-  </span>
+    <p class="event-infos">
+      {% for produser in event.produser %}
+      <a href="{{ produser.link }}" class="artist">{{ produser }}</a>
+      {% endfor %}
+    </p>
+    {{ event.summary }}
+    {{ event.content }}
+  </main>
 </body>
 </html>

@@ -36,25 +36,25 @@ class ReverseLink(object):
   def __init__ (self, name):
     self.linkName = name
   
-  def __call__ (self, obj, target):
-    if hasattr(obj, self.linkName):
+  def __call__ (self, source, destination):
+    if hasattr(source, self.linkName):
       raise LinkExistsError()
     
-    setattr(obj, self.linkName, target)  
+    setattr(source, self.linkName, destination)  
 
 class ReverseMultiLink(ReverseLink):
-  def __call__ (self, obj, target):
-    if hasattr(target, self.linkName):
-      links = getattr(obj, self.linkName)
+  def __call__ (self, source, destination):
+    if hasattr(source , self.linkName):
+      links = getattr(source, self.linkName)
 
       if type(links) is not list:
         raise LinkExistsError
     else:
-      links = getattr(obj, self.linkName)
+      links = getattr(source, self.linkName)
     
-    links.append(target)
+    links.append(destination)
     
-    setattr(obj, self.linkName, links)
+    setattr(source, self.linkName, links)
 
 def is_link (obj):
   return isinstance(obj, (Link, MultiLink, ReverseLink, ReverseMultiLink))
