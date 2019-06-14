@@ -206,6 +206,7 @@ class Produser (Model):
   metadataFields = {
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
+    'produser': fields.Single(fields.StringField()),
     'tags': fields.StringField()
   }
 

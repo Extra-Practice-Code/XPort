@@ -1,4 +1,4 @@
-{% regroup produsers|dictsort:"role" by role as role_list %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +8,10 @@
   <title>Produsers</title>
 </head>
 <body>
-  {% for role in role_list %}
-    <h2>{{ role.grouper }}</h2>
-    {% for produser in role.list %}
-      <h3><a href="produsers/{{ produser.key }}.html">{{ produser.produser }}</a></h3>
+  {% for role, produsers in grouped_produsers %}
+    <h2>{{ role }}</h2>
+    {% for produser in produsers %}
+      <h3><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h3>
     {% endfor %}
   {% endfor %}
 </body>

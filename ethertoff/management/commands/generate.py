@@ -5,6 +5,8 @@ import os
 import os.path
 import shutil
 
+from math import inf
+
 
 import markdown
 from markdown.extensions.toc import TocExtension
@@ -41,6 +43,33 @@ def output (path, template, context):
     w.write(loader.render_to_string(template, context))
 
 
+produser_role_sorting = ['artist', 'partner']
+
+def regroup (iterable, field):
+  index = {}
+  grouped = []
+  
+  for entry in iterable:
+    try:
+      key = getattr(entry, field)
+    except AttributeError:
+      key = ''
+
+    if not key in index:
+      grouped.append((key, [ entry ]))
+      index[key] = grouped[-1]
+    else:
+      index[key][1].append(entry)
+
+  return grouped
+
+def try_attributes (obj, attributes):
+  for attr in attributes:
+    if hasattr(obj, attr):
+      return getattr(obj, attr)
+  
+  return ''
+
 class Command(BaseCommand):
   args = ''
   help = 'Generate a static interpretation of the pads'
@@ -66,7 +95,10 @@ class Command(BaseCommand):
     produsers = collectionFor('produser')
     events = collectionFor('event')
 
-    # output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
+
+    grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
+
+    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
     output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)) })
 
     for produser in produsers.models:
@@ -75,7 +107,7 @@ class Command(BaseCommand):
     # output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(filter(lambda obj: hasattr(obj, 'date'), events.models), key=lambda r: str(r.date), reverse=True) })
 
     print('Generating index', events.models)
-    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: event.date if hasattr(event, 'date') else None, reverse=True) })
+    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date'])) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)
