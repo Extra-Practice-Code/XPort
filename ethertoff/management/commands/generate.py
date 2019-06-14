@@ -72,7 +72,10 @@ class Command(BaseCommand):
     for produser in produsers.models:
       output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
 
-    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(filter(lambda obj: hasattr(obj, 'date'), events.models), key=lambda r: str(r.date), reverse=True) })
+    # output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(filter(lambda obj: hasattr(obj, 'date'), events.models), key=lambda r: str(r.date), reverse=True) })
+
+    print('Generating index', events.models)
+    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: event.date if hasattr(event, 'date') else None, reverse=True) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)

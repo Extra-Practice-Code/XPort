@@ -1,6 +1,4 @@
-FIELD_DATE_FORMAT = '%d-%m-%Y'
-FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
-FIELD_TIME_FORMAT = '%H:%M'
+from . import fields
 
 import datetime
 import re
@@ -14,7 +12,7 @@ def keyFilter (value):
     return '--'.join([keyFilter(v) for v in value])
   elif type(value) is str:
     return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', value.lower()))
-  else:
+  else: 
     return value
 
 class UnknownContentTypeError(Exception):
@@ -38,7 +36,7 @@ class Link(object):
     self.contentType = contentType
     self.reverse = reverse
   
-  def __call__ (self, targetKey, source):
+  def __call__ (self, targetKey, source): 
     target = collectionFor(self.contentType).get(targetKey)
     if self.reverse:
       self.reverse(obj=target, target=source)
@@ -88,7 +86,7 @@ def is_link (obj):
 class Model(object):
   metadataFields = {}
   content = None
-  keyField = 'pk'
+  keyField = 'id'
   metadata = {}
   
   def __init__ (self, key=None, metadata=None, content=None):
@@ -179,6 +177,8 @@ class Collection(object):
       if obj.key not in self.index:
         self.models.append(obj)
         self.index[obj.key] = obj
+      else:
+        print('Already have', obj, obj.key)
 
   """
     Instantiate a model for the given key, metadata and content
@@ -189,62 +189,30 @@ class Collection(object):
     self.register(obj)
     return obj
 
-def dateField (value):
-  return datetime.datetime.strptime(value, FIELD_DATE_FORMAT).date()
-
-def dateTimeField (value):
-  def parse (self, value):
-    return datetime.datetime.strptime(value, FIELD_DATETIME_FORMAT)
-
-def timeField (value):
-  return datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time()
-
-def intField (value):
-  return int(value)
-
-def floatField(value):
-  return float(value)
-
-def stringField(value):
-  return str(value)
-
-def many(parse):
-  return lambda val: [parse(v) for v in val] 
-
-def single(parse):
-  return lambda val: parse(val[0])
-
-def markdownField(parse):
-  md = markdown.Markdown(extensions=['extra', 'attr_list'])
-  return mark_safe(md.convert(parse))
-
 def linkMultiReverse(contentType, reverseName):
   return Link(contentType=contentType, reverse=ReverseMultiLink(reverseName))
 
 class Event (Model):
-  keyField = 'event'
   metadataFields = {
-    'date': single(dateField),
+    'date': fields.Single(fields.DateField()),
     'produser': linkMultiReverse('produser', 'events'),
-    'event': single(stringField),
-    'summary': single(markdownField),
-    'location': single(stringField),
-    'address': many(stringField)
+    'event': fields.Single(fields.StringField()),
+    'summary': fields.Single(fields.MarkdownField()),
+    'location': fields.Single(fields.StringField()),
+    'address': fields.StringField()
   }
 
 class Produser (Model):
-  keyField = 'produser'
   metadataFields = {
-    'role': single(stringField),
-    'produser': single(stringField),
-    'tags': many(stringField)
+    'role': fields.Single(fields.StringField()),
+    'name': fields.Single(fields.StringField()),
+    'tags': fields.StringField()
   }
 
 class Trajectory (Model):
-  keyField = 'trajectory'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'trajectories'),
-    'tags': many(stringField)
+    'tags': fields.StringField()
   }
 
 class Pad (Model):
@@ -252,7 +220,14 @@ class Pad (Model):
     'produser': linkMultiReverse('produser', 'pads'),
     'event': linkMultiReverse('events', 'pads'),
     'trajectory': linkMultiReverse('trajectory', 'pads'),
-    'tags': many(stringField)
+    'tags': fields.StringField()
+  }
+
+class Note (Model):
+  metadataFields = {
+    'produser': linkMultiReverse('produser', 'notes'),
+    'event': linkMultiReverse('events', 'notes'),
+    'tags': fields.StringField()
   }
 
 class Page (Model):
@@ -267,6 +242,7 @@ contentTypes = {
 }
 
 def collectionFor (contentType):
+  print(contentType)
   if contentType in contentTypes:
     return contentTypes[contentType]['collection']
   else:
