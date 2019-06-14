@@ -54,6 +54,11 @@
                     {% for line in event.address %}
                       <p class="event-infos">{{ line }}</p>
                     {% endfor %}
+                    <p class="event-infos">
+                      {% for produser in event.produser %}
+                      <a href="{{ produser.link }}">{{ produser }}</a>
+                      {% endfor %}
+                    </p>
                     {{ event.content }}
                   </span>
               </div>

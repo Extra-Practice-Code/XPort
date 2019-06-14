@@ -51,9 +51,11 @@
                       <h2 class="event-title">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h2>
                       <span class="event-detail">
                         <h1>{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
-                        {% if produser.trajectory %}
-                          <h2>Trajectory</h2>
-                          {{ produser.trajectory.content}}
+                        {% if produser.trajectories %}
+                          {% for trajectory in produser.trajectories %}
+                            <h2>Trajectory</h2>
+                            {{ trajectory.content}}
+                          {% endfor %}
                         {% endif %}
                         <h2>Biography</h2>
                         {{ produser.content }}
@@ -61,8 +63,8 @@
                           <h2>Events</h2>
                           <ul>
                             {% for event in produser.events %}
-                              <li>{{ event.event }}
-                                {{ event.content }}
+                              <li><a href="{{ event.link }}">{{ event.event }} {{ event.title }}</a>
+                                {{ event.summary }}
                               </li>
                             {% endfor %}
                           </ul>

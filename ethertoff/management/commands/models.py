@@ -1,6 +1,6 @@
 from . import fields
 from .utils import info, debug, CMAGENTA
-
+import os.path
 import datetime
 import re
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
@@ -8,6 +8,7 @@ import re
 import markdown
 from django.utils.safestring import mark_safe
 
+from settings import GENERATED_SITE_PREFIX
 
 def keyFilter (value):
   if type(value) is list:
@@ -30,7 +31,7 @@ class LinkExistsError(Exception):
 # This error should be raised when an object is added
 # to a reverse container with a different contentType.
 # ContentTypes should be homogenous
-class LinkDifferentContentType(Exception):
+class LinkDifferentContentTypeError(Exception):
   pass 
 
 class Link(object):
@@ -73,7 +74,6 @@ class ReverseMultiLink(ReverseLink):
     if hasattr(obj, self.linkName):
       links = getattr(obj, self.linkName)
       if type(links) is not list:
-        debug(self.linkName, obj.key, target.key, type(links), color=CMAGENTA)
         raise LinkExistsError
     else:
       links = []
@@ -116,6 +116,10 @@ class Model(object):
     else:
       raise ValueError("Object doesn't have any key")
 
+  @property
+  def link (self):
+    return os.path.join(GENERATED_SITE_PREFIX, self.prefix, '{}.html'.format(self.key))
+
   def setMetadata(self, metadata=None):
     if metadata:
       for key in metadata:
@@ -151,6 +155,14 @@ class Model(object):
       return self.metadata[name]
     else:
       raise AttributeError()
+
+  def __str__ (self):
+    if hasattr(self, 'labelField') and hasattr(self, self.labelField):
+      return getattr(self, self.labelField)
+    elif hasattr(self, self.keyField):
+      return getattr(self, self.keyField)
+    else:
+      return super().__str__()
 
   # @property
   # def content (self):
@@ -235,10 +247,13 @@ def multiLinkMultiReverse(contentType, reverseName):
   return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
 
 class Event (Model):
+  prefix = 'events'
+
   metadataFields = {
     'date': fields.Single(fields.DateField()),
     'produser': multiLinkMultiReverse('produser', 'events'),
     'event': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField()
@@ -246,7 +261,8 @@ class Event (Model):
 
 class Produser (Model):
   keyField = 'produser'
-  
+  prefix = 'produsers'
+
   metadataFields = {
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
@@ -277,7 +293,11 @@ class Note (Model):
 
 class Page (Model):
   keyField = 'name'
-  
+
+
+# Perhaps include the sort in the collection?
+# Might also need to include the outputfolder here
+# rather than on the model?
 contentTypes = {
   'event': { 'model': Event, 'collection': Collection(Event) },
   'produser': { 'model': Produser, 'collection': Collection(Produser) },

@@ -6,8 +6,8 @@
     --header-font: var(--serif);
     --mono: Monospace;
     --font-lettrine: "Young Serif";
-    --font-size: 1.4em;
-    --line-height: 1.2em;
+    --font-size: 16pt;
+    --line-height: 20pt;
     --font-size-small: 12px;
     --highlight-color: #f2f2ff;
     --bleu-bille: #112B92;
@@ -67,6 +67,7 @@ iframe#ether {
     height: 700px !important;
     max-width: 50em;
     margin: auto;
+    width: 100%;
 }
 /* Style des niveaux de titre */
 h1, h2, h3, h4, h5, h6 {
@@ -370,6 +371,7 @@ form input[type=submit]:hover {
 }
 .write-mode .middle {
     width: 70%;
+    max-width: 50em;
 }
 /* Pour les inclusions de pads dans les compilations */
 #content .middle {

@@ -13,6 +13,7 @@ from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 from .parse import parse_pads
 from .models import collectionFor
+from .utils import info
 
 from django.template import loader
 from django.template.defaultfilters import slugify
@@ -40,6 +41,7 @@ import datetime
 
 def output (path, template, context):
   with open(path, 'w', encoding='utf-8') as w:
+    info('Writing {} → {}'.format(template, path))
     w.write(loader.render_to_string(template, context))
 
 
@@ -82,15 +84,16 @@ class Command(BaseCommand):
     
     os.mkdir(outputdir)
     os.mkdir(os.path.join(outputdir, 'produsers'))
+    os.mkdir(os.path.join(outputdir, 'events'))
   
-    print('Copying static files')
+    info('Copying static files')
 
     shutil.copytree(os.path.join(BASE_DIR, 'ethertoff', 'templates', 'generated', 'static'), os.path.join(outputdir, 'static'))
 
     parse_pads()
 
-    print('Read pads')
-    print('Generating output')
+    info('Read pads')
+    info('Generating output')
 
     produsers = collectionFor('produser')
     events = collectionFor('event')
@@ -102,12 +105,12 @@ class Command(BaseCommand):
     output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
 
     for produser in produsers.models:
-      output(os.path.join(outputdir, 'produsers', '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
+      output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
 
-    # output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(filter(lambda obj: hasattr(obj, 'date'), events.models), key=lambda r: str(r.date), reverse=True) })
+    for event in events.models:
+      output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'generated/event.html', { 'event': event })
 
-    print('Generating index', events.models)
-    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date'])) })
+    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date']), reverse=True) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)

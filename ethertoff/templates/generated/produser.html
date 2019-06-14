@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Produsers</title>
+  <title>Caveat → Produsers → {% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</title>
 </head>
 <body>
-  <h1>{{ produser.produser }}</h1>
-  <p>{{ produser.role }}</p>
-  {% if produser.trajectory %}
-    <h2>Trajectory</h2>
-    {{ produser.trajectory.content}}
+  <h1>{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
+  {% if produser.trajectories %}
+    {% for trajectory in produser.trajectories %}
+      <h2>Trajectory</h2>
+      {{ trajectory.content}}
+    {% endfor %}
   {% endif %}
   <h2>Biography</h2>
   {{ produser.content }}
@@ -19,12 +20,11 @@
     <h2>Events</h2>
     <ul>
       {% for event in produser.events %}
-        <li>{{ event.event }}
-          {{ event.content }}
+        <li><a href="{{ event.link }}">{{ event.event }} {{ event.title }}</a>
+          {{ event.summary }}
         </li>
       {% endfor %}
     </ul>
   {% endif %}
 </body>
 </html>
-
