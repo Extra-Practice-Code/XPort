@@ -752,6 +752,7 @@ div .pad {
   margin-top: .5em;
   margin-bottom: .5em;
   cursor: zoom-in;
+  clear: left;
 }
 
 .content img.full, 

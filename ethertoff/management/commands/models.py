@@ -192,6 +192,9 @@ class Collection(object):
 def linkMultiReverse(contentType, reverseName):
   return Link(contentType=contentType, reverse=ReverseMultiLink(reverseName))
 
+def multiLinkMultiReverse(contentType, reverseName):
+  return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
+
 class Event (Model):
   metadataFields = {
     'date': fields.Single(fields.DateField()),
