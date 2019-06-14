@@ -749,6 +749,8 @@ div .pad {
   width: 33%;
   float: left;
   margin-right: .5em;
+  margin-top: .5em;
+  margin-bottom: .5em;
   cursor: zoom-in;
 }
 
@@ -757,4 +759,6 @@ div .pad {
 .content video {
   max-width: 100%;
   width: 100%;
+  margin-top: .5em;
+  margin-bottom: .5em;
 }

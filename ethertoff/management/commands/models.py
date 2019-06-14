@@ -203,6 +203,8 @@ class Event (Model):
   }
 
 class Produser (Model):
+  keyField = 'produser'
+  
   metadataFields = {
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
