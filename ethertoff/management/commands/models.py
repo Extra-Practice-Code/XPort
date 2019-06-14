@@ -198,7 +198,7 @@ def multiLinkMultiReverse(contentType, reverseName):
 class Event (Model):
   metadataFields = {
     'date': fields.Single(fields.DateField()),
-    'produser': linkMultiReverse('produser', 'events'),
+    'produser': multiLinkMultiReverse('produser', 'events'),
     'event': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
