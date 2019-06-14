@@ -70,9 +70,8 @@ class ReverseLink(object):
 
 class ReverseMultiLink(ReverseLink):
   def __call__ (self, obj, target):
-    if hasattr(target, self.linkName):
-      links = getattr(target, self.linkName)
-
+    if hasattr(obj, self.linkName):
+      links = getattr(obj, self.linkName)
       if type(links) is not list:
         debug(self.linkName, obj.key, target.key, type(links), color=CMAGENTA)
         raise LinkExistsError
