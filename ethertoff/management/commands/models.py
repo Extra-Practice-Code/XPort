@@ -1,4 +1,5 @@
 from . import fields
+from .utils import info, debug
 
 import datetime
 import re
@@ -6,6 +7,7 @@ import re
 
 import markdown
 from django.utils.safestring import mark_safe
+
 
 def keyFilter (value):
   if type(value) is list:
@@ -70,7 +72,7 @@ class ReverseMultiLink(ReverseLink):
       links = getattr(obj, self.linkName)
 
       if type(links) is not list:
-        # debug(self.linkName, obj.key, target.key, type(links))
+        debug(self.linkName, obj.key, target.key, type(links))
         raise LinkExistsError
     else:
       links = []
@@ -88,19 +90,42 @@ class Model(object):
   content = None
   keyField = 'id'
   metadata = {}
-  
+
   def __init__ (self, key=None, metadata=None, content=None):
-    print('Keyfield {}'.format(self.keyField))
     if key: 
       self.key = key
-    elif metadata:
-      self.key = keyFilter(metadata[self.keyField]) if self.keyField in metadata else keyFilter(metadata['pk']) if 'pk' in metadata else None
+    else:
+      self.key = self.extractKey(metadata)
+
     self.metadata = {}
+    if metadata:
+      self.setMetadata(metadata)
+    
+    self.empty = True
+
+    if metadata or content:
+      self.fill(metadata=metadata, content=content)
+  
+  @classmethod
+  def extractKey(cls, data):
+    if cls.keyField in data:
+      return keyFilter(data[cls.keyField])
+    elif 'pk' in data:
+      return keyFilter(data['pk'])
+    else:
+      raise ValueError("Object doesn't have any key")
+
+  def setMetadata(self, metadata=None):
     if metadata:
       for key in metadata:
         self.__setattr__(key, metadata[key])
-    
+
+  def fill(self, metadata={}, content=None):
+    if metadata:
+      self.empty = False
+      self.setMetadata(metadata)
     if content:
+      self.empty = False
       self.content = content
 
   def __setattr__ (self, name, value):
@@ -112,7 +137,6 @@ class Model(object):
     elif name == 'content':
       super().__setattr__('content', value)
     elif name in self.metadataFields:
-      print(name)
       if is_link(self.metadataFields[name]):
         # If it is a link we also include, the obj
         self.metadata[name] = self.metadataFields[name](value, self)
@@ -163,29 +187,43 @@ class Collection(object):
   def get (self, key, instantiate=True):
     key = keyFilter(key)
     if key in self.index:
+      debug('Found entry for {}'.format(key))
       return self.index[key]
     elif key and instantiate:
-      return self.instantiate(key)
+      debug('Could not find entry for {}, instantiating'.format(key))
+      return self.instantiateStub(key)
     else:
       return None
+
+  def has (self, key):
+    return key in self.index
 
   """
     Register the given model with the collection
   """
   def register (self, obj):
     if isinstance(obj, self.model):
-      if obj.key not in self.index:
+      if not self.has(obj.key):
         self.models.append(obj)
         self.index[obj.key] = obj
+      elif self.index[obj.key].empty:
+        debug('Updating metadata for stub {}'.format(obj.key))
+        self.index[obj.key].setMetadata(obj.meta)
       else:
-        print('Already have', obj, obj.key)
-
+        # Extend the object here
+        debug('Already have', obj, obj.key)
+        
   """
     Instantiate a model for the given key, metadata and content
     and register it on the collection.
   """
   def instantiate (self, key, metadata=None, content=None):
     obj = self.model(key=key, metadata=metadata, content=content)
+    self.register(obj)
+    return obj
+
+  def instantiateStub (self, key):
+    obj = self.model(key=key)
     self.register(obj)
     return obj
 
