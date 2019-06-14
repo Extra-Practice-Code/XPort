@@ -121,7 +121,7 @@
     entry.classList.add('active');
     var clone = entry.cloneNode(true);
     
-    clone.querySelectorAll('.content img');
+    var images = clone.querySelectorAll('.content img');
       
     for (var i=0; i < images.length; i++) {
       img.addEventListener('click', function () { this.classList.toggle('full'); });
