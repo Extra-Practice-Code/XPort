@@ -98,11 +98,6 @@ short_names = {
     "http://purl.org/dc/terms/Location" : "place",
 }
 
-HOST = None
-if Site.objects.count() > 0:
-    site = Site.objects.all()[0]
-    HOST = site.domain
-
 def query_results_to_template_articles(query_results):
     """
     Transform the RDFLIB SPARQL query result into the row that we want to use for the template
@@ -157,9 +152,15 @@ def query_results_to_template_articles(query_results):
     return sorted(template_articles, key=lambda a: a['date'] if 'date' in a else 0, reverse=True)
 
 def snif():
-    global HOST
+    HOST = None
+
+    if Site.objects.count() > 0:
+        site = Site.objects.all()[0]
+        HOST = site.domain
+
     if not HOST:
         return "No site domain settings found"
+
     host = u"http://%s" % HOST
     
     start = clock()
