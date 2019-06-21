@@ -71,3 +71,13 @@ class MarkdownField(Field):
   def parse (self, value):
     md = markdown.Markdown(extensions=['extra', 'attr_list'])
     return mark_safe(md.convert(value))
+
+# # Maybe simplify to a function
+# class InlineLink(Field):
+#   def __init__ (self, target, label):
+#     self.target = target
+#     self.label = label
+
+#   def __str__  (self):
+#     # return '[{}]({}){{: .{}}}'.format(self.label, self.target.link, self.target.contentType)
+#     return '<a href="{target}" class="{className}">{label}</a>'.format(label=self.label, target=self.target.link, className=self.target.contentType)

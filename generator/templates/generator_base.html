@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" media="all" href="{{ SITE_URL }}static/styles.simple.css" />
+  <title>Caveat → Produsers → {% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{{ SITE_URL }}" id="site-logo">
+        <img src="{{ SITE_URL }}static/images/logos/caveat.png" />
+      </a>
+      <ul>
+        {% for label, url in MENU_ITEMS %}
+          <li><a href="{{ url }}">{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <section id="header-map" style="background-image:url({{ SITE_URL }}static/images/maps/reading-room8-cover.png);">
+
+    </section>
+    <section id="header-content">
+      <p>
+        {% block header-text %}
+        <strong>Caveat</strong> tries to find more sustainable, balanced ways of operating within the existing legal frameworks. And when the limits of the existing system are reached, it tries to come up with possible new narratives that open up space for reflection.
+        {% endblock %}
+      </p>
+    </section>
+  </header>
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  <footer>
+      <p class=""><img class="logo-partners" src="{{ SITE_URL }}static/imag/logos/innoviris.svg"/><strong>Caveat</strong> is a co-create research project convened by the Brussels-based artists’ initiative Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78 and supported by Innoviris, Brussels Institute for Research and Innovation.</p>
+  </footer>
+</body>
+</html>

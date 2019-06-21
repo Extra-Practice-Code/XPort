@@ -11,9 +11,9 @@ from math import inf
 import markdown
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
-from .parse import parse_pads
-from .models import collectionFor
-from .utils import info
+from generator.parse import parse_pads
+from generator.models import collectionFor
+from generator.utils import info
 
 from django.template import loader
 from django.template.defaultfilters import slugify
@@ -21,9 +21,10 @@ from django.utils.safestring import mark_safe
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 
-from etherpadlite.models import Pad
+from etherpadlite.models import Pad 
 
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG, GENERATED_SITE_PREFIX
+from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from generator.settings import SITE_URL, MENU_ITEMS
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -40,7 +41,8 @@ import datetime
 # Feed content to templates
 
 def output (path, template, context):
-  context['BASE_URL'] = GENERATED_SITE_PREFIX
+  context['SITE_URL'] = SITE_URL
+  context['MENU_ITEMS'] = MENU_ITEMS
   
   with open(path, 'w', encoding='utf-8') as w:
     info('Writing {} -> {}'.format(template, path))
@@ -79,7 +81,9 @@ class Command(BaseCommand):
   help = 'Generate a static interpretation of the pads'
 
   def handle(self, *args, **options):
-    outputdir = os.path.join(BASE_DIR, 'ethertoff', 'static', 'generated')
+    basedir = os.path.join(BASE_DIR, 'generator')
+    staticdir = os.path.join(basedir, 'templates', 'static')
+    outputdir = os.path.join(basedir, 'static', 'generated')
 
     if os.path.exists(outputdir):
       shutil.rmtree(outputdir)
@@ -90,7 +94,7 @@ class Command(BaseCommand):
   
     info('Copying static files')
 
-    shutil.copytree(os.path.join(BASE_DIR, 'ethertoff', 'templates', 'generated', 'static'), os.path.join(outputdir, 'static'))
+    shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
 
     parse_pads()
 
@@ -103,16 +107,16 @@ class Command(BaseCommand):
 
     grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
-    output(os.path.join(outputdir, 'produsers.html'), 'generated/produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
-    output(os.path.join(outputdir, 'produsers.layout.html'), 'generated/produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
+    output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
+    output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
 
     for produser in produsers.models:
-      output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'generated/produser.html', { 'produser': produser })
+      output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
 
     for event in events.models:
-      output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'generated/event.html', { 'event': event })
+      output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
-    output(os.path.join(outputdir, 'index.html'), 'generated/index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date']), reverse=True) })
+    output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date']), reverse=True) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)

@@ -1,0 +1,34 @@
+{% extends "generator_base.html" %}
+{% block title %}
+  Caveat → Produsers → {% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</title>
+{% endblock %}
+{% block content %}
+  <nav class="breadcrumbs">
+    <ul>
+      <li><a href="../produsers.html">Produsers</a></li>
+      <li>{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</li>
+    </ul>
+  </nav>
+    <h1 class="produser">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
+    {% if produser.trajectories %}
+      {% for trajectory in produser.trajectories %}
+        <h2>Trajectory</h2>
+        {{ trajectory.content}}
+      {% endfor %}
+    {% endif %}
+    <h2>Biography</h2>
+    {{ produser.content }}
+     {% if produser.events %}
+    <h2>Events</h2>
+    <ul>
+      {% for event in produser.events %}
+      <li>
+        <section class="event-preview">
+          <a href="{{ event.link }}">{{ event.event }} {{ event.title }}</a>
+          {{ event.summary }}
+        </section>
+      </li> 
+      {% endfor %}
+    </ul>
+    {% endif %}
+{% endblock %}

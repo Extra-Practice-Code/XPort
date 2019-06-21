@@ -1,0 +1,302 @@
+@font-face {
+  font-family: "Junicode-Condensed";
+  src: url("fonts/junicode/Junicode-RegularCondensed.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Junicode-Condensed";
+  src: url("fonts/junicode/Junicode-BoldItalicCondensed.ttf");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Junicode-Condensed";
+  src: url("fonts/junicode/Junicode-BoldCondensed.ttf");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Caveat-Outline";
+  src: url("fonts/Caveat.woff");
+  font-weight: regular;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "U001";
+  src: url("fonts/u001-font-univers/webfonts/U001-Reg.woff");
+  font-weight: regular;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "U001";
+  src: url("fonts/u001-font-univers/webfonts/U001-Bol.woff");
+  font-weight: Bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "U001";
+  src: url("fonts/u001-font-univers/webfonts/U001-BolIta.woff");
+  font-weight: Bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "U001";
+  src: url("fonts/u001-font-univers/webfonts/U001-Ita.woff");
+  font-weight: regular;
+  font-style: italic;
+}
+
+
+/* ==========================================================================
+   Custom medias definitions
+   ========================================================================== */
+@custom-media --mobile only screen and (max-width: 767px);
+@custom-media --mobile-landscape only screen and (max-width: 767px) and (orientation: landscape);
+
+/* ==========================================================================
+  Variables
+  ========================================================================== */
+:root {
+  --bleu-bille: #112B92;
+  --vert-karel: #00B788;
+  --orange-karel: #ff5900;
+  --rose-karel: #FCBFC4;
+  --rose-pale: #ffe1e4;
+  --red-question: #ff3f00;
+
+  --font-size: 1.4em;
+  --font-size-small: 80%;
+  --font-size-extra-small: 70%;
+  --line-height: 1.2em;
+}
+
+body {
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  font-family: "U001";
+  padding: 0px;
+  margin: 0px !important;
+}
+
+/* ==========================================================================
+  Typography
+  ========================================================================== */
+
+p {
+  margin: 0;
+}
+
+ul, ol {
+  margin: 0 0 0 1em;
+}
+
+ul {
+  list-style-type: none;
+}
+
+main ul > li::before {
+  content: "─ ";
+  margin-left: -1em; 
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+  border: 0px solid currentColor;
+  font-size: 1em;
+  border-bottom: 2px solid;
+}
+
+.produser {
+  text-decoration: none;
+  font-size: 0.8em;
+  padding: 1px .25em;
+  color: currentColor;
+  vertical-align: middle;
+  position: relative;
+  border-bottom: none;
+}
+
+.produser:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border: 1px solid currentColor;
+  border-top: 0px;
+}
+
+h1.produser {
+  font-size: 200%;
+  display: inline-block;
+  line-height: 100%;
+}
+
+h1.produser:before {
+  border-width: 2px;
+}
+
+h1 {
+  font-family: "Junicode-Condensed";
+}
+
+h2 {
+  font-family: "U001";
+  text-transform: uppercase;
+  font-size: var(--font-size-small);
+  margin-top: var(--line-height);
+  margin-bottom: 0;
+}
+
+main {
+  color: var(--bleu-bille);
+}
+
+.info {
+  font-family: "Junicode-condensed";
+  font-weight: bold;
+  font-size: 1em;
+  line-height: 1.1em;
+  margin-bottom: 1.1em;
+}
+
+main p {
+  max-width: 47.5em;
+}
+
+/* ==========================================================================
+  Page structure
+  ========================================================================== */
+
+body {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: [left sidebar-start] 1fr [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
+  grid-template-rows: [top] repeat(2, 1fr) [footer] min-content [bottom];
+}
+
+main, footer {
+  padding: 1em;
+}
+
+header {
+  grid-column: sidebar-start;
+  grid-row: top / footer;
+  border-right: 2px solid;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+header nav {
+  flex: 0 0;
+  border-bottom: 2px solid black;
+  display: flex;
+  padding: 1em;
+}
+
+header nav a {
+  text-decoration: none;
+  border: none;
+}
+
+header nav a:hover {
+  color: var(--bleu-bille);
+}
+
+header nav #site-logo {
+  flex: 0 0 100px;
+}
+
+header nav #site-logo img {
+  max-width: 100px;
+}
+
+header nav ul {
+  flex: 1 0;
+  margin: 0;
+}
+
+header #header-map {
+  flex: 2 1;
+  background: var(--rose-pale);
+  border-bottom: 2px solid black;
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: cover;
+}
+
+#header-content {
+  flex: 1 0;
+  overflow-y: auto;
+  padding: 1em;
+}
+
+#header-content p {
+  font-family: "Junicode-Condensed";
+  font-size: 1.7em;
+  line-height: 1em;
+}
+
+main {
+  grid-row: top / footer;
+  grid-column: content-start /  content-end;
+  overflow-y: auto;
+}
+
+footer {
+  border-top: 2px solid;
+  grid-column: left / right;
+  grid-row: footer;
+  background: var(--rose-karel);
+}
+
+.breadcrumbs {
+  border-bottom: 2px solid black;
+  margin-left: -1em;
+  margin-right: -1em;
+  margin-top: -1em;
+}
+
+.breadcrumbs ul {
+  list-style-type: none;
+  margin: 0;
+  padding: .5em;
+  font-size: var(--font-size-small);
+}
+
+.breadcrumbs li {
+  display: inline-block;
+}
+
+.breadcrumbs ul > li:before {
+  content: none;
+}
+
+.breadcrumbs ul > li:nth-child(n+2):before {
+  content: " → ";
+}
+
+.breadcrumbs ul > li:nth-child(n+2) {
+  margin-left: 1em;
+}
+
+footer .logo-partners {
+  float: right;
+}

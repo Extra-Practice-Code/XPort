@@ -1,0 +1,14 @@
+{% extends "generator_base.html" %}
+
+{% block title %}Produsers{% endblock %}
+
+{% block content %}
+  {% for role, produsers in grouped_produsers %}
+    <h2>{{ role }}</h2>
+    {% for produser in produsers %}
+      <p>
+        <a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a>
+      </p>
+    {% endfor %}
+  {% endfor %}
+{% endblock %}

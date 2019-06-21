@@ -3,12 +3,18 @@ from .utils import info, debug, CMAGENTA
 import os.path
 import datetime
 import re
+# from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
 import markdown
 from django.utils.safestring import mark_safe
 
-from ethertoff.settings import GENERATED_SITE_PREFIX
+from generator.settings import SITE_URL
+
+"""
+  - Alternatively: make and register models before parsing their fields.
+    Then unknown resources / objects are easier to spot.
+"""
 
 def keyFilter (value):
   if type(value) is list:
@@ -85,11 +91,31 @@ class ReverseMultiLink(ReverseLink):
 def is_link (obj):
   return isinstance(obj, (Link, MultiLink, ReverseLink, ReverseMultiLink))
 
+def linkMultiReverse(contentType, reverseName):
+  return Link(contentType=contentType, reverse=ReverseMultiLink(reverseName))
+
+def multiLinkMultiReverse(contentType, reverseName):
+  return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
+
+
+def insertInternalLink(matches):
+  contentType = matches.group(1)
+  key = matches.group(2)
+  target = collectionFor(contentType).get(key)
+
+  return '<a href="{target}" class="{className}">{label}</a>'.format(label=str(target), target=target.link, className=target.contentType)
+
+def resolveInternalLinks (content):
+  if content:
+    return mark_safe(re.sub(r"\{(\w+):(.[^\}]+)\}", insertInternalLink, content))
+  else:
+    return content
 
 class Model(object):
   metadataFields = {}
-  content = None
+  _content = None
   keyField = 'id'
+  labelField = 'title'
   metadata = {}
 
   def __init__ (self, key=None, metadata=None, content=None):
@@ -118,7 +144,11 @@ class Model(object):
 
   @property
   def link (self):
-    return os.path.join(GENERATED_SITE_PREFIX, self.prefix, '{}.html'.format(self.key))
+    return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
+
+  @property
+  def content (self):
+    return resolveInternalLinks(self._content)
 
   def setMetadata(self, metadata=None):
     if metadata:
@@ -140,7 +170,7 @@ class Model(object):
     elif name == 'metadata':
       super().__setattr__('metadata', value)
     elif name == 'content':
-      super().__setattr__('content', value)
+      super().__setattr__('_content', value)
     elif name in self.metadataFields:
       if is_link(self.metadataFields[name]):
         # If it is a link we also include, the obj
@@ -180,7 +210,15 @@ class Collection(object):
     self.model = model
     self.models = []
     self.index = {}
-    self.iterindex = -1
+    self.iterindex = -1# Maybe simplify to a function
+# class InlineLink(Field):
+#   def __init__ (self, target, label):
+#     self.target = target
+#     self.label = label
+
+#   def __str__  (self):
+#     # return '[{}]({}){{: .{}}}'.format(self.label, self.target.link, self.target.contentType)
+#     return '<a href="{target}" class="{className}">{label}</a>'.format(label=self.label, target=self.target.link, className=self.target.contentType)
 
   def __iter__ (self):
     return self
@@ -240,13 +278,8 @@ class Collection(object):
     self.register(obj)
     return obj
 
-def linkMultiReverse(contentType, reverseName):
-  return Link(contentType=contentType, reverse=ReverseMultiLink(reverseName))
-
-def multiLinkMultiReverse(contentType, reverseName):
-  return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
-
 class Event (Model):
+  contentType = 'event'
   prefix = 'events'
 
   metadataFields = {
@@ -260,6 +293,7 @@ class Event (Model):
   }
 
 class Produser (Model):
+  contentType = 'produser'
   keyField = 'produser'
   prefix = 'produsers'
 
@@ -271,12 +305,14 @@ class Produser (Model):
   }
 
 class Trajectory (Model):
+  contentType = 'trajectory'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'trajectories'),
     'tags': fields.StringField()
   }
 
 class Pad (Model):
+  contentType = 'pad'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'pads'),
     'event': linkMultiReverse('events', 'pads'),
@@ -285,6 +321,7 @@ class Pad (Model):
   }
 
 class Note (Model):
+  contentType = 'note'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('events', 'notes'),
@@ -292,6 +329,7 @@ class Note (Model):
   }
 
 class Page (Model):
+  contentType = 'page'
   keyField = 'name'
 
 

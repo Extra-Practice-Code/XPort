@@ -1,0 +1,31 @@
+{% extends "generator_base.html" %}
+
+{% block title %}Caveat → events → {{ event.title }}{% endblock %}
+
+{% block content %}
+  <nav class="breadcrumbs">
+    <ul>
+      <li><a href="../events.html">Events</a></li>
+      <li>{{ event.title }}</li>
+    </ul>
+  </nav>
+  <h1>{% if event.event %}{{ event.event }}{% else %}{{ event.title }}{% endif %}</h1>
+  <section class="info">
+    <time datetime="2019-05-24">{{ event.date }}</time>
+    <p>
+      {{ event.location }}<br />
+      {% if event.address %}
+        {% for addressline in event.address %}
+          {{ addressline }}<br />
+        {% endfor %}
+      {% endif %}
+    </p>
+    <p class="event-infos">
+      {% for produser in event.produser %}
+      <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
+      {% endfor %}
+    </p>
+  </section>
+  {{ event.summary }}
+  {{ event.content }}
+{% endblock %}
