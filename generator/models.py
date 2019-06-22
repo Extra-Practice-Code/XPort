@@ -118,13 +118,19 @@ class Model(object):
   labelField = 'title'
   metadata = {}
 
-  def __init__ (self, key=None, metadata=None, content=None):
+  def __init__ (self, key=None, label=None, metadata=None, content=None):
+    # debug('Instantiating model, key: {}, label: {}'.format(key, label))
+    self.metadata = {}
+    
     if key: 
       self.key = key
     else:
       self.key = self.extractKey(metadata)
 
-    self.metadata = {}
+    if label:
+      # debug('Setting label, {}, {}'.format(label, self.labelField))
+      self.__setattr__(self.labelField, [label])
+
     if metadata:
       self.setMetadata(metadata)
     
@@ -155,20 +161,20 @@ class Model(object):
       for key in metadata:
         self.__setattr__(key, metadata[key])
 
-  def fill(self, metadata={}, content=None):
+  def fill(self, metadata={}, content=None, source_path=None):
     if metadata:
       self.empty = False
       self.setMetadata(metadata)
     if content:
       self.empty = False
       self.content = content
+    if source_path:
+      self.source_path = source_path
 
   def __setattr__ (self, name, value):
     # This might break with the links
-    if name == 'key':
-      super().__setattr__('key', value)
-    elif name == 'metadata':
-      super().__setattr__('metadata', value)
+    if name in ['key', 'metadata', 'source_path']:
+      super().__setattr__(name, value)
     elif name == 'content':
       super().__setattr__('_content', value)
     elif name in self.metadataFields:
@@ -192,7 +198,9 @@ class Model(object):
     elif hasattr(self, self.keyField):
       return getattr(self, self.keyField)
     else:
+      debug('Has not attr for to string {}'.format(self.metadata))
       return super().__str__()
+
 
   # @property
   # def content (self):
@@ -220,29 +228,29 @@ class Collection(object):
 #     # return '[{}]({}){{: .{}}}'.format(self.label, self.target.link, self.target.contentType)
 #     return '<a href="{target}" class="{className}">{label}</a>'.format(label=self.label, target=self.target.link, className=self.target.contentType)
 
-  def __iter__ (self):
-    return self
+  # def __iter__ (self):
+  #   return self
 
-  def __next__ (self):
-    self.iterindex = self.iterindex + 1
+  # def __next__ (self):
+  #   self.iterindex = self.iterindex + 1
   
-    if len(self.models) >= self.iterindex:
-      raise StopIteration
-    else:
-      return self.models[self.iterindex]
+  #   if len(self.models) >= self.iterindex:
+  #     raise StopIteration
+  #   else:
+  #     return self.models[self.iterindex]
 
   """
-    Retreive a model from the collection with the given key.
+    Retreive a model from the collection with the given label.
     If instantiate is set to true an empty model will be created.
   """
-  def get (self, key, instantiate=True):
-    key = keyFilter(key)
-    if key in self.index:
+  def get (self, label):
+    key = keyFilter(label)
+    if self.has(key):
       debug('Found entry for {}'.format(key))
       return self.index[key]
-    elif key and instantiate:
+    elif key:
       debug('Could not find entry for {}, instantiating'.format(key))
-      return self.instantiateStub(key)
+      return self.instantiateStub(key=key, label=label)
     else:
       return None
 
@@ -273,8 +281,8 @@ class Collection(object):
     self.register(obj)
     return obj
 
-  def instantiateStub (self, key):
-    obj = self.model(key=key)
+  def instantiateStub (self, key, label=None):
+    obj = self.model(key=key, label=label)
     self.register(obj)
     return obj
 
@@ -289,19 +297,21 @@ class Event (Model):
     'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
-    'address': fields.StringField()
+    'address': fields.StringField(),
+    'tags': linkMultiReverse('tags', 'events')
   }
 
 class Produser (Model):
   contentType = 'produser'
   keyField = 'produser'
+  labelField = 'produser'
   prefix = 'produsers'
 
   metadataFields = {
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
     'produser': fields.Single(fields.StringField()),
-    'tags': fields.StringField()
+    'tags': linkMultiReverse('tags', 'produsers')
   }
 
 class Trajectory (Model):
@@ -315,8 +325,9 @@ class Pad (Model):
   contentType = 'pad'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'pads'),
-    'event': linkMultiReverse('events', 'pads'),
+    'event': linkMultiReverse('event', 'pads'),
     'trajectory': linkMultiReverse('trajectory', 'pads'),
+    'tags': linkMultiReverse('tags', 'pads'),
     'tags': fields.StringField()
   }
 
@@ -324,14 +335,29 @@ class Note (Model):
   contentType = 'note'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
-    'event': linkMultiReverse('events', 'notes'),
-    'tags': fields.StringField()
+    'event': linkMultiReverse('event', 'notes'),
+    'tags': linkMultiReverse('tag', 'notes')
   }
 
 class Page (Model):
   contentType = 'page'
-  keyField = 'name'
+  keyField = 'title'
+  labelField = 'title'
+  prefix = 'pages'
 
+  metadataFields = {
+    'title': fields.Single(fields.StringField()),
+    'tags': linkMultiReverse('tag', 'pages')
+  }
+
+class Tag (Model):
+  contentType = 'tag'
+  keyField = 'tag'
+  labelField = 'tag'
+
+  metaFields = {
+    'tag': fields.Single(fields.StringField())
+  }
 
 # Perhaps include the sort in the collection?
 # Might also need to include the outputfolder here

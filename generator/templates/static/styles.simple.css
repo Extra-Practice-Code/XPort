@@ -175,6 +175,10 @@ main p {
   max-width: 47.5em;
 }
 
+p {
+  margin-bottom: var(--line-height);
+}
+
 /* ==========================================================================
   Page structure
   ========================================================================== */
@@ -299,4 +303,8 @@ footer {
 
 footer .logo-partners {
   float: right;
+}
+
+footer p {
+  margin-bottom: 0;
 }

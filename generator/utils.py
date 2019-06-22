@@ -16,3 +16,29 @@ def debug(*args, color=CYELLOW):
 
 def error(*args):
   print(CRED, *args, CEND)
+
+
+def regroup (iterable, field):
+  index = {}
+  grouped = []
+  
+  for entry in iterable:
+    try:
+      key = getattr(entry, field)
+    except AttributeError:
+      key = ''
+
+    if not key in index:
+      grouped.append((key, [ entry ]))
+      index[key] = grouped[-1]
+    else:
+      index[key][1].append(entry)
+
+  return grouped
+
+def try_attributes (obj, attributes):
+  for attr in attributes:
+    if hasattr(obj, attr):
+      return getattr(obj, attr)
+  
+  return ''

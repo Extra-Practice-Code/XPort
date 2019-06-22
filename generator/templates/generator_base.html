@@ -15,7 +15,7 @@
       </a>
       <ul>
         {% for label, url in MENU_ITEMS %}
-          <li><a href="{{ url }}">{{ label }}</a></li>
+          <li><a href="{{ SITE_URL}}{{ url }}">{{ label }}</a></li>
         {% endfor %}
       </ul>
     </nav>
@@ -23,11 +23,13 @@
 
     </section>
     <section id="header-content">
-      <p>
-        {% block header-text %}
-        <strong>Caveat</strong> tries to find more sustainable, balanced ways of operating within the existing legal frameworks. And when the limits of the existing system are reached, it tries to come up with possible new narratives that open up space for reflection.
-        {% endblock %}
-      </p>
+      {% block header-text %}
+        <p>
+          <strong>Caveat</strong> tries to find more sustainable, balanced ways of operating
+          within the existing legal frameworks. And when the limits of the existing system are
+          reached, it tries to come up with possible new narratives that open up space for reflection.
+        </p>
+      {% endblock %}
     </section>
   </header>
   <main>
@@ -35,7 +37,10 @@
     {% endblock %}
   </main>
   <footer>
-      <p class=""><img class="logo-partners" src="{{ SITE_URL }}static/imag/logos/innoviris.svg"/><strong>Caveat</strong> is a co-create research project convened by the Brussels-based artists’ initiative Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78 and supported by Innoviris, Brussels Institute for Research and Innovation.</p>
+      <p class=""><img class="logo-partners" src="{{ SITE_URL }}static/imag/logos/innoviris.svg"/>
+        <strong>Caveat</strong> is a co-create research project convened by the Brussels-based artists’
+        initiative Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78 and
+        supported by Innoviris, Brussels Institute for Research and Innovation.</p>
   </footer>
 </body>
 </html>

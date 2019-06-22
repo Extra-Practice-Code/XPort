@@ -14,6 +14,23 @@ from etherpadlite.models import Pad
 
 from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
+"""
+  
+  We loop through all the pads and 'parse' them as markdown.
+  This should return both the content and a dictionary for the metadata
+
+  From this information a model is contstructed. The metadata is further
+  parsed depending the field type.
+
+  Links will try to look up their targets. If the pad isn't parsed yet a 
+  stub is created to be filled later in the process. 
+
+  TODO: decouple metadata parsing and linking. To make sure all data is seen
+  before linking is performed.
+
+
+"""
+
 def parse_pads ():
   epclient = None
   
@@ -49,7 +66,7 @@ def parse_pads ():
         model = collection.get(key)
         if model.empty:
           debug('Filling model {}'.format(key))
-          model.fill(metadata=meta, content=content)
+          model.fill(metadata=meta, content=content, source_path=pad.display_slug)
         else:
           error('Model for key {} already filled'.format(key))
 

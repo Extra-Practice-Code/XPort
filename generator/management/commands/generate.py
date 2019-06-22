@@ -13,7 +13,7 @@ from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 from generator.parse import parse_pads
 from generator.models import collectionFor
-from generator.utils import info
+from generator.utils import info, regroup, try_attributes
 
 from django.template import loader
 from django.template.defaultfilters import slugify
@@ -48,33 +48,11 @@ def output (path, template, context):
     info('Writing {} -> {}'.format(template, path))
     w.write(loader.render_to_string(template, context))
 
+def generate_single_pages (collection, template, outputdir, make_context):
+  for model in collection.models:
+    output(os.path.join(outputdir, model.prefix, '{}.html'.format(model.key)), template, make_context(model))
 
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', ' qpartner']
-
-def regroup (iterable, field):
-  index = {}
-  grouped = []
-  
-  for entry in iterable:
-    try:
-      key = getattr(entry, field)
-    except AttributeError:
-      key = ''
-
-    if not key in index:
-      grouped.append((key, [ entry ]))
-      index[key] = grouped[-1]
-    else:
-      index[key][1].append(entry)
-
-  return grouped
-
-def try_attributes (obj, attributes):
-  for attr in attributes:
-    if hasattr(obj, attr):
-      return getattr(obj, attr)
-  
-  return ''
 
 class Command(BaseCommand):
   args = ''
@@ -91,6 +69,7 @@ class Command(BaseCommand):
     os.mkdir(outputdir)
     os.mkdir(os.path.join(outputdir, 'produsers'))
     os.mkdir(os.path.join(outputdir, 'events'))
+    os.mkdir(os.path.join(outputdir, 'pages'))
   
     info('Copying static files')
 
@@ -103,6 +82,7 @@ class Command(BaseCommand):
 
     produsers = collectionFor('produser')
     events = collectionFor('event')
+    pages = collectionFor('page')
 
 
     grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
@@ -110,11 +90,16 @@ class Command(BaseCommand):
     output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
     output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
 
-    for produser in produsers.models:
-      output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
+    # for produser in produsers.models:
+    #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
 
-    for event in events.models:
-      output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
+    # for event in events.models:
+    #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
+
+
+    generate_single_pages(produsers, 'produser.html', outputdir, lambda produser: { 'produser': produser })
+    generate_single_pages(events, 'event.html', outputdir, lambda event: { 'event': event })
+    generate_single_pages(pages, 'page.html', outputdir, lambda page: { 'page': page })
 
     output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date']), reverse=True) })
 
