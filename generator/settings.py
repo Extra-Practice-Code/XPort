@@ -1,7 +1,7 @@
 MENU_ITEMS = [
   ('About', 'pages/about.html'),
   ('Produsers', 'produsers.html' ),
-  ('Contact', 'contact.html')
+  ('Contact', 'pages/contact.html')
 ]
 
 SITE_URL = ''

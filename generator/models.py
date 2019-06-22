@@ -119,7 +119,7 @@ class Model(object):
   metadata = {}
 
   def __init__ (self, key=None, label=None, metadata=None, content=None):
-    # debug('Instantiating model, key: {}, label: {}'.format(key, label))
+    debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
     self.metadata = {}
     
     if key: 
@@ -298,7 +298,7 @@ class Event (Model):
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
-    'tags': linkMultiReverse('tags', 'events')
+    'tags': multiLinkMultiReverse('tag', 'events')
   }
 
 class Produser (Model):
@@ -311,7 +311,7 @@ class Produser (Model):
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
     'produser': fields.Single(fields.StringField()),
-    'tags': linkMultiReverse('tags', 'produsers')
+    'tags': multiLinkMultiReverse('tag', 'produsers')
   }
 
 class Trajectory (Model):
@@ -327,8 +327,7 @@ class Pad (Model):
     'produser': linkMultiReverse('produser', 'pads'),
     'event': linkMultiReverse('event', 'pads'),
     'trajectory': linkMultiReverse('trajectory', 'pads'),
-    'tags': linkMultiReverse('tags', 'pads'),
-    'tags': fields.StringField()
+    'tags': multiLinkMultiReverse('tag', 'pads')
   }
 
 class Note (Model):
@@ -336,7 +335,7 @@ class Note (Model):
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('event', 'notes'),
-    'tags': linkMultiReverse('tag', 'notes')
+    'tags': multiLinkMultiReverse('tag', 'notes')
   }
 
 class Page (Model):
@@ -347,15 +346,28 @@ class Page (Model):
 
   metadataFields = {
     'title': fields.Single(fields.StringField()),
-    'tags': linkMultiReverse('tag', 'pages')
+    'tags': multiLinkMultiReverse('tag', 'pages')
   }
 
 class Tag (Model):
   contentType = 'tag'
   keyField = 'tag'
   labelField = 'tag'
+  prefix = 'tags'
 
-  metaFields = {
+  @property
+  def link_count (self):
+    count = 0
+    
+    debug(self.metadata)
+
+    for field in self.metadata:
+      if type(getattr(self, field)) is list:
+        count += len(getattr(self, field))
+
+    return count
+
+  metadataFields = {
     'tag': fields.Single(fields.StringField())
   }
 
@@ -367,7 +379,8 @@ contentTypes = {
   'produser': { 'model': Produser, 'collection': Collection(Produser) },
   'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
   'pad': { 'model': Pad, 'collection': Collection(Pad) },
-  'page': { 'model': Page, 'collection': Collection(Page) }
+  'page': { 'model': Page, 'collection': Collection(Page) },
+  'tag': { 'model': Tag, 'collection': Collection(Tag) }
 }
 
 def collectionFor (contentType):
