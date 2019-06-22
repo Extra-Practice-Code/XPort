@@ -3,12 +3,14 @@
 {% block title %}Produsers{% endblock %}
 
 {% block content %}
+  <h1>Produsers</h1>
   {% for role, produsers in grouped_produsers %}
     <h2>{{ role }}</h2>
     {% for produser in produsers %}
-      <p>
-        <a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a>
-      </p>
+    <h2 class="produser"><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h2>
+    {% if produser.content %}
+    {{ produser.content|truncatechars_html:200 }}
+    {% endif %}
     {% endfor %}
   {% endfor %}
 {% endblock %}

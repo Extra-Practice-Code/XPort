@@ -70,6 +70,7 @@ class Command(BaseCommand):
     os.mkdir(os.path.join(outputdir, 'produsers'))
     os.mkdir(os.path.join(outputdir, 'events'))
     os.mkdir(os.path.join(outputdir, 'pages'))
+    os.mkdir(os.path.join(outputdir, 'tags'))
   
     info('Copying static files')
 
@@ -83,13 +84,14 @@ class Command(BaseCommand):
     produsers = collectionFor('produser')
     events = collectionFor('event')
     pages = collectionFor('page')
+    tags = collectionFor('tag')
 
 
     grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
     output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers })
     output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
-
+    output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': tags.models })
     # for produser in produsers.models:
     #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
 
@@ -100,8 +102,39 @@ class Command(BaseCommand):
     generate_single_pages(produsers, 'produser.html', outputdir, lambda produser: { 'produser': produser })
     generate_single_pages(events, 'event.html', outputdir, lambda event: { 'event': event })
     generate_single_pages(pages, 'page.html', outputdir, lambda page: { 'page': page })
+    generate_single_pages(tags, 'tag.html', outputdir, lambda tag: { 'tag': tag })
 
-    output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=lambda event: try_attributes(event, ['date']), reverse=True) })
+    def isdate (candidate):
+      return type(candidate) is datetime.date
+
+    def datesorter(obj):
+      if hasattr(obj, 'date') and isdate(getattr(obj, 'date')):
+        return getattr(obj, 'date')
+      else:
+        return datetime.date(1,1,1)
+    #   def 
+    #   def sorter (a, b):
+    #     a = try_attributes(a, [key])
+    #     b = try_attributes(b, [key])
+
+    #     if isdate(a):
+    #       if isdate(b):
+    #         return (a-b).days
+    #       else:
+    #         # a bigger than b, as b is not a valid date
+    #         return 1 
+    #     elif isdate(b):
+    #       # b is bigger than a, as b is a valid date but a isn't
+    #       return -1
+    #     else:
+    #       # both aren't valid dates; equal
+    #       return 0
+
+    #   return sorter
+
+    # sorted()
+
+    output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
 
     if not DEBUG:
       call_command('collectstatic', interactive=False)

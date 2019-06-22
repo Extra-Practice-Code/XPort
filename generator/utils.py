@@ -41,4 +41,4 @@ def try_attributes (obj, attributes):
     if hasattr(obj, attr):
       return getattr(obj, attr)
   
-  return ''
+  return None

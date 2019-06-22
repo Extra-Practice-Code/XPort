@@ -1,0 +1,12 @@
+{% extends "generator_base.html" %}
+
+{% block title %}Tags{% endblock %}
+
+{% block content %}
+  <h1>Tags</h1>
+  <ul>
+    {% for tag in tags %}
+      <li><a href="{{ tag.link }}">{{ tag }} ({{ tag.link_count }})</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

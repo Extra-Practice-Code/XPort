@@ -159,6 +159,14 @@ h2 {
   margin-bottom: 0;
 }
 
+h2.produser {
+  display: inline-block;
+}
+
+.produser a {
+  border: none;
+}
+
 main {
   color: var(--bleu-bille);
 }
