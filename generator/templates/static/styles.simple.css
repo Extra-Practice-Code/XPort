@@ -344,7 +344,7 @@ main img.full {
 main img.full, 
 main audio,
 main video {
-  max-width: 100%;
+  max-width: 47.5em;
   width: 100%;
   margin-top: .5em;
   margin-bottom: .5em;
