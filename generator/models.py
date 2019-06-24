@@ -482,7 +482,6 @@ contentTypes = {
 }
 
 def collectionFor (contentType):
-  print(contentType)
   if contentType in contentTypes:
     return contentTypes[contentType]['collection']
   else:

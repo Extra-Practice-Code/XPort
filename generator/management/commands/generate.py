@@ -72,14 +72,16 @@ class Command(BaseCommand):
     os.mkdir(os.path.join(outputdir, 'pages'))
     os.mkdir(os.path.join(outputdir, 'tags'))
   
-    info('Copying static files')
+    print('Copying static files')
 
     shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
 
+    print('Parsing pads')
+
     parse_pads()
 
-    info('Read pads')
-    info('Generating output')
+    print('Read pads')
+    print('Generating output')
 
     produsers = collectionFor('produser')
     events = collectionFor('event')
@@ -138,4 +140,7 @@ class Command(BaseCommand):
     output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
 
     if not DEBUG:
+      print('Collecting static')
       call_command('collectstatic', interactive=False)
+
+    print('Done')

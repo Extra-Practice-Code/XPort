@@ -71,8 +71,8 @@ def parse_pads ():
           error('Model for key {} already filled'.format(key))
 
       except UnknownContentTypeError as e:
-        print('Skipped `{}`'.format(name))
-        print(e)
+        debug('Skipped `{}`'.format(name))
+        debug(e)
         pass
 
     info('Read {}'.format(pad.display_slug))
@@ -87,7 +87,7 @@ class Command(BaseCommand):
 
     for produser in collectionFor('produser').models:
       for k in dir(produser):
-        print(getattr(produser, k))
+        info(getattr(produser, k))
 
     # print(collectionFor('produser').models)
     # print(collectionFor('event').models, collectionFor('event').models[0].metadata, collectionFor('event').models[0].metadata['produser'].metadata)

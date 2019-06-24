@@ -1,3 +1,5 @@
+from ethertoff.settings import DEBUG
+
 MENU_ITEMS = [
   ('About', 'pages/about.html'),
   ('Produsers', 'produsers.html' ),
@@ -7,6 +9,9 @@ MENU_ITEMS = [
 ]
 
 SITE_URL = ''
+
+SHOW_LOG_MESSAGES = DEBUG
+SHOW_DEBUG_MESSAGES = DEBUG
 
 try:
     LOCAL_SETTINGS

@@ -1,4 +1,5 @@
-DEBUG = True
+from .settings import SHOW_LOG_MESSAGES
+from .settings import SHOW_DEBUG_MESSAGES
 
 CRED = '\033[91m'
 CGREEN = '\033[92m'
@@ -8,10 +9,11 @@ CCYAN = '\033[96m'
 CEND = '\033[0m'
 
 def info(*args):
-  print(*args)
+  if SHOW_LOG_MESSAGES:
+    print(*args)
 
 def debug(*args, color=CYELLOW):
-  if DEBUG:
+  if SHOW_DEBUG_MESSAGES:
     print(color, *args, CEND)
 
 def error(*args):
