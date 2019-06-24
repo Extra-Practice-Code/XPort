@@ -19,13 +19,12 @@
     <main>
       <aside class="left">
         <nav id="menu">
-          <p class="logo"><a href="index.html"><img class="logo" src="img/logos/logo-caveat-90.png" /></span></a></p>
+          <p class="logo"><a href="{{ SITE_URL }}index.html"><img class="logo" src="{{ SITE_URL }}static/images/logos/caveat.png" /></span></a></p>
 
           <ul>
-            <li><a href="caveat-about.html">About</span></a></li>
-            <li><a href="caveat-contact.html">Contact</span></a></li>
-            <li><a href="produsers.layout.html">Produsers</span></a></li>
-
+              {% for label, url in MENU_ITEMS %}
+                <li><a href="{{ SITE_URL}}{{ url }}">{{ label }}</a></li>
+              {% endfor %}
             <!-- <li><a href="" class="artist"><span>Activities</span></a></li>
                   <li><a href="" class="artist"><span>Documents</span></a></li> -->
           </ul>

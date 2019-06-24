@@ -24,7 +24,7 @@
     
     {% if produser.events %}
       <h2>Events</h2>
-      <ul>
+      <ul class="simplelist">
         {% for event in produser.events %}
         <li>
           <section class="event-preview">
@@ -33,6 +33,15 @@
           </section>
         </li> 
         {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if produser.bibliography %}
+      <h2>Bibliography</h2>
+      <ul class="simplelist">
+        {% for bibliography in tag.bibliography %}
+          <li>{{ bibliography }}</li>
+        {% endfor %}   
       </ul>
     {% endif %}
 {% endblock %}

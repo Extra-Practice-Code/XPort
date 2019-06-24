@@ -14,6 +14,12 @@ from generator.settings import SITE_URL
 """
   - Alternatively: make and register models before parsing their fields.
     Then unknown resources / objects are easier to spot.
+
+  - Make links more complex objects in result, so we can find the source
+    reference: how to make those links 'stable'
+
+  The result of a reference depends the type, many objects will result
+  in a link, while some will result in a tag.
 """
 
 def keyFilter (value):
@@ -55,12 +61,12 @@ class Link(object):
 class MultiLink(Link):
   def __call__ (self, targetKeys, source):
     debug('Link target keys', targetKeys, color=CMAGENTA)
-    targets = [ collectionFor(self.contentType).get(targetKey) for targetKey in targetKeys ]
+    targets = [ collectionFor(self.contentType).get(targetKey) for targetKey in filter(None, targetKeys) ]
 
     if self.reverse:
       for target in targets:
         # Set the property
-        self.reverse(target, source)
+          self.reverse(target, source)
 
     return targets
 
@@ -97,17 +103,78 @@ def linkMultiReverse(contentType, reverseName):
 def multiLinkMultiReverse(contentType, reverseName):
   return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
 
-
-def insertInternalLink(matches):
-  contentType = matches.group(1)
-  key = matches.group(2)
-  target = collectionFor(contentType).get(key)
-
+def linkReference(target):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=str(target), target=target.link, className=target.contentType)
 
-def resolveInternalLinks (content):
+def includeVideo(video):
+  return '<video controls><source src="{}" type="{}"></video>'.format(video.source, video.mime)
+
+def includeAudio(audio):
+  return '<audio controls></audio>'
+
+def labelReference(target):
+  return '<span class="{}">{}</span>'.format(target.contentType, str(target))
+
+def renderReference(target):
+  if target.contentType == 'video':
+    return includeVideo(target)
+  elif target.contentType == 'bibliography':
+    return labelReference(target)
+  else:
+    return linkReference(target)
+
+# def insertReference(matches):
+#   contentType = matches.group(1)
+#   key = matches.group(2)
+#   target = collectionFor(contentType).get(key)
+
+#   return target.reference
+
+def parseReferenceMetadata (raw):
+  data = {}
+
+  for m in re.finditer(r'(\w+):([^\|]+)', raw):
+    key = m.group(1)
+    value = m.group(2)
+
+    if key not in data:
+      data[key] = []
+    
+    data[key].append(value)
+  
+  return data
+
+def parseReference(match):
+  contentType = match.group(1)
+  key = match.group(2)
+  metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
+  target = collectionFor(contentType).get(key)
+
+  debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
+  # debug('Rendered reference ', renderReference(target))
+
+  # Insert the metadata on the object ?
+  if metadata and target.empty  :
+    target.fill(metadata)
+
+  # return ''
+  return renderReference(target)
+
+# difference between import and reference.
+# Some reference result in a snippet of media
+
+# would it make sense to have a sort of included media
+# which can be extended by links in the 'metadata'
+
+# [[video:]]
+
+# switch between reference type and inclusion types
+
+def resolveReferences (content):
+  # return content
   if content:
-    return mark_safe(re.sub(r"\{(\w+):(.[^\}]+)\}", insertInternalLink, content))
+    return mark_safe(re.sub(r'\[\[(\w+):([^\|]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
+    # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content
 
@@ -154,13 +221,15 @@ class Model(object):
 
   @property
   def content (self):
-    return resolveInternalLinks(self._content)
+    return resolveReferences(self._content)
 
   def setMetadata(self, metadata=None):
     if metadata:
       for key in metadata:
         self.__setattr__(key, metadata[key])
 
+  # TODO: deal with objects which already have data
+  # Overwrite or extend data. Etc.
   def fill(self, metadata={}, content=None, source_path=None):
     if metadata:
       self.empty = False
@@ -190,6 +259,7 @@ class Model(object):
     if name in self.metadata:
       return self.metadata[name]
     else:
+      # debug('Attribute error', name, self.metadata)
       raise AttributeError()
 
   def __str__ (self):
@@ -371,6 +441,27 @@ class Tag (Model):
     'tag': fields.Single(fields.StringField())
   }
 
+class Bibliography (Model):
+  contentType = 'bibliography'
+  keyField = 'bibliography'
+  labelField = 'bibliography'
+
+  metadataFields = {
+    'bibliography': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'bibliography'),
+    'produser': multiLinkMultiReverse('produser', 'bibliography')
+  }
+
+class Video (Model):
+  contentType = 'video'
+  
+  metadataFields = {
+    'source': fields.Single(fields.StringField()),
+    'type': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'videos'),
+    'produser': multiLinkMultiReverse('produser', 'videos')
+  }
+
 # Perhaps include the sort in the collection?
 # Might also need to include the outputfolder here
 # rather than on the model?
@@ -380,7 +471,9 @@ contentTypes = {
   'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
   'pad': { 'model': Pad, 'collection': Collection(Pad) },
   'page': { 'model': Page, 'collection': Collection(Page) },
-  'tag': { 'model': Tag, 'collection': Collection(Tag) }
+  'tag': { 'model': Tag, 'collection': Collection(Tag) },
+  'bibliography': { 'model': Bibliography, 'collection': Collection(Bibliography) },
+  'video': { 'model': Video, 'collection': Collection(Video) }
 }
 
 def collectionFor (contentType):

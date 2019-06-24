@@ -316,3 +316,13 @@ footer .logo-partners {
 footer p {
   margin-bottom: 0;
 }
+
+ul.simplelist, ul.simplelist > li {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul.simplelist > li:before {
+  content: "";
+  margin: 0;
+}
