@@ -327,7 +327,7 @@ ul.simplelist > li:before {
   margin: 0;
 }
 
-.content img {
+main img {
   width: 33%;
   float: left;
   margin-right: .5em;
@@ -337,13 +337,13 @@ ul.simplelist > li:before {
   clear: left;
 }
 
-.content img.full {
+main img.full {
   cursor: zoom-out;
 }
 
-.content img.full, 
-.content audio,
-.content video {
+main img.full, 
+main audio,
+main video {
   max-width: 100%;
   width: 100%;
   margin-top: .5em;
