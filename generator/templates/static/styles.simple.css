@@ -326,3 +326,26 @@ ul.simplelist > li:before {
   content: "";
   margin: 0;
 }
+
+.content img {
+  width: 33%;
+  float: left;
+  margin-right: .5em;
+  margin-top: .5em;
+  margin-bottom: .5em;
+  cursor: zoom-in;
+  clear: left;
+}
+
+.content img.full {
+  cursor: zoom-out;
+}
+
+.content img.full, 
+.content audio,
+.content video {
+  max-width: 100%;
+  width: 100%;
+  margin-top: .5em;
+  margin-bottom: .5em;
+}

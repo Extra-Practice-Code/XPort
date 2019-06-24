@@ -42,5 +42,16 @@
         initiative Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78 and
         supported by Innoviris, Brussels Institute for Research and Innovation.</p>
   </footer>
+  <script>
+    (function () {
+      var images = document.querySelectorAll('main img');
+
+      for (var i=0; i < images.length; i++) {
+        images[i].addEventListener('click', function () {
+          this.classList.toggle('full');
+        })
+      }
+    })();
+  </script>
 </body>
 </html>
