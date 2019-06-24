@@ -42,7 +42,7 @@
             <a class="button screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
             <a class="button screen" href="{% url 'password_change' %}">Change password</a>
             <a class="button screen-only" href="{% url 'pad-create' %}">Create</a>
-            <a class="button screen-only" href="{% url 'publish' %}">Re-index</a>
+            <a class="button screen-only" href="{% url 'generate' %}">Generate static version</a>
             <a class="button screen-only" href="/w/screen.css">screen.css</a>
             <a class="button screen-only" href="/w/laser.css">laser.css</a>
             <a class="button screen-only" href="/w/offset.css">offset.css</a>

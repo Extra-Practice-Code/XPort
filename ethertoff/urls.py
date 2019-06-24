@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('all/', views.all, name='all'), # TemplateView.as_view(template_name = 'all.html')
     #re_path(r'manage/(?P<page>[\d]+)?/?$', views.manage, name='manage'),
+    path('manage', views.manage, name='manage'),
     path('manage/', views.manage, name='manage'),
     path('manage/<path:path>', views.manage, name='manage'),
     path('publish/', views.publish, name='publish'),
