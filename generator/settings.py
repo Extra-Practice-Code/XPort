@@ -1,6 +1,8 @@
 MENU_ITEMS = [
   ('About', 'pages/about.html'),
   ('Produsers', 'produsers.html' ),
+  ('Bibliography', 'bibliography.html' ),
+  ('Tags', 'tags.html' ),
   ('Contact', 'pages/contact.html')
 ]
 
