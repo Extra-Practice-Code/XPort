@@ -57,4 +57,17 @@
         {% endfor %}   
       </ul>
     {% endif %}
+
+    {% if produser.audio %}
+    <h2>Audio</h2>
+    <ul class="simplelist">
+      {% for audio in produser.audio %}
+        <li>
+          <audio controls>
+            <source type="{{ audio.type }}" src="{{ audio.audio }}">
+          </audio>
+        </li>
+      {% endfor %}   
+    </ul>
+  {% endif %}
 {% endblock %}

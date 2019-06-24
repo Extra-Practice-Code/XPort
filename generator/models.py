@@ -118,6 +118,8 @@ def labelReference(target):
 def renderReference(target):
   if target.contentType == 'video':
     return includeVideo(target)
+  if target.contentType == 'audio':
+    return includeAudio(target)
   elif target.contentType == 'bibliography':
     return labelReference(target)
   else:
@@ -494,7 +496,8 @@ contentTypes = {
   'page': { 'model': Page, 'collection': Collection(Page) },
   'tag': { 'model': Tag, 'collection': Collection(Tag) },
   'bibliography': { 'model': Bibliography, 'collection': Collection(Bibliography) },
-  'video': { 'model': Video, 'collection': Collection(Video) }
+  'video': { 'model': Video, 'collection': Collection(Video) },
+  'audio': { 'model': Audio, 'collection': Collection(Audio) },
 }
 
 def collectionFor (contentType):
