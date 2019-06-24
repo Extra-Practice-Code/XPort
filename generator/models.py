@@ -368,7 +368,8 @@ class Event (Model):
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
-    'tags': multiLinkMultiReverse('tag', 'events')
+    'tags': multiLinkMultiReverse('tag', 'events'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'events'),
   }
 
 class Produser (Model):
@@ -381,7 +382,8 @@ class Produser (Model):
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.StringField()),
     'produser': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'produsers')
+    'tags': multiLinkMultiReverse('tag', 'produsers'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
   }
 
 class Trajectory (Model):
@@ -397,7 +399,8 @@ class Pad (Model):
     'produser': linkMultiReverse('produser', 'pads'),
     'event': linkMultiReverse('event', 'pads'),
     'trajectory': linkMultiReverse('trajectory', 'pads'),
-    'tags': multiLinkMultiReverse('tag', 'pads')
+    'tags': multiLinkMultiReverse('tag', 'pads'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'pads'),
   }
 
 class Note (Model):
@@ -405,7 +408,8 @@ class Note (Model):
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('event', 'notes'),
-    'tags': multiLinkMultiReverse('tag', 'notes')
+    'tags': multiLinkMultiReverse('tag', 'notes'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
   }
 
 class Page (Model):
@@ -416,7 +420,8 @@ class Page (Model):
 
   metadataFields = {
     'title': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'pages')
+    'tags': multiLinkMultiReverse('tag', 'pages'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
   }
 
 class Tag (Model):
