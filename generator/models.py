@@ -133,7 +133,7 @@ def renderReference(target):
 def parseReferenceMetadata (raw):
   data = {}
 
-  for m in re.finditer(r'(\w+):([^\|]+)', raw):
+  for m in re.finditer(r'(\w\._-+):([^\|]+)', raw):
     key = m.group(1)
     value = m.group(2)
 
@@ -173,7 +173,7 @@ def parseReference(match):
 def resolveReferences (content):
   # return content
   if content:
-    return mark_safe(re.sub(r'\[\[(\w+):([^\|]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
+    return mark_safe(re.sub(r'\[\[(\w\._-+):([^\|]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content

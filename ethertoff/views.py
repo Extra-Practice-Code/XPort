@@ -42,6 +42,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
+from generator.management.commands.generate import generate as generateStatic
+
 from . import forms as ethertoffForms
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
@@ -473,6 +475,8 @@ def pad_write(request, pad):
         
     return response
 
+# @FIXME either implement or remove?
+# Archiving command
 def xhtml(request, slug):
     return pad_read(request, "r", slug + '.md')
 
@@ -655,6 +659,18 @@ def publish(request):
         tpl_params['published'] = False
         tpl_params['message'] = ""
     return render(request, "publish.html", tpl_params)
+
+@login_required(login_url='/accounts/login')
+def generate(request):
+    tpl_params = {}
+    if request.method == 'POST':
+        tpl_params['generated'] = True
+        tpl_params['message'] = generateStatic()
+    else:
+        tpl_params['generate'] = False
+        tpl_params['message'] = ""
+    return render(request, "generate.html", tpl_params)
+
 
 @login_required(login_url='/accounts/login')
 # def manage(request, page=1):

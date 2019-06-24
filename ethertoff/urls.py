@@ -35,6 +35,7 @@ urlpatterns = [
     path('manage/', views.manage, name='manage'),
     path('manage/<path:path>', views.manage, name='manage'),
     path('publish/', views.publish, name='publish'),
+    path('generate/', views.generate, name='generate'),
     path('css-screen/', views.css, name='css-screen'),
     path('css-print/', views.cssprint, name='css-print'),
     path('css-offset/', views.offsetprint, name='css-offset'),
