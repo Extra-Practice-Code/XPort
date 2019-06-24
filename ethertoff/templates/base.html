@@ -49,8 +49,8 @@
             <a class="button screen-only" href="/w/documentation.md">documentation</a>
             {% else %}
             <a class="button" href="{% url 'login' %}">Log in</a>
+            {% endif %}
         </div>
-        {% endif %}
     </nav>
     <nav id="nav-right">
         {% if pad %}
