@@ -85,7 +85,7 @@ class Command(BaseCommand):
     events = collectionFor('event')
     pages = collectionFor('page')
     tags = collectionFor('tag')
-
+    bibliography = collectionFor('bibliography')
 
     grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 

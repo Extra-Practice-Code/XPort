@@ -1,0 +1,12 @@
+{% extends "generator_base.html" %}
+
+{% block title %}Bibliography{% endblock %}
+
+{% block content %}
+  <h1>Bibliography</h1>
+  <ul>
+    {% for entry in bibliography %}
+      <li>{{ bibliography }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
