@@ -46,5 +46,31 @@
         {% endfor %}   
       </ul>
     {% endif %}
+
+    {% if tag.video %}
+    <h2>Video</h2>
+    <ul class="simplelist">
+      {% for video in tag.video %}
+        <li>
+          <video controls>
+            <source type="{{ video.type }}" src="{{ video.video }}">
+          </video>
+        </li>
+      {% endfor %}   
+    </ul>
+  {% endif %}
+
+  {% if tag.audio %}
+  <h2>Audio</h2>
+  <ul class="simplelist">
+    {% for audio in tag.audio %}
+      <li>
+        <audio controls>
+          <source type="{{ audio.type }}" src="{{ audio.audio }}">
+        </audio>
+      </li>
+    {% endfor %}   
+  </ul>
+{% endif %}
     
 {% endblock %}
