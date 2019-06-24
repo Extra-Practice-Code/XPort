@@ -283,7 +283,8 @@ footer {
   border-bottom: 2px solid black;
   margin-left: -1em;
   margin-right: -1em;
-  margin-top: -1em;
+  position: sticky;
+  top: -1em;
 }
 
 .breadcrumbs ul {
