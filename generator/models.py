@@ -107,10 +107,10 @@ def linkReference(target):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=str(target), target=target.link, className=target.contentType)
 
 def includeVideo(video):
-  return '<video controls><source src="{}" type="{}"></video>'.format(video.source, video.mime)
+  return '<video controls><source src="{}" type="{}"></video>'.format(video.video, video.type)
 
 def includeAudio(audio):
-  return '<audio controls></audio>'
+  return '<audio controls><source src="{}" type="{}"></audio>'.format(audio.audio, audio.type)
 
 def labelReference(target):
   return '<span class="{}">{}</span>'.format(target.contentType, str(target))
@@ -133,7 +133,7 @@ def renderReference(target):
 def parseReferenceMetadata (raw):
   data = {}
 
-  for m in re.finditer(r'(\w\._-+):([^\|]+)', raw):
+  for m in re.finditer(r'([\w\._-]+):([^\|]+)', raw):
     key = m.group(1)
     value = m.group(2)
 
@@ -173,7 +173,7 @@ def parseReference(match):
 def resolveReferences (content):
   # return content
   if content:
-    return mark_safe(re.sub(r'\[\[(\w\._-+):([^\|]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
+    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content
@@ -221,7 +221,7 @@ class Model(object):
 
   @property
   def content (self):
-    return resolveReferences(self._content)
+    return self._content
 
   def setMetadata(self, metadata=None):
     if metadata:
@@ -236,7 +236,7 @@ class Model(object):
       self.setMetadata(metadata)
     if content:
       self.empty = False
-      self.content = content
+      self.content =  resolveReferences(content)
     if source_path:
       self.source_path = source_path
 
@@ -459,12 +459,28 @@ class Bibliography (Model):
 
 class Video (Model):
   contentType = 'video'
+  keyField = 'video'
+  labelField = 'video'
   
   metadataFields = {
-    'source': fields.Single(fields.StringField()),
+    'video': fields.Single(fields.StringField()),
     'type': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'videos'),
-    'produser': multiLinkMultiReverse('produser', 'videos')
+    'title': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'video'),
+    'produser': multiLinkMultiReverse('produser', 'video')
+  }
+
+class Audio (Model):
+  contentType = 'audio'
+  keyField = 'audio'
+  labelField = 'audio'
+
+  metadataFields = {
+    'audio': fields.Single(fields.StringField()),
+    'type': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'audio'),
+    'produser': multiLinkMultiReverse('produser', 'audio')
   }
 
 # Perhaps include the sort in the collection?

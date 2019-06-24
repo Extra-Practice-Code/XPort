@@ -44,4 +44,17 @@
         {% endfor %}   
       </ul>
     {% endif %}
+
+    {% if produser.video %}
+      <h2>Video</h2>
+      <ul class="simplelist">
+        {% for video in produser.video %}
+          <li>
+            <video controls>
+              <source type="{{ video.type }}" src="{{ video.video }}">
+            </video>
+          </li>
+        {% endfor %}   
+      </ul>
+    {% endif %}
 {% endblock %}
