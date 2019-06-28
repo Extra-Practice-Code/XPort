@@ -104,14 +104,19 @@ def includeVideo(video):
 def includeAudio(audio):
   return '<audio controls><source src="{}" type="{}"></audio>'.format(audio.audio, audio.type)
 
+def includeImage(image):
+  return '<img src="{}" />'.format(image.image)
+
 def labelReference(target):
   return '<span class="{}">{}</span>'.format(target.contentType, str(target))
 
 def renderReference(target):
   if target.contentType == 'video':
     return includeVideo(target)
-  if target.contentType == 'audio':
+  elif target.contentType == 'audio':
     return includeAudio(target)
+  elif target.contentType == 'image':
+    return includeImage(target)
   elif target.contentType == 'bibliography':
     return labelReference(target)
   else:
