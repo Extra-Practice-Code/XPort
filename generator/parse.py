@@ -2,8 +2,8 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError
-from .utils import info, debug, error
+from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes
+from .utils import info, debug, error, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
@@ -11,6 +11,8 @@ from py_etherpad import EtherpadLiteClient
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.safestring import mark_safe
 from etherpadlite.models import Pad
+
+from .settings import DEFAULT_CONTENT_TYPE
 
 from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
@@ -28,6 +30,10 @@ from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
   TODO: decouple metadata parsing and linking. To make sure all data is seen
   before linking is performed.
 
+
+  If both keys and labels are used to address models. Depending the order of
+  encountering we might create an instance for the label and another for the
+  key. Especially when the label / title is later changed.
 
 """
 
@@ -52,18 +58,31 @@ def parse_pads ():
         meta = md.Meta
         meta['pk'] = pad.pk
 
-        if 'type' not in meta:
-          meta['type'] = ['pad']
+        # if the first line of the metadata is a known contenttype
+        # use it as such. It's value becomes the key and potetntially
+        # the label
+        firstMetaKey, firstMetaValue = list(meta.items())[0]
 
-        if meta['type'] == ['biography']:
-          meta['type'] = ['produser']
+        if firstMetaKey in knownContentTypes:
+          contentType = firstMetaKey
+          key = keyFilter(firstMetaValue)
 
+          if 'type' in meta:
+            warn('Both valid contenttype present in the first row ({0}) as well as a type declaration ({1}), using {0}'.format(contentType, meta['type'][0]), pad.display_slug)
+        else:
+          if 'type' in meta:
+            if meta['type'] == ['biography']:
+              meta['type'] = ['produser']
+            contentType = meta['type'][0]
+          else:
+            contentType = DEFAULT_CONTENT_TYPE
+          key = modelFor(contentType).extractKey(meta)
 
-        collection = collectionFor(meta['type'][0])
-        
-        key = modelFor(meta['type'][0]).extractKey(meta)
+        collection = collectionFor(contentType)
+                
         debug('Extracted key: {}'.format(key))
-        model = collection.get(key)
+        model = collection.get(key=key)
+        
         if model.empty:
           debug('Filling model {}'.format(key))
           model.fill(metadata=meta, content=content, source_path=pad.display_slug)

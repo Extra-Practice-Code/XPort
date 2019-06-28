@@ -1,5 +1,5 @@
 from . import fields
-from .utils import info, debug, CMAGENTA
+from .utils import info, debug, CMAGENTA, keyFilter
 import os.path
 import datetime
 import re
@@ -21,15 +21,6 @@ from generator.settings import SITE_URL
   The result of a reference depends the type, many objects will result
   in a link, while some will result in a tag.
 """
-
-def keyFilter (value):
-  if type(value) is list:
-    return '--'.join([keyFilter(v) for v in value])
-  elif type(value) is str:
-    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', value.lower()))
-  else: 
-    return value
-
 class UnknownContentTypeError(Exception):
   def __init__(self, contentType):
     self.contentType = contentType
@@ -51,17 +42,18 @@ class Link(object):
     self.contentType = contentType
     self.reverse = reverse
   
-  def __call__ (self, targetKey, source): 
-    debug('Link target {}'.format(targetKey), color=CMAGENTA)
-    target = collectionFor(self.contentType).get(targetKey)
+  def __call__ (self, targetLabel, source): 
+    debug('Link target {}'.format(targetLabel), color=CMAGENTA)
+    target = collectionFor(self.contentType).get(label=targetLabel)
     if self.reverse:
       self.reverse(target, source)
     return target
 
 class MultiLink(Link):
-  def __call__ (self, targetKeys, source):
-    debug('Link target keys', targetKeys, color=CMAGENTA)
-    targets = [ collectionFor(self.contentType).get(targetKey) for targetKey in filter(None, targetKeys) ]
+  def __call__ (self, targetLabels, source):
+    debug('Link target keys', targetLabels, color=CMAGENTA)
+    # Filter out empty string keys
+    targets = [ collectionFor(self.contentType).get(label=targetLabel) for targetLabel in filter(None, targetLabels) ]
 
     if self.reverse:
       for target in targets:
@@ -148,9 +140,9 @@ def parseReferenceMetadata (raw):
 
 def parseReference(match):
   contentType = match.group(1)
-  key = match.group(2)
+  label = match.group(2)
   metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
-  target = collectionFor(contentType).get(key)
+  target = collectionFor(contentType).get(label=label)
 
   debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
   # debug('Rendered reference ', renderReference(target))
@@ -171,6 +163,9 @@ def parseReference(match):
 # [[video:]]
 
 # switch between reference type and inclusion types
+
+def expandTags (content):
+  return re.sub(r'\[\[([\w\._\-]+)\]\]', '[[tags: \\1]]', content)
 
 def resolveReferences (content):
   # return content
@@ -315,8 +310,14 @@ class Collection(object):
     Retreive a model from the collection with the given label.
     If instantiate is set to true an empty model will be created.
   """
-  def get (self, label):
-    key = keyFilter(label)
+  def get (self, key = None, label = None):
+    if not label and not key:
+      raise(AttributeError('Can not retreive a model without a key or a label.'))
+    elif not label:
+      label = key
+    elif not key:
+      key = keyFilter(label)
+
     if self.has(key):
       debug('Found entry for {}'.format(key))
       return self.index[key]
@@ -364,7 +365,28 @@ class Event (Model):
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
+    'end_date': fields.Single(fields.DateField()),
+    'time': fields.Single(fields.TimeField()),
     'produser': multiLinkMultiReverse('produser', 'events'),
+    'participant': multiLinkMultiReverse('produser', 'events_participant'),
+    'event': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.StringField()),
+    'summary': fields.Single(fields.MarkdownField()),
+    'location': fields.Single(fields.StringField()),
+    'address': fields.StringField(),
+    'tags': multiLinkMultiReverse('tag', 'events'),
+    'bibliography': multiLinkMultiReverse('bibliography', 'events'),
+  }
+
+class ProgrammeItem (Model):
+  contentType = 'programme_item'
+
+  metadataFields = {
+    'date': fields.Single(fields.DateField()),
+    'end_date': fields.Single(fields.DateField()),
+    'time': fields.Single(fields.TimeField()),
+    'produser': multiLinkMultiReverse('produser', 'events'),
+    'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': fields.Single(fields.StringField()),
     'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
@@ -485,11 +507,35 @@ class Audio (Model):
     'produser': multiLinkMultiReverse('produser', 'audio')
   }
 
+class Image (Model):
+  contentType = 'image'
+  keyField = 'image'
+  labelField = 'image'
+
+  metadataFields = {
+    'image': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'image'),
+    'produser': multiLinkMultiReverse('produser', 'image')
+  }
+
+class Text (Model):
+  contentType = 'text'
+  keyField = 'title'
+  labelField = 'title'
+
+  metadataFields = {
+    'title': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'image'),
+    'produser': multiLinkMultiReverse('produser', 'text'),
+    'event': multiLinkMultiReverse('event', 'text')
+  }
+
 # Perhaps include the sort in the collection?
 # Might also need to include the outputfolder here
 # rather than on the model?
 contentTypes = {
   'event': { 'model': Event, 'collection': Collection(Event) },
+  'programme-item': { 'model': ProgrammeItem, 'collection': Collection(ProgrammeItem) },
   'produser': { 'model': Produser, 'collection': Collection(Produser) },
   'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
   'pad': { 'model': Pad, 'collection': Collection(Pad) },
@@ -498,16 +544,21 @@ contentTypes = {
   'bibliography': { 'model': Bibliography, 'collection': Collection(Bibliography) },
   'video': { 'model': Video, 'collection': Collection(Video) },
   'audio': { 'model': Audio, 'collection': Collection(Audio) },
+  'image': { 'model': Image, 'collection': Collection(Image) },
+  'text': { 'model': Text, 'collection': Collection(Text) },
+  'note': { 'model': Note, 'collecion': Collection(Note) },
 }
 
+knownContentTypes = contentTypes.keys()
+
 def collectionFor (contentType):
-  if contentType in contentTypes:
+  if contentType in knownContentTypes:
     return contentTypes[contentType]['collection']
   else:
     raise UnknownContentTypeError(contentType)
 
 def modelFor (contentType):
-  if contentType in contentTypes:
+  if contentType in knownContentTypes:
     return contentTypes[contentType]['model']
   else:
     raise UnknownContentTypeError(contentType)
