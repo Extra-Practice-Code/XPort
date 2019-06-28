@@ -52,7 +52,7 @@ def generate_single_pages (collection, template, outputdir, make_context):
   for model in collection.models:
     output(os.path.join(outputdir, model.prefix, '{}.html'.format(model.key)), template, make_context(model))
 
-produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', ' qpartner']
+produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
 
 def generate ():
   basedir = os.path.join(BASE_DIR, 'generator')

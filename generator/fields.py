@@ -1,11 +1,21 @@
+# -*- coding: utf-8 -*-
+
 FIELD_DATE_FORMAT = '%d-%m-%Y'
 FIELD_DATE_FORMAT_ALT = '%d %b %Y'
 FIELD_TIME_FORMAT = '%H:%M'
 
 import datetime
-
+import re
 import markdown
 from django.utils.safestring import mark_safe
+
+class TimeRange(object):
+  def __init__ (self, start, end):
+    self.start = start
+    self.end = end
+
+  def __str__ (self):
+    return '{} - {}'.format(self.start, self.end)
 
 class Field (object):
   def __init__ (self, default = []):
@@ -53,7 +63,13 @@ class DateTimeField (Field):
 
 class TimeField (Field):
   def parse (self, value):
-    return datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time()
+    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―]\s*(\d{1,2}\:\d{1,2})', value)
+    if m:
+      start = datetime.datetime.strptime(m.group(1), FIELD_TIME_FORMAT).time()
+      end = datetime.datetime.strptime(m.group(2), FIELD_TIME_FORMAT).time()
+      return TimeRange(start, end)
+    else:
+      return datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time()
 
 class IntField (Field):
   def parse (self, value):

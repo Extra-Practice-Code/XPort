@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from .settings import SHOW_LOG_MESSAGES
 from .settings import SHOW_DEBUG_MESSAGES
 
@@ -12,17 +14,17 @@ CEND = '\033[0m'
 
 def info(*args):
   if SHOW_LOG_MESSAGES:
-    print(*args)
+    print(*[str(a).encode('utf-8') for a in args])
 
 def debug(*args, color=CCYAN):
   if SHOW_DEBUG_MESSAGES:
-    print(color, *args, CEND)
+    print(color, *[str(a).encode('utf-8') for a in args], CEND)
 
 def warn(*args):
-  print(CYELLOW, *args, CEND)
+  print(CYELLOW, *[str(a).encode('utf-8') for a in args], CEND)
 
 def error(*args):
-  print(CRED, *args, CEND)
+  print(CRED, *[str(a).encode('utf-8') for a in args], CEND)
 
 
 def regroup (iterable, field):
