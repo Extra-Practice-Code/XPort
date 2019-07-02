@@ -7,7 +7,11 @@
         <h2 class="produser">
           <a href="{{ trajectory.produser.link }}">{{ trajectory.produser }}</a>
         </h2>
-        {{ trajectory.content }}
+        {% if trajectory.summary %}
+          {{ trajectory.summary }}
+        {% else %}
+          {{ trajectory.content }}
+        {% endif %}
       </section>
     {% endfor %}
   </section>

@@ -56,7 +56,7 @@ try:
 except ImportError:
     BACKUP_DIR = None
 
-from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR, MAX_PAD_SAVE_TRIES
+from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR, MAX_PAD_SAVE_TRIES, API_LOCAL_URL
 
 """
 Set up an HTMLParser for the sole purpose of unescaping
@@ -98,7 +98,7 @@ def insertPad (pad, tree):
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
     if not pad.is_public:
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
         tail = '' if n == 0 else '-{}'.format(n)
         publicid = pad.name+tail
 
@@ -117,7 +117,7 @@ def makePadPublic (pad, n=0):
 
 def makePadPrivate(pad):
     if pad.is_public:
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
         res = epclient.movePad(pad.publicpadid, pad.padid, force=True)
 
         pad.is_public = False
@@ -405,7 +405,7 @@ def pad_write(request, pad):
     expires = datetime.datetime.utcnow() + datetime.timedelta(
         seconds=config.SESSION_LENGTH
     )
-    epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+    epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
 
     # Try to use existing session as to allow editing multiple pads at once
     makeNewSessionID = False
@@ -510,7 +510,7 @@ def pad_read(request, mode="r", slug=None):
     pad = get_object_or_404(Pad, display_slug=slug)
 
     padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
-    epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+    epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
 
     # Etherpad gives us authorIDs in the form ['a.5hBzfuNdqX6gQhgz', 'a.tLCCEnNVJ5aXkyVI']
     # We link them to the Django users DjangoEtherpadLite created for us
@@ -717,7 +717,7 @@ def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
         pad = Pad.objects.get(display_slug=slug)
         padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
         return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
     except:
         # If there is no pad called "css", loads a default css file

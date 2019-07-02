@@ -459,7 +459,7 @@ class Note (Model):
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('event', 'notes'),
-    'project-item': linkMultiReverse('project-item', 'notes'),
+    'programme-item': linkMultiReverse('programme-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
     'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
     'title': fields.Single(fields.StringField()),
