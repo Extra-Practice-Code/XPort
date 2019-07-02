@@ -10,7 +10,7 @@
         {% if project.link %}
           <a href="{{ project.link }}">{{ project.project }}</a>
         {% else %}
-          {{ project.project }}
+          <a href="{{ project.project }}">{{ project.project }}</a>
         {% endif %}
       </li>
     {% endfor %}

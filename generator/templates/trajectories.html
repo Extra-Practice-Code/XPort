@@ -1,0 +1,15 @@
+{% extends "generator_base.html" %}
+
+{% block content %}
+  <h1>Trajectories</h1>
+  <ul class="simplelist">
+  {% for trajectory in trajectories %}
+    <li>
+      <h2 class="produser">
+        <a href="{{ trajectory.produser.link }}" class="produser">{{ trajectory.produser }}</a>
+      </h2>
+      {{ trajectory.content }}
+    </li>
+  {% endfor %}
+  </ul>
+{% endblock %}

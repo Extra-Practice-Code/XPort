@@ -68,10 +68,10 @@
       {% endfor %}   
     </ul>
   {% endif %}
-  {% if event.notes %}
+  {% if produser.notes %}
     <h2>Notes</h2>
     <ul>
-      {% for note in event.notes %}
+      {% for note in produser.notes %}
         <li>
           <a href="{{ note.link }}" class="note">{{ note }}</a>
         </li>

@@ -83,6 +83,16 @@
       </li>
     {% endfor %}   
   </ul>
-{% endif %}
+  {% endif %}
+  {% if produser.notes %}
+    <h2>Notes</h2>
+    <ul>
+      {% for note in tag.notes %}
+        <li>
+          <a href="{{ note.link }}" class="note">{{ note }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
     
 {% endblock %}
