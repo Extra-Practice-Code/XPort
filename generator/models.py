@@ -180,7 +180,6 @@ def parseReference(match):
 # switch between reference type and inclusion types
 
 def expandTags (content):
-  print(re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content))
   return re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content)
 
 def resolveReferences (content):
