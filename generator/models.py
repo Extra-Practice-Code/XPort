@@ -84,7 +84,8 @@ class ReverseMultiLink(ReverseLink):
     else:
       links = []
     
-    links.append(target)
+    if target not in links:
+      links.append(target)
     
     setattr(obj, self.linkName, links)
 
@@ -171,8 +172,9 @@ def parseReference(match, source=None):
 
   if contentType == 'tag' and 'tags' in source.metadataFields:
     debug('Trying to extend tags')
-    old = source.tags if hasattr(source, 'tags') else []
-    source.tags = old + source.metadataFields['tags']([label], source)
+    current = source.tags if hasattr(source, 'tags') else []
+    if target not in current:
+      source.tags = current + source.metadataFields['tags']([label], source)
 
   # return ''
   return renderReference(target)
