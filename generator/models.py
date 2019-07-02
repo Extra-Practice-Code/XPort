@@ -154,8 +154,8 @@ def parseReferenceMetadata (raw):
   return data
 
 def parseReference(match):
-  contentType = match.group(1)
-  label = match.group(2)
+  contentType = match.group(1).strip()
+  label = match.group(2).strip()
   metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
   target = collectionFor(contentType).get(label=label)
 
@@ -180,12 +180,13 @@ def parseReference(match):
 # switch between reference type and inclusion types
 
 def expandTags (content):
-  return re.sub(r'\[\[([\w\._\-]+)\]\]', '[[tags: \\1]]', content)
+  print(re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content))
+  return re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content)
 
 def resolveReferences (content):
   # return content
   if content:
-    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', parseReference, content))
+    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', parseReference, expandTags(content)))
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content
