@@ -38,16 +38,21 @@
 {% endblock %}
 
 {% block sidebar %}
-  <ul>
+  <ul class="programme-item-list">
     {% for item in event.programmeItems %}
       <li>
         {{ item.time }} {{ item.title }}
+        <p class="event-infos">
+          {% for produser in item.produser %}
+          <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
+          {% endfor %}
+        </p>
         <p>
           {{ item.content }}
         </p>
         {% if item.notes %}
         <ul>
-          {% for note in event.notes %}
+          {% for note in item.notes %}
           <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
           {% endfor %}
         </ul>
