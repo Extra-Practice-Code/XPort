@@ -5,7 +5,7 @@
 {% block content %}
   <nav class="breadcrumbs">
     <ul>
-      <li><a href="../events.html">Activities</a></li>
+      <li><a href="../activities.html">Activities</a></li>
       <li>{{ event.title }}</li>
     </ul>
   </nav>
@@ -29,6 +29,8 @@
   {{ event.summary }}
   {{ event.content }}
   {% if event.notes %}
+  <h2>Attached notes</h2>
+  <p>Read more about this event</p>
   <ul>
     {% for note in event.notes %}
     <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
@@ -42,7 +44,7 @@
     {% for item in event.programmeItems %}
       <li>
         {{ item.time }} {{ item.title }}
-        <p class="event-infos">
+        <p class="event-infos"> 
           {% for produser in item.produser %}
           <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
           {% endfor %}
@@ -51,6 +53,8 @@
           {{ item.content }}
         </p>
         {% if item.notes %}
+        <h2>Attached notes</h2>
+        <p>Read more about this event</p>
         <ul>
           {% for note in item.notes %}
           <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>

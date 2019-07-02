@@ -275,6 +275,7 @@ main {
 
 .two-columns main {
   grid-column: content-start / content-middle;
+  border-right: 2px solid black;
 }
 
 .two-columns aside {
@@ -390,12 +391,13 @@ a.tag {
 
 .trajectory-list {
   display: grid;
-  grid-auto-columns: minmax(200px, 400px);
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1em;
 }
 
 .trajectory-list section.trajectory {
   max-height: 300px;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .programme-item-list {

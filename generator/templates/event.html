@@ -29,6 +29,8 @@
   {{ event.summary }}
   {{ event.content }}
   {% if event.notes %}
+  <h2>Attached notes</h2>
+  <p>Read more about this event</p>
   <ul>
     {% for note in event.notes %}
     <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
