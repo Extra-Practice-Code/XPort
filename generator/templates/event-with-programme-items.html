@@ -1,4 +1,4 @@
-{% extends "generator_base.html" %}
+{% extends "generator_base_two_columns.html" %}
 
 {% block title %}Caveat → activities → {{ event.title }}{% endblock %}
 
@@ -35,4 +35,24 @@
     {% endfor %}
   </ul>
   {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+  <ul>
+    {% for item in event.programmeItems %}
+      <li>
+        {{ item.time }} {{ item.title }}
+        <p>
+          {{ item.content }}
+        </p>
+        {% if item.notes %}
+        <ul>
+          {% for note in event.notes %}
+          <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

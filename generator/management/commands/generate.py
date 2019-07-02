@@ -48,8 +48,8 @@ def output (path, template, context):
     info('Writing {} -> {}'.format(template, path))
     w.write(loader.render_to_string(template, context))
 
-def generate_single_pages (collection, template, outputdir, make_context):
-  for model in collection.models:
+def generate_single_pages (models, template, outputdir, make_context):
+  for model in models:
     output(os.path.join(outputdir, model.prefix, '{}.html'.format(model.key)), template, make_context(model))
 
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
@@ -67,6 +67,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'events'))
   os.mkdir(os.path.join(outputdir, 'pages'))
   os.mkdir(os.path.join(outputdir, 'tags'))
+  os.mkdir(os.path.join(outputdir, 'notes'))
 
   print('Copying static files')
 
@@ -84,6 +85,8 @@ def generate ():
   pages = collectionFor('page')
   tags = collectionFor('tag')
   bibliography = collectionFor('bibliography')
+  externalProjects = collectionFor('external-project')
+  notes = collectionFor('notes')
 
   grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
@@ -91,6 +94,7 @@ def generate ():
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
   output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=lambda m: getattr(m, m.labelField)) })
   output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=lambda m: getattr(m, m.labelField)) })
+  output(os.path.join(outputdir, 'external-projects.html'), 'external-projects.html', { 'externalProjects': sorted(externalProjects.models, key=lambda m: getattr(m, m.labelField)) })
   # for produser in produsers.models:
   #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
 
@@ -98,10 +102,13 @@ def generate ():
   #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
 
-  generate_single_pages(produsers, 'produser.html', outputdir, lambda produser: { 'produser': produser })
-  generate_single_pages(events, 'event.html', outputdir, lambda event: { 'event': event })
-  generate_single_pages(pages, 'page.html', outputdir, lambda page: { 'page': page })
-  generate_single_pages(tags, 'tag.html', outputdir, lambda tag: { 'tag': tag })
+  generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
+  generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
+  generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
+  generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
+  generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event })
+  generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
+  
 
   def isdate (candidate):
     return type(candidate) is datetime.date

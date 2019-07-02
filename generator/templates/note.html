@@ -1,0 +1,14 @@
+{% extends "generator_base.html" %}
+{% block title %}
+  Caveat → {{ note.title }}
+{% endblock %}
+{% block content %}
+  <nav class="breadcrumbs">
+    <ul>
+    </ul>
+  </nav>
+    <h1>{{ note.title }}</h1>
+    {{ note.content }}
+{% endif %}
+    
+{% endblock %}

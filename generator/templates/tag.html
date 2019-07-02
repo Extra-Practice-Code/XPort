@@ -1,6 +1,6 @@
 {% extends "generator_base.html" %}
 {% block title %}
-  Caveat → Produsers → {{ tag.tag }}
+  Caveat → {{ tag.tag }}
 {% endblock %}
 {% block content %}
   <nav class="breadcrumbs">
@@ -10,6 +10,9 @@
     </ul>
   </nav>
     <h1>{{ tag.tag }}</h1>
+    {% if tag.content %}
+    {{ tag.content }}
+    {% endif %}
     {% if tag.produsers %}
       <h2>Produsers</h2>
       <ul class="simplelist">
@@ -20,7 +23,7 @@
     {% endif %}
     
     {% if tag.events %}
-      <h2>Events</h2>
+      <h2>Activities</h2>
       <ul class="simplelist">
         {% for event in tag.events %}
           <li><a href="{{ event.link }}">{{ event }}</a></li>

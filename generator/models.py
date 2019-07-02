@@ -1,5 +1,5 @@
 from . import fields
-from .utils import info, debug, CMAGENTA, keyFilter
+from .utils import info, debug, CMAGENTA, keyFilter, try_attributes
 import os.path
 import datetime
 import re
@@ -106,6 +106,9 @@ def includeAudio(audio):
 
 def includeImage(image):
   return '<img src="{}" />'.format(image.image)
+
+def includeExternalProject(project):
+  return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), project.project)
 
 def labelReference(target):
   return '<span class="{}">{}</span>'.format(target.contentType, str(target))
@@ -384,7 +387,7 @@ class Event (Model):
   }
 
 class ProgrammeItem (Model):
-  contentType = 'programme_item'
+  contentType = 'programme-item'
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
@@ -392,7 +395,7 @@ class ProgrammeItem (Model):
     'time': fields.Single(fields.TimeField()),
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participant': multiLinkMultiReverse('produser', 'events_participant'),
-    'event': fields.Single(fields.StringField()),
+    'event': multiLinkMultiReverse('event', 'programmeItems'),
     'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
@@ -437,6 +440,7 @@ class Note (Model):
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('event', 'notes'),
+    'project-item': linkMultiReverse('project-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
     'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
   }
@@ -520,7 +524,19 @@ class Image (Model):
   metadataFields = {
     'image': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'image'),
-    'produser': multiLinkMultiReverse('produser', 'image')
+    'produser': multiLinkMultiReverse('produser', 'image'),
+    'caption': fields.Single(fields.StringField()),
+  }
+
+class ExternalProject (Model):
+  contentType = 'external-project'
+  keyField = 'project'
+  labelField = 'project'
+
+  metadataFields = {
+    'title': fields.Single(fields.StringField()),
+    'link': fields.Single(fields.StringField()),
+    'tags': multiLinkMultiReverse('tag', 'externalProject'),
   }
 
 class Text (Model):
@@ -551,7 +567,8 @@ contentTypes = {
   'audio': { 'model': Audio, 'collection': Collection(Audio) },
   'image': { 'model': Image, 'collection': Collection(Image) },
   'text': { 'model': Text, 'collection': Collection(Text) },
-  'note': { 'model': Note, 'collecion': Collection(Note) },
+  'notes': { 'model': Note, 'collection': Collection(Note) },
+  'external-project': { 'model': ExternalProject, 'collection': Collection(ExternalProject) },
 }
 
 knownContentTypes = contentTypes.keys()

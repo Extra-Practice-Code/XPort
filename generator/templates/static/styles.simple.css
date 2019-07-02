@@ -272,6 +272,17 @@ main {
   overflow-y: auto;
 }
 
+
+.two-columns main {
+  grid-column: content-start / content-middle;
+}
+
+.two-columns aside {
+  grid-row: top / footer;
+  grid-column: content-middle / content-end;
+  overflow-y: auto;
+}
+
 footer {
   border-top: 2px solid;
   grid-column: left / right;

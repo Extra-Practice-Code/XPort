@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-
-FIELD_DATE_FORMAT = '%d-%m-%Y'
-FIELD_DATE_FORMAT_ALT = '%d %b %Y'
-FIELD_TIME_FORMAT = '%H:%M'
-
+from .settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT
 import datetime
 import re
 import markdown
@@ -15,7 +11,15 @@ class TimeRange(object):
     self.end = end
 
   def __str__ (self):
-    return '{} - {}'.format(self.start, self.end)
+    return '{} - {}'.format(self.start.strftime(TIME_OUTPUT_FORMAT), self.end.strftime(TIME_OUTPUT_FORMAT))
+
+
+class Time (object):
+  def __init__ (self, time):
+    self.time = time
+  
+  def __str__ (self):
+    return self.time.strftime(TIME_OUTPUT_FORMAT)
 
 class Field (object):
   def __init__ (self, default = []):
@@ -49,10 +53,13 @@ class Single(object):
 
 class DateField (Field):
   def parse (self, value):
-    try:
-      return datetime.datetime.strptime(value, FIELD_DATE_FORMAT).date()
-    except ValueError:
-      return datetime.datetime.strptime(value, FIELD_DATE_FORMAT_ALT).date()
+    for frm in FIELD_DATE_FORMATS:
+      try:
+        return datetime.datetime.strptime(value, frm).date()
+      except ValueError:
+        pass
+
+    return None
 
 class DateTimeField (Field):
   def parse (self, value):
@@ -63,13 +70,13 @@ class DateTimeField (Field):
 
 class TimeField (Field):
   def parse (self, value):
-    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―]\s*(\d{1,2}\:\d{1,2})', value)
+    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―|─]\s*(\d{1,2}\:\d{1,2})', value)
     if m:
       start = datetime.datetime.strptime(m.group(1), FIELD_TIME_FORMAT).time()
       end = datetime.datetime.strptime(m.group(2), FIELD_TIME_FORMAT).time()
       return TimeRange(start, end)
     else:
-      return datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time()
+      return Time(datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time())
 
 class IntField (Field):
   def parse (self, value):
