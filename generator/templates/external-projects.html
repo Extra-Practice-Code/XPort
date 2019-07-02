@@ -6,7 +6,13 @@
   <h1>Projects & Initiatives</h1>
   <ul>
     {% for project in externalProjects %}
-      <li>{{ project }}</li>
+      <li>
+        {% if project.link %}
+          <a href="{{ project.link }}">{{ project.project }}</a>
+        {% else %}
+          {{ project.project }}
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
 {% endblock %}

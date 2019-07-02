@@ -107,6 +107,9 @@ def includeAudio(audio):
 def includeImage(image):
   return '<img src="{}" />'.format(image.image)
 
+def includeQuestion(question):
+  return '<span class="question">{}</span>'.format(question.question)
+
 def includeExternalProject(project):
   return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), project.project)
 
@@ -120,6 +123,10 @@ def renderReference(target):
     return includeAudio(target)
   elif target.contentType == 'image':
     return includeImage(target)
+  elif target.contentType == 'question':
+    return includeQuestion(target)
+  elif target.contentType == 'external-project':
+    return includeExternalProject(target)
   elif target.contentType == 'bibliography':
     return labelReference(target)
   else:
@@ -369,7 +376,7 @@ class Collection(object):
 
 class Event (Model):
   contentType = 'event'
-  prefix = 'events'
+  prefix = 'activities'
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
@@ -537,7 +544,7 @@ class ExternalProject (Model):
   labelField = 'project'
 
   metadataFields = {
-    'title': fields.Single(fields.StringField()),
+    'project': fields.Single(fields.StringField()),
     'link': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'externalProject'),
   }
@@ -552,6 +559,15 @@ class Text (Model):
     'tags': multiLinkMultiReverse('tag', 'image'),
     'produser': multiLinkMultiReverse('produser', 'text'),
     'event': multiLinkMultiReverse('event', 'text')
+  }
+
+class Question (Model):
+  contentType = 'question'
+  keyField = 'question'
+  labelField = 'question'
+
+  metadataFields = {
+    'question': fields.Single(fields.StringField())
   }
 
 # Perhaps include the sort in the collection?
@@ -572,6 +588,7 @@ contentTypes = {
   'text': { 'model': Text, 'collection': Collection(Text) },
   'notes': { 'model': Note, 'collection': Collection(Note) },
   'external-project': { 'model': ExternalProject, 'collection': Collection(ExternalProject) },
+  'question': { 'model': Question, 'collection': Collection(Question) },
 }
 
 knownContentTypes = contentTypes.keys()

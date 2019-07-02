@@ -64,7 +64,7 @@ def generate ():
   
   os.mkdir(outputdir)
   os.mkdir(os.path.join(outputdir, 'produsers'))
-  os.mkdir(os.path.join(outputdir, 'events'))
+  os.mkdir(os.path.join(outputdir, 'activities'))
   os.mkdir(os.path.join(outputdir, 'pages'))
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
@@ -95,6 +95,7 @@ def generate ():
   output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=lambda m: getattr(m, m.labelField)) })
   output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=lambda m: getattr(m, m.labelField)) })
   output(os.path.join(outputdir, 'external-projects.html'), 'external-projects.html', { 'externalProjects': sorted(externalProjects.models, key=lambda m: getattr(m, m.labelField)) })
+  
   # for produser in produsers.models:
   #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
 
@@ -119,6 +120,8 @@ def generate ():
     else:
       return datetime.date(1,1,1)
 
+  output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  
   output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
 
   if not DEBUG:
