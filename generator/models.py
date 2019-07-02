@@ -437,12 +437,15 @@ class Pad (Model):
 
 class Note (Model):
   contentType = 'note'
+  labelField = 'title'
+  prefix = 'notes'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'notes'),
     'event': linkMultiReverse('event', 'notes'),
     'project-item': linkMultiReverse('project-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
     'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
+    'title': fields.Single(fields.StringField()),
   }
 
 class Page (Model):
