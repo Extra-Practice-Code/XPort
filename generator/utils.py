@@ -57,7 +57,7 @@ def try_attributes (obj, attributes):
 def keyFilter (value):
   if type(value) is list:
     return '--'.join([keyFilter(v) for v in value])
-  elif type(value) is str:
-    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', value.lower()))
+  elif type(value) is int:
+    return str(value)
   else: 
-    return value
+    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower()))
