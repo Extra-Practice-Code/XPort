@@ -21,6 +21,15 @@
         {% endfor %}
       </ul>
     {% endif %}
+
+    {% if tag.trajectories %}
+      <h2>Trajectories</h2>
+      <ul class="simplelist">
+        {% for trajectory in tag.trajectories %}
+          <li><a href="{{ trajectory.produser.link }}">{{ trajectory.produser }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     
     {% if tag.events %}
       <h2>Activities</h2>

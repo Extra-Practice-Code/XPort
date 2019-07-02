@@ -6,6 +6,8 @@ import re
 # from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
+from functools import partial
+
 import markdown
 from django.utils.safestring import mark_safe
 
@@ -153,7 +155,7 @@ def parseReferenceMetadata (raw):
   
   return data
 
-def parseReference(match):
+def parseReference(match, source=None):
   contentType = match.group(1).strip()
   label = match.group(2).strip()
   metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
@@ -163,8 +165,14 @@ def parseReference(match):
   # debug('Rendered reference ', renderReference(target))
 
   # Insert the metadata on the object ?
-  if metadata and target.empty  :
+  if metadata and target.empty:
     target.fill(metadata)
+
+
+  if contentType == 'tag' and 'tags' in source.metadataFields:
+    debug('Trying to extend tags')
+    old = source.tags if hasattr(source, 'tags') else []
+    source.tags = old + source.metadataFields['tags']([label], source)
 
   # return ''
   return renderReference(target)
@@ -182,10 +190,10 @@ def parseReference(match):
 def expandTags (content):
   return re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content)
 
-def resolveReferences (content):
+def resolveReferences (content, source=None):
   # return content
   if content:
-    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', parseReference, expandTags(content)))
+    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, source=source), expandTags(content)))
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content
@@ -248,7 +256,7 @@ class Model(object):
       self.setMetadata(metadata)
     if content:
       self.empty = False
-      self.content =  resolveReferences(content)
+      self.content = resolveReferences(content, source=self)
     if source_path:
       self.source_path = source_path
 
@@ -429,7 +437,7 @@ class Trajectory (Model):
   contentType = 'trajectory'
   metadataFields = {
     'produser': linkMultiReverse('produser', 'trajectories'),
-    'tags': fields.StringField()
+    'tags': multiLinkMultiReverse('tag', 'trajectories')
   }
 
 class Pad (Model):
