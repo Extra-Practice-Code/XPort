@@ -63,18 +63,17 @@ def generate ():
     shutil.rmtree(outputdir)
   
   os.mkdir(outputdir)
+  
+  print('Copying static files')
+  shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
+
+  print('Parsing pads')
   os.mkdir(os.path.join(outputdir, 'produsers'))
   os.mkdir(os.path.join(outputdir, 'activities'))
   os.mkdir(os.path.join(outputdir, 'pages'))
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
-
-  print('Copying static files')
-
-  shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
-
-  print('Parsing pads')
-
+  
   parse_pads()
 
   print('Read pads')

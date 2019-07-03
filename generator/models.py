@@ -189,13 +189,72 @@ def parseReference(match, source=None):
 
 # switch between reference type and inclusion types
 
+def formatTimecode(hours=None, minutes=None, seconds=None):
+  out = '{1:0>2d}:{0:0>2d}'.format(int(seconds) if seconds else 0, int(minutes) if minutes else 0)
+  
+  if hours:
+    out = '{:d}:{}'.format(int(hours), out) 
+      
+  return out
+
+# Formats
+# 7 → 7 seconds
+# 7:00 → 7 minutes
+# 1:07:00 → 1 hour, 7 minutes
+# 1h7 → 1 hour, 7 minutes
+def parseTimecodeString (content):
+  if 'h' in content:
+    hours, tail = content.split('h')
+
+    if ':' in tail:
+      minutes, seconds = tail.split(':', 2)
+    else:
+      minutes = tail
+      seconds = 0
+  else:
+    parts = content.split(':', 3)
+
+    if parts:
+      if len(parts) == 3:
+        hours, minutes, seconds = parts
+      elif len(parts) == 2:
+        hours = 0
+        minutes, seconds = parts
+      else:
+        hours = 0
+        minutes = 0
+        seconds = parts[0]
+    else:
+      hours = 0
+      minutes = 0
+      seconds = 0
+
+  return (int(hours), int(minutes), int(seconds))
+
+def inSeconds(hours = 0, minutes = 0, seconds = 0):
+  return max(0, seconds) + max(0, minutes * 60) + max(0, hours * 3600)
+
+def insertTimecode (matches):
+  hours, minutes, seconds = parseTimecodeString(matches.group(1))
+
+  return '<span class="timecode" data-time="{0}">{1}</span>'.format(inSeconds(hours, minutes, seconds), formatTimecode(hours, minutes, seconds))
+
+def parseTimecodes (content):
+  return re.sub(r'\[\[t(?:imecode)?\s*:\s*([\d:]+)\]\]', insertTimecode, content)
+
+def parseShortTimecodes (content):
+  return re.sub(r'\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\]', insertTimecode, content)
+
 def expandTags (content):
-  return re.sub(r'\[\[([^:\]]+)\]\]', '[[tag: \\1]]', content)
+  return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[tag: \\1]]', content)
 
 def resolveReferences (content, source=None):
   # return content
   if content:
-    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, source=source), expandTags(content)))
+    content = expandTags(content)
+    content = parseShortTimecodes(content)
+    content = parseTimecodes(content)
+    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, source=source), content))
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return content

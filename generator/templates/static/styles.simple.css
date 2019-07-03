@@ -410,3 +410,18 @@ a.tag {
   border-bottom: 2px solid black;
   padding: 1em;
 }
+
+.timecode {
+	font-size: 75%;
+	border: 1px solid;
+	padding: .1em .25em;
+	/* margin-right: .5em; */
+	/* margin-left: -.5em; */
+	letter-spacing: 1px;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+
+.timecode:hover {
+  color: var(--red-question);
+}
