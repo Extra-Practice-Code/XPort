@@ -6,16 +6,15 @@ import os.path
 import shutil
 
 from math import inf
-
+from generator.index import make_index
 
 import markdown
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 from generator.parse import parse_pads
 from generator.models import collectionFor
-from generator.utils import info, regroup, try_attributes
+from generator.utils import info, regroup, try_attributes, render_to_string
 
-from django.template import loader
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 from django.core.management.base import BaseCommand, CommandError
@@ -24,7 +23,6 @@ from django.core.management import call_command
 from etherpadlite.models import Pad 
 
 from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
-from generator.settings import SITE_URL, MENU_ITEMS
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -40,13 +38,11 @@ import datetime
 # Go through them, record information
 # Feed content to templates
 
-def output (path, template, context):
-  context['SITE_URL'] = SITE_URL
-  context['MENU_ITEMS'] = MENU_ITEMS
-  
+def output (path, template, context):  
   with open(path, 'w', encoding='utf-8') as w:
     info('Writing {} -> {}'.format(template, path))
-    w.write(loader.render_to_string(template, context))
+    w.write(render_to_string(template, context))
+
 
 def generate_single_pages (models, template, outputdir, make_context):
   for model in models:
@@ -74,7 +70,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
   
-  parse_pads()
+  models = parse_pads()
 
   print('Read pads')
   print('Generating output')
@@ -130,6 +126,9 @@ def generate ():
     call_command('collectstatic', interactive=False)
 
   print('Done')
+
+  with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
+    w.write(make_index(models))
 
 class Command(BaseCommand):
   args = ''

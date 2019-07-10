@@ -20,6 +20,7 @@ FIELD_DATE_FORMATS = ['%d-%m-%Y', '%d %b %Y']
 FIELD_TIME_FORMAT = '%H:%M'
 
 TIME_OUTPUT_FORMAT = '%H:%M'
+DATE_OUTPUT_FORMAT = '%d %b %Y'
 
 try:
     LOCAL_SETTINGS

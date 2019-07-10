@@ -1,5 +1,5 @@
 from . import fields
-from .utils import info, debug, CMAGENTA, keyFilter, try_attributes
+from .utils import info, debug, CMAGENTA, keyFilter, try_attributes, render_to_string
 import os.path
 import datetime
 import re
@@ -105,13 +105,13 @@ def includeVideo(video):
   return '<video controls><source src="{}" type="{}"></video>'.format(video.video, video.type)
 
 def includeAudio(audio):
-  return '<audio controls><source src="{}" type="{}"></audio>'.format(audio.audio, audio.type)
+  return render_to_string('snippets/audio.html', { 'audio': audio })
 
 def includeImage(image):
   return '<img src="{}" />'.format(image.image)
 
 def includeQuestion(question):
-  return '<span class="question">{}</span>'.format(question.question)
+  return render_to_string('snippets/question.html', { 'question': question })
 
 def includeExternalProject(project):
   return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), project.project)
@@ -262,6 +262,7 @@ def resolveReferences (content, source=None):
 class Model(object):
   metadataFields = {}
   _content = None
+  _source_path = None
   keyField = 'id'
   labelField = 'title'
   metadata = {}
@@ -304,6 +305,10 @@ class Model(object):
   def content (self):
     return self._content
 
+  @property
+  def source_path (self):
+    return self._source_path
+
   def setMetadata(self, metadata=None):
     if metadata:
       for key in metadata:
@@ -323,10 +328,12 @@ class Model(object):
 
   def __setattr__ (self, name, value):
     # This might break with the links
-    if name in ['key', 'metadata', 'source_path']:
+    if name in ['key', 'metadata', 'empty']:
       super().__setattr__(name, value)
     elif name == 'content':
       super().__setattr__('_content', value)
+    elif name == 'source_path':
+      super().__setattr__('_source_path', value)
     elif name in self.metadataFields:
       if is_link(self.metadataFields[name]):
         # If it is a link we also include, the obj
@@ -340,14 +347,16 @@ class Model(object):
     if name in self.metadata:
       return self.metadata[name]
     else:
+      print(name)
+      # super().__getattr__(name)
       # debug('Attribute error', name, self.metadata)
       raise AttributeError()
 
   def __str__ (self):
     if hasattr(self, 'labelField') and hasattr(self, self.labelField):
-      return getattr(self, self.labelField)
+      return str(getattr(self, self.labelField))
     elif hasattr(self, self.keyField):
-      return getattr(self, self.keyField)
+      return str(getattr(self, self.keyField))
     else:
       debug('Has not attr for to string {}'.format(self.metadata))
       return super().__str__()
@@ -460,6 +469,7 @@ class Event (Model):
     'address': fields.StringField(),
     'tags': multiLinkMultiReverse('tag', 'events'),
     'bibliography': multiLinkMultiReverse('bibliography', 'events'),
+    'image': fields.Single(fields.StringField()),
   }
 
 class ProgrammeItem (Model):
@@ -470,7 +480,7 @@ class ProgrammeItem (Model):
     'end_date': fields.Single(fields.DateField()),
     'time': fields.Single(fields.TimeField()),
     'produser': multiLinkMultiReverse('produser', 'events'),
-    'participant': multiLinkMultiReverse('produser', 'events_participant'),
+    'participants': multiLinkMultiReverse('produser', 'events_participant'),
     'event': multiLinkMultiReverse('event', 'programmeItems'),
     'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
@@ -504,7 +514,7 @@ class Trajectory (Model):
 class Pad (Model):
   contentType = 'pad'
   metadataFields = {
-    'produser': linkMultiReverse('produser', 'pads'),
+    'produser': multiLinkMultiReverse('produser', 'pads'),
     'event': linkMultiReverse('event', 'pads'),
     'trajectory': linkMultiReverse('trajectory', 'pads'),
     'tags': multiLinkMultiReverse('tag', 'pads'),
@@ -516,7 +526,8 @@ class Note (Model):
   labelField = 'title'
   prefix = 'notes'
   metadataFields = {
-    'produser': linkMultiReverse('produser', 'notes'),
+    'produser': multiLinkMultiReverse('produser', 'notes'),
+    'participants': multiLinkMultiReverse('produser', 'notes_participant'),
     'event': linkMultiReverse('event', 'notes'),
     'programme-item': linkMultiReverse('programme-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),

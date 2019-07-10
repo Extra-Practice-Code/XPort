@@ -2,6 +2,9 @@
 
 from .settings import SHOW_LOG_MESSAGES
 from .settings import SHOW_DEBUG_MESSAGES
+from .settings import SITE_URL, MENU_ITEMS
+
+from django.template import loader
 
 import re
 
@@ -61,3 +64,10 @@ def keyFilter (value):
     return str(value)
   else: 
     return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower()))
+
+
+def render_to_string(template, context):
+  context['SITE_URL'] = SITE_URL
+  context['MENU_ITEMS'] = MENU_ITEMS
+
+  return loader.render_to_string(template, context)

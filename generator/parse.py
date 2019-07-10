@@ -39,7 +39,8 @@ from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
 def parse_pads ():
   epclient = None
-  
+  models = []
+
   for pad in Pad.objects.all():
     if not epclient:
       epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
@@ -82,7 +83,8 @@ def parse_pads ():
                 
         debug('Extracted key: {}'.format(key))
         model = collection.get(key=key)
-        
+        models.append(model)
+
         if model.empty:
           debug('Filling model {}'.format(key))
           model.fill(metadata=meta, content=content, source_path=pad.display_slug)
@@ -95,7 +97,9 @@ def parse_pads ():
         pass
 
     info('Read {}'.format(pad.display_slug))
-
+    
+  return models
+  
 class Command(BaseCommand):
   args = ''
   help = 'Generate a static interpretation of the pads'

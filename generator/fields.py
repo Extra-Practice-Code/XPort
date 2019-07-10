@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT
+from .settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT
 import datetime
 import re
 import markdown
@@ -20,6 +20,22 @@ class Time (object):
   
   def __str__ (self):
     return self.time.strftime(TIME_OUTPUT_FORMAT)
+
+
+class Date (object):
+  def __init__ (self, date):
+    self.date = date
+
+  def __str__ (self):
+    return '{}'.format(self.date.strftime(DATE_OUTPUT_FORMAT))
+
+class DateRange (object):
+  def __init__ (self, start, end):
+    self.start = start
+    self.end = end
+  
+  def __str__ (self):
+    return '{} - {}'.format(self.start, self.end)
 
 class Field (object):
   def __init__ (self, default = []):
