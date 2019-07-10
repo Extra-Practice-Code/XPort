@@ -7,7 +7,7 @@ def display_link (direction, label, link=None):
         direction=direction,
         arrow=arrow,
         label=label,
-        link=link
+        link=link.replace('#', '%23')
       )
   else:
     return '<dd>{direction} {arrow} {label}</dd>'.format(
@@ -25,7 +25,7 @@ def make_index (models):
         buff += '<li><a href="https://ethertoff.caveat.be/w/{link}">{label}</a> ({type})'.format(
           label=str(obj),
           type=obj.contentType,
-          link=obj.source_path
+          link=obj.source_path.replace('#', '%23')
         )
       else:
         buff += '<li>{label} ({type})'.format(
