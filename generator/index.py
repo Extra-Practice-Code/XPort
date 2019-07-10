@@ -22,7 +22,7 @@ def make_index (models):
     collection = collectionFor(contentType)
     for obj in collection.models:
       if obj.source_path:
-        buff += '<li><a href=""https://ethertoff.caveat.be/w/{link}">{label}</a> ({type})'.format(
+        buff += '<li><a href="https://ethertoff.caveat.be/w/{link}">{label}</a> ({type})'.format(
           label=str(obj),
           type=obj.contentType,
           link=obj.source_path
