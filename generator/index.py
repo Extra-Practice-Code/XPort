@@ -17,16 +17,21 @@ def display_link (direction, label, link=None):
       )
 
 def make_index (models):
-  buff = '<ul>'
+  buff = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><ul>'
   for contentType in knownContentTypes:
     collection = collectionFor(contentType)
     for obj in collection.models:
-      buff += '<li><a href="{link}">{label}</a> ({type})'.format(
-        label=str(obj),
-        type=obj.contentType,
-        link=obj.source_path
-      )
-
+      if obj.source_path:
+        buff += '<li><a href=""https://ethertoff.caveat.be/w/{link}">{label}</a> ({type})'.format(
+          label=str(obj),
+          type=obj.contentType,
+          link=obj.source_path
+        )
+      else:
+        buff += '<li>{label} ({type})'.format(
+          label=str(obj),
+          type=obj.contentType
+        )
       for attr in dir(obj):
         # Attributes noted in the metafields list
         # can be an outgoing links
@@ -56,7 +61,7 @@ def make_index (models):
           elif isinstance(val, Model):
             buff += display_link('in', getattr(val, val.labelField), val.source_path)
       buff += '</li>'
-  buff += '</ul><style>li { margin-top: 1em; }</style>'
+  buff += '</ul><style>li { margin-top: 1em; }</style></body></html>'
   return buff
 # for obj in models:
 #   '{type}: {label} -- {padurl}'.format({ 'type': obj.type, 'label': getattr(obj, obj.labelField), 'padurl': padurl })
