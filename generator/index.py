@@ -3,7 +3,7 @@ from generator.models import collectionFor, knownContentTypes, is_link, Model
 def display_link (direction, label, link=None):
   arrow = '→' if direction == 'out' else '←'
   if link:
-    return '<dd>{direction} {arrow} <a href="{link}">{label}</a></dd>'.format(
+    return '<dd>{direction} {arrow} <a href="https://ethertoff.caveat.be/w/{link}">{label}</a></dd>'.format(
         direction=direction,
         arrow=arrow,
         label=label,

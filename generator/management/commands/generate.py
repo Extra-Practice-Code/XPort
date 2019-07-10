@@ -121,14 +121,14 @@ def generate ():
   
   output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
 
+  with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
+    w.write(make_index(models))
+
   if not DEBUG:
     print('Collecting static')
     call_command('collectstatic', interactive=False)
 
   print('Done')
-
-  with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
-    w.write(make_index(models))
 
 class Command(BaseCommand):
   args = ''
