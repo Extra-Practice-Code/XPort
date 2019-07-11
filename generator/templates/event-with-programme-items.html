@@ -1,6 +1,6 @@
 {% extends "generator_base_two_columns.html" %}
 
-{% block title %}Caveat → activities → {{ event.title }}{% endblock %}
+{% block title %}Caveat → activities → {{ event.title|striptags  }}{% endblock %}
 
 {% block content %}
   <nav class="breadcrumbs">

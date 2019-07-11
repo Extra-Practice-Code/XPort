@@ -1,6 +1,6 @@
 {% extends "generator_base.html" %}
 
-{% block title %}Caveat → events → {{ event.title }}{% endblock %}
+{% block title %}Caveat → events → {{ event.title|striptags }}{% endblock %}
 
 {% block content %}
   <h1>{{ page.title }}</h1>

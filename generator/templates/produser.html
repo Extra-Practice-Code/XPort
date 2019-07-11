@@ -1,5 +1,5 @@
 {% extends "generator_base.html" %}
-{% block title %}Caveat → Produsers → {% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}{% endblock %}
+{% block title %}Caveat → Produsers → {% if produser.name %}{{ produser.name|striptags  }}{% else %}{{ produser.produser|striptags }}{% endif %}{% endblock %}
 {% block content %}
   <nav class="breadcrumbs">
     <ul>

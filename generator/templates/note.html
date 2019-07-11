@@ -1,6 +1,6 @@
 {% extends "generator_base.html" %}
 {% block title %}
-  Caveat → {{ note.title }}
+  Caveat → {{ note.title|striptags  }}
 {% endblock %}
 {% block content %}
   <nav class="breadcrumbs">
