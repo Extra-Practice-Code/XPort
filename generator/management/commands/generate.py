@@ -33,6 +33,7 @@ FIELD_TIME_FORMAT = '%H:%M'
 
 import datetime
 
+from generator.fields import Date, DateRange, Time, TimeRange
 
 # List pads
 # Go through them, record information
@@ -112,10 +113,15 @@ def generate ():
     return type(candidate) is datetime.date
 
   def datesorter(obj):
-    if hasattr(obj, 'date') and isdate(getattr(obj, 'date')):
-      return getattr(obj, 'date')
-    else:
-      return datetime.date(1,1,1)
+    if hasattr(obj, 'date'):
+      date = getattr(obj, 'date')
+
+      if isinstance(date, Date):
+        return date.date
+      elif isinstance(date, DateRange):
+        return date.start.date
+      
+    return datetime.date(1,1,1)
 
   output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
