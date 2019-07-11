@@ -3,7 +3,7 @@
 {% block title %}Caveat → activities → {{ event.title|striptags  }}{% endblock %}
 
 {% if event.image %}
-  {% block sidebar_image %}event.image{% endblock %}
+  {% block sidebar_image %}{{ event.image }}{% endblock %}
 {% endif %}
 
 {% block content %}
