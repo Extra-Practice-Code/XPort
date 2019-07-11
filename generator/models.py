@@ -46,7 +46,7 @@ class Link(object):
   
   def __call__ (self, targetLabel, source): 
     debug('Link target {}'.format(targetLabel), color=CMAGENTA)
-    if targetLabel is list:
+    if type(targetLabel) is list:
       targetLabel = targetLabel[0]
 
     target = collectionFor(self.contentType).get(label=targetLabel)
