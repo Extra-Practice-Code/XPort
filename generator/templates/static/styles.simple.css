@@ -416,7 +416,7 @@ a.tag {
   list-style-type: none;
 }
 
-.programme-item-list li {
+.programme-item-list > li {
   border-bottom: 2px solid black;
   padding: 1em;
 }
