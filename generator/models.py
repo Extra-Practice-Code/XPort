@@ -496,6 +496,9 @@ class ProgrammeItem (Model):
   contentType = 'programme-item'
   labelField = 'title'
 
+  def link (self):
+    return self.event[0].link + '#' + self.key
+
   metadataFields = {
     'date': fields.Single(fields.DateField()),
     'end_date': fields.Single(fields.DateField()),
