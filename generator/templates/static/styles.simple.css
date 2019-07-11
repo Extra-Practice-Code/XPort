@@ -443,3 +443,10 @@ a.tag {
   background: white;
   z-index: 1;
 }
+
+.question {
+	font-family: "Junicode-Condensed";
+	font-size: 180%;
+	font-weight: bolder;
+	line-height: 1em;
+}
