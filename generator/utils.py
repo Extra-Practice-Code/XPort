@@ -35,10 +35,13 @@ def regroup (iterable, field):
   grouped = []
   
   for entry in iterable:
-    try:
-      key = getattr(entry, field)
-    except AttributeError:
-      key = ''
+    if callable(field):
+      key = field(entry)
+    else:
+      try:
+        key = getattr(entry, field)
+      except AttributeError:
+        key = ''
 
     if not key in index:
       grouped.append((key, [ entry ]))

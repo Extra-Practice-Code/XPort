@@ -35,6 +35,8 @@ import datetime
 
 from generator.fields import Date, DateRange, Time, TimeRange
 
+from generator.settings import DATE_OUTPUT_FORMAT
+
 # List pads
 # Go through them, record information
 # Feed content to templates
@@ -133,14 +135,11 @@ def generate ():
   generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
 
-  def sortProgrammeItems(event):
-    event.programmeItems = sorted(event.programmeItems, key=datetimesorter)
-    return event
+  def groupedProgrammeItems(event):
+    programmeItems = sorted(event.programmeItems, key=datetimesorter)
+    return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
 
-  eventsWithProgrammeItems = map(sortProgrammeItems, filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models))
-
-
-  generate_single_pages(eventsWithProgrammeItems, 'event-with-programme-items.html', outputdir, lambda event: { 'event': event })
+  generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
   generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
   
 
