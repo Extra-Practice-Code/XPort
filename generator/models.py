@@ -494,6 +494,7 @@ class Event (Model):
 
 class ProgrammeItem (Model):
   contentType = 'programme-item'
+  labelField = 'title'
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
