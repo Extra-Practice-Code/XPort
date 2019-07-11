@@ -513,12 +513,12 @@ class ProgrammeItem (Model):
 class Produser (Model):
   contentType = 'produser'
   keyField = 'produser'
-  labelField = 'produser'
+  labelField = 'name'
   prefix = 'produsers'
 
   metadataFields = {
     'role': fields.Single(fields.StringField()),
-    'name': fields.Single(fields.StringField()),
+    'name': fields.Single(fields.InlineMarkdownField()),
     'produser': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'produsers'),
     'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
