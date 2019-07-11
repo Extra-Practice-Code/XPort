@@ -100,6 +100,8 @@ def parse_pads ():
           for linkTarget in collectedLinkTargets:
             # print(linkTarget.contentType, linkTarget)
 
+            # TODO, simplify linking process
+            # make references to more than just tags
             if linkTarget.contentType == 'tag' and 'tags' in model.metadataFields:
               current = model.tags if hasattr(model, 'tags') else []
 

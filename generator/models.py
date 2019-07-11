@@ -471,7 +471,7 @@ class Event (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.MarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -490,7 +490,7 @@ class ProgrammeItem (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participants': multiLinkMultiReverse('produser', 'events_participant'),
     'event': multiLinkMultiReverse('event', 'programmeItems'),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.MarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -550,7 +550,7 @@ class Page (Model):
   prefix = 'pages'
 
   metadataFields = {
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.MarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'pages'),
     'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
   }
@@ -583,7 +583,7 @@ class Bibliography (Model):
   labelField = 'bibliography'
 
   metadataFields = {
-    'bibliography': fields.Single(fields.StringField()),
+    'bibliography': fields.Single(fields.MarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'bibliography'),
     'produser': multiLinkMultiReverse('produser', 'bibliography')
   }
