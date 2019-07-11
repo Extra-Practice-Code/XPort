@@ -100,7 +100,7 @@ def generate ():
   # for event in events.models:
   #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
-  def datesorter(obj):
+  def datesorter (obj):
     if hasattr(obj, 'date'):
       date = getattr(obj, 'date')
 
@@ -122,13 +122,19 @@ def generate ():
     
     return datetime.time(0,0)
 
+  def datetimesorter (obj):
+    date = datesorter(obj)
+    time = timesorter(obj)
+
+    return datetime.datetime.combine(date, time)
+
   generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
   generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
   generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
 
   def sortProgrammeItems(event):
-    event.programmeItems = sorted(event.programmeItems, key=timesorter)
+    event.programmeItems = sorted(event.programmeItems, key=datetimesorter)
     return event
 
   eventsWithProgrammeItems = map(sortProgrammeItems, filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models))
