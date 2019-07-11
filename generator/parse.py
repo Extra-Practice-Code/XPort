@@ -52,7 +52,8 @@ def parse_pads ():
     info('Reading {}'.format(pad.display_slug))
 
     if extension in ['.md', '.markdown']:
-      source = resolveReferences(source, source=None)
+      source, collectedLinkTargets = resolveReferences(source, source=None)
+
       md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
       content = mark_safe(md.convert(source))
 
@@ -93,6 +94,17 @@ def parse_pads ():
           error('Model for key {} already filled'.format(key))
 
         # resolveReferences()
+
+        if collectedLinkTargets:
+          print('Collected link targets')
+          for linkTarget in collectedLinkTargets:
+            print(linkTarget.contentType, linkTarget)
+
+            if linkTarget.contentType == 'tag' and 'tags' in model.metadataFields:
+              current = model.tags if hasattr(model, 'tags') else []
+
+              if linkTarget not in current:
+                model.tags = current + model.metadataFields['tags']([str(linkTarget)], model)
 
       except UnknownContentTypeError as e:
         debug('Skipped `{}`'.format(name))

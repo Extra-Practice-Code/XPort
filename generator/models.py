@@ -156,7 +156,7 @@ def parseReferenceMetadata (raw):
   
   return data
 
-def parseReference(match, source=None):
+def parseReference(match, collector=None):
   contentType = match.group(1).strip()
   label = match.group(2).strip()
   metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
@@ -171,12 +171,13 @@ def parseReference(match, source=None):
     if metadata and target.empty:
       target.fill(metadata)
 
+    collector.append(target)
 
-    if source and contentType == 'tag' and 'tags' in source.metadataFields:
-      debug('Trying to extend tags')
-      current = source.tags if hasattr(source, 'tags') else []
-      if target not in current:
-        source.tags = current + source.metadataFields['tags']([label], source)
+    # if source and contentType == 'tag' and 'tags' in source.metadataFields:
+    #   debug('Trying to extend tags')
+    #   current = source.tags if hasattr(source, 'tags') else []
+    #   if target not in current:
+    #     source.tags = current + source.metadataFields['tags']([label], source)
 
     # return ''
     return renderReference(target)
@@ -254,14 +255,15 @@ def expandTags (content):
 
 def resolveReferences (content, source=None):
   # return content
+  collector = []
   if content:
     content = expandTags(content)
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, source=source), content))
+    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
-    return content
+    return (content, [])
 
 class Model(object):
   metadataFields = {}
