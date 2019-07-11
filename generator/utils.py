@@ -59,11 +59,11 @@ def try_attributes (obj, attributes):
 
 def keyFilter (value):
   if type(value) is list:
-    return '--'.join([keyFilter(v) for v in value])
+    return '--'.join([keyFilter(str(v).lower().strip()) for v in filter(None, value)])
   elif type(value) is int:
     return str(value)
   else: 
-    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower()))
+    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower().strip()))
 
 
 def render_to_string(template, context):
