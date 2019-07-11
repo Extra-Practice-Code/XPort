@@ -98,42 +98,42 @@ def linkMultiReverse(contentType, reverseName):
 def multiLinkMultiReverse(contentType, reverseName):
   return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
 
-def linkReference(target):
-  return '<a href="{target}" class="{className}">{label}</a>'.format(label=str(target), target=target.link, className=target.contentType)
+def linkReference(target, display_label):
+  return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)
 
-def includeVideo(video):
+def includeVideo(video, display_label):
   return '<video controls><source src="{}" type="{}"></video>'.format(video.video, video.type)
 
-def includeAudio(audio):
+def includeAudio(audio, display_label):
   return render_to_string('snippets/audio.html', { 'audio': audio })
 
-def includeImage(image):
+def includeImage(image, display_label):
   return '<img src="{}" />'.format(image.image)
 
-def includeQuestion(question):
+def includeQuestion(question, display_label):
   return render_to_string('snippets/question.html', { 'question': question })
 
-def includeExternalProject(project):
-  return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), project.project)
+def includeExternalProject(project, display_label):
+  return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), display_label if display_label else project.project)
 
-def labelReference(target):
-  return '<span class="{}">{}</span>'.format(target.contentType, str(target))
+def labelReference(target, display_label):
+  return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))
 
-def renderReference(target):
+def renderReference(target, display_label=None):
   if target.contentType == 'video':
-    return includeVideo(target)
+    return includeVideo(target, display_label)
   elif target.contentType == 'audio':
-    return includeAudio(target)
+    return includeAudio(target, display_label)
   elif target.contentType == 'image':
-    return includeImage(target)
+    return includeImage(target, display_label)
   elif target.contentType == 'question':
-    return includeQuestion(target)
+    return includeQuestion(target, display_label)
   elif target.contentType == 'external-project':
-    return includeExternalProject(target)
+    return includeExternalProject(target, display_label)
   elif target.contentType == 'bibliography':
-    return labelReference(target)
+    return labelReference(target, display_label)
   else:
-    return linkReference(target)
+    return linkReference(target, display_label)
 
 # def insertReference(matches):
 #   contentType = matches.group(1)
@@ -145,21 +145,30 @@ def renderReference(target):
 def parseReferenceMetadata (raw):
   data = {}
 
-  for m in re.finditer(r'([\w\._-]+):([^\|]+)', raw):
-    key = m.group(1)
-    value = m.group(2)
+  # Split into metadata and display label
+  print('Raw metadata ', raw)
+  if ':' in raw:
+    m = re.match(r'(.+)(?:\|?([^:\|]+))?$', raw)
+    raw_meta = m.group(1)
+    label = m.group(2)
 
-    if key not in data:
-      data[key] = []
+    for m in re.finditer(r'([\w\._-]+):([^\|]+)', raw_meta):
+      key = m.group(1).strip()
+      value = m.group(2).strip()
+
+      if key not in data:
+        data[key] = []
+      
+      data[key].append(value)
     
-    data[key].append(value)
-  
-  return data
+    return (data, label)
+  else:
+    return (None, raw.strip())
 
 def parseReference(match, collector=None):
   contentType = match.group(1).strip()
   label = match.group(2).strip()
-  metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
+  metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
 
   try:
     target = collectionFor(contentType).get(label=label)
@@ -180,7 +189,7 @@ def parseReference(match, collector=None):
     #     source.tags = current + source.metadataFields['tags']([label], source)
 
     # return ''
-    return renderReference(target)
+    return renderReference(target, display_label=display_label)
   except UnknownContentTypeError:
     return match.group(0)
 
@@ -471,7 +480,7 @@ class Event (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.MarkdownField()),
+    'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -490,7 +499,7 @@ class ProgrammeItem (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participants': multiLinkMultiReverse('produser', 'events_participant'),
     'event': multiLinkMultiReverse('event', 'programmeItems'),
-    'title': fields.Single(fields.MarkdownField()),
+    'title': fields.Single(fields.StringField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -550,7 +559,7 @@ class Page (Model):
   prefix = 'pages'
 
   metadataFields = {
-    'title': fields.Single(fields.MarkdownField()),
+    'title': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'pages'),
     'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
   }
