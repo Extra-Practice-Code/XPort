@@ -160,24 +160,28 @@ def parseReference(match, source=None):
   contentType = match.group(1).strip()
   label = match.group(2).strip()
   metadata = parseReferenceMetadata(match.group(3)) if match.group(3) else None
-  target = collectionFor(contentType).get(label=label)
 
-  debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
-  # debug('Rendered reference ', renderReference(target))
+  try:
+    target = collectionFor(contentType).get(label=label)
 
-  # Insert the metadata on the object ?
-  if metadata and target.empty:
-    target.fill(metadata)
+    debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
+    # debug('Rendered reference ', renderReference(target))
+
+    # Insert the metadata on the object ?
+    if metadata and target.empty:
+      target.fill(metadata)
 
 
-  if source and contentType == 'tag' and 'tags' in source.metadataFields:
-    debug('Trying to extend tags')
-    current = source.tags if hasattr(source, 'tags') else []
-    if target not in current:
-      source.tags = current + source.metadataFields['tags']([label], source)
+    if source and contentType == 'tag' and 'tags' in source.metadataFields:
+      debug('Trying to extend tags')
+      current = source.tags if hasattr(source, 'tags') else []
+      if target not in current:
+        source.tags = current + source.metadataFields['tags']([label], source)
 
-  # return ''
-  return renderReference(target)
+    # return ''
+    return renderReference(target)
+  except UnknownContentTypeError:
+    return match.group(0)
 
 # difference between import and reference.
 # Some reference result in a snippet of media
