@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT
+from generator.settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT, DATE_OUTPUT_FORMAT_DATE, DATE_OUTPUT_FORMAT_MONTH, DATE_OUTPUT_FORMAT_YEAR
 import datetime
 import re
 import markdown
@@ -35,7 +35,41 @@ class DateRange (object):
     self.end = end
   
   def __str__ (self):
-    return '{} - {}'.format(self.start, self.end)
+    # return '{} - {}'.format(self.start, self.end)
+
+    delta = (self.end.date - self.start.date).days
+    
+    if delta > 4:
+      return ' - '.join(self.makeFormattingChunks([self.start.date, self.end.date]))
+    else:
+      chunks = self.makeFormattingChunks([self.start.date + datetime.timedelta(days=k) for k in range(delta)])
+      if delta > 2:
+        return ', '.join(chunks[:-1]) + ' & ' + chunks[-1]
+      else:
+        return ' & '.join(chunks)
+
+
+  def makeFormattingChunks(self, dates):
+    chunks = []
+    last = None
+
+    # Loop through a reversed list of dates
+    # if the month or year changes, add it
+    # to the text chunk
+    for date in reversed(dates):
+      chunk = date.strftime(DATE_OUTPUT_FORMAT_DATE)
+
+      if not last or last.month != date.month:
+        chunk += ' ' + date.strftime(DATE_OUTPUT_FORMAT_MONTH)
+
+        if not last or last.year != date.year:
+          chunk += ' ' + date.strftime(DATE_OUTPUT_FORMAT_YEAR)
+
+      chunks.append(chunk)
+
+      last = date
+
+    return list(reversed(chunks))
 
 class Field (object):
   def __init__ (self, default = []):
@@ -68,14 +102,48 @@ class Single(object):
 
 
 class DateField (Field):
-  def parse (self, value):
-    for frm in FIELD_DATE_FORMATS:
-      try:
-        return datetime.datetime.strptime(value, frm).date()
-      except ValueError:
-        pass
+  def isRange (self, value):
+    """
+      
+      A date is:
+      - one or two numbers, day
+      - followed by numbers or a word, month
+      - followed by two or four numbers, year
 
-    return None
+      In between the parts a space, hyphen or slash,
+      a backreference \2 is used through the regex
+      to make sure this seperator is uniform.
+
+      In between the two dates there is a seperator as well,
+        group 1 → first date
+        group 2 → seperator within the date part
+        group 3 → second date part
+        
+    """
+    rangeRegex = r'((?:\d{1,2})(\s|-|─|/)(?:\d{1,2}|\w+)\2(?:\d{2,4}))\s*(?:(?:-|─*)\s*)?((?:\d{1,2})\2(?:\d{1,2}|\w+)\2(?:\d{2,4}))'
+
+    m = re.match(rangeRegex, value)
+
+    if m:
+      return (m.group(1), m.group(3))
+    else:
+      return None
+
+  def parse (self, value):
+    dateRange = self.isRange(value)
+
+    if dateRange:
+      start, end = dateRange
+      return DateRange(self.parse(start), self.parse(end))
+    else:
+      for frm in FIELD_DATE_FORMATS:
+        try:
+          date = datetime.datetime.strptime(value, frm).date()
+          return Date(date)
+        except ValueError:
+          pass
+
+      return None
 
 class DateTimeField (Field):
   def parse (self, value):
