@@ -100,18 +100,6 @@ def generate ():
   # for event in events.models:
   #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
-
-  generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
-  generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
-  generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
-  generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
-  generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event })
-  generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
-  
-
-  def isdate (candidate):
-    return type(candidate) is datetime.date
-
   def datesorter(obj):
     if hasattr(obj, 'date'):
       date = getattr(obj, 'date')
@@ -122,6 +110,33 @@ def generate ():
         return date.start.date
       
     return datetime.date(1,1,1)
+
+  def timesorter (obj):
+    if hasattr(obj, 'time'):
+      time = getattr(obj, 'time')
+
+      if isinstance(time, Time):
+        return time.time
+      elif isinstance(time, TimeRange):
+        return time.start
+    
+    return datetime.time(0,0)
+
+  generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
+  generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
+  generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
+  generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
+
+  def sortProgrammeItems(event):
+    event.programmeItems = sorted(event.programmeItems, key=timesorter)
+    return event
+
+  eventsWithProgrammeItems = map(sortProgrammeItems, filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models))
+
+
+  generate_single_pages(eventsWithProgrammeItems, 'event-with-programme-items.html', outputdir, lambda event: { 'event': event })
+  generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
+  
 
   output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
