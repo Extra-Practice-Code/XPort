@@ -19,7 +19,7 @@
         {% endfor %}
       </ul>
     </nav>
-    <section id="header-map" style="background-image:url({{ SITE_URL }}static/images/maps/reading-room8-cover.png);">
+    <section id="header-map" style="background-image:url({% block sidebar_image %}{{ SITE_URL }}static/images/maps/reading-room8-cover.png{% endblock %});">
 
     </section>
     <section id="header-content">

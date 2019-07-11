@@ -556,7 +556,7 @@ class Note (Model):
     'programme-item': linkMultiReverse('programme-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
     'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
-    'title': fields.Single(fields.MarkdownField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
   }
 
 class Page (Model):
