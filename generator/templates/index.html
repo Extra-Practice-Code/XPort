@@ -45,9 +45,9 @@
             <div id="{{ event.key }}" class="event presentation">
                 <div class="event-detail-header">
                   <p class="event-date"><time datetime="2019-05-24">{{ event.date }}</time></p>
-                  <h2 class="event-title">{{ event.event }}</h2>
+                  <h2 class="event-title">{{ event }}</h2>
                   {% if event.programmeItems %}
-                    <a href="{{ event.link }}">→ See programme</a>
+                    <p><a href="{{ event.link }}">→ See programme</a></p>
                   {% endif %}
                   {{ event.summary }}
 
@@ -61,9 +61,13 @@
                       <a href="{{ produser.link }}">{{ produser }}</a>
                       {% endfor %}
                     </p>
-                    <a href="{{ event.link }}">→ See programme</a>
+                    {% if event.programmeItems %}
+                      <p><a href="{{ event.link }}">→ See programme</a></p>
+                    {% endif %}
                     {{ event.content }}
-                    <a href="{{ event.link }}">→ See programme</a>
+                    {% if event.programmeItems %}
+                      <p><a href="{{ event.link }}">→ See programme</a></p>
+                    {% endif %}
                   </span>
               </div>
             </div>

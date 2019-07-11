@@ -341,6 +341,7 @@ class Model(object):
       else:
         self.metadata[name] = self.metadataFields[name](value)
     else:
+      # This might not be the best idea?
       self.metadata[name] = value
 
   def __getattr__ (self, name):
@@ -455,6 +456,7 @@ class Collection(object):
 class Event (Model):
   contentType = 'event'
   prefix = 'activities'
+  labelField = 'title'
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
