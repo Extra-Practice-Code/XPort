@@ -124,7 +124,7 @@ a {
   vertical-align: middle;
   position: relative;
   border-bottom: none;
-  white-space: nowrap;
+  display: inline-block;
 }
 
 .produser:before {

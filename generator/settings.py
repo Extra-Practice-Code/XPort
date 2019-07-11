@@ -2,12 +2,12 @@ from ethertoff.settings import DEBUG
 
 MENU_ITEMS = [
   ('About', 'pages/about.html'),
-  ('Activities', 'activities.html'),
+  ('Time;ine', 'index.html'),
   ('Artist trajectories', 'trajectories.html'),
   ('Produsers', 'produsers.html' ),
-  ('Bibliography', 'bibliography.html' ),
-  ('Projects & Initiatives', 'external-projects.html'),
-  ('Tags', 'tags.html' ),
+#   ('Bibliography', 'bibliography.html' ),
+  ('Related Projects', 'external-projects.html'),
+#   ('Tags', 'tags.html' ),
   ('Contact', 'pages/contact.html')
 ]
 
