@@ -2,7 +2,7 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes
+from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
 from .utils import info, debug, error, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
@@ -52,6 +52,7 @@ def parse_pads ():
     info('Reading {}'.format(pad.display_slug))
 
     if extension in ['.md', '.markdown']:
+      source = resolveReferences(source, source=None)
       md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
       content = mark_safe(md.convert(source))
 
@@ -91,6 +92,8 @@ def parse_pads ():
         else:
           error('Model for key {} already filled'.format(key))
 
+        # resolveReferences()
+
       except UnknownContentTypeError as e:
         debug('Skipped `{}`'.format(name))
         debug(e)
@@ -99,7 +102,7 @@ def parse_pads ():
     info('Read {}'.format(pad.display_slug))
     
   return models
-  
+
 class Command(BaseCommand):
   args = ''
   help = 'Generate a static interpretation of the pads'

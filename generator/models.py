@@ -170,7 +170,7 @@ def parseReference(match, source=None):
     target.fill(metadata)
 
 
-  if contentType == 'tag' and 'tags' in source.metadataFields:
+  if source and contentType == 'tag' and 'tags' in source.metadataFields:
     debug('Trying to extend tags')
     current = source.tags if hasattr(source, 'tags') else []
     if target not in current:
@@ -322,7 +322,7 @@ class Model(object):
       self.setMetadata(metadata)
     if content:
       self.empty = False
-      self.content = resolveReferences(content, source=self)
+      self.content = content
     if source_path:
       self.source_path = source_path
 
