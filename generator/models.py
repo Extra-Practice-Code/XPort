@@ -483,7 +483,7 @@ class Event (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.MarkdownField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -502,7 +502,7 @@ class ProgrammeItem (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participants': multiLinkMultiReverse('produser', 'events_participant'),
     'event': multiLinkMultiReverse('event', 'programmeItems'),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
@@ -552,7 +552,7 @@ class Note (Model):
     'programme-item': linkMultiReverse('programme-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
     'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.MarkdownField()),
   }
 
 class Page (Model):
@@ -562,7 +562,7 @@ class Page (Model):
   prefix = 'pages'
 
   metadataFields = {
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'pages'),
     'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
   }
@@ -595,7 +595,7 @@ class Bibliography (Model):
   labelField = 'bibliography'
 
   metadataFields = {
-    'bibliography': fields.Single(fields.MarkdownField()),
+    'bibliography': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'bibliography'),
     'produser': multiLinkMultiReverse('produser', 'bibliography')
   }
@@ -608,7 +608,7 @@ class Video (Model):
   metadataFields = {
     'video': fields.Single(fields.StringField()),
     'type': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'video'),
     'produser': multiLinkMultiReverse('produser', 'video')
   }
@@ -621,7 +621,7 @@ class Audio (Model):
   metadataFields = {
     'audio': fields.Single(fields.StringField()),
     'type': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'audio'),
     'produser': multiLinkMultiReverse('produser', 'audio')
   }
@@ -655,7 +655,7 @@ class Text (Model):
   labelField = 'title'
 
   metadataFields = {
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'image'),
     'produser': multiLinkMultiReverse('produser', 'text'),
     'event': multiLinkMultiReverse('event', 'text')
@@ -667,7 +667,7 @@ class Question (Model):
   labelField = 'question'
 
   metadataFields = {
-    'question': fields.Single(fields.StringField())
+    'question': fields.Single(fields.InlineMarkdownField())
   }
 
 # Perhaps include the sort in the collection?
