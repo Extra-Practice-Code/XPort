@@ -89,7 +89,7 @@ def generate ():
 
   grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['name', 'produser'])), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
-  output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(getattr(r, r.label)).lower()), 'grouped_produsers': grouped_produsers })
+  output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(getattr(r, r.labelField)).lower()), 'grouped_produsers': grouped_produsers })
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
   output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=lambda m: getattr(m, m.labelField)) })
   output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=lambda m: getattr(m, m.labelField)) })
