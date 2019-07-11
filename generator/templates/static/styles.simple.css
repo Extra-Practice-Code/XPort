@@ -124,6 +124,7 @@ a {
   vertical-align: middle;
   position: relative;
   border-bottom: none;
+  white-space: nowrap;
 }
 
 .produser:before {
@@ -149,9 +150,10 @@ h1.produser:before {
 
 h1 {
   font-family: "Junicode-Condensed";
+  line-height: calc(var(--line-height) * .8);
 }
 
-h2 {
+h2, h4 {
   font-family: "U001";
   text-transform: uppercase;
   font-size: var(--font-size-small);
@@ -161,6 +163,14 @@ h2 {
 
 h2.produser {
   display: inline-block;
+}
+
+h3 {
+  font-family: "Junicode-Condensed";
+}
+
+h3 {
+  margin: 0;
 }
 
 .produser a {
@@ -334,6 +344,7 @@ footer p {
 ul.simplelist, ul.simplelist > li {
   margin-left: 0;
   padding-left: 0;
+  border-bottom: none;
 }
 
 ul.simplelist > li:before {
@@ -424,4 +435,11 @@ a.tag {
 
 .timecode:hover {
   color: var(--red-question);
+}
+
+.list-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
 }

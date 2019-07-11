@@ -33,9 +33,9 @@
   {{ event.summary }}
   {{ event.content }}
   {% if event.notes %}
-  <h2>Attached notes</h2>
+  <h4>Attached notes</h4>
   <p>Read more about this event</p>
-  <ul>
+  <ul class="simplelist">
     {% for note in event.notes %}
     <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
     {% endfor %}
