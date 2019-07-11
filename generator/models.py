@@ -480,7 +480,7 @@ class Event (Model):
     'produser': multiLinkMultiReverse('produser', 'events'),
     'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.MarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
     'location': fields.Single(fields.StringField()),
     'address': fields.StringField(),
