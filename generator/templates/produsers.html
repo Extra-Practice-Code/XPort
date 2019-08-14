@@ -4,6 +4,12 @@
 
 {% block content %}
   <h1>Produsers</h1>
+  <p class="page-intro">
+    Prod<em>users</em> (users producing value as they use) is a concept that stresses the merging of ‘producer’ and ‘user’.
+    It was coined by Australian media scholar Axel Bruns and is now developed by Belgian peer-to-peer theorist Michael Bauwens
+    to rethink the interplay between exchange value and use value for a community of users, between private property and the commons.
+    As <em>Caveat</em> is an ongoing research, the produsers below are regularly updated. 
+  </p>
   {% for role, produsers in grouped_produsers %}
     <h2>{{ role }}</h2>
     {% for produser in produsers %}
