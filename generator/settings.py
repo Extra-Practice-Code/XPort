@@ -8,7 +8,7 @@ MENU_ITEMS = [
 #   ('Bibliography', 'bibliography.html' ),
 #   ('Related Projects', 'external-projects.html'),
 #   ('Tags', 'tags.html' ),
-  ('Contact', 'pages/contact.html')
+#   ('Contact', 'pages/contact.html')
 ]
 
 SITE_URL = ''
