@@ -523,6 +523,7 @@ class Produser (Model):
   metadataFields = {
     'role': fields.Single(fields.StringField()),
     'name': fields.Single(fields.InlineMarkdownField()),
+    'sortname': fields.Single(fields.StringField()),
     'produser': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'produsers'),
     'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
