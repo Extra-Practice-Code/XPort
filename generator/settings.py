@@ -6,7 +6,7 @@ MENU_ITEMS = [
   ('Research trajectories', 'trajectories.html'),
   ('Produsers', 'produsers.html' ),
 #   ('Bibliography', 'bibliography.html' ),
-  ('Related Projects', 'external-projects.html'),
+#   ('Related Projects', 'external-projects.html'),
 #   ('Tags', 'tags.html' ),
   ('Contact', 'pages/contact.html')
 ]

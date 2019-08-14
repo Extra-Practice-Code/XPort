@@ -449,3 +449,8 @@ a.tag {
 	font-weight: bolder;
 	line-height: 1em;
 }
+
+section.audio {
+  border-top: 2 solid black;
+  border-bottom: 2 solid black;
+}
