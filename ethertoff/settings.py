@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'etherpadlite',
+    'generator'
     #'south'
 ]
 
@@ -154,3 +155,4 @@ except NameError:
     except ImportError:
         pass
 
+API_LOCAL_URL = None

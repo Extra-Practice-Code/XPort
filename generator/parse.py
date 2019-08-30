@@ -16,6 +16,8 @@ from .settings import DEFAULT_CONTENT_TYPE
 
 from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
 
+from generator.extract_meta import extract_meta
+
 """
   
   We loop through all the pads and 'parse' them as markdown.
@@ -24,12 +26,11 @@ from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
   From this information a model is contstructed. The metadata is further
   parsed depending the field type.
 
-  Links will try to look up their targets. If the pad isn't parsed yet a 
-  stub is created to be filled later in the process. 
+  Links will try to look up their targets. If the target pad isn't parsed yet
+  a stub is created to be filled later in the process. 
 
   TODO: decouple metadata parsing and linking. To make sure all data is seen
   before linking is performed.
-
 
   If both keys and labels are used to address models. Depending the order of
   encountering we might create an instance for the label and another for the
@@ -52,61 +53,59 @@ def parse_pads ():
     info('Reading {}'.format(pad.display_slug))
 
     if extension in ['.md', '.markdown']:
-      source, collectedLinkTargets = resolveReferences(source, source=None)
+      # source, collectedLinkTargets = resolveReferences(source, source=None)
 
-      md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
-      content = mark_safe(md.convert(source))
+      # md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
+      # content = mark_safe(md.convert(source))
+      meta, content = extract_meta(source)
+      label = None
 
       try:
-        meta = md.Meta
+        # meta = md.Meta
         meta['pk'] = pad.pk
 
         # if the first line of the metadata is a known contenttype
-        # use it as such. It's value becomes the key and potetntially
+        # use it as such. It's value becomes the key and potentially
         # the label
         firstMetaKey, firstMetaValue = list(meta.items())[0]
 
         if firstMetaKey in knownContentTypes:
           contentType = firstMetaKey
           key = keyFilter(firstMetaValue)
+          label = firstMetaValue
 
           if 'type' in meta:
             warn('Both valid contenttype present in the first row ({0}) as well as a type declaration ({1}), using {0}'.format(contentType, meta['type'][0]), pad.display_slug)
         else:
           if 'type' in meta:
             if meta['type'] == ['biography']:
+              warn("Outdated contenttype biography. for pad: {}".format(pad.display_slug))
               meta['type'] = ['produser']
             contentType = meta['type'][0]
           else:
+            debug("No contenttype found, applied default contenttype for pad: {}".format(pad.display_slug))
             contentType = DEFAULT_CONTENT_TYPE
           key = modelFor(contentType).extractKey(meta)
 
         collection = collectionFor(contentType)
-                
+        
         debug('Extracted key: {}'.format(key))
-        model = collection.get(key=key)
+        model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug)
         models.append(model)
-
-        if model.empty:
-          debug('Filling model {}'.format(key))
-          model.fill(metadata=meta, content=content, source_path=pad.display_slug)
-        else:
-          error('Model for key {} already filled'.format(key))
-
         # resolveReferences()
 
-        if collectedLinkTargets:
-          # print('Collected link targets')
-          for linkTarget in collectedLinkTargets:
-            # print(linkTarget.contentType, linkTarget)
+        # if collectedLinkTargets:
+        #   # print('Collected link targets')
+        #   for linkTarget in collectedLinkTargets:
+        #     # print(linkTarget.contentType, linkTarget)
 
-            # TODO, simplify linking process
-            # make references to more than just tags
-            if linkTarget.contentType == 'tag' and 'tags' in model.metadataFields:
-              current = model.tags if hasattr(model, 'tags') else []
+        #     # TODO, simplify linking process
+        #     # make references to more than just tags
+        #     if linkTarget.contentType == 'tag' and 'tags' in model.metadataFields:
+        #       current = model.tags if hasattr(model, 'tags') else []
 
-              if linkTarget not in current:
-                model.tags = current + model.metadataFields['tags']([str(linkTarget)], model)
+        #       if linkTarget not in current:
+        #         model.tags = current + model.metadataFields['tags']([str(linkTarget)], model)
 
       except UnknownContentTypeError as e:
         debug('Skipped `{}`'.format(name))
@@ -114,7 +113,16 @@ def parse_pads ():
         pass
 
     info('Read {}'.format(pad.display_slug))
-    
+
+    # Excecuting links
+  for m in models:
+    # resolve links
+    # collect inline links
+    content, _ = resolveReferences(m.content, model=m) # Second return are the collected references
+    # render markdown
+    m.resolveLinks()
+    md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
+    m.content = mark_safe(md.convert(content))
   return models
 
 class Command(BaseCommand):

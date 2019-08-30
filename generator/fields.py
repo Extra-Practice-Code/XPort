@@ -181,6 +181,7 @@ class MarkdownField(Field):
 
 class InlineMarkdownField(Field):
   def parse (self, value):
+    print(value)
     md = markdown.Markdown(extensions=['extra', 'attr_list'])
     return mark_safe(re.sub(r'<p>(.+)</p>', '\\1', md.convert(value)))
 

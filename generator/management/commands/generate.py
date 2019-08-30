@@ -51,6 +51,38 @@ def generate_single_pages (models, template, outputdir, make_context):
   for model in models:
     output(os.path.join(outputdir, model.prefix, '{}.html'.format(model.key)), template, make_context(model))
 
+def datesorter (obj):
+  if hasattr(obj, 'date'):
+    date = getattr(obj, 'date')
+
+    if isinstance(date, Date):
+      return date.date
+    elif isinstance(date, DateRange):
+      return date.start.date
+    
+  return datetime.date(1,1,1)
+
+def timesorter (obj):
+  if hasattr(obj, 'time'):
+    time = getattr(obj, 'time')
+
+    if isinstance(time, Time):
+      return time.time
+    elif isinstance(time, TimeRange):
+      return time.start
+  
+  return datetime.time(0,0)
+
+def datetimesorter (obj):
+  date = datesorter(obj)
+  time = timesorter(obj)
+
+  return datetime.datetime.combine(date, time)
+  
+def groupedProgrammeItems(event):
+  programmeItems = sorted(event.programmeItems, key=datetimesorter)
+  return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
+
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
 
 def generate ():
@@ -89,7 +121,7 @@ def generate ():
 
   grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['sortname', 'name', 'produser']).lower()), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
-  output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(getattr(r, r.labelField)).lower()), 'grouped_produsers': grouped_produsers })
+  output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(try_attributes(r, ['sortname', 'name', 'produser', 'key'])).lower()), 'grouped_produsers': grouped_produsers })
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
   output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=lambda m: getattr(m, m.labelField)) })
   output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=lambda m: getattr(m, m.labelField)) })
@@ -102,42 +134,12 @@ def generate ():
   # for event in events.models:
   #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
-  def datesorter (obj):
-    if hasattr(obj, 'date'):
-      date = getattr(obj, 'date')
-
-      if isinstance(date, Date):
-        return date.date
-      elif isinstance(date, DateRange):
-        return date.start.date
-      
-    return datetime.date(1,1,1)
-
-  def timesorter (obj):
-    if hasattr(obj, 'time'):
-      time = getattr(obj, 'time')
-
-      if isinstance(time, Time):
-        return time.time
-      elif isinstance(time, TimeRange):
-        return time.start
-    
-    return datetime.time(0,0)
-
-  def datetimesorter (obj):
-    date = datesorter(obj)
-    time = timesorter(obj)
-
-    return datetime.datetime.combine(date, time)
 
   generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
   generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
   generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
 
-  def groupedProgrammeItems(event):
-    programmeItems = sorted(event.programmeItems, key=datetimesorter)
-    return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
 
   generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
   generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })

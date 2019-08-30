@@ -42,32 +42,44 @@ class LinkDifferentContentTypeError(Exception):
 class Link(object):
   def __init__ (self, contentType, reverse=None):
     self.contentType = contentType
-    self.reverse = reverse
-  
-  def __call__ (self, targetLabel, source): 
-    debug('Link target {}'.format(targetLabel), color=CMAGENTA)
-    if type(targetLabel) is list:
-      targetLabel = targetLabel[0]
+    self.reverse = reverse # Reverse function with the soure object
+ 
 
-    target = collectionFor(self.contentType).get(label=targetLabel)
-    if self.reverse:
-      self.reverse(target, source)
-    return target
+  def __call__ (self, targetLabel): 
+    contentType = self.contentType
+    reverse = self.reverse
 
+    def create(source):
+      collection = collectionFor(contentType)
+      target = collection.get(label=targetLabel)
+
+      if reverse and target:
+        reverse(target, source)
+
+      return target
+
+    return create
+    
 class MultiLink(Link):
-  def __call__ (self, targetLabels, source):
+  def __call__ (self, targetLabels):
     debug('Link target keys', targetLabels, color=CMAGENTA)
-    # Filter out empty string keys
-    targets = [ collectionFor(self.contentType).get(label=targetLabel) for targetLabel in filter(None, targetLabels) ]
+    contentType = self.contentType
+    reverse = self.reverse
 
-    if self.reverse:
-      for target in targets:
-        # Set the property
-          self.reverse(target, source)
+    def link (source):
+      collection = collectionFor(contentType)
+      # filter(None, x) Filters out empty string keys
+      targets = [ collection.get(label=targetLabel) for targetLabel in filter(None, targetLabels) ]
 
-    return targets
+      if reverse:
+        for target in filter(None, targets):
+          reverse(target, source)
 
-# This couls as well be a partian
+      return targets
+
+    return link
+
+# This could as well be a partial?
 class ReverseLink(object):
   def __init__ (self, name):
     self.linkName = name
@@ -119,10 +131,20 @@ def includeQuestion(question, display_label):
 def includeExternalProject(project, display_label):
   return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), display_label if display_label else project.project)
 
+def includeTag(tag, display_label, model):
+  # if model:
+  #   try:
+  #     if tag not in model.tags:
+  #       model.tags.append(tag)
+  #   except AttributeError:
+  #     model.tags = [tag]
+
+  return '<span class="tag">{}</span>'.format(display_label if display_label else str(tag))
+
 def labelReference(target, display_label):
   return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))
 
-def renderReference(target, display_label=None):
+def renderReference(target, display_label=None, model=None):
   if target.contentType == 'video':
     return includeVideo(target, display_label)
   elif target.contentType == 'audio':
@@ -135,6 +157,8 @@ def renderReference(target, display_label=None):
     return includeExternalProject(target, display_label)
   elif target.contentType == 'bibliography':
     return labelReference(target, display_label)
+  elif target.contentType == 'tag':
+    return includeTag(target, display_label, model)
   else:
     return linkReference(target, display_label)
 
@@ -168,7 +192,7 @@ def parseReferenceMetadata (raw):
   else:
     return (None, raw.strip())
 
-def parseReference(match, collector=None):
+def parseReference(match, collector=None, model=None):
   contentType = match.group(1).strip()
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
@@ -180,19 +204,15 @@ def parseReference(match, collector=None):
     # debug('Rendered reference ', renderReference(target))
 
     # Insert the metadata on the object ?
-    if metadata and target.empty:
-      target.fill(metadata)
+    if target:
+      if metadata and target.stub:
+        target.fill(metadata)
 
-    collector.append(target)
+      collector.append(target)
 
-    # if source and contentType == 'tag' and 'tags' in source.metadataFields:
-    #   debug('Trying to extend tags')
-    #   current = source.tags if hasattr(source, 'tags') else []
-    #   if target not in current:
-    #     source.tags = current + source.metadataFields['tags']([label], source)
-
-    # return ''
-    return renderReference(target, display_label=display_label)
+      return renderReference(target, display_label=display_label, model=model)
+    else:
+      return label
   except UnknownContentTypeError:
     return match.group(0)
 
@@ -265,14 +285,14 @@ def parseShortTimecodes (content):
 def expandTags (content):
   return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[tag: \\1]]', content)
 
-def resolveReferences (content, source=None):
+def resolveReferences (content, model=None, source=None):
   # return content
   collector = []
   if content:
     content = expandTags(content)
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector), content)), collector)
+    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, model=model), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])
@@ -285,7 +305,7 @@ class Model(object):
   labelField = 'title'
   metadata = {}
 
-  def __init__ (self, key=None, label=None, metadata=None, content=None):
+  def __init__ (self, key=None, label=None, metadata={}, content=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
     self.metadata = {}
     
@@ -294,14 +314,14 @@ class Model(object):
     else:
       self.key = self.extractKey(metadata)
 
-    if label:
-      # debug('Setting label, {}, {}'.format(label, self.labelField))
-      self.__setattr__(self.labelField, [label])
+    if label and not self.labelField in metadata:
+      print('Setting label!')
+      self.__setattr__(self.labelField, label)
 
     if metadata:
       self.setMetadata(metadata)
     
-    self.empty = True
+    self.stub = True
 
     if metadata or content:
       self.fill(metadata=metadata, content=content)
@@ -336,10 +356,10 @@ class Model(object):
   # Overwrite or extend data. Etc.
   def fill(self, metadata={}, content=None, source_path=None):
     if metadata:
-      self.empty = False
+      self.stub = False
       self.setMetadata(metadata)
     if content:
-      self.empty = False
+      self.stub = False
       self.content = content
     if source_path:
       self.source_path = source_path
@@ -353,20 +373,23 @@ class Model(object):
     elif name == 'source_path':
       super().__setattr__('_source_path', value)
     elif name in self.metadataFields:
-      if is_link(self.metadataFields[name]):
-        # If it is a link we also include, the obj
-        self.metadata[name] = self.metadataFields[name](value, self)
-      else:
-        self.metadata[name] = self.metadataFields[name](value)
+      self.metadata[name] = self.metadataFields[name](value)
     else:
       # This might not be the best idea?
       self.metadata[name] = value
+
+  def resolveLinks(self):
+    print('Resolving links')
+    for fieldname in self.metadata:
+      print(fieldname, callable(fieldname))
+      if callable(self.metadata[fieldname]):
+        result = self.metadata[fieldname](self)
+        self.metadata[fieldname] = result
 
   def __getattr__ (self, name):
     if name in self.metadata:
       return self.metadata[name]
     else:
-      print(name)
       # super().__getattr__(name)
       # debug('Attribute error', name, self.metadata)
       raise AttributeError()
@@ -431,11 +454,8 @@ class Collection(object):
       key = keyFilter(label)
 
     if self.has(key):
-      debug('Found entry for {}'.format(key))
+      # debug('Found entry for {}'.format(key))
       return self.index[key]
-    elif key:
-      debug('Could not find entry for {}, instantiating'.format(key))
-      return self.instantiateStub(key=key, label=label)
     else:
       return None
 
@@ -450,7 +470,7 @@ class Collection(object):
       if not self.has(obj.key):
         self.models.append(obj)
         self.index[obj.key] = obj
-      elif self.index[obj.key].empty:
+      elif self.index[obj.key].stub:
         debug('Updating metadata for stub {}'.format(obj.key))
         self.index[obj.key].setMetadata(obj.meta)
       else:
@@ -461,15 +481,28 @@ class Collection(object):
     Instantiate a model for the given key, metadata and content
     and register it on the collection.
   """
-  def instantiate (self, key, metadata=None, content=None):
-    obj = self.model(key=key, metadata=metadata, content=content)
+  def instantiate (self, key, label=None, metadata={}, content=None, source_path=''):
+    obj = self.model(key=key, label=label, metadata=metadata, content=content)
     self.register(obj)
     return obj
 
-  def instantiateStub (self, key, label=None):
-    obj = self.model(key=key, label=label)
-    self.register(obj)
-    return obj
+""" 
+  Instantiates a model if it isn't part of the collection.
+  Useful for objects like tags or questions
+""" 
+class InstantiatingCollection (Collection):
+  def get (self, key = None, label = None):
+    if not label and not key:
+      raise(AttributeError('Can not retreive a model without a key or a label.'))
+    if not key:
+      key = keyFilter(label)
+
+    if self.has(key):
+      # debug('Found entry for {}'.format(key))
+      return self.index[key]
+    else:
+      return self.instantiate(key=key, label=[label])
+
 
 class Event (Model):
   contentType = 'event'
@@ -497,6 +530,7 @@ class ProgrammeItem (Model):
   labelField = 'title'
 
   def link (self):
+    self.metadata
     return self.event[0].link + '#' + self.key
 
   metadataFields = {
@@ -685,15 +719,15 @@ contentTypes = {
   'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
   'pad': { 'model': Pad, 'collection': Collection(Pad) },
   'page': { 'model': Page, 'collection': Collection(Page) },
-  'tag': { 'model': Tag, 'collection': Collection(Tag) },
-  'bibliography': { 'model': Bibliography, 'collection': Collection(Bibliography) },
-  'video': { 'model': Video, 'collection': Collection(Video) },
-  'audio': { 'model': Audio, 'collection': Collection(Audio) },
-  'image': { 'model': Image, 'collection': Collection(Image) },
+  'tag': { 'model': Tag, 'collection': InstantiatingCollection(Tag) },
+  'bibliography': { 'model': Bibliography, 'collection': InstantiatingCollection(Bibliography) },
+  'video': { 'model': Video, 'collection': InstantiatingCollection(Video) },
+  'audio': { 'model': Audio, 'collection': InstantiatingCollection(Audio) },
+  'image': { 'model': Image, 'collection': InstantiatingCollection(Image) },
   'text': { 'model': Text, 'collection': Collection(Text) },
   'notes': { 'model': Note, 'collection': Collection(Note) },
-  'external-project': { 'model': ExternalProject, 'collection': Collection(ExternalProject) },
-  'question': { 'model': Question, 'collection': Collection(Question) },
+  'external-project': { 'model': ExternalProject, 'collection': InstantiatingCollection(ExternalProject) },
+  'question': { 'model': Question, 'collection': InstantiatingCollection(Question) },
 }
 
 knownContentTypes = contentTypes.keys()

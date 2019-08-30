@@ -1,4 +1,5 @@
 from generator.models import collectionFor, knownContentTypes, is_link, Model
+from generator.utils import try_attributes
 
 def display_link (direction, label, link=None):
   arrow = '→' if direction == 'out' else '←'
@@ -44,9 +45,9 @@ def make_index (models):
           if type(val) is list:
             for entry in val:
               if isinstance(entry, Model):
-                buff += display_link('out', getattr(entry, entry.labelField), entry.source_path)
+                buff += display_link('out', try_attributes(entry, [entry.labelField, 'pk']), entry.source_path)
           elif isinstance(val, Model):
-            buff += display_link('out', getattr(val, val.labelField), val.source_path)
+            buff += display_link('out', try_attributes(val, [val.labelField, 'pk']), val.source_path)
 
 
         # As the attribute is not in the metadataFields
@@ -57,9 +58,9 @@ def make_index (models):
           if type(val) is list:
             for entry in val:
               if isinstance(entry, Model):
-                buff += display_link('in', getattr(entry, entry.labelField), entry.source_path)
+                buff += display_link('in', try_attributes(entry, [entry.labelField, 'pk']), entry.source_path)
           elif isinstance(val, Model):
-            buff += display_link('in', getattr(val, val.labelField), val.source_path)
+            buff += display_link('in', try_attributes(val, [val.labelField, 'pk']), val.source_path)
       buff += '</li>'
   buff += '</ul><style>li { margin-top: 1em; }</style></body></html>'
   return buff
