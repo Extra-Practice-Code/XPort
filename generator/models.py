@@ -533,8 +533,10 @@ class ProgrammeItem (Model):
   labelField = 'title'
 
   def link (self):
-    self.metadata
-    return self.event[0].link + '#' + self.key
+    if not callable(self.event):
+      return self.event[0].link + '#' + self.key
+    else:
+      return ''
 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
