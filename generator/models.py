@@ -389,6 +389,9 @@ class Model(object):
   def __getattr__ (self, name):
     if name in self.metadata:
       return self.metadata[name]
+    elif name.lower() != name:
+      name = re.sub('[A-Z]', lambda m: '-{}'.format(m.group(0).lower()), name)
+      return self.__getattr__(name)
     else:
       # super().__getattr__(name)
       # debug('Attribute error', name, self.metadata)
@@ -648,8 +651,9 @@ class Video (Model):
     'video': fields.Single(fields.StringField()),
     'type': fields.Single(fields.StringField()),
     'title': fields.Single(fields.InlineMarkdownField()),
+    'caption': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'video'),
-    'produser': multiLinkMultiReverse('produser', 'video')
+    'produser': multiLinkMultiReverse('produser', 'video'),
   }
 
 class Audio (Model):
@@ -661,8 +665,9 @@ class Audio (Model):
     'audio': fields.Single(fields.StringField()),
     'type': fields.Single(fields.StringField()),
     'title': fields.Single(fields.InlineMarkdownField()),
+    'caption': fields.Single(fields.InlineMarkdownField()),
     'tags': multiLinkMultiReverse('tag', 'audio'),
-    'produser': multiLinkMultiReverse('produser', 'audio')
+    'produser': multiLinkMultiReverse('produser', 'audio'),
   }
 
 class Image (Model):
@@ -674,7 +679,8 @@ class Image (Model):
     'image': fields.Single(fields.StringField()),
     'tags': multiLinkMultiReverse('tag', 'image'),
     'produser': multiLinkMultiReverse('produser', 'image'),
-    'caption': fields.Single(fields.StringField()),
+    'title': fields.Single(fields.InlineMarkdownField()),
+    'caption': fields.Single(fields.InlineMarkdownField()),
   }
 
 class ExternalProject (Model):

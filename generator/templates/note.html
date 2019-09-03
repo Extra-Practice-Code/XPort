@@ -1,15 +1,21 @@
 {% extends "generator_base.html" %}
-{% block title %}
-  Caveat → {{ note.title|striptags  }}
-{% endblock %}
+{% block title %}Caveat → {{ note.title|striptags  }}{% endblock %}
 {% block content %}
-  <nav class="breadcrumbs">
-    <ul>
-    </ul>
-  </nav>
-  
+  <section class="item-reference">
+    {% if note.programmeItem %}
+      <a href="{{ note.programmeItem.link }}">
+        <h2>{{ note.programmeItem.date }} {{ note.programmeItem.time }} {{ note.programmeItem }}</h2>
+      </a>
+      {{ note.programmeItem.summary }}
+    {% elif note.event %}
+      <a href="{{ note.event.link }}">
+        <h2>{{ note.event.date }} {{ note.event.time }} {{ note.event }}</h2>
+      </a>
+      {{ note.event.summary }}
+    {% endif %}
+    </section>
     <h1>{{ note.title }}</h1>
-    {{ note.content }}    
+    {{ note.content }}
 {% endblock %}
 {% block footerresources %}
   <script src="{{ SITE_URL }}static/js/timejumper.js"></script>

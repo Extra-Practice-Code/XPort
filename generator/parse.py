@@ -118,11 +118,12 @@ def parse_pads ():
   for m in models:
     # resolve links
     # collect inline links
-    content, _ = resolveReferences(m.content, model=m) # Second return are the collected references
-    # render markdown
-    m.resolveLinks()
-    md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
-    m.content = mark_safe(md.convert(content))
+    if m.content:
+      content, _ = resolveReferences(m.content, model=m) # Second return are the collected references
+      # render markdown
+      m.resolveLinks()
+      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
+      m.content = mark_safe(md.convert(content))
   return models
 
 class Command(BaseCommand):
