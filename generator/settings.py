@@ -16,7 +16,7 @@ DEFAULT_CONTENT_TYPE = 'pad'
 SHOW_LOG_MESSAGES = True
 SHOW_DEBUG_MESSAGES = True
 
-FIELD_DATE_FORMATS = ['%d-%m-%Y', '%d %b %Y', '%d %B %Y']
+FIELD_DATE_FORMATS = ['%d-%m-%Y', '%d %m %Y', '%d/%m/%Y', '%d %b %Y', '%d %B %Y']
 FIELD_TIME_FORMAT = '%H:%M'
 
 TIME_OUTPUT_FORMAT = '%H:%M'

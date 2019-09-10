@@ -42,7 +42,7 @@ class DateRange (object):
     if delta > 4:
       return ' - '.join(self.makeFormattingChunks([self.start.date, self.end.date]))
     else:
-      chunks = self.makeFormattingChunks([self.start.date + datetime.timedelta(days=k) for k in range(delta)])
+      chunks = self.makeFormattingChunks([self.start.date + datetime.timedelta(days=k) for k in range(delta + 1)])
       if delta > 2:
         return ', '.join(chunks[:-1]) + ' & ' + chunks[-1]
       else:
