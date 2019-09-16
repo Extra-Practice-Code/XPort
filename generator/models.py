@@ -305,7 +305,7 @@ class Model(object):
   labelField = 'title'
   metadata = {}
 
-  def __init__ (self, key=None, label=None, metadata={}, content=None):
+  def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
     self.metadata = {}
     
@@ -320,7 +320,10 @@ class Model(object):
 
     if metadata:
       self.setMetadata(metadata)
-    
+
+    if source_path:
+      self.source_path = source_path
+
     self.stub = True
 
     if metadata or content:
@@ -485,7 +488,7 @@ class Collection(object):
     and register it on the collection.
   """
   def instantiate (self, key, label=None, metadata={}, content=None, source_path=''):
-    obj = self.model(key=key, label=label, metadata=metadata, content=content)
+    obj = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path)
     self.register(obj)
     return obj
 
