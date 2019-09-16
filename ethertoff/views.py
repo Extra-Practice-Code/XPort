@@ -386,6 +386,9 @@ def pad_write(request, pad):
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
 
+    path = pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)
+    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+
     if author not in pad.group.authors.all():
         response = render(
             request,
@@ -444,7 +447,8 @@ def pad_write(request, pad):
             'server': server,
             'uname': "{}".format(author.user),
             'error': False,
-            'mode' : 'write'
+            'mode' : 'write',
+            'crumbs': crumbs
         },
     )
 
