@@ -546,7 +546,7 @@ class ProgrammeItem (Model):
     'end_date': fields.Single(fields.DateField()),
     'time': fields.Single(fields.TimeField()),
     'produser': multiLinkMultiReverse('produser', 'events'),
-    'participants': multiLinkMultiReverse('produser', 'events_participant'),
+    'participant': multiLinkMultiReverse('produser', 'events_participant'),
     'event': multiLinkMultiReverse('event', 'programmeItems'),
     'title': fields.Single(fields.InlineMarkdownField()),
     'summary': fields.Single(fields.MarkdownField()),
@@ -594,7 +594,7 @@ class Note (Model):
   prefix = 'notes'
   metadataFields = {
     'produser': multiLinkMultiReverse('produser', 'notes'),
-    'participants': multiLinkMultiReverse('produser', 'notes_participant'),
+    'participant': multiLinkMultiReverse('produser', 'notes_participant'),
     'event': linkMultiReverse('event', 'notes'),
     'programme-item': linkMultiReverse('programme-item', 'notes'),
     'tags': multiLinkMultiReverse('tag', 'notes'),
