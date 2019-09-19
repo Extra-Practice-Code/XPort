@@ -40,6 +40,15 @@
     {% endfor %}
   </ul>
   {% endif %}
+  {% if event.participants %}
+  <h4>Participants</h4>
+  <p>
+    {% for produser in event.produser %}
+    <a href="{{ produser.link }}" class="produser">
+      {{ produser }}</a>{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  </p>
+  {% endif %}
 {% endblock %}
 
 {% block sidebar %}
@@ -72,5 +81,14 @@
         </li>
       {% endfor %}
     {% endfor %}
+    {% if event.participants %}
+    <h4>Participants</h4>
+    <p>
+      {% for produser in event.produser %}
+      <a href="{{ produser.link }}" class="produser">
+        {{ produser }}</a>{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    </p>
+    {% endif %}
   </ul>
 {% endblock %}
