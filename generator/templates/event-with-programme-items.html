@@ -40,7 +40,7 @@
     {% endfor %}
   </ul>
   {% endif %}
-  {% if event.participants %}
+  {% if event.participant %}
   <h4>Participants</h4>
   <p>
     {% for produser in event.produser %}
@@ -81,10 +81,10 @@
         </li>
       {% endfor %}
     {% endfor %}
-    {% if event.participants %}
+    {% if event.participant %}
     <h4>Participants</h4>
     <p>
-      {% for produser in event.produser %}
+      {% for produser in event.participant %}
       <a href="{{ produser.link }}" class="produser">
         {{ produser }}</a>{% if not forloop.last %},{% endif %}
       {% endfor %}
