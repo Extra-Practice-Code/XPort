@@ -2,7 +2,7 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences, initContentTypes
+from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
 from .utils import info, debug, error, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
@@ -68,7 +68,7 @@ def parse_pads ():
         # use it as such. It's value becomes the key and potentially
         # the label
         firstMetaKey, firstMetaValue = list(meta.items())[0]
-
+        
         if firstMetaKey in knownContentTypes:
           contentType = firstMetaKey
           key = keyFilter(firstMetaValue)

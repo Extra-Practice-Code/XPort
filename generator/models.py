@@ -729,7 +729,7 @@ class Question (Model):
 # rather than on the model?
 contentTypes = {}
 
-knownContentTypes = contentTypes.keys()
+knownContentTypes = [ 'event', 'programme-item', 'produser', 'trajectory', 'pad', 'page', 'tag', 'bibliography', 'video', 'audio', 'image', 'text', 'notes', 'external-project', 'question' ]
 
 def initContentTypes ():
   global contentTypes

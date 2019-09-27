@@ -86,7 +86,6 @@ def groupedProgrammeItems(event):
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
 
 def generate ():
-  initContentTypes()
   basedir = os.path.join(BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
   outputdir = os.path.join(basedir, 'static', 'generated')
@@ -164,4 +163,5 @@ class Command(BaseCommand):
   help = 'Generate a static interpretation of the pads'
 
   def handle(self, *args, **options):
+    initContentTypes()
     generate()
