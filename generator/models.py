@@ -197,23 +197,27 @@ def parseReference(match, collector=None, model=None):
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
 
-  try:
-    target = collectionFor(contentType).get(label=label)
+  if label:
+    try:
+      target = collectionFor(contentType).get(label=label)
 
-    debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
-    # debug('Rendered reference ', renderReference(target))
+      # debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
+      # debug('Rendered reference ', renderReference(target))
 
-    # Insert the metadata on the object ?
-    if target:
-      if metadata and target.stub:
-        target.fill(metadata)
+      # Insert the metadata on the object ?
+      if target:
+        if metadata and target.stub:
+          target.fill(metadata)
 
-      collector.append(target)
+        collector.append(target)
 
-      return renderReference(target, display_label=display_label, model=model)
-    else:
-      return label
-  except UnknownContentTypeError:
+        return renderReference(target, display_label=display_label, model=model)
+      else:
+        return label
+    except UnknownContentTypeError:
+      return match.group(0)
+  else:
+    debug('Skipping inline reference {}, no label'.format(match.group(0)))
     return match.group(0)
 
 # difference between import and reference.
