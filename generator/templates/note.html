@@ -1,7 +1,28 @@
 {% extends "generator_base.html" %}
-{% block title %}Caveat → {{ note.title|striptags  }}{% endblock %}
+{% block title %}
+  Caveat
+  {% if note.programmeItem %}
+    → {{ note.programmeItem }}
+  {% elif note.event %}
+    → {{ note.event }}
+  {% endif %}
+  → {{ note.title|striptags }}
+{% endblock %}
 {% block content %}
+  <nav class="breadcrumbs">
+    <ul>
+      {% if note.programmeItem %}
+      <li><a href="../activities.html">Activities</a></li>
+      <li><a href="{{ note.programmeItem.link }}">{{ note.programmeItem }}</a></li>
+      {% elif note.event %}
+      <li><a href="../activities.html">Activities</a></li>
+      <li><a href="{{ note.event.link }}">{{ note.event }}</a></li>
+      {% endif %}
+      <li>{{ note }}</li>
+    </ul>
+  </nav>
   <section class="item-reference">
+    Note related to:
     {% if note.programmeItem %}
       <a href="{{ note.programmeItem.link }}">
         <h2>{{ note.programmeItem.date }} {{ note.programmeItem.time }} {{ note.programmeItem }}</h2>

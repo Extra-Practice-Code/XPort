@@ -300,16 +300,18 @@ footer {
   background: var(--rose-karel);
 }
 
-.breadcrumbs, .item-reference {
+.breadcrumbs {
   border-bottom: 2px solid black;
   margin: -1em -1em 0 -1em;
   position: sticky;
   top: -1em;
-  background: white;
+  background:white;
   z-index: 1;
 }
 
 .item-reference {
+  border-bottom: 2px solid black;
+  margin: 0 -1em 0 -1em;
   padding: .5em 1em;
 }
 

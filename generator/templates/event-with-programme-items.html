@@ -58,7 +58,7 @@
         <h3>{{ date }}</h3>
       </li>
       {% for item in events %}
-        <li>
+        <li id="{{ item.key }}">
           <h2>{{ item.time }} {{ item }}</h2>
           <p class="event-infos"> 
             {% for produser in item.produser %}
