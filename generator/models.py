@@ -723,25 +723,33 @@ class Question (Model):
 # Perhaps include the sort in the collection?
 # Might also need to include the outputfolder here
 # rather than on the model?
-contentTypes = {
-  'event': { 'model': Event, 'collection': Collection(Event) },
-  'programme-item': { 'model': ProgrammeItem, 'collection': Collection(ProgrammeItem) },
-  'produser': { 'model': Produser, 'collection': Collection(Produser) },
-  'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
-  'pad': { 'model': Pad, 'collection': Collection(Pad) },
-  'page': { 'model': Page, 'collection': Collection(Page) },
-  'tag': { 'model': Tag, 'collection': InstantiatingCollection(Tag) },
-  'bibliography': { 'model': Bibliography, 'collection': InstantiatingCollection(Bibliography) },
-  'video': { 'model': Video, 'collection': InstantiatingCollection(Video) },
-  'audio': { 'model': Audio, 'collection': InstantiatingCollection(Audio) },
-  'image': { 'model': Image, 'collection': InstantiatingCollection(Image) },
-  'text': { 'model': Text, 'collection': Collection(Text) },
-  'notes': { 'model': Note, 'collection': Collection(Note) },
-  'external-project': { 'model': ExternalProject, 'collection': InstantiatingCollection(ExternalProject) },
-  'question': { 'model': Question, 'collection': InstantiatingCollection(Question) },
-}
+contentTypes = {}
 
 knownContentTypes = contentTypes.keys()
+
+def initContentTypes ():
+  global contentTypes
+  global knownContentTypes
+
+  contentTypes = {
+    'event': { 'model': Event, 'collection': Collection(Event) },
+    'programme-item': { 'model': ProgrammeItem, 'collection': Collection(ProgrammeItem) },
+    'produser': { 'model': Produser, 'collection': Collection(Produser) },
+    'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
+    'pad': { 'model': Pad, 'collection': Collection(Pad) },
+    'page': { 'model': Page, 'collection': Collection(Page) },
+    'tag': { 'model': Tag, 'collection': InstantiatingCollection(Tag) },
+    'bibliography': { 'model': Bibliography, 'collection': InstantiatingCollection(Bibliography) },
+    'video': { 'model': Video, 'collection': InstantiatingCollection(Video) },
+    'audio': { 'model': Audio, 'collection': InstantiatingCollection(Audio) },
+    'image': { 'model': Image, 'collection': InstantiatingCollection(Image) },
+    'text': { 'model': Text, 'collection': Collection(Text) },
+    'notes': { 'model': Note, 'collection': Collection(Note) },
+    'external-project': { 'model': ExternalProject, 'collection': InstantiatingCollection(ExternalProject) },
+    'question': { 'model': Question, 'collection': InstantiatingCollection(Question) }
+  }
+  
+  knownContentTypes = contentTypes.keys()
 
 def collectionFor (contentType):
   if contentType in knownContentTypes:

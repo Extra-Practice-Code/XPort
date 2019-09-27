@@ -12,7 +12,7 @@ import markdown
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 from generator.parse import parse_pads
-from generator.models import collectionFor
+from generator.models import collectionFor, initContentTypes
 from generator.utils import info, regroup, try_attributes, render_to_string
 
 from django.template.defaultfilters import slugify
@@ -86,6 +86,7 @@ def groupedProgrammeItems(event):
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
 
 def generate ():
+  initContentTypes()
   basedir = os.path.join(BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
   outputdir = os.path.join(basedir, 'static', 'generated')

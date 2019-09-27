@@ -2,7 +2,7 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
+from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences, initContentTypes
 from .utils import info, debug, error, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
