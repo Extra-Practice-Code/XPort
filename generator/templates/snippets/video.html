@@ -1,0 +1,10 @@
+<section class="video">
+  <video controls>
+    <source src="{{ video.video }}" type="{% if video.type %}{{ video.type }}{% else %}video/mp4{% endif %}">
+  </video>
+  {% if audio.description %}
+    <p>
+      {{ audio.description }}
+    </p>
+  {% endif %}
+</section>

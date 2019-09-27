@@ -117,7 +117,7 @@ def linkReference(target, display_label):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)
 
 def includeVideo(video, display_label):
-  return '<video controls><source src="{}" type="{}"></video>'.format(video.video, video.type)
+  return render_to_string('snippets/video.html', { 'video': video })
 
 def includeAudio(audio, display_label):
   return render_to_string('snippets/audio.html', { 'audio': audio })
