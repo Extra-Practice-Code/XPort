@@ -11,7 +11,14 @@
     As <em>Caveat</em> is an ongoing research, the produsers below are regularly updated. 
   </p>
   {% for role, produsers in grouped_produsers %}
-    <h2>{{ role }}</h2>
+    {% if role != 'team' %}
+      <h2>{{ role }}s</h2>
+    {% else %}
+      <h2>{{ role }}</h2>
+    {% endif %}
+    {% if role == 'dramaturg' %}
+    <p>External experts who, in their role as 'dramaturg', follow the research from their own expertise.</p>
+    {% endif %}
     {% for produser in produsers %}
     <h2 class="produser"><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h2>
     {% if produser.content %}
