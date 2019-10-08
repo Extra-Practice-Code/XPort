@@ -22,7 +22,7 @@ from django.core.management import call_command
 
 from etherpadlite.models import Pad 
 
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from django.conf import settings
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -87,7 +87,7 @@ produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 
 
 def generate ():
   initContentTypes()
-  basedir = os.path.join(BASE_DIR, 'generator')
+  basedir = os.path.join(settings.BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
   outputdir = os.path.join(basedir, 'static', 'generated')
 
@@ -153,7 +153,7 @@ def generate ():
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 
-  if not DEBUG:
+  if not settings.DEBUG:
     print('Collecting static')
     call_command('collectstatic', interactive=False)
 

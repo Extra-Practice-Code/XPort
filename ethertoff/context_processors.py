@@ -4,7 +4,6 @@ import sys
 
 from datetime import datetime
 
-from ethertoff.settings import MEDIA_ROOT
 from etherpadlite.models import Pad, PadAuthor, PadServer
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.shortcuts import get_current_site

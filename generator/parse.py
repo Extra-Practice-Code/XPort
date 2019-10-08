@@ -14,7 +14,7 @@ from etherpadlite.models import Pad
 
 from .settings import DEFAULT_CONTENT_TYPE
 
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from django.conf import settings
 
 from generator.extract_meta import extract_meta
 
@@ -47,7 +47,7 @@ def parse_pads ():
       epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     name, extension = os.path.splitext(pad.display_slug)
-    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
+    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
     source = epclient.getText(padID)['text']
 
     info('Reading {}'.format(pad.display_slug))

@@ -32,6 +32,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
 from django.core.paginator import Paginator
+from django.conf import settings
 
 # Django Apps import
 
@@ -49,15 +50,13 @@ from . import forms as ethertoffForms
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
-    from ethertoff.settings import HOME_PAD
+    HOME_PAD = settings.HOME_PAD
 except ImportError:
     HOME_PAD = 'About.md'
 try:
-    from ethertoff.settings import BACKUP_DIR
+    BACKUP_DIR = settings.BACKUP_DIR
 except ImportError:
     BACKUP_DIR = None
-
-from ethertoff.settings import PAD_FORCE_EXTENSION, PAD_ALLOWED_EXTENSIONS, PAD_DEFAULT_EXTENSION, PADS_PER_PAGE, PAD_NAMESPACE_SEPARATOR, MAX_PAD_SAVE_TRIES, API_LOCAL_URL
 
 """
 Set up an HTMLParser for the sole purpose of unescaping
@@ -89,8 +88,8 @@ def insertAt (path=[], tree=[], pad=''):
     return tree
 
 def insertPad (pad, tree):
-    if PAD_NAMESPACE_SEPARATOR in pad.display_slug:
-        path = pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)
+    if settings.PAD_NAMESPACE_SEPARATOR in pad.display_slug:
+        path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
     else:
         path = []
     
@@ -99,7 +98,7 @@ def insertPad (pad, tree):
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
     if not pad.is_public:
-        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
+        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
         tail = '' if n == 0 else '-{}'.format(n)
         publicid = pad.name+tail
 
@@ -118,7 +117,7 @@ def makePadPublic (pad, n=0):
 
 def makePadPrivate(pad):
     if pad.is_public:
-        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
+        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
         res = epclient.movePad(pad.publicpadid, pad.padid, force=True)
 
         pad.is_public = False
@@ -138,9 +137,9 @@ def filterPadSlug(slug):
 def ensurePadExtension(slug):
     name, ext = os.path.splitext(slug)
 
-    if PAD_FORCE_EXTENSION:
-        if ext.lower() not in PAD_ALLOWED_EXTENSIONS:
-            ext = PAD_DEFAULT_EXTENSION
+    if settings.PAD_FORCE_EXTENSION:
+        if ext.lower() not in settings.PAD_ALLOWED_EXTENSIONS:
+            ext = settings.PAD_DEFAULT_EXTENSION
 
         return '{}{}'.format(name, ext.lower())
 
@@ -184,8 +183,8 @@ def createPad (slug, server, group, n=0):
 
 # Move as a property to the model ?
 def getFolderName (slug):
-    if PAD_NAMESPACE_SEPARATOR in slug:
-        return slug.rsplit(PAD_NAMESPACE_SEPARATOR, 1)[0]
+    if settings.PAD_NAMESPACE_SEPARATOR in slug:
+        return slug.rsplit(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
     else:
         return None
 
@@ -253,7 +252,7 @@ def padDelete(request, pk):
 def renamePad(pad, slug, n=0):
     pad.display_slug = treatPadName(slug, n)
     
-    while n < MAX_PAD_SAVE_TRIES:
+    while n < settings.MAX_PAD_SAVE_TRIES:
         try:
             return pad.save()
         except IntegrityError:
@@ -267,7 +266,7 @@ def padRename(request, pk):
         form = ethertoffForms.PadRename(request.POST)
         if form.is_valid():
             renamePad(pad, form.cleaned_data['name'])
-            return redirect('manage', path=getFolderName(pad.display_slug).replace(PAD_NAMESPACE_SEPARATOR, '/'))
+            return redirect('manage', path=getFolderName(pad.display_slug).replace(settings.PAD_NAMESPACE_SEPARATOR, '/'))
     else:
         form = ethertoffForms.PadRename({
             'pk': pad.pk,
@@ -387,7 +386,7 @@ def pad_write(request, pad):
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
 
-    path = pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)
+    path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
     crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
 
     if author not in pad.group.authors.all():
@@ -409,7 +408,7 @@ def pad_write(request, pad):
     expires = datetime.datetime.utcnow() + datetime.timedelta(
         seconds=config.SESSION_LENGTH
     )
-    epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
+    epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
 
     # Try to use existing session as to allow editing multiple pads at once
     makeNewSessionID = False
@@ -514,8 +513,8 @@ def pad_read(request, mode="r", slug=None):
     # Initialize some needed values
     pad = get_object_or_404(Pad, display_slug=slug)
 
-    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
-    epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
+    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
+    epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
 
     # Etherpad gives us authorIDs in the form ['a.5hBzfuNdqX6gQhgz', 'a.tLCCEnNVJ5aXkyVI']
     # We link them to the Django users DjangoEtherpadLite created for us
@@ -560,7 +559,7 @@ def pad_read(request, mode="r", slug=None):
     
     # Create namespaces from the url of the pad
     # 'pedagogy::methodology' -> ['pedagogy', 'methodology']
-    namespaces = [p.rstrip('-') for p in pad.display_slug.split(PAD_NAMESPACE_SEPARATOR)]
+    namespaces = [p.rstrip('-') for p in pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)]
 
     meta_list = []
 
@@ -685,10 +684,10 @@ def generate(request):
 def manage(request, path=[]):
     if len(path) > 0:
         path = path.split('/')
-        pads = Pad.objects.filter(display_slug__startswith=PAD_NAMESPACE_SEPARATOR.join(path) + PAD_NAMESPACE_SEPARATOR).order_by('name')
+        pads = Pad.objects.filter(display_slug__startswith=settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR).order_by('name')
     else:
         pads = Pad.objects.all().order_by('name')
-    # paginator = Paginator(pads, PADS_PER_PAGE)
+    # paginator = Paginator(pads, settings.PADS_PER_PAGE)
 
     tree = makeLeaf()
 
@@ -724,8 +723,8 @@ def all_private(request):
 def padOrFallbackPath(request, slug, fallbackPath, mimeType):
     try:
         pad = Pad.objects.get(display_slug=slug)
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, API_LOCAL_URL if API_LOCAL_URL else pad.server.apiurl)
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
+        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
         return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
     except:
         # If there is no pad called "css", loads a default css file

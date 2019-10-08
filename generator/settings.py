@@ -1,5 +1,3 @@
-from ethertoff.settings import DEBUG
-
 MENU_ITEMS = [
   ('About & Contact', 'pages/about.html'),
   ('Timeline', 'index.html'),
