@@ -111,7 +111,6 @@ class PadAuthor(models.Model):
     group = models.ManyToManyField(
         PadGroup,
         blank=True,
-        null=True,
         related_name='authors'
     )
 
