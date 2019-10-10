@@ -38,7 +38,6 @@ from django.contrib.staticfiles import finders
 from etherpadlite.models import Pad, PadAuthor
 from etherpadlite import forms
 from etherpadlite import config
-from django.contrib.sites.shortcuts import get_current_site
 
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
