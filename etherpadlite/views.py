@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from py_etherpad import EtherpadLiteClient
 
 # local imports
-from etherpadlite.models import *
+from etherpadlite.models import Pad, PadAuthor, PadGroup, PadServer
 from etherpadlite import forms
 from etherpadlite import config
 
