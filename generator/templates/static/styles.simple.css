@@ -465,6 +465,10 @@ section.audio {
   padding-top: 0;
 }
 
+.programme-item-list li.list-header {
+  padding-top: 1em;
+}
+
 .programme-item-list :target:before {
 	margin: -3em 0 0;
 	height: 3em;
