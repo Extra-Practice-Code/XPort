@@ -1,10 +1,4 @@
-from django.contrib.auth import views as auth_views
-# from etherpadlite.views import padDelete
-from django.urls import path, re_path
-from ethertoff import views
-#from django.conf.urls import *
-from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.urls import path
 
 from django.conf import settings
 from django.conf.urls import include
