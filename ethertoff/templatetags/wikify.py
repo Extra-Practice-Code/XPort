@@ -2,7 +2,8 @@
 
 from django import template
 from django.template.defaultfilters import stringfilter
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, PAD_NAMESPACE_SEPARATOR_DISPLAY
+from django.conf import settings 
+
 
 register = template.Library()
 
@@ -10,17 +11,18 @@ register = template.Library()
 @stringfilter
 def dewikify(name):
     name = name.replace('-', ' ')
-    name = name.replace(PAD_NAMESPACE_SEPARATOR, PAD_NAMESPACE_SEPARATOR_DISPLAY)
+    name = name.replace(settings.PAD_NAMESPACE_SEPARATOR, settings.PAD_NAMESPACE_SEPARATOR_DISPLAY)
     return name
 
 @register.filter
 def wikifyPath(value):
-    return value.replace('/', PAD_NAMESPACE_SEPARATOR)
+    return value.replace('/', settings.PAD_NAMESPACE_SEPARATOR)
 
 @register.filter
 def stripPath(value, path):
     if path is not None and len(path) > 0:
-        from ethertoff.settings import PAD_NAMESPACE_SEPARATOR as PNS
+        from django.conf import settings
+        PNS = settings.PAD_NAMESPACE_SEPARATOR
         pathstring = '{}{}'.format(PNS.join(path), PNS)
         return value.replace(pathstring, '')
     

@@ -23,7 +23,7 @@ from django.template.loader import render_to_string
 
 from django.contrib.sites.models import Site
 from etherpadlite.models import Pad, PadAuthor
-from ethertoff.settings import BACKUP_DIR
+from django.conf import settings
 
 """
 We scrape all the pages, construct a graph, and ask the RDF store to return us all the metadata.
@@ -195,9 +195,9 @@ def snif():
     
     d = query_results_to_template_articles(g.query(sparql_query))
     
-    with open(os.path.join(BACKUP_DIR, "index.json"), 'w') as f:
+    with open(os.path.join(settings.BACKUP_DIR, "index.json"), 'w') as f:
         json.dump(d, f, indent=2, ensure_ascii=False)
-        # with open(os.path.join(BACKUP_DIR, "index.html"), 'w') as f:
+        # with open(os.path.join(settings.BACKUP_DIR, "index.html"), 'w') as f:
         #    f.write(render_to_string("home.html", {"articles" : d}).encode('utf-8'))
     
     duration = clock() - start

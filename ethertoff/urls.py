@@ -14,19 +14,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 admin.autodiscover()
 
-# This is to allow the website to work under a subfolder
-# i.e. http://ethertoff.be/2015/
-# Define SUBFOLDER in your local_settings.py
-BASE_URL = '^'
-try:
-    BASE_URL = r'^' + settings.SUBFOLDER
-    if BASE_URL and not BASE_URL.endswith(r'/'):
-        BASE_URL += r'/'
-except AttributeError:
-    pass
-
-app_name = "ethertoff"
-
 urlpatterns = [
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
@@ -59,8 +46,4 @@ urlpatterns = [
     #re_path(r's/(?P<slug>[^/]+)$', views.pad, name='pad-slide'),
     #re_path(r'p/(?P<slug>[^/]+)$', views.pad, name='pad-print'),
     re_path(r'w/(?P<slug>[^/]+)$', views.pad, name='pad-write'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-#urlpatterns = [
-    #path(BASE_URL , include(base_urlpatterns)),
-#]
+]
