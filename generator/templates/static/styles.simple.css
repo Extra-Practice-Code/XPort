@@ -461,13 +461,13 @@ section.audio {
   border-bottom: 2 solid black;
 }
 
-.programme-item-list :target {
+.programme-item-list li {
   padding-top: 0;
 }
 
 .programme-item-list :target:before {
-	margin: -4em 0 0;
-	height: 4em;
+	margin: -3em 0 0;
+	height: 3em;
 	content: '';
 	display: block;
 }
