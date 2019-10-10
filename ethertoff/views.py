@@ -701,7 +701,7 @@ def manage(request, path=[]):
 
     folders.sort(key=str.lower)
 
-    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path, 'crumbs': crumbs, 'folders': folders })
+    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path, 'crumbs': crumbs, 'folders': folders, 'folderPathString': '/'.join(path) if path else None })
     
 def all(request):
     if request.user.is_authenticated:
