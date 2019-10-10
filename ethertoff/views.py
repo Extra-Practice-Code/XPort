@@ -27,20 +27,17 @@ from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.template.context_processors import csrf
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
-from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.staticfiles import finders
 
 # Django Apps import
 
-from etherpadlite.models import *
+from etherpadlite.models import Pad, PadAuthor
 from etherpadlite import forms
 from etherpadlite import config
-from django.contrib.sites.shortcuts import get_current_site
 
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
@@ -496,8 +493,8 @@ def pad_read(request, mode="r", slug=None):
     except IOError:
         articles = []
     
-    SITE = get_current_site(request)
     # FIXME: construct url based on settings?
+    # SITE = get_current_site(request)
     #href = "http://%s" % SITE.domain + request.path
     
     href = request.path

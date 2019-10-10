@@ -3,12 +3,12 @@ import os.path
 import urllib
 
 from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
-from .utils import info, debug, error, warn, keyFilter
+from .utils import info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.utils.safestring import mark_safe
 from etherpadlite.models import Pad
 

@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from etherpadlite.models import *
+from etherpadlite.models import PadServer, PadGroup, PadAuthor, Pad
 
 class PadAuthorAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
