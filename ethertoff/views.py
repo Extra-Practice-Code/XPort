@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.staticfiles import finders
 
 # Django Apps import
 
@@ -728,19 +729,20 @@ def padOrFallbackPath(request, slug, fallbackPath, mimeType):
         return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
     except:
         # If there is no pad called "css", loads a default css file
-        f = open(fallbackPath, 'r')
+        path = finders.find(fallbackPath)
+        f = open(path, 'r')
         contents = f.read()
         f.close()
         return HttpResponse(contents, content_type=mimeType)
 
 def css(request):
-    return padOrFallbackPath(request, 'screen.css', 'ethertoff/static/css/screen.css', 'text/css')
+    return padOrFallbackPath(request, 'screen.css', 'css/screen.css', 'text/css')
 
 def cssprint(request):
-    return padOrFallbackPath(request, 'laser.css', 'ethertoff/static/css/laser.css', 'text/css')
+    return padOrFallbackPath(request, 'laser.css', 'css/laser.css', 'text/css')
 
 def offsetprint(request):
-    return padOrFallbackPath(request, 'offset.css', 'ethertoff/static/css/offset.css', 'text/css')
+    return padOrFallbackPath(request, 'offset.css', 'css/offset.css', 'text/css')
 
 def css_slide(request):
-    return padOrFallbackPath(request, 'slidy.css', 'ethertoff/static/css/slidy.css', 'text/css')
+    return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
