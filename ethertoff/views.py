@@ -14,6 +14,7 @@ import os
 
 import markdown
 from markdown.extensions.toc import TocExtension
+from mdx_semanticdata import SemanticDataExtension
 from py_etherpad import EtherpadLiteClient
 import dateutil.parser
 import pytz
@@ -542,7 +543,7 @@ def pad_read(request, mode="r", slug=None):
         # we don’t want Etherpads automatically generated HTML, we want plain text.
         text = epclient.getText(padID)['text']
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list'])
+            md = markdown.Markdown(extensions=['extra', 'meta', SemanticDataExtension({}), TocExtension(baselevel=2), 'attr_list'])
             text = md.convert(text)
             try:
                 meta = md.Meta
@@ -575,12 +576,15 @@ def pad_read(request, mode="r", slug=None):
             meta['date_iso'] = []
             meta['date_parsed'] = []
             for date in meta['date']:
-                date_parsed = dateutil.parser.parse(date)
-                # If there is no timezone we assume it is in Brussels:
-                if not date_parsed.tzinfo:
-                    date_parsed = pytz.timezone('Europe/Brussels').localize(date_parsed) 
-                meta['date_parsed'].append(date_parsed)
-                meta['date_iso'].append( date_parsed.isoformat() )
+                try:
+                    date_parsed = dateutil.parser.parse(date)
+                    # If there is no timezone we assume it is in Brussels:
+                    if not date_parsed.tzinfo:
+                        date_parsed = pytz.timezone('Europe/Brussels').localize(date_parsed)
+                    meta['date_parsed'].append(date_parsed)
+                    meta['date_iso'].append( date_parsed.isoformat() )
+                except ValueError:
+                    continue
 
         meta_list = list(meta.items())
 
