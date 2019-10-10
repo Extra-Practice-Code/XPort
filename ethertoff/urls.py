@@ -1,14 +1,7 @@
 from django.contrib.auth import views as auth_views
-# from etherpadlite.views import padDelete
 from django.urls import path, re_path
 from . import views
-#from django.conf.urls import *
-from django.views.generic import TemplateView
-from django.http import HttpResponse
 
-from django.conf import settings
-from django.conf.urls import include
-from django.conf.urls.static import static
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin

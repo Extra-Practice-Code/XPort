@@ -3,21 +3,19 @@
 # Python imports
 
 import os
-import codecs
 import urllib
 
 # PyPi imports
 
-import markdown
 from py_etherpad import EtherpadLiteClient
 
 # Django imports
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 # Django Apps import
 
-from etherpadlite.models import Pad, PadAuthor
+from etherpadlite.models import Pad
 from django.conf import settings
 
 class Command(BaseCommand):

@@ -3,9 +3,6 @@
 # Python imports
 
 import os
-import re
-import sys
-import codecs
 import json
 from urllib import error
 from time import clock
@@ -16,13 +13,12 @@ import rdflib
 
 # Django imports
 
-from django.core.management.base import BaseCommand, CommandError
-from django.template.loader import render_to_string
+from django.core.management.base import BaseCommand
 
 # Django Apps import
 
 from django.contrib.sites.models import Site
-from etherpadlite.models import Pad, PadAuthor
+from etherpadlite.models import Pad
 from django.conf import settings
 
 """

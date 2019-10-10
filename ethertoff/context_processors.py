@@ -1,8 +1,4 @@
-import re
-import os
 import sys
-
-from datetime import datetime
 
 from etherpadlite.models import Pad, PadAuthor, PadServer
 from django.contrib.auth.models import AnonymousUser
