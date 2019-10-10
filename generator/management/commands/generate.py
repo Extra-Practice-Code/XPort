@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import urllib
 import os
 import os.path
 import shutil
@@ -8,19 +7,12 @@ import shutil
 from math import inf
 from generator.index import make_index
 
-import markdown
-from markdown.extensions.toc import TocExtension
-from py_etherpad import EtherpadLiteClient
 from generator.parse import parse_pads
 from generator.models import collectionFor, initContentTypes
 from generator.utils import info, regroup, try_attributes, render_to_string
 
-from django.template.defaultfilters import slugify
-from django.utils.safestring import mark_safe
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.management import call_command
-
-from etherpadlite.models import Pad 
 
 from django.conf import settings
 
