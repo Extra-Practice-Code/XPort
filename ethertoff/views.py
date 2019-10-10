@@ -576,12 +576,15 @@ def pad_read(request, mode="r", slug=None):
             meta['date_iso'] = []
             meta['date_parsed'] = []
             for date in meta['date']:
-                date_parsed = dateutil.parser.parse(date)
-                # If there is no timezone we assume it is in Brussels:
-                if not date_parsed.tzinfo:
-                    date_parsed = pytz.timezone('Europe/Brussels').localize(date_parsed) 
-                meta['date_parsed'].append(date_parsed)
-                meta['date_iso'].append( date_parsed.isoformat() )
+                try:
+                    date_parsed = dateutil.parser.parse(date)
+                    # If there is no timezone we assume it is in Brussels:
+                    if not date_parsed.tzinfo:
+                        date_parsed = pytz.timezone('Europe/Brussels').localize(date_parsed)
+                    meta['date_parsed'].append(date_parsed)
+                    meta['date_iso'].append( date_parsed.isoformat() )
+                except ValueError:
+                    continue
 
         meta_list = list(meta.items())
 
