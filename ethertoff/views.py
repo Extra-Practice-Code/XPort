@@ -200,6 +200,7 @@ def padCreate(request, prefix=''):
         form = forms.PadCreate(request.POST)
         if form.is_valid():
             slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
+            slug = slug.strip(":")  # avoids leading and trailing "::"
             pad = createPad(slug=slug, server=group.server, group=group)
 
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
@@ -256,6 +257,7 @@ def renamePad(pad, slug, n=0):
         except IntegrityError:
             return renamePad(pad, slug, n+1)
 
+
 @login_required(login_url='/etherpad')
 def padRename(request, pk):
     pad = get_object_or_404(Pad, pk=pk)
@@ -263,8 +265,17 @@ def padRename(request, pk):
     if request.method == 'POST':
         form = ethertoffForms.PadRename(request.POST)
         if form.is_valid():
-            renamePad(pad, form.cleaned_data['name'])
-            return redirect('manage', path=getFolderName(pad.display_slug).replace(settings.PAD_NAMESPACE_SEPARATOR, '/'))
+            slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
+            slug = slug.strip(":")  # avoids leading and trailing "::"
+            renamePad(pad, slug)
+
+            path = getFolderName(pad.display_slug)
+            if path:
+                path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
+                return redirect('manage', path=path)
+            else:
+                return redirect('manage')
+
     else:
         form = ethertoffForms.PadRename({
             'pk': pad.pk,
