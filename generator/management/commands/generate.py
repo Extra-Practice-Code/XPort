@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import urllib
 import os
 import os.path
 import shutil
@@ -8,21 +7,14 @@ import shutil
 from math import inf
 from generator.index import make_index
 
-import markdown
-from markdown.extensions.toc import TocExtension
-from py_etherpad import EtherpadLiteClient
 from generator.parse import parse_pads
 from generator.models import collectionFor, initContentTypes
 from generator.utils import info, regroup, try_attributes, render_to_string
 
-from django.template.defaultfilters import slugify
-from django.utils.safestring import mark_safe
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
-from etherpadlite.models import Pad 
-
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from django.conf import settings
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -87,7 +79,7 @@ produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 
 
 def generate ():
   initContentTypes()
-  basedir = os.path.join(BASE_DIR, 'generator')
+  basedir = os.path.join(settings.BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
   outputdir = os.path.join(basedir, 'static', 'generated')
 
@@ -153,7 +145,7 @@ def generate ():
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 
-  if not DEBUG:
+  if not settings.DEBUG:
     print('Collecting static')
     call_command('collectstatic', interactive=False)
 

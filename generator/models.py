@@ -1,14 +1,12 @@
 from . import fields
-from .utils import info, debug, CMAGENTA, keyFilter, try_attributes, render_to_string
+from .utils import debug, CMAGENTA, keyFilter, try_attributes, render_to_string
 import os.path
-import datetime
 import re
 # from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
 from functools import partial
 
-import markdown
 from django.utils.safestring import mark_safe
 
 from generator.settings import SITE_URL

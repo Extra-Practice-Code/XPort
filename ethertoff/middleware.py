@@ -1,9 +1,8 @@
 from django.http import HttpResponseServerError
-from django.template import Context, Template, loader
+from django.template import Context, loader
 
 from urllib2 import URLError
 from ethertoff.context_processors import EthertoffError
-from etherpadlite.models import Pad, PadAuthor, PadServer
 
 from html5lib import HTMLParser, serializer, treebuilders, treewalkers
 

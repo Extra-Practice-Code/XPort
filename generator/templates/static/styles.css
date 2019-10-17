@@ -111,14 +111,16 @@ p {
   margin: 0;
 }
 
-p.event-date+p, p.event-title+p, p.event-date+p.event-date, .event-infos, p.event-title, p.event-detail-title, .event-detail-schedule .event-infos+p {
-  margin-top: 0pt;
+.event-date+p, .event-title+p, .event-date+p.event-date, .event-infos, .event-title, .event-detail-title, .event-detail-schedule .event-infos+p {
+  margin-top: var(--lin-height);
 }
 
-p.event-title+p.event-exerpt, .event-detail-schedule .event-infos, p+p {
+.event-title+p.event-exerpt, .event-detail-schedule .event-infos, p+p {
   margin-top: 12pt;
 }
-
+.event-title + p {
+  margin-top: var(--line-height);
+}
 strong {
   /* font-family: "Junicode-Condensed"; */
   font-weight: inherit;
@@ -432,9 +434,10 @@ blockquote+p, .event-infos+blockquote {
   font-size: 0.8em;
   line-height: 1.3em;
   text-transform: uppercase;
-  /* color: black; */
   font-weight: bold;
   letter-spacing: 0.025em;
+  font-family: "U001";
+  margin: 0;
 }
 
 .grouper-header {
@@ -755,7 +758,7 @@ div .pad {
   clear: left;
 }
 
-.content img.full, 
+.content img.full,
 .content audio,
 .content video {
   max-width: 100%;

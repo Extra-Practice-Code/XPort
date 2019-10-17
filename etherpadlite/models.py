@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from py_etherpad import EtherpadLiteClient
-
-from ethertoff.templatetags.wikify import dewikify
 
 import string
 import random

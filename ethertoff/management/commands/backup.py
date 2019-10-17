@@ -3,22 +3,20 @@
 # Python imports
 
 import os
-import codecs
 import urllib
 
 # PyPi imports
 
-import markdown
 from py_etherpad import EtherpadLiteClient
 
 # Django imports
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 # Django Apps import
 
-from etherpadlite.models import Pad, PadAuthor
-from ethertoff.settings import BACKUP_DIR
+from etherpadlite.models import Pad
+from django.conf import settings
 
 class Command(BaseCommand):
     args = ''
@@ -32,7 +30,7 @@ class Command(BaseCommand):
             
             text = epclient.getText(padID)['text']
 
-            backup_file_path = os.path.join(BACKUP_DIR, pad.display_slug)
+            backup_file_path = os.path.join(settings.BACKUP_DIR, pad.display_slug)
             
             with open(backup_file_path.encode('utf-8'), 'w') as f:
                 f.write(text.encode('utf-8'))

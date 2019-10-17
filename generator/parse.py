@@ -3,18 +3,18 @@ import os.path
 import urllib
 
 from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
-from .utils import info, debug, error, warn, keyFilter
+from .utils import info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.utils.safestring import mark_safe
 from etherpadlite.models import Pad
 
 from .settings import DEFAULT_CONTENT_TYPE
 
-from ethertoff.settings import PAD_NAMESPACE_SEPARATOR, BASE_DIR, DEBUG
+from django.conf import settings
 
 from generator.extract_meta import extract_meta
 
@@ -47,7 +47,7 @@ def parse_pads ():
       epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
     name, extension = os.path.splitext(pad.display_slug)
-    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(PAD_NAMESPACE_SEPARATOR, '_'))
+    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
     source = epclient.getText(padID)['text']
 
     info('Reading {}'.format(pad.display_slug))
