@@ -20,7 +20,7 @@ from generator.extract_meta import extract_meta
 
 """
   
-  We loop through all the pads and 'parse' them as markdown.
+  Loop through all the pads and 'parse' them as markdown.
   This should return both the content and a dictionary for the metadata
 
   From this information a model is contstructed. The metadata is further
@@ -115,15 +115,17 @@ def parse_pads ():
     info('Read {}'.format(pad.display_slug))
 
     # Excecuting links
-  for m in models:
+  for model in models:
     # resolve links
     # collect inline links
-    if m.content:
+    model.resolveLinks()
+    
+    if model.content:
       content, _ = resolveReferences(m.content, model=m) # Second return are the collected references
       # render markdown
-      m.resolveLinks()
       md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
-      m.content = mark_safe(md.convert(content))
+      model.content = mark_safe(md.convert(content))
+      
   return models
 
 class Command(BaseCommand):
