@@ -2,6 +2,7 @@ from . import fields
 from .utils import debug, CMAGENTA, keyFilter, try_attributes, render_to_string
 import os.path
 import re
+import random
 # from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
@@ -37,12 +38,42 @@ class LinkExistsError(Exception):
 class LinkDifferentContentTypeError(Exception):
   pass 
 
-class Link(object):
+"""
+  The link object, the link field will in the end be filled with these
+"""
+class Link (object):
+  def __init__ (self, source, target):
+    self.source = source
+    self.target = target
+    self._id = ''.join([str(random.randint(0,9)) for x in range(15)])
+
+  def __repr__ (self):
+    return 'Link between {} -> {}'.format(repr(self.source), repr(self.target))
+
+  def __str__ (self):
+    return str(self.target)
+
+  @property
+  def id (self):
+    return '{}-{}-{}'.format(self.source, self.target, self._id)
+
+  def link (self):
+    try:
+      return self.target.link
+    except:
+      print('****')
+      print('BROKEN LINK')
+      print(self.source, self.target, self.id)
+
+"""
+  Field for a links, holds more information, like the contenttype and whether
+  a reverse link shoudl be put in place.
+"""
+class LinkField(object):
   def __init__ (self, contentType, reverse=None):
     self.contentType = contentType
     self.reverse = reverse # Reverse function with the soure object
  
-
   def __call__ (self, targetLabel): 
     contentType = self.contentType
     reverse = self.reverse
@@ -54,11 +85,14 @@ class Link(object):
       if reverse and target:
         reverse(target, source)
 
-      return target
+      return Link(source, target)
 
     return create
     
-class MultiLink(Link):
+"""
+  Field for multiple links.
+"""
+class MultiLinkField(LinkField):
   def __call__ (self, targetLabels):
     debug('Link target keys', targetLabels, color=CMAGENTA)
     contentType = self.contentType
@@ -73,43 +107,44 @@ class MultiLink(Link):
         for target in filter(None, targets):
           reverse(target, source)
 
-      return targets
+      return [ Link(source, target) for target in targets ]
 
     return link
 
 # This could as well be a partial?
-class ReverseLink(object):
+class ReverseLinkField(object):
   def __init__ (self, name):
     self.linkName = name
   
-  def __call__ (self, obj, target):
-    if hasattr(obj, self.linkName):
+  def __call__ (self, source, target):
+    if hasattr(source, self.linkName):
       raise LinkExistsError()
     
-    setattr(obj, self.linkName, target)  
+    setattr(source, self.linkName, Link(source, target))  
 
-class ReverseMultiLink(ReverseLink):
-  def __call__ (self, obj, target):
-    if hasattr(obj, self.linkName):
-      links = getattr(obj, self.linkName)
+class ReverseMultiLinkField(ReverseLinkField):
+  def __call__ (self, source, target):
+    if hasattr(source, self.linkName):
+      links = getattr(source, self.linkName)
       if type(links) is not list:
         raise LinkExistsError
     else:
       links = []
     
+
     if target not in links:
       links.append(target)
     
-    setattr(obj, self.linkName, links)
+    setattr(source, self.linkName, links)
 
 def is_link (obj):
-  return isinstance(obj, (Link, MultiLink, ReverseLink, ReverseMultiLink))
+  return isinstance(obj, (LinkField, MultiLinkField, ReverseLinkField, ReverseMultiLinkField))
 
 def linkMultiReverse(contentType, reverseName):
-  return Link(contentType=contentType, reverse=ReverseMultiLink(reverseName))
+  return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
 
 def multiLinkMultiReverse(contentType, reverseName):
-  return MultiLink(contentType=contentType, reverse=ReverseMultiLink(reverseName))
+  return MultiLinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
 
 def linkReference(target, display_label):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)
@@ -129,7 +164,7 @@ def includeQuestion(question, display_label):
 def includeExternalProject(project, display_label):
   return '<a href="{}" class="external-project">{}</a>'.format(try_attributes(project, ['link', 'project']), display_label if display_label else project.project)
 
-def includeTag(tag, display_label, model):
+def includeTag(tag, display_label, source, link):
   # if model:
   #   try:
   #     if tag not in model.tags:
@@ -137,12 +172,12 @@ def includeTag(tag, display_label, model):
   #   except AttributeError:
   #     model.tags = [tag]
 
-  return '<span class="tag">{}</span>'.format(display_label if display_label else str(tag))
+  return '<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id)
 
 def labelReference(target, display_label):
   return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))
 
-def renderReference(target, display_label=None, model=None):
+def renderReference(target, display_label, source, link):
   if target.contentType == 'video':
     return includeVideo(target, display_label)
   elif target.contentType == 'audio':
@@ -156,7 +191,7 @@ def renderReference(target, display_label=None, model=None):
   elif target.contentType == 'bibliography':
     return labelReference(target, display_label)
   elif target.contentType == 'tag':
-    return includeTag(target, display_label, model)
+    return includeTag(target, display_label, source, link)
   else:
     return linkReference(target, display_label)
 
@@ -190,10 +225,14 @@ def parseReferenceMetadata (raw):
   else:
     return (None, raw.strip())
 
-def parseReference(match, collector=None, model=None):
-  contentType = match.group(1).strip()
+def parseReference(match, collector=None, source=None):
+  contentType = match.group(1).strip().lower()
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
+  print()
+  print()
+  print('*** Parsing reference')
+  print(contentType, label, metadata, display_label)
 
   if label:
     try:
@@ -202,14 +241,21 @@ def parseReference(match, collector=None, model=None):
       # debug('Metadata in reference: {}, source: {}'.format(metadata, match.group(0)))
       # debug('Rendered reference ', renderReference(target))
 
-      # Insert the metadata on the object ?
       if target:
         if metadata and target.stub:
+          # Insert the metadata on the object ?
+          # If the target has been instantiated by the collection
+          # fill it with the metadata that was inserted on the reference
           target.fill(metadata)
 
+        print('FOUND TARGET', target)
+
+        # Here we should create the link between the source and the target
+        # setattr(source, contentType, target)
+        link = Link(source, target)
         collector.append(target)
 
-        return renderReference(target, display_label=display_label, model=model)
+        return renderReference(target, display_label=display_label, source=source, link=link)
       else:
         return label
     except UnknownContentTypeError:
@@ -289,12 +335,12 @@ def expandTags (content):
 
 def resolveReferences (content, model=None, source=None):
   # return content
-  collector = []
+  collector = [] # Collects all the targets
   if content:
-    content = expandTags(content)
+    content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, model=model), content)), collector)
+    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, source=source), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])
@@ -516,7 +562,7 @@ class Event (Model):
   contentType = 'event'
   prefix = 'activities'
   labelField = 'title'
-
+ 
   metadataFields = {
     'date': fields.Single(fields.DateField()),
     'end_date': fields.Single(fields.DateField()),
@@ -539,7 +585,7 @@ class ProgrammeItem (Model):
 
   def link (self):
     if not callable(self.event):
-      return self.event[0].link + '#' + self.key
+      return self.event[0].target.link + '#' + self.key
     else:
       return ''
 
@@ -722,45 +768,56 @@ class Question (Model):
     'question': fields.Single(fields.InlineMarkdownField())
   }
 
+class ContentType (object):
+  def __init__ (self, model, collection = Collection):
+    self.model = model
+    self._collection = collection
+    self.resetCollection()
+
+  def resetCollection(self):
+    self.collection = self._collection(self.model)
+
 # Perhaps include the sort in the collection?
 # Might also need to include the outputfolder here
 # rather than on the model?
-contentTypes = {}
-
-knownContentTypes = [ 'event', 'programme-item', 'produser', 'trajectory', 'pad', 'page', 'tag', 'bibliography', 'video', 'audio', 'image', 'text', 'notes', 'external-project', 'question' ]
-
-def initContentTypes ():
-  global contentTypes
-  global knownContentTypes
-
-  contentTypes = {
-    'event': { 'model': Event, 'collection': Collection(Event) },
-    'programme-item': { 'model': ProgrammeItem, 'collection': Collection(ProgrammeItem) },
-    'produser': { 'model': Produser, 'collection': Collection(Produser) },
-    'trajectory': { 'model': Trajectory, 'collection': Collection(Trajectory) },
-    'pad': { 'model': Pad, 'collection': Collection(Pad) },
-    'page': { 'model': Page, 'collection': Collection(Page) },
-    'tag': { 'model': Tag, 'collection': InstantiatingCollection(Tag) },
-    'bibliography': { 'model': Bibliography, 'collection': InstantiatingCollection(Bibliography) },
-    'video': { 'model': Video, 'collection': InstantiatingCollection(Video) },
-    'audio': { 'model': Audio, 'collection': InstantiatingCollection(Audio) },
-    'image': { 'model': Image, 'collection': InstantiatingCollection(Image) },
-    'text': { 'model': Text, 'collection': Collection(Text) },
-    'notes': { 'model': Note, 'collection': Collection(Note) },
-    'external-project': { 'model': ExternalProject, 'collection': InstantiatingCollection(ExternalProject) },
-    'question': { 'model': Question, 'collection': InstantiatingCollection(Question) }
+contentTypes = {
+    'event': ContentType(Event),
+    'programme-item': ContentType(ProgrammeItem),
+    'produser': ContentType(Produser),
+    'trajectory': ContentType(Trajectory),
+    'pad': ContentType(Pad),
+    'page': ContentType(Page),
+    'tag': ContentType(Tag, InstantiatingCollection),
+    'bibliography': ContentType(Bibliography, InstantiatingCollection),
+    'video': ContentType(Video, InstantiatingCollection),
+    'audio': ContentType(Audio, InstantiatingCollection),
+    'image': ContentType(Image, InstantiatingCollection),
+    'text': ContentType(Text),
+    'notes': ContentType(Note),
+    'external-project': ContentType(ExternalProject, InstantiatingCollection),
+    'question': ContentType(Question, InstantiatingCollection)
   }
+
+def knownContentTypes():
+  return contentTypes.keys()
+
+def knownContentType(contentType):
+  return contentType in knownContentTypes()
+
+def resetCollections (contentTypes):
+  for c in contentTypes:
+    contentTypes[c].resetCollection()
   
-  knownContentTypes = contentTypes.keys()
+  return contentTypes
 
 def collectionFor (contentType):
-  if contentType in knownContentTypes:
-    return contentTypes[contentType]['collection']
+  if knownContentType(contentType):
+    return contentTypes[contentType].collection
   else:
     raise UnknownContentTypeError(contentType)
 
 def modelFor (contentType):
-  if contentType in knownContentTypes:
-    return contentTypes[contentType]['model']
+  if knownContentType(contentType):
+    return contentTypes[contentType].model
   else:
     raise UnknownContentTypeError(contentType)
