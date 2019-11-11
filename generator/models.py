@@ -525,7 +525,7 @@ class Model(object):
       print('Setting label!', self.labelField)
       self.__setattr__(self.labelField, label)
 
-    print('Model::init metadata ', metadata)
+    # print('Model::init metadata ', metadata)
     for key, value in metadata.items():
       # print(row, metadata[row])
       # self.metadata[key].set(value)
