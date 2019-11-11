@@ -51,10 +51,10 @@
                 <div class="event-detail-header">
                   <p class="event-date"><time datetime="2019-05-24">{{ event.date }}</time></p>
                   <h2 class="event-title">{{ event }}</h2>
-                  {% if event.programmeItems %}
-                    <p><a href="{{ event.link }}">→ See programme</a></p>
-                  {% endif %}
                   <section class="event-summary">
+                    {% if event.programmeItems %}
+                      <p><a href="{{ event.link }}">→ See programme</a></p>
+                    {% endif %}
                     {{ event.summary }}
                   </section>
 
