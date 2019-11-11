@@ -701,7 +701,7 @@ class Collection(object):
   """
   def instantiate (self, key, label=None, metadata={}, content=None, source_path=''):
     obj = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path)
-    print('OBJECT: ', obj)
+    # print('OBJECT: ', obj)
     self.register(obj)
     return obj
 
