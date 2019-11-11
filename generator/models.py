@@ -73,7 +73,8 @@ class Link (object):
 
   @property
   def id (self):
-    return keyFilter('{0}-{1}-{2}'.format(self.source, self.target, self._id))
+    return 'l' + str(self._id)
+    # return keyFilter('{0}-{1}-{2}'.format(self.source, self.target, self._id))
 
   def link (self):
     try:
@@ -114,7 +115,8 @@ class ReverseLink (object):
 
   @property
   def id (self):
-    return keyFilter('{1}-{0}-{2}'.format(self.source, self.target, self._id))
+    return 'l' + str(self._id)
+    # return keyFilter('{1}-{0}-{2}'.format(self.source, self.target, self._id))
 
   def __repr__ (self):
     return 'Reverse link of {} <- {}'.format(repr(self.source), repr(self.target))
@@ -320,7 +322,7 @@ def includeTag(tag, display_label, source, link):
   #   except AttributeError:
   #     model.tags = [tag]
   # print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
-  return '<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id)
+  return '<a class="tag" id="{id}" href="{url}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
 
 def labelReference(target, display_label):
   return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))

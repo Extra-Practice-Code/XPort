@@ -542,3 +542,12 @@ section.audio {
 	content: '';
 	display: block;
 }
+
+.tag {
+  text-transform: uppercase;
+  font-size: 70%;
+}
+
+.tag:target {
+  color: var(--orange-karel);
+}
