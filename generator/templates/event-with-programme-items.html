@@ -1,4 +1,5 @@
 {% extends "generator_base_two_columns.html" %}
+{% load generator_utils %}
 
 {% block title %}Caveat → activities → {{ event.title|striptags  }}{% endblock %}
 
@@ -25,7 +26,7 @@
       {% endif %}
     </p>
     <p class="event-infos">
-      {% for produser in event.produser %}
+      {% for produser in event.produser|link_target_iterator %}
       <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
       {% endfor %}
     </p>
@@ -43,7 +44,7 @@
   {% if event.participant %}
   <h4>Participants</h4>
   <p>
-    {% for produser in event.produser %}
+    {% for produser in event.produser|link_target_iterator %}
     <a href="{{ produser.link }}" class="produser">
       {{ produser }}</a>{% if not forloop.last %},{% endif %}
     {% endfor %}
@@ -61,7 +62,7 @@
         <li id="{{ item.key }}">
           <h2>{{ item.time }} {{ item }}</h2>
           <p class="event-infos"> 
-            {% for produser in item.produser %}
+            {% for produser in item.produser|link_target_iterator %}
             <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
             {% endfor %}
           </p>
@@ -73,7 +74,7 @@
           {% if item.notes %}
           <h4>Related documents</h4>
           <ul class="simplelist">
-            {% for note in item.notes %}
+            {% for note in item.notes|link_target_iterator %}
             <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
             {% endfor %}
           </ul>

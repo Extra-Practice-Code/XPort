@@ -1,4 +1,5 @@
-  <html>
+{% load generator_utils %}
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -57,11 +58,11 @@
 
                   <span class="event-detail">
                     <p class="event-infos">{{ event.location }}</p>
-                    {% for line in event.address %}
+                    {% for line in event.address.value %}
                       <p class="event-infos">{{ line }}</p>
                     {% endfor %}
                     <p class="event-infos">
-                      {% for produser in event.produser %}
+                      {% for link, source, produser in event.produser|link_iterator %}
                       <a href="{{ produser.link }}">{{ produser }}</a>
                       {% endfor %}
                     </p>

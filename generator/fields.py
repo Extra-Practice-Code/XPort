@@ -74,16 +74,29 @@ class DateRange (object):
 class Field (object):
   def __init__ (self, default = []):
     self.default = default
+    self.value = None
 
   # no-op
   def parse (self, value):
     return value
 
-  def __call__ (self, value):
-    if value:
-      return [self.parse(v) for v in value]
-    else:
-      return self.default
+  def set (self, value):
+    self.value = [self.parse(v) for v in value]
+
+  def __repr__ (self):
+    return repr(self.value)
+
+  def __str__ (self):
+    return str(self.value)
+
+  def __iter__ (self):
+    return iter(self.value)
+
+  # def __call__ (self, value):
+  #   if value:
+  #     return [self.parse(v) for v in value]
+  #   else:
+  #     return self.default
 
 """
   Wrapper for a field object to turn it into a single field
@@ -92,13 +105,21 @@ class Single(object):
   def __init__ (self, field):
     self.field = field
   
-  def __call__ (self, value):
-    result = self.field(value)
+  def set (self, value):
+    self.field.set(value)
 
-    if len(result) > 0:
-      return result[0]
+  @property
+  def value (self):
+    if self.field.value:
+      return self.field.value[0]
     else:
       return None
+
+  def __repr__ (self):
+    return repr(self.value)
+
+  def __str__ (self):
+    return str(self.value)
 
 
 class DateField (Field):
@@ -144,6 +165,7 @@ class DateField (Field):
           pass
 
       return None
+
 
 class DateTimeField (Field):
   def parse (self, value):

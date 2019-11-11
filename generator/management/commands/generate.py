@@ -8,13 +8,15 @@ from math import inf
 from generator.index import make_index
 
 from generator.parse import parse_pads
-from generator.models import collectionFor, initContentTypes
+from generator.models import collectionFor, resetCollections, contentTypes
 from generator.utils import info, regroup, try_attributes, render_to_string
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
 from django.conf import settings
+
+from generator.templatetags.generator_utils import link_iterator, link_target_iterator
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -72,13 +74,15 @@ def datetimesorter (obj):
   return datetime.datetime.combine(date, time)
   
 def groupedProgrammeItems(event):
-  programmeItems = sorted(event.programmeItems, key=datetimesorter)
+  # print(list(link_target_iterator(event.programmeItems)))
+  programmeItems = sorted(list(link_target_iterator(event.programmeItems)), key=datetimesorter)
   return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
 
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
 
 def generate ():
-  initContentTypes()
+  # Clear existing collections
+  resetCollections(contentTypes)
   basedir = os.path.join(settings.BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
   outputdir = os.path.join(basedir, 'static', 'generated')
@@ -112,13 +116,29 @@ def generate ():
   notes = collectionFor('notes')
   trajectories = collectionFor('trajectory')
 
-  grouped_produsers = sorted(regroup(sorted(produsers.models, key=lambda produser: try_attributes(produser, ['sortname', 'name', 'produser']).lower()), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
+  def getProduserSortKey (produser):
+    attr = try_attributes(produser, ['sortname', 'name', 'produser'])
+
+    if attr and attr.value:
+      return attr.value.lower()
+    else:
+      return None
+
+  def getLabelAsSortKey (model):
+    label = getattr(model, model.labelField)
+
+    if label and label.value:
+      return label.value.lower()
+    else:
+      return ''
+
+  grouped_produsers = sorted(regroup(sorted(produsers.models, key=getProduserSortKey), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
 
   output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(try_attributes(r, ['sortname', 'name', 'produser', 'key'])).lower()), 'grouped_produsers': grouped_produsers })
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
-  output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=lambda m: getattr(m, m.labelField)) })
-  output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=lambda m: getattr(m, m.labelField)) })
-  output(os.path.join(outputdir, 'external-projects.html'), 'external-projects.html', { 'externalProjects': sorted(externalProjects.models, key=lambda m: getattr(m, m.labelField)) })
+  output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=getLabelAsSortKey) })
+  output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=getLabelAsSortKey) })
+  output(os.path.join(outputdir, 'external-projects.html'), 'external-projects.html', { 'externalProjects': sorted(externalProjects.models, key=getLabelAsSortKey) })
   output(os.path.join(outputdir, 'trajectories.html'), 'trajectories.html', { 'trajectories': trajectories.models })
 
   # for produser in produsers.models:

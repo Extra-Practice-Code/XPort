@@ -3,6 +3,7 @@ from .utils import debug, CMAGENTA, keyFilter, try_attributes, render_to_string
 import os.path
 import re
 import random
+from collections import OrderedDict
 # from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
@@ -38,14 +39,31 @@ class LinkExistsError(Exception):
 class LinkDifferentContentTypeError(Exception):
   pass 
 
+# class LinkStub (object):
+#   def __init__ (self, target):
+#     self.target = target
+
 """
   The link object, the link field will in the end be filled with these
 """
 class Link (object):
-  def __init__ (self, source, target):
-    self.source = source
+  def __init__ (self, target, contentType, inline=False, direct=False, source=None):
     self.target = target
+    self.contentType = contentType
+    self.inline = inline
     self._id = ''.join([str(random.randint(0,9)) for x in range(15)])
+    
+    if direct and source:
+      self.resolved = True
+      self.source = source
+      self.broken = False
+    else:
+      self.resolved = False
+      self.source = None
+      self.broken = False
+    
+    # Flag whether this a reverse link
+    self.reverse = False
 
   def __repr__ (self):
     return 'Link between {} -> {}'.format(repr(self.source), repr(self.target))
@@ -55,7 +73,7 @@ class Link (object):
 
   @property
   def id (self):
-    return '{}-{}-{}'.format(self.source, self.target, self._id)
+    return keyFilter('{0}-{1}-{2}'.format(self.source, self.target, self._id))
 
   def link (self):
     try:
@@ -65,80 +83,211 @@ class Link (object):
       print('BROKEN LINK')
       print(self.source, self.target, self.id)
 
+  def resolve (self, source):
+    if self.target and not self.resolved:
+      debug(self.target, self.contentType)
+      self.source = source
+      target = collectionFor(self.contentType).get(self.target)
+      if target:
+        self.target = target
+      else:
+        self.broken = True
+        debug('Broken link', source, target)
+      
+      self.resolved = True
+    elif not self.target:
+      self.broken = True
+
+"""
+  Takes a link on initiation and reverses it, while keeping the original id.
+  Allowing to track it across the platform.
+"""
+class ReverseLink (object):
+  def __init__ (self, link):
+    self._id = link._id
+    self.source = link.target
+    self.target = link.source
+    self.inline = link.inline
+    self.reverse = True
+    self.resolved = link.resolved
+    self.broken = link.broken
+
+  @property
+  def id (self):
+    return keyFilter('{1}-{0}-{2}'.format(self.source, self.target, self._id))
+
+  def __repr__ (self):
+    return 'Reverse link of {} <- {}'.format(repr(self.source), repr(self.target))
+
+  def __str__ (self):
+    return str(self.target)
+
 """
   Field for a links, holds more information, like the contenttype and whether
-  a reverse link shoudl be put in place.
+  it has, and the type of reverse link.
 """
 class LinkField(object):
   def __init__ (self, contentType, reverse=None):
     self.contentType = contentType
-    self.reverse = reverse # Reverse function with the soure object
+    self.resolved = False
+    self.value = None
+    # Will hold the label / key of the target.
+    # Once resolved the link is stored in value
+    self.reverse = reverse
  
-  def __call__ (self, targetLabel): 
-    contentType = self.contentType
-    reverse = self.reverse
+  def __str__ (self):
+    return str(self.value)
 
-    def create(source):
-      collection = collectionFor(contentType)
-      target = collection.get(label=targetLabel)
+  def resolve (self, source):
+    if self.value:
+      self.value.resolve(source)
+      # Should we also resolve the reverse link?
+      if not self.value.broken and self.reverse:
+        # If so provide a reversed version of the link
+        self.reverse.resolve(ReverseLink(self.value))
+    else:
+      debug('Unset linkfield')
+    # if self.target and not self.resolved:
+    #   print(self.target, self.contentType)
+    #   target = collectionFor(self.contentType).get(self.target)
+    #   if target:
+    #     self.makeLink(source, target)
+    #   else:
+    #     debug('Broken link', source, target)
+      
+    #   self.resolved = True
 
-      if reverse and target:
-        reverse(target, source)
+  # Takes a string for target
+  # boolean whether this an inline link
+  def set (self, target, inline=False):
+    if type(target) is list:
+      self.set(target[0], inline)
 
-      return Link(source, target)
+    self.value = Link(keyFilter(target), self.contentType, inline)
 
-    return create
+  # Directly construct a link
+  # Circumvents the resolving through a collection
+  def makeLink(self, source, target, inline=False):
+    if not self.resolved:
+      link = Link(target, self.contentType, inline, True, source)
+      self.value = link
+      # if we have a reverse link, set it
+      if self.reverse:
+        self.reverse.resolve(target, ReverseLink(link))
+      self.resolved = True
+
+      return link
     
+  #   return None
+
 """
-  Field for multiple links.
+  Field for multiple links, every link will be a single linkfield.
 """
 class MultiLinkField(LinkField):
-  def __call__ (self, targetLabels):
-    debug('Link target keys', targetLabels, color=CMAGENTA)
-    contentType = self.contentType
-    reverse = self.reverse
+  def __init__ (self, contentType = None, reverse = None):
+    self.contentType = contentType
+    self.value = []
+    self.target = None
+    self.reverse = reverse
 
-    def link (source):
-      collection = collectionFor(contentType)
-      # filter(None, x) Filters out empty string keys
-      targets = [ collection.get(label=targetLabel) for targetLabel in filter(None, targetLabels) ]
+  def __iter__ (self):
+    return iter(self.value)
 
-      if reverse:
-        for target in filter(None, targets):
-          reverse(target, source)
+  def set (self, target, inline=False):
+    if type(target) is list:
+      for t in target:
+        self.set(t, inline)
+    else:
+      for existingLink in self.value:
+        if existingLink.target == target:
+          return existingLink
 
-      return [ Link(source, target) for target in targets ]
+      self.value.append(Link(target, self.contentType, inline))
+
+  def makeLink(self, source, target, inline=False):
+    for existingLink in self.value:
+      if existingLink.target == target:
+        return existingLink
+
+    link = Link(target, self.contentType, inline, direct=True, source=source)
+    self.value.append(link)
+
+    if self.reverse:
+      self.reverse.resolve(ReverseLink(link))
 
     return link
+  
+  # def resolveLink
+
+  def resolve (self, source):
+    for link in self.value:
+      link.resolve(source)
+      if not link.broken and self.reverse:
+        self.reverse.resolve(ReverseLink(link))
+
+  @property
+  def targets (self):
+    return [link.target for link in self.value]
 
 # This could as well be a partial?
 class ReverseLinkField(object):
   def __init__ (self, name):
-    self.linkName = name
+    self.name = name
+    self.value = None
+
+  def __str__ (self):
+    return str(self.value)
+
+  def resolve (self, link):
+    self.value = link
+    # Register the reverse link on the target.
+    # this is a problem. The multilinkfield will have
+    # linkfields in the iterator, rather than links.
+    # Simplify?
+    link.source.registerMetadataField(self.name, self)
   
-  def __call__ (self, source, target):
-    if hasattr(source, self.linkName):
-      raise LinkExistsError()
-    
-    setattr(source, self.linkName, Link(source, target))  
-
 class ReverseMultiLinkField(ReverseLinkField):
-  def __call__ (self, source, target):
-    if hasattr(source, self.linkName):
-      links = getattr(source, self.linkName)
-      if type(links) is not list:
-        raise LinkExistsError
-    else:
-      links = []
-    
+  def __init__ (self, name):
+    self.name = name
+    self.value = []
+    self.id = ''.join([str(random.randint(0, 9)) for r in range(3)])
 
-    if target not in links:
-      links.append(target)
-    
-    setattr(source, self.linkName, links)
+  def __iter__ (self):
+    return iter(self.value)
+
+  def resolve (self, link):
+    # If there is not yet a field on the source create it,
+    # otherwise append the link to the existing field
+    if self.name not in link.source.metadata:
+      ## Every time make sure a new container is created
+      link.source.registerMetadataField(self.name, ReverseMultiLinkField(self.name))
+    else:
+      # UNIQUE LINK UNIQUE_LINK
+      # Check whether there is already a link to this target
+      # on source, for now don't set it if this is the case.
+      for exisitingLink in link.source.metadata[self.name].value:
+        if exisitingLink.target == link.target:
+          # This link already exists, for now we ignore it.
+          return False
+
+    link.source.metadata[self.name].value.append(link)
+
+  @property
+  def targets (self):
+    for link in self.value:
+      return link.target
 
 def is_link (obj):
-  return isinstance(obj, (LinkField, MultiLinkField, ReverseLinkField, ReverseMultiLinkField))
+  return isinstance(obj, (LinkField, MultiLinkField))
+
+def is_multi_link (obj):
+  return isinstance(obj, (MultiLinkField))
+
+def is_reverse_link (obj):
+  return isinstance(obj, (ReverseLinkField, ReverseMultiLinkField))
+
+def is_reverse_multi_link (obj):
+  return isinstance(obj, (ReverseMultiLinkField))
 
 def linkMultiReverse(contentType, reverseName):
   return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
@@ -171,7 +320,7 @@ def includeTag(tag, display_label, source, link):
   #       model.tags.append(tag)
   #   except AttributeError:
   #     model.tags = [tag]
-
+  print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
   return '<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id)
 
 def labelReference(target, display_label):
@@ -252,7 +401,14 @@ def parseReference(match, collector=None, source=None):
 
         # Here we should create the link between the source and the target
         # setattr(source, contentType, target)
-        link = Link(source, target)
+        if target.contentType in source.metadata and is_link(source.metadata[target.contentType]):
+          link = source.metadata[target.contentType].makeLink(source, target, inline=True)
+        elif target.contentType + 's' in source.metadata:
+          link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True)
+        else:
+          link = None
+
+        # link = Link(source, target)
         collector.append(target)
 
         return renderReference(target, display_label=display_label, source=source, link=link)
@@ -333,41 +489,47 @@ def parseShortTimecodes (content):
 def expandTags (content):
   return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[tag: \\1]]', content)
 
-def resolveReferences (content, model=None, source=None):
+def resolveReferences (model):
   # return content
   collector = [] # Collects all the targets
+  content = model.content
   if content:
     content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, source=source), content)), collector)
+    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])
 
 class Model(object):
-  metadataFields = {}
-  _content = None
-  _source_path = None
+  content = None
+  source_path = None
   keyField = 'id'
   labelField = 'title'
-  metadata = {}
-
+  # metadata = OrderedDict()
+  
   def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
-    self.metadata = {}
-    
+    self.metadata = OrderedDict()
+
+    for fieldName, field in self._metadataFields().items():
+      self.metadata[fieldName] = field
+
     if key: 
       self.key = key
     else:
       self.key = self.extractKey(metadata)
 
     if label and not self.labelField in metadata:
-      print('Setting label!')
+      print('Setting label!', self.labelField)
       self.__setattr__(self.labelField, label)
 
-    if metadata:
-      self.setMetadata(metadata)
+    print('Model::init metadata ', metadata)
+    for key, value in metadata.items():
+      # print(row, metadata[row])
+      # self.metadata[key].set(value)
+      self.__setattr__(key, value)
 
     if source_path:
       self.source_path = source_path
@@ -390,14 +552,6 @@ class Model(object):
   def link (self):
     return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
 
-  @property
-  def content (self):
-    return self._content
-
-  @property
-  def source_path (self):
-    return self._source_path
-
   def setMetadata(self, metadata=None):
     if metadata:
       for key in metadata:
@@ -416,26 +570,29 @@ class Model(object):
       self.source_path = source_path
 
   def __setattr__ (self, name, value):
-    # This might break with the links
-    if name in ['key', 'metadata', 'empty']:
+    if name == 'metadata':
       super().__setattr__(name, value)
-    elif name == 'content':
-      super().__setattr__('_content', value)
-    elif name == 'source_path':
-      super().__setattr__('_source_path', value)
-    elif name in self.metadataFields:
-      self.metadata[name] = self.metadataFields[name](value)
+    elif name in self.metadata:
+      self.metadata[name].set(value)
     else:
-      # This might not be the best idea?
-      self.metadata[name] = value
+      super().__setattr__(name, value)
+
+  def registerMetadataField (self, fieldName, field):
+    if fieldName not in self.metadata:
+      self.metadata[fieldName] = field
 
   def resolveLinks(self):
     print('Resolving links')
-    for fieldname in self.metadata:
-      print(fieldname, callable(fieldname))
-      if callable(self.metadata[fieldname]):
-        result = self.metadata[fieldname](self)
-        self.metadata[fieldname] = result
+    print(self.contentType)
+    # print(self.metadata, 'key: ', self.key)
+    fields = list(self.metadata.keys())
+    for fieldname in fields:
+      if is_link(self.metadata[fieldname]):
+        self.metadata[fieldname].resolve(self)
+      # print(fieldname, callable(fieldname))
+      # if callable(self.metadata[fieldname]):
+      #   result = self.metadata[fieldname](self)
+      #   self.metadata[fieldname] = result
 
   def __getattr__ (self, name):
     if name in self.metadata:
@@ -445,7 +602,7 @@ class Model(object):
       return self.__getattr__(name)
     else:
       # super().__getattr__(name)
-      # debug('Attribute error', name, self.metadata)
+      debug('Attribute error', name)
       raise AttributeError()
 
   def __str__ (self):
@@ -457,6 +614,13 @@ class Model(object):
       debug('Has not attr for to string {}'.format(self.metadata))
       return super().__str__()
 
+  @property
+  def label (self):
+    return self.metadata[self.labelField]
+
+  # @property
+  # def key (self):
+  #   return self.metadata[self.keyField]
 
   # @property
   # def content (self):
@@ -467,7 +631,7 @@ class Model(object):
   #   self._content = content
 
   def __dir__ (self):
-    return list(self.metadata.keys()) + ['content']
+    return list(self.metadata.keys()) + ['content', 'link', 'source_path']
 
 class Collection(object):
   def __init__ (self, model):
@@ -525,7 +689,7 @@ class Collection(object):
         self.models.append(obj)
         self.index[obj.key] = obj
       elif self.index[obj.key].stub:
-        debug('Updating metadata for stub {}'.format(obj.key))
+        debug('Updating metadata for stub {} {}'.format(obj.key, obj.label.value))
         self.index[obj.key].setMetadata(obj.meta)
       else:
         # Extend the object here
@@ -537,6 +701,7 @@ class Collection(object):
   """
   def instantiate (self, key, label=None, metadata={}, content=None, source_path=''):
     obj = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path)
+    print('OBJECT: ', obj)
     self.register(obj)
     return obj
 
@@ -555,7 +720,10 @@ class InstantiatingCollection (Collection):
       # debug('Found entry for {}'.format(key))
       return self.index[key]
     else:
-      return self.instantiate(key=key, label=[label])
+      if label:
+        return self.instantiate(key=key, label=[label])
+      else:
+        return self.instantiate(key=key, label=[key])
 
 
 class Event (Model):
@@ -563,21 +731,22 @@ class Event (Model):
   prefix = 'activities'
   labelField = 'title'
  
-  metadataFields = {
-    'date': fields.Single(fields.DateField()),
-    'end_date': fields.Single(fields.DateField()),
-    'time': fields.Single(fields.TimeField()),
-    'produser': multiLinkMultiReverse('produser', 'events'),
-    'participant': multiLinkMultiReverse('produser', 'events_participant'),
-    'event': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'summary': fields.Single(fields.MarkdownField()),
-    'location': fields.Single(fields.StringField()),
-    'address': fields.StringField(),
-    'tags': multiLinkMultiReverse('tag', 'events'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'events'),
-    'image': fields.Single(fields.StringField()),
-  }
+  def _metadataFields (self):
+    return {
+      'date': fields.Single(fields.DateField()),
+      'end_date': fields.Single(fields.DateField()),
+      'time': fields.Single(fields.TimeField()),
+      'produser': multiLinkMultiReverse('produser', 'events'),
+      'participant': multiLinkMultiReverse('produser', 'events_participant'),
+      'event': fields.Single(fields.StringField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'summary': fields.Single(fields.MarkdownField()),
+      'location': fields.Single(fields.StringField()),
+      'address': fields.StringField(),
+      'tags': multiLinkMultiReverse('tag', 'events'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'events'),
+      'image': fields.Single(fields.StringField()),
+    }
 
 class ProgrammeItem (Model):
   contentType = 'programme-item'
@@ -585,24 +754,25 @@ class ProgrammeItem (Model):
 
   def link (self):
     if not callable(self.event):
-      return self.event[0].target.link + '#' + self.key
+      return self.event.value[0].target.link + '#' + self.key
     else:
       return ''
 
-  metadataFields = {
-    'date': fields.Single(fields.DateField()),
-    'end_date': fields.Single(fields.DateField()),
-    'time': fields.Single(fields.TimeField()),
-    'produser': multiLinkMultiReverse('produser', 'events'),
-    'participant': multiLinkMultiReverse('produser', 'events_participant'),
-    'event': multiLinkMultiReverse('event', 'programmeItems'),
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'summary': fields.Single(fields.MarkdownField()),
-    'location': fields.Single(fields.StringField()),
-    'address': fields.StringField(),
-    'tags': multiLinkMultiReverse('tag', 'events'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'events'),
-  }
+  def _metadataFields (self):
+    return {
+      'date': fields.Single(fields.DateField()),
+      'end_date': fields.Single(fields.DateField()),
+      'time': fields.Single(fields.TimeField()),
+      'produser': multiLinkMultiReverse('produser', 'events'),
+      'participant': multiLinkMultiReverse('produser', 'events_participant'),
+      'event': multiLinkMultiReverse('event', 'programmeItems'),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'summary': fields.Single(fields.MarkdownField()),
+      'location': fields.Single(fields.StringField()),
+      'address': fields.StringField(),
+      'tags': multiLinkMultiReverse('tag', 'events'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'events'),
+    }
 
 class Produser (Model):
   contentType = 'produser'
@@ -610,45 +780,52 @@ class Produser (Model):
   labelField = 'name'
   prefix = 'produsers'
 
-  metadataFields = {
-    'role': fields.Single(fields.StringField()),
-    'name': fields.Single(fields.InlineMarkdownField()),
-    'sortname': fields.Single(fields.StringField()),
-    'produser': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'produsers'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
-  }
+  def _metadataFields (self):
+    return {
+      'role': fields.Single(fields.StringField()),
+      'name': fields.Single(fields.InlineMarkdownField()),
+      'sortname': fields.Single(fields.StringField()),
+      'produser': fields.Single(fields.StringField()),
+      'tags': multiLinkMultiReverse('tag', 'produsers'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
+    }
 
 class Trajectory (Model):
   contentType = 'trajectory'
-  metadataFields = {
-    'produser': linkMultiReverse('produser', 'trajectories'),
-    'tags': multiLinkMultiReverse('tag', 'trajectories')
-  }
+
+  def _metadataFields (self):
+    return {
+      'produser': linkMultiReverse('produser', 'trajectories'),
+      'tags': multiLinkMultiReverse('tag', 'trajectories')
+    }
 
 class Pad (Model):
   contentType = 'pad'
-  metadataFields = {
-    'produser': multiLinkMultiReverse('produser', 'pads'),
-    'event': linkMultiReverse('event', 'pads'),
-    'trajectory': linkMultiReverse('trajectory', 'pads'),
-    'tags': multiLinkMultiReverse('tag', 'pads'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'pads'),
-  }
+
+  def _metadataFields (self):
+    return {
+      'produser': multiLinkMultiReverse('produser', 'pads'),
+      'event': linkMultiReverse('event', 'pads'),
+      'trajectory': linkMultiReverse('trajectory', 'pads'),
+      'tags': multiLinkMultiReverse('tag', 'pads'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'pads'),
+    }
 
 class Note (Model):
   contentType = 'note'
   labelField = 'title'
   prefix = 'notes'
-  metadataFields = {
-    'produser': multiLinkMultiReverse('produser', 'notes'),
-    'participant': multiLinkMultiReverse('produser', 'notes_participant'),
-    'event': linkMultiReverse('event', 'notes'),
-    'programme-item': linkMultiReverse('programme-item', 'notes'),
-    'tags': multiLinkMultiReverse('tag', 'notes'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
-    'title': fields.Single(fields.InlineMarkdownField()),
-  }
+
+  def _metadataFields (self):
+    return {
+      'produser': multiLinkMultiReverse('produser', 'notes'),
+      'participant': multiLinkMultiReverse('produser', 'notes_participant'),
+      'event': linkMultiReverse('event', 'notes'),
+      'programme-item': linkMultiReverse('programme-item', 'notes'),
+      'tags': multiLinkMultiReverse('tag', 'notes'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
+      'title': fields.Single(fields.InlineMarkdownField()),
+    }
 
 class Page (Model):
   contentType = 'page'
@@ -656,11 +833,12 @@ class Page (Model):
   labelField = 'title'
   prefix = 'pages'
 
-  metadataFields = {
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'tags': multiLinkMultiReverse('tag', 'pages'),
-    'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
-  }
+  def _metadataFields (self):
+    return {
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'tags': multiLinkMultiReverse('tag', 'pages'),
+      'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
+    }
 
 class Tag (Model):
   contentType = 'tag'
@@ -680,93 +858,101 @@ class Tag (Model):
 
     return count
 
-  metadataFields = {
-    'tag': fields.Single(fields.StringField())
-  }
+  def _metadataFields (self):
+    return {
+      'tag': fields.Single(fields.StringField())
+    }
 
 class Bibliography (Model):
   contentType = 'bibliography'
   keyField = 'bibliography'
   labelField = 'bibliography'
 
-  metadataFields = {
-    'bibliography': fields.Single(fields.InlineMarkdownField()),
-    'tags': multiLinkMultiReverse('tag', 'bibliography'),
-    'produser': multiLinkMultiReverse('produser', 'bibliography')
-  }
+  def _metadataFields (self):
+    return {
+      'bibliography': fields.Single(fields.InlineMarkdownField()),
+      'tags': multiLinkMultiReverse('tag', 'bibliography'),
+      'produser': multiLinkMultiReverse('produser', 'bibliography')
+    }
 
 class Video (Model):
   contentType = 'video'
   keyField = 'video'
   labelField = 'video'
   
-  metadataFields = {
-    'video': fields.Single(fields.StringField()),
-    'type': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'caption': fields.Single(fields.InlineMarkdownField()),
-    'tags': multiLinkMultiReverse('tag', 'video'),
-    'produser': multiLinkMultiReverse('produser', 'video'),
-  }
+  def _metadataFields (self):
+    return {
+      'video': fields.Single(fields.StringField()),
+      'type': fields.Single(fields.StringField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField()),
+      'tags': multiLinkMultiReverse('tag', 'video'),
+      'produser': multiLinkMultiReverse('produser', 'video'),
+    }
 
 class Audio (Model):
   contentType = 'audio'
   keyField = 'audio'
   labelField = 'audio'
 
-  metadataFields = {
-    'audio': fields.Single(fields.StringField()),
-    'type': fields.Single(fields.StringField()),
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'caption': fields.Single(fields.InlineMarkdownField()),
-    'tags': multiLinkMultiReverse('tag', 'audio'),
-    'produser': multiLinkMultiReverse('produser', 'audio'),
-  }
+  def _metadataFields (self):
+    return {
+      'audio': fields.Single(fields.StringField()),
+      'type': fields.Single(fields.StringField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField()),
+      'tags': multiLinkMultiReverse('tag', 'audio'),
+      'produser': multiLinkMultiReverse('produser', 'audio'),
+    }
 
 class Image (Model):
   contentType = 'image'
   keyField = 'image'
   labelField = 'image'
 
-  metadataFields = {
-    'image': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'image'),
-    'produser': multiLinkMultiReverse('produser', 'image'),
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'caption': fields.Single(fields.InlineMarkdownField()),
-  }
+  def _metadataFields (self):
+    return {
+      'image': fields.Single(fields.StringField()),
+      'tags': multiLinkMultiReverse('tag', 'image'),
+      'produser': multiLinkMultiReverse('produser', 'image'),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField()),
+    }
 
 class ExternalProject (Model):
   contentType = 'external-project'
   keyField = 'project'
   labelField = 'project'
 
-  metadataFields = {
-    'project': fields.Single(fields.StringField()),
-    'link': fields.Single(fields.StringField()),
-    'tags': multiLinkMultiReverse('tag', 'externalProject'),
-  }
+  def _metadataFields (self):
+    return {
+      'project': fields.Single(fields.StringField()),
+      'link': fields.Single(fields.StringField()),
+      'tags': multiLinkMultiReverse('tag', 'externalProject'),
+    }
 
 class Text (Model):
   contentType = 'text'
   keyField = 'title'
   labelField = 'title'
 
-  metadataFields = {
-    'title': fields.Single(fields.InlineMarkdownField()),
-    'tags': multiLinkMultiReverse('tag', 'image'),
-    'produser': multiLinkMultiReverse('produser', 'text'),
-    'event': multiLinkMultiReverse('event', 'text')
-  }
+  def _metadataFields (self):
+    return {
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'tags': multiLinkMultiReverse('tag', 'image'),
+      'produser': multiLinkMultiReverse('produser', 'text'),
+      'event': multiLinkMultiReverse('event', 'text')
+    }
 
 class Question (Model):
   contentType = 'question'
   keyField = 'question'
   labelField = 'question'
 
-  metadataFields = {
-    'question': fields.Single(fields.InlineMarkdownField())
-  }
+  def _metadataFields (self):
+    return {
+      'question': fields.Single(fields.InlineMarkdownField())
+    }
 
 class ContentType (object):
   def __init__ (self, model, collection = Collection):

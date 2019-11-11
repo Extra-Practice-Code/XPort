@@ -54,7 +54,7 @@ def regroup (iterable, field):
 
 def try_attributes (obj, attributes):
   for attr in attributes:
-    if hasattr(obj, attr):
+    if hasattr(obj, attr) and getattr(obj, attr).value:
       return getattr(obj, attr)
   
   return None

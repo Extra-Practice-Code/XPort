@@ -2,7 +2,7 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences
+from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences, knownContentType
 from .utils import info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
@@ -69,7 +69,7 @@ def parse_pads ():
         # the label
         firstMetaKey, firstMetaValue = list(meta.items())[0]
         
-        if firstMetaKey in knownContentTypes:
+        if knownContentType(firstMetaKey):
           contentType = firstMetaKey
           key = keyFilter(firstMetaValue)
           label = firstMetaValue
@@ -121,7 +121,8 @@ def parse_pads ():
     model.resolveLinks()
     
     if model.content:
-      content, _ = resolveReferences(m.content, model=m) # Second return are the collected references
+      # Render inline references
+      content, _ = resolveReferences(model) # Second return are the collected references
       # render markdown
       md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
       model.content = mark_safe(md.convert(content))
