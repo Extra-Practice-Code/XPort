@@ -402,8 +402,10 @@ def parseReference(match, collector=None, source=None):
         # Here we should create the link between the source and the target
         # setattr(source, contentType, target)
         if target.contentType in source.metadata and is_link(source.metadata[target.contentType]):
+          ## FIXME what if it's an existing reverse
           link = source.metadata[target.contentType].makeLink(source, target, inline=True)
-        elif target.contentType + 's' in source.metadata:
+        elif target.contentType + 's' in source.metadata and is_multi_link(source.metadata[target.contentType + 's']):
+          ## FIXME what if it's an existing reverse?
           link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True)
         else:
           link = None
