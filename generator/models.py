@@ -715,8 +715,8 @@ class InstantiatingCollection (Collection):
   def get (self, key = None, label = None):
     if not label and not key:
       raise(AttributeError('Can not retreive a model without a key or a label.'))
-    if not key:
-      key = keyFilter(label)
+    # if not key:
+    key = keyFilter(label)
 
     if self.has(key):
       # debug('Found entry for {}'.format(key))
