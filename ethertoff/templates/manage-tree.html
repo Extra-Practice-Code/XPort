@@ -5,7 +5,9 @@
     <section class="pad-list--path">
         <a href="{% url 'manage' %}">root</a>
         {% for name, path in crumbs %}
-            > <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
+            {% if path %}
+                > <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
+            {% endif %}
         {% endfor %}
     </section>
     <ul id="pads_list" class="manage_list">
