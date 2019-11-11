@@ -79,9 +79,9 @@ class Link (object):
     try:
       return self.target.link
     except:
-      print('****')
-      print('BROKEN LINK')
-      print(self.source, self.target, self.id)
+      debug('****')
+      debug('BROKEN LINK')
+      debug(self.source, self.target, self.id)
 
   def resolve (self, source):
     if self.target and not self.resolved:
@@ -378,10 +378,10 @@ def parseReference(match, collector=None, source=None):
   contentType = match.group(1).strip().lower()
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
-  print()
-  print()
-  print('*** Parsing reference')
-  print(contentType, label, metadata, display_label)
+  debug()
+  debug()
+  debug('*** Parsing reference')
+  debug(contentType, label, metadata, display_label)
 
   if label:
     try:
@@ -397,7 +397,7 @@ def parseReference(match, collector=None, source=None):
           # fill it with the metadata that was inserted on the reference
           target.fill(metadata)
 
-        print('FOUND TARGET', target)
+        debug('FOUND TARGET', target)
 
         # Here we should create the link between the source and the target
         # setattr(source, contentType, target)
@@ -522,7 +522,7 @@ class Model(object):
       self.key = self.extractKey(metadata)
 
     if label and not self.labelField in metadata:
-      print('Setting label!', self.labelField)
+      debug('Setting label!', self.labelField)
       self.__setattr__(self.labelField, label)
 
     # print('Model::init metadata ', metadata)
@@ -582,8 +582,8 @@ class Model(object):
       self.metadata[fieldName] = field
 
   def resolveLinks(self):
-    print('Resolving links')
-    print(self.contentType)
+    debug('Resolving links')
+    debug(self.contentType)
     # print(self.metadata, 'key: ', self.key)
     fields = list(self.metadata.keys())
     for fieldname in fields:
