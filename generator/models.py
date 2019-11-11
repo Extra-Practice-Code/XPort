@@ -173,7 +173,7 @@ class LinkField(object):
       self.value = link
       # if we have a reverse link, set it
       if self.reverse:
-        self.reverse.resolve(target, ReverseLink(link))
+        self.reverse.resolve(ReverseLink(link))
       self.resolved = True
 
       return link
