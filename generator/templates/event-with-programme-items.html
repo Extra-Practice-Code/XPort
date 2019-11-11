@@ -81,15 +81,15 @@
           {% endif %}
         </li>
       {% endfor %}
+      {% if item.participant %}
+      <h4>Participants</h4>
+      <p>
+        {% for produser in item.participant %}
+        <a href="{{ produser.link }}" class="produser">
+          {{ produser }}</a>{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      </p>
+      {% endif %}
     {% endfor %}
-    {% if event.participant %}
-    <h4>Participants</h4>
-    <p>
-      {% for produser in event.participant %}
-      <a href="{{ produser.link }}" class="produser">
-        {{ produser }}</a>{% if not forloop.last %},{% endif %}
-      {% endfor %}
-    </p>
-    {% endif %}
   </ul>
 {% endblock %}

@@ -849,15 +849,22 @@ class Tag (Model):
 
   @property
   def link_count (self):
-    count = 0
+    counter = 0
     
-    debug(self.metadata)
+    # debug(self.metadata)
+    # Loop through all fields, if they are multilinks or multireverselinks
+    # increase the counter with their length
+    # if they are simple links, which are resolved and not broken increase
+    # the counter as well
+    for fieldname in self.metadata:
+      field = self.metadata[fieldname]
+      if is_multi_link(field) or is_reverse_multi_link(field):
+        counter += len(field.value)
+      elif (is_link(field) or is_reverse_link(field)) \
+        and field.resolved and not field.broken:
+        counter += 1
 
-    for field in self.metadata:
-      if type(getattr(self, field)) is list:
-        count += len(getattr(self, field))
-
-    return count
+    return counter
 
   def _metadataFields (self):
     return {
