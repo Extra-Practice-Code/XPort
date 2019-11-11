@@ -386,6 +386,13 @@ img.event-detail {
   margin-bottom: 30px;
 }
 
+.question {
+	font-family: "Junicode-Condensed";
+	font-size: 180%;
+	font-weight: bolder;
+	line-height: 1em;
+}
+
 .question-quote:hover {}
 
 blockquote {
