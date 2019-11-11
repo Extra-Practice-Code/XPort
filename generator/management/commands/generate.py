@@ -9,7 +9,7 @@ from generator.index import make_index
 
 from generator.parse import parse_pads
 from generator.models import collectionFor, resetCollections, contentTypes
-from generator.utils import info, regroup, try_attributes, render_to_string
+from generator.utils import info, regroup, try_attributes, render_to_string, keyFilter
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -43,7 +43,7 @@ def output (path, template, context):
 
 def generate_single_pages (models, template, outputdir, make_context):
   for model in models:
-    output(os.path.join(outputdir, model.prefix, '{}.html'.format(model.key)), template, make_context(model))
+    output(os.path.join(outputdir, model.prefix, '{}.html'.format(keyFilter(model.key))), template, make_context(model))
 
 def datesorter (obj):
   if hasattr(obj, 'date'):
