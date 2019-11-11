@@ -54,9 +54,11 @@
                   {% if event.programmeItems %}
                     <p><a href="{{ event.link }}">→ See programme</a></p>
                   {% endif %}
-                  {{ event.summary }}
+                  <section class="event-summary">
+                    {{ event.summary }}
+                  </section>
 
-                  <span class="event-detail">
+                  <section class="event-detail">
                     <p class="event-infos">{{ event.location }}</p>
                     {% for line in event.address.value %}
                       <p class="event-infos">{{ line }}</p>
@@ -81,7 +83,7 @@
                     {% if event.programmeItems %}
                       <p><a href="{{ event.link }}">→ See programme</a></p>
                     {% endif %}
-                  </span>
+                  </section>
               </div>
             </div>
           {% endfor %}

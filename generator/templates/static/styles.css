@@ -112,7 +112,7 @@ p {
 }
 
 .event-date+p, .event-title+p, .event-date+p.event-date, .event-infos, .event-title, .event-detail-title, .event-detail-schedule .event-infos+p {
-  margin-top: var(--lin-height);
+  margin-top: var(--line-height);
 }
 
 .event-title+p.event-exerpt, .event-detail-schedule .event-infos, p+p {
@@ -535,7 +535,10 @@ blockquote+p, .event-infos+blockquote {
   display: block;
 }
 
-#detail-container .event.active .event-exerpt, #detail-container .event.active img.event-image, #detail-container .event.active .button-header {
+#detail-container .event.active .event-exerpt, 
+#detail-container .event.active img.event-image, 
+#detail-container .event.active .button-header,
+#detail-container .event-summary {
   display: none;
 }
 
