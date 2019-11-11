@@ -320,7 +320,7 @@ def includeTag(tag, display_label, source, link):
   #       model.tags.append(tag)
   #   except AttributeError:
   #     model.tags = [tag]
-  print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
+  # print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
   return '<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id)
 
 def labelReference(target, display_label):
@@ -355,7 +355,7 @@ def parseReferenceMetadata (raw):
   data = {}
 
   # Split into metadata and display label
-  print('Raw metadata ', raw)
+  # print('Raw metadata ', raw)
   if ':' in raw:
     m = re.match(r'(.+)(?:\|?([^:\|]+))?$', raw)
     raw_meta = m.group(1)
