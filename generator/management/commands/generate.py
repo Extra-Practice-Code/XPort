@@ -47,7 +47,7 @@ def generate_single_pages (models, template, outputdir, make_context):
 
 def datesorter (obj):
   if hasattr(obj, 'date'):
-    date = getattr(obj, 'date')
+    date = getattr(obj, 'date').value
 
     if isinstance(date, Date):
       return date.date
@@ -58,7 +58,7 @@ def datesorter (obj):
 
 def timesorter (obj):
   if hasattr(obj, 'time'):
-    time = getattr(obj, 'time')
+    time = getattr(obj, 'time').value
 
     if isinstance(time, Time):
       return time.time
@@ -75,7 +75,7 @@ def datetimesorter (obj):
   
 def groupedProgrammeItems(event):
   # print(list(link_target_iterator(event.programmeItems)))
-  programmeItems = sorted(list(link_target_iterator(event.programmeItems)), key=datetimesorter)
+  programmeItems = sorted(event.programmeItems.targets, key=datetimesorter)
   return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
 
 produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']

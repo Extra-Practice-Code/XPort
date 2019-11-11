@@ -30,24 +30,23 @@ def error(*args):
   print(CRED, *[str(a).encode('utf-8') for a in args], CEND)
 
 
-def regroup (iterable, field):
+def regroup (iterable, key):
   index = {}
   grouped = []
   
-  for entry in iterable:
-    if callable(field):
-      key = field(entry)
+  for model in iterable:
+    if callable(key):
+      groupkey = key(model)
+    elif hasattr(model, key):
+      groupkey = str(getattr(model, key))
     else:
-      try:
-        key = getattr(entry, field)
-      except AttributeError:
-        key = ''
+      groupkey = ''
 
-    if not key in index:
-      grouped.append((key, [ entry ]))
-      index[key] = grouped[-1]
+    if not groupkey in index:
+      grouped.append((groupkey, [ model ]))
+      index[groupkey] = grouped[-1]
     else:
-      index[key][1].append(entry)
+      index[groupkey][1].append(model)
 
   return grouped
 

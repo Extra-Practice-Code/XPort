@@ -274,8 +274,7 @@ class ReverseMultiLinkField(ReverseLinkField):
 
   @property
   def targets (self):
-    for link in self.value:
-      return link.target
+    return [link.target for link in self.value]
 
 def is_link (obj):
   return isinstance(obj, (LinkField, MultiLinkField))
