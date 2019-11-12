@@ -182,10 +182,15 @@ class LinkField(object):
     
   #   return None
 
+  @property
+  def target (self):
+    if self.value:
+      return self.value.target
+
 """
   Field for multiple links, every link will be a single linkfield.
 """
-class MultiLinkField(LinkField):
+class MultiLinkField(object):
   def __init__ (self, contentType = None, reverse = None):
     self.contentType = contentType
     self.value = []
@@ -248,6 +253,11 @@ class ReverseLinkField(object):
     # Simplify?
     link.source.registerMetadataField(self.name, self)
   
+  @property
+  def target (self):
+    if self.value:
+      return self.value.target
+
 class ReverseMultiLinkField(ReverseLinkField):
   def __init__ (self, name):
     self.name = name
@@ -756,8 +766,8 @@ class ProgrammeItem (Model):
   labelField = 'title'
 
   def link (self):
-    if not callable(self.event):
-      return self.event.value[0].target.link + '#' + self.key
+    if self.event.target:
+      return self.event.target.link + '#' + self.key
     else:
       return ''
 

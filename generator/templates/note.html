@@ -13,10 +13,10 @@
     <ul>
       {% if note.programmeItem %}
       <li><a href="../activities.html">Activities</a></li>
-      <li><a href="{{ note.programmeItem.link }}">{{ note.programmeItem }}</a></li>
+      <li><a href="{{ note.programmeItem.target.link }}">{{ note.programmeItem }}</a></li>
       {% elif note.event %}
       <li><a href="../activities.html">Activities</a></li>
-      <li><a href="{{ note.event.link }}">{{ note.event }}</a></li>
+      <li><a href="{{ note.event.target.link }}">{{ note.event }}</a></li>
       {% endif %}
       <li>{{ note }}</li>
     </ul>

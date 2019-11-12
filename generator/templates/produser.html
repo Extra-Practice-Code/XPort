@@ -10,9 +10,9 @@
   </nav>
   <h1 class="produser">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
   {% if produser.trajectories %}
-    {% for trajectory in produser.trajectories %}
+    {% for trajectory in produser.trajectories.targets %}
       <h2>Trajectory</h2>
-      {{ trajectory.content}}
+      {{ trajectory.content }}
     {% endfor %}
   {% endif %}
   
@@ -24,7 +24,7 @@
   {% if produser.events %}
     <h2>Activities</h2>
     <ul class="simplelist">
-      {% for event in produser.events|link_target_iterator %}
+      {% for event in produser.events.targets %}
       <li>
         <section class="event-preview">
           <a href="{{ event.link }}">{{ event }}</a>
@@ -38,7 +38,7 @@
   {% if produser.bibliography %}
     <h2>Bibliography</h2>
     <ul class="simplelist">
-      {% for entry in produser.bibliography.value %}
+      {% for entry in produser.bibliography.targets %}
         <li>{{ entry }}</li>
       {% endfor %}   
     </ul>
@@ -47,7 +47,7 @@
   {% if produser.video %}
     <h2>Video</h2>
     <ul class="simplelist">
-      {% for video in produser.video %}
+      {% for video in produser.video.targets %}
         <li>
           <video controls>
             <source type="{{ video.type }}" src="{{ video.video }}">
@@ -60,7 +60,7 @@
   {% if produser.audio %}
     <h2>Audio</h2>
     <ul class="simplelist">
-      {% for audio in produser.audio %}
+      {% for audio in produser.audio.targets %}
         <li>
           <audio controls>
             <source type="{{ audio.type }}" src="{{ audio.audio }}">
@@ -72,7 +72,7 @@
   {% if produser.notes %}
     <h2>Notes</h2>
     <ul>
-      {% for note in produser.notes %}
+      {% for note in produser.notes.targets %}
         <li>
           <a href="{{ note.link }}" class="note">{{ note }}</a>
         </li>
@@ -83,7 +83,7 @@
   {% if produser.events_participant %}
   <h2>Activities (participant)</h2>
   <ul class="simplelist">
-    {% for event in produser.events_participant %}
+    {% for event in produser.events_participant.targets %}
     <li>
       <section class="event-preview">
         <a href="{{ event.link }}">{{ event }}</a>
@@ -96,7 +96,7 @@
   {% if produser.notes_participant %}
   <h2>Notes (participant)</h2>
   <ul>
-    {% for note in produser.notes_participant %}
+    {% for note in produser.notes_participant.targets %}
       <li>
         <a href="{{ note.link }}" class="note">{{ note }}</a>
       </li>

@@ -11,7 +11,7 @@
     {% for trajectory in trajectories %}
       <section class="trajectory">
         <h2 class="produser">
-          <a href="{{ trajectory.produser.link }}">{{ trajectory.produser }}</a>
+          <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
         </h2>
         {% if trajectory.summary %}
           {{ trajectory.summary }}
