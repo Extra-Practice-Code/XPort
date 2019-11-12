@@ -47,7 +47,7 @@
       <aside class="right">
         <div class="agenda">
           {% for event in events %}
-            <div id="{{ event.key }}" class="event presentation">
+            <div id="{{ event.key }}" class="event presentation" data-image="{{ event.image }}">
                 <div class="event-detail-header">
                   <p class="event-date"><time datetime="2019-05-24">{{ event.date }}</time></p>
                   <h2 class="event-title">{{ event }}</h2>
@@ -128,6 +128,15 @@
     setHash(null);
     document.body.className = document.body.className.replace(/\s*event-active-through-click/, '');
   });
+  
+  function showImage(path) {
+    var holder = document.getElementById('prolog');
+    if (path && path != 'None') {
+      holder.style.backgroundImage = 'url(' + path + ')';
+    } else {
+      holder.style.removeProperty('background-image');
+    }
+  }
 
   function activate(entry, entries) {
     for (var e = 0; e < entries.length; e++) {
@@ -147,6 +156,11 @@
     var question = document.getElementById('prolog');
     if (question) {
       question.classList.add('blink');
+    }
+    
+    if (entry.dataset.image) {
+      var image = entry.dataset.image;
+      showImage(image);
     }
   }
 
