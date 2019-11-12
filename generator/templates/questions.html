@@ -1,0 +1,12 @@
+{% extends "generator_base.html" %}
+
+{% block title %}Questions{% endblock %}
+
+{% block content %}
+  <h1>Questions</h1>
+  {% for question in questions %}
+    <p class="question">
+      {{ question }}
+    </p>
+  {% endfor %}
+{% endblock %}
