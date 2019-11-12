@@ -75,7 +75,7 @@
                     {% if event.notes %}
                     <h4>Related documents</h4>
                     <ul class="simplelist">
-                      {% for note in event.notes %}
+                      {% for note in event.notes.targets %}
                       <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
                       {% endfor %}
                     </ul>

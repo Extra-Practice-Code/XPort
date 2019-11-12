@@ -24,29 +24,27 @@
         {% endfor %}
       {% endif %}
     </p>
-    <p class="event-infos">
-      {% for produser in event.produser.value %}
+    {% if event.participant or event.produser %}
+    <h4>Participants</h4>
+    <p>
+      {% for produser in event.produser.targets %}
       <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
       {% endfor %}
+      {% for produser in event.produser.targets %}
+      <a href="{{ produser.link }}" class="produser">
+        {{ produser }}</a>{% if not forloop.last %},{% endif %}
+      {% endfor %}
     </p>
+    {% endif %}
   </section>
   {{ event.summary }}
   {{ event.content }}
   {% if event.notes %}
   <h4>Related documents</h4>
   <ul class="simplelist">
-    {% for note in event.notes.value %}
+    {% for note in event.notes.targets %}
     <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
     {% endfor %}
   </ul>
-  {% endif %}
-  {% if event.participant %}
-  <h4>Participants</h4>
-  <p>
-    {% for produser in event.participant.value %}
-    <a href="{{ produser.link }}" class="produser">
-      {{ produser }}</a>{% if not forloop.last %},{% endif %}
-    {% endfor %}
-  </p>
   {% endif %}
 {% endblock %}
