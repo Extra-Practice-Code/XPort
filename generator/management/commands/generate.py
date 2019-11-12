@@ -78,8 +78,6 @@ def groupedProgrammeItems(event):
   programmeItems = sorted(event.programmeItems.targets, key=datetimesorter)
   return regroup(programmeItems, lambda e: datesorter(e).strftime(DATE_OUTPUT_FORMAT))
 
-produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
-
 def generate ():
   # Clear existing collections
   resetCollections(contentTypes)
@@ -101,6 +99,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'pages'))
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
+  os.mkdir(os.path.join(outputdir, 'questions'))
   
   models = parse_pads()
 
@@ -115,6 +114,7 @@ def generate ():
   externalProjects = collectionFor('external-project')
   notes = collectionFor('notes')
   trajectories = collectionFor('trajectory')
+  questions = collectionFor('question')
 
   def getProduserSortKey (produser):
     attr = try_attributes(produser, ['sortname', 'name', 'produser'])
@@ -124,6 +124,12 @@ def generate ():
     else:
       return None
 
+  def getTrajectorySortKey (trajectory):
+    if trajectory.produser.resolved:
+      return getProduserSortKey(trajectory.produser.target)
+    else:
+      return ''
+
   def getLabelAsSortKey (model):
     label = getattr(model, model.labelField)
 
@@ -132,14 +138,70 @@ def generate ():
     else:
       return ''
 
-  grouped_produsers = sorted(regroup(sorted(produsers.models, key=getProduserSortKey), 'role'), key=lambda group: produser_role_sorting.index(group[0]) if group[0] in produser_role_sorting else inf)
+  def makeGroupSorter (order):
+    def sorter (line):
+      sortKey = line[0]
+      return order.index(sortKey) if sortKey in order else inf
 
-  output(os.path.join(outputdir, 'produsers.html'), 'produsers.html', { 'produsers': sorted(produsers.models, key=lambda r: str(try_attributes(r, ['sortname', 'name', 'produser', 'key'])).lower()), 'grouped_produsers': grouped_produsers })
+    return sorter
+
+  def makeAttributeSorter(attributes):
+    def sorter (model):
+      return str(try_attributes(model, attributes)).lower()
+
+    return sorter
+
+  ## Produsers
+  ## First 
+  produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
+  sorted_produsers = sorted(produsers.models, key=getProduserSortKey)
+  grouped_produsers = sorted(regroup(sorted_produsers, 'role'), key=makeGroupSorter(produser_role_sorting))
+
+  output(
+    os.path.join(outputdir, 'produsers.html'), 
+    'produsers.html', 
+    { 
+      'produsers': sorted(produsers.models, key=makeAttributeSorter(['sortname', 'name', 'produser', 'key'])), 
+      'grouped_produsers': grouped_produsers })
+  
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
-  output(os.path.join(outputdir, 'tags.html'), 'tags.html', { 'tags': sorted(tags.models, key=getLabelAsSortKey) })
-  output(os.path.join(outputdir, 'bibliography.html'), 'bibliography.html', { 'bibliography': sorted(bibliography.models, key=getLabelAsSortKey) })
-  output(os.path.join(outputdir, 'external-projects.html'), 'external-projects.html', { 'externalProjects': sorted(externalProjects.models, key=getLabelAsSortKey) })
-  output(os.path.join(outputdir, 'trajectories.html'), 'trajectories.html', { 'trajectories': trajectories.models })
+  
+  ## Tags
+  output(
+    os.path.join(outputdir, 'tags.html'), 
+    'tags.html', 
+    { 'tags': sorted(tags.models, key=getLabelAsSortKey) })
+  
+  ## Bibliography
+  output(
+    os.path.join(outputdir, 'bibliography.html'),
+    'bibliography.html', 
+    { 'bibliography': sorted(bibliography.models, key=getLabelAsSortKey) })
+  
+  ## External projects
+  output(
+    os.path.join(outputdir, 'external-projects.html'),
+    'external-projects.html',
+    { 'externalProjects': sorted(externalProjects.models, key=getLabelAsSortKey) })
+  
+  ## Trajectories
+  trajectory_category_sorting = ['artisttrajectory', 'designertrajectory', 'reflection']
+  sorted_trajectories = sorted(trajectories.models, key=getTrajectorySortKey)
+  grouped_trajectories = sorted(regroup(sorted_trajectories, 'category'), key=makeGroupSorter(trajectory_category_sorting))
+  output(
+    os.path.join(outputdir, 'trajectories.html'),
+    'trajectories.html', 
+    {
+      'trajectories': sorted_trajectories,
+      'grouped_trajectories': grouped_trajectories 
+    })
+
+  ## Questions
+  output(
+    os.path.join(outputdir, 'questions.html'),
+    'questions.html',
+    { 'questions': questions.models }
+  )
 
   # for produser in produsers.models:
   #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
@@ -152,8 +214,6 @@ def generate ():
   generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
   generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
-
-
   generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
   generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
   

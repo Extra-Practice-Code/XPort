@@ -7,6 +7,38 @@
     Caveat gathers these as 'trajectories', since they are process-based, durational,
     and do not necessarily have a tangible outcome.  
   </p>
+  {% for category, trajectories in grouped_trajectories %}
+    {% if category == 'artisttrajectory' %}
+      <h3>Artists trajectories</h3>
+      <p>
+        <em>Caveat</em> attributes a central role to a large number of artists who are invited to do in-depth research through their art practices into the socio-economic and legal conditions of these practices.
+      </p>
+    {% elif category == 'designertractory' %}
+      <h3>Designer trajectories</h3>
+      <p>
+        As one of <em>Caveat</em>'s partners, open-source design collective OSP pursues a research into fair design practice: Ecotones of Collaboration.
+      </p>
+    {% elif category == 'reflection' %}
+      <h3>Reflections</h3>
+      <p>
+          Critial considerations by the <em>Caveat</em> research team and 'dramaturgs' , and by invited guest writers put the research trajectories in different perspectives from their art historical, legal, sociological and other backgrounds.
+      </p>
+    {% endif %}
+    <section class="trajectory-list">
+      {% for trajectory in trajectories %}
+        <section class="trajectory">
+          <h2 class="produser">
+            <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
+          </h2>
+          {% if trajectory.summary %}
+            {{ trajectory.summary }}
+          {% else %}
+            {{ trajectory.content }}
+          {% endif %}
+        </section>
+      {% endfor %}
+    </section>  
+  {% endfor %}
   <section class="trajectory-list">
     {% for trajectory in trajectories %}
       <section class="trajectory">

@@ -74,14 +74,14 @@ class DateRange (object):
 class Field (object):
   def __init__ (self, default = []):
     self.default = default
-    self.value = None
+    self._value = None
 
   # no-op
   def parse (self, value):
     return value
 
   def set (self, value):
-    self.value = [self.parse(v) for v in value]
+    self._value = [self.parse(v) for v in value]
 
   def __repr__ (self):
     return repr(self.value)
@@ -91,6 +91,13 @@ class Field (object):
 
   def __iter__ (self):
     return iter(self.value)
+  
+  @property
+  def value (self):
+    if self._value:
+      return self._value
+    else:
+      return self.default
 
   # def __call__ (self, value):
   #   if value:

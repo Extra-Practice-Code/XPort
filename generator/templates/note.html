@@ -1,9 +1,9 @@
 {% extends "generator_base.html" %}
 {% block title %}
   Caveat
-  {% if note.programmeItem %}
+  {% if note.programmeItem.resolved %}
     → {{ note.programmeItem }}
-  {% elif note.event %}
+  {% elif note.event.resolved %}
     → {{ note.event }}
   {% endif %}
   → {{ note.title|striptags }}
@@ -11,11 +11,11 @@
 {% block content %}
   <nav class="breadcrumbs">
     <ul>
-      {% if note.programmeItem %}
-      <li><a href="../activities.html">Activities</a></li>
+      {% if note.programmeItem.resolved %}
+      <li><a href="../index.html">Timeline</a></li>
       <li><a href="{{ note.programmeItem.target.link }}">{{ note.programmeItem }}</a></li>
-      {% elif note.event %}
-      <li><a href="../activities.html">Activities</a></li>
+      {% elif note.event.resolved %}
+      <li><a href="../index.html">Timeline</a></li>
       <li><a href="{{ note.event.target.link }}">{{ note.event }}</a></li>
       {% endif %}
       <li>{{ note }}</li>

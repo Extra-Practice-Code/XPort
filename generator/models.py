@@ -143,6 +143,7 @@ class LinkField(object):
   def resolve (self, source):
     if self.value:
       self.value.resolve(source)
+      self.resolved = True
       # Should we also resolve the reverse link?
       if not self.value.broken and self.reverse:
         # If so provide a reversed version of the link
@@ -288,17 +289,26 @@ class ReverseMultiLinkField(ReverseLinkField):
   def targets (self):
     return [link.target for link in self.value]
 
+# Returns true id the given object is a LinkField
+# or a MultiLinkField
 def is_link (obj):
   return isinstance(obj, (LinkField, MultiLinkField))
 
+# Returns true if the given object is a LinkField
+def is_single_link (obj):
+  return isinstance(obj, (LinkField,))
+
 def is_multi_link (obj):
-  return isinstance(obj, (MultiLinkField))
+  return isinstance(obj, (MultiLinkField,))
 
 def is_reverse_link (obj):
   return isinstance(obj, (ReverseLinkField, ReverseMultiLinkField))
 
+def is_reverse_single_link (obj):
+  return isinstance(obj, (ReverseLinkField,))
+
 def is_reverse_multi_link (obj):
-  return isinstance(obj, (ReverseMultiLinkField))
+  return isinstance(obj, (ReverseMultiLinkField,))
 
 def linkMultiReverse(contentType, reverseName):
   return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
@@ -766,10 +776,12 @@ class ProgrammeItem (Model):
   labelField = 'title'
 
   def link (self):
-    if self.event.target:
+    if is_multi_link(self.event) or is_reverse_multi_link(self.event):
+      return self.event.targets[0].link + '#' + self.key
+    elif is_single_link(self.event) or is_reverse_single_link(self.event):
       return self.event.target.link + '#' + self.key
     else:
-      return ''
+      return '#broken'
 
   def _metadataFields (self):
     return {
@@ -809,6 +821,7 @@ class Trajectory (Model):
   def _metadataFields (self):
     return {
       'produser': linkMultiReverse('produser', 'trajectories'),
+      'category': fields.Single(fields.StringField(['artisttrajectory'])),
       'tags': multiLinkMultiReverse('tag', 'trajectories')
     }
 
