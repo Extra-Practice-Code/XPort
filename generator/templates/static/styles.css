@@ -445,7 +445,26 @@ blockquote+p, .event-infos+blockquote {
   letter-spacing: 0.025em;
   font-family: "U001";
   margin: 0;
+  margin-bottom: 0.5em;
 }
+section.event-summary a::before {
+  content: '';
+  background: url(images/jump-arrow.svg) no-repeat;
+  display: block;
+  height: 10px;
+  width: 45px;
+  padding-bottom: 20px;
+  float: left;
+}
+section.event-summary a::after {
+    content: '';
+    background: url(images/jump-arrow.svg) no-repeat;
+    display: inline-block;
+    height: 10px;
+    width: 45px;
+    padding-bottom: 20px;
+}
+
 
 .grouper-header {
   color:#112B92;

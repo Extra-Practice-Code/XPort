@@ -187,18 +187,23 @@ h2.produser {
   display: inline;
   float: left;
   margin-right: 7px;
+  margin-bottom: 0.5em;
 }
 .produsers + p {
   margin-bottom: calc(0.8 * var(--line-height));
 }
 
 h3 {
-  font-family: "Junicode-Condensed";
+  font-size: 0.8em;
+  line-height: 1.3em;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.025em;
+  font-family: "U001";
+  margin: 0;
+  margin-bottom: 0.5em;
 }
 
-h3 {
-  margin: 0;
-}
 
 .produser a {
   border: none;
@@ -246,6 +251,15 @@ p.page-intro {
 .event-title + p {
   margin-top: var(--line-height);
 }
+/*section.event-summary a::before {
+  content: '';
+  background: url(images/jump-arrow.svg) no-repeat;
+  display: block;
+  height: 10px;
+  width: 55px;
+  padding-bottom: 20px;
+  float: left;
+}*/
 /* ==========================================================================
   tags
   ========================================================================== */
@@ -478,8 +492,8 @@ a.tag {
   grid-template-columns: repeat(2, 1fr);
   /*! grid-gap: 1em; */
   /*! border: 1px solid; */
-  border-top: 2px solid;
-  border-bottom: 2px solid;
+/*  border-top: 2px solid;
+  border-bottom: 2px solid;*/
   margin-left: -1em;
   margin-right: -1em;
 }
@@ -487,11 +501,29 @@ a.tag {
 .trajectory-list section.trajectory--item {
   max-height: 300px;
   overflow: hidden;
-  border-top: 2px solid;
-  background: linear-gradient(transparent 81.2%, var(--font-size-small) 98.5%);
-  z-index: 1000;
-  /*! background: var(--rose-pale); */
+/*  border-top: 2px solid;
+*//*  background: linear-gradient(transparent 81.2%, var(--font-size-small) 98.5%);
+*/  z-index: 1000;
+  background: var(--rose-pale); 
   padding: 1em;
+  outline: 2px solid black;
+  outline-offset: 0px;
+  padding: 1em;
+}
+.trajectory-list section.trajectory--item:hover {
+  background: white;
+}
+
+.trajectory-list section.trajectory--item h2.produser {
+
+    text-align: center;
+    margin: auto;
+    margin-bottom: auto;
+    display: block;
+    font-size: 1.6em;
+    letter-spacing: 0;
+    margin-bottom: 0.5em;
+
 }
 
 .programme-item-list {
@@ -568,10 +600,17 @@ section.audio {
 }
 
 .inline-navigation ul li {
-	display: inline-block;
+  display: inline-block;
+  margin-left: 25px;
 }
-.inline-navigation ul li:before {
-	display: none;
+.inline-navigation ul li::before {
+	content: '';
+  background: url(images/jump-arrow-blue.svg) no-repeat;
+  display: block;
+  height: 10px;
+  width: 45px;
+  padding-bottom: 20px;
+  float: left;
 }
 
 .inline-navigation ul {
