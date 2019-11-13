@@ -831,7 +831,9 @@ class Trajectory (Model):
     return {
       'produser': linkMultiReverse('produser', 'trajectories'),
       'category': fields.Single(fields.StringField(['artisttrajectory'])),
-      'tags': multiLinkMultiReverse('tag', 'trajectories')
+      'tags': multiLinkMultiReverse('tag', 'trajectories'),
+      'summary': fields.Single(fields.MarkdownField()),
+      'title': fields.Single(fields.StringField())
     }
 
 class Pad (Model):
