@@ -46,9 +46,9 @@
     <section class="trajectory-list--grid">
       {% for trajectory in trajectories %}
         <section class="trajectory--item">
-          {% if trajectory.title and trajectory.title.value %}
+          {% if trajectory.title.value %}
             <h2 class="produser">
-              <a href="{{ trajectory.link }}">{{ trajectory.title }}</a>
+              <a href="{{ trajectory.link }}">{{ trajectory.title }}
             </h2>
           {% else %}
             <h2>
@@ -60,8 +60,7 @@
           {% else %}
             {{ trajectory.content|truncatewords_html:60 }}
           {% endif %}
-
-          <a href="{{ trajectory.link }}" class="read-further">read further</a>
+            <a href="{{ trajectory.produser.target.link }}" class="read-further">read further</a>
         </section>
       {% endfor %}
     </section>
