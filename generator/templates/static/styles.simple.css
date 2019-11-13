@@ -726,14 +726,15 @@ section.audio {
 }
 .read-further:after {
   content: '';
-  background: url(images/jump-arrow.svg) no-repeat;
+  background: url(images/jump-arrow-blue.svg) no-repeat;
   display: inline-block;
   height: -7px;
   width: 41px;
   padding-bottom: 20px;
   margin-left: 7px;
-  /*! position: absolute; */
-  /*! right: 0; */
+}
+.read-further:hover:after {
+  background: url(images/jump-arrow-orange.svg) no-repeat;
 }
 
 .read-further {
