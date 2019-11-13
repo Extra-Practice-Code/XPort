@@ -657,9 +657,6 @@ section.audio {
   margin: 0;
   padding: 0;
 }
-.taglist h3 {
-	margin-top: 1em;
-}
 .taglist :first-child h3 {
 	margin-top: 0;
 }

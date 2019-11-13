@@ -819,6 +819,11 @@ class Produser (Model):
       'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
     }
 
+  @property
+  def content_without_name (self):
+    name = self.name.value if self.name.value else self.produser.value
+    return mark_safe(re.sub('^<p>' + name, '<p>', self.content, re.I))
+
 class Trajectory (Model):
   contentType = 'trajectory'
 

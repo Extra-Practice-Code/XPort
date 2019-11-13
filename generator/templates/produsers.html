@@ -39,7 +39,7 @@
     <section class="produser--item">
       <h2 class="produser"><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h2>
       {% if produser.content %}
-      {{ produser.content|truncatechars_html:200 }}
+      {{ produser.content_without_name|truncatechars_html:200 }}
       {% endif %}
     </section>
     {% endfor %}

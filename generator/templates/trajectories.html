@@ -52,7 +52,7 @@
           {% if trajectory.summary %}
             {{ trajectory.summary }}
           {% else %}
-            {{ trajectory.content }}
+            {{ trajectory.content|truncatechars_html:250 }}
           {% endif %}
         </section>
       {% endfor %}
