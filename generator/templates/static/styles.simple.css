@@ -265,13 +265,15 @@ code {
 body {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 20px;
   bottom: 0;
-  left: 0;
+  left: 20px;
   overflow: hidden;
   display: grid;
   grid-template-columns: [left sidebar-start] 1fr [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
   grid-template-rows: [top] repeat(2, 1fr) [footer] min-content [bottom];
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
 
 main, footer {
