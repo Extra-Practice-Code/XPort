@@ -441,13 +441,13 @@ main video {
   margin-top: .5em;
   margin-bottom: .5em;
 }
-
+/* 
 a.tag {
 	font-size: 85%;
 	text-transform: uppercase;
 	border-bottom: none;
 	letter-spacing: 0px;
-}
+} */
 
 .gallery {
   display: grid;
@@ -466,25 +466,32 @@ a.tag {
 	margin: 0;
 }
 
-
+5
 .trajectory-list {
-  margin-bottom: 3em;
+  margin-bottom: 1.5em;
+  /*! margin-left: -1em; */
+  /*! margin-right: -1em; */
 }
 
 .trajectory-list--grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1em;
+  /*! grid-gap: 1em; */
+  /*! border: 1px solid; */
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  margin-left: -1em;
+  margin-right: -1em;
 }
 
 .trajectory-list section.trajectory--item {
   max-height: 300px;
   overflow: hidden;
-  border-bottom: 2px solid;
+  border-top: 2px solid;
   background: linear-gradient(transparent 81.2%, var(--font-size-small) 98.5%);
   z-index: 1000;
-  background: var(--rose-pale);
-  padding: 20px;
+  /*! background: var(--rose-pale); */
+  padding: 1em;
 }
 
 .programme-item-list {
@@ -548,8 +555,12 @@ section.audio {
 }
 
 .tag {
-  text-transform: uppercase;
-  font-size: 70%;
+  border-width: 0px 1px 1px 0px;
+	border-style: dotted;
+	border-radius: .25em;
+	padding: 0 .15em;
+	border-left: 0px;
+	border-top: 0px;
 }
 
 .tag:target {
@@ -589,7 +600,10 @@ section.audio {
 	display: block;
 }
 
-.produser-list:target h3,
-.trajectory-list:target h3 {
-  color: var(--orange-karel);
+.trajectory--item:nth-child(odd) {
+	border-right: 2px solid;
+}
+
+.trajectory-list .trajectory--item:nth-child(-n+2) {
+	border-top: 0px;
 }

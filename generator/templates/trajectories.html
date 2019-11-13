@@ -1,8 +1,7 @@
 {% extends "generator_base.html" %}
 {% block content %}
-  <h1>Artist Trajectories</h1>
-  <p class="page-intro
-  ">
+  <h1>Research Trajectories</h1>
+  <p class="page-intro">
     <em>Caveat</em>'s collective research unfolds through an array of research practices.
     Caveat gathers these as 'trajectories', since they are process-based, durational,
     and do not necessarily have a tangible outcome.  
@@ -29,7 +28,7 @@
   {% for category, trajectories in grouped_trajectories %}
   <section id="{{ category }}" class="trajectory-list">
     {% if category == 'artisttrajectory' %}
-      <h3>Artists trajectories</h3>
+      <h3>Artist trajectories</h3>
       <p>
         <em>Caveat</em> attributes a central role to a large number of artists who are invited to do in-depth research through their art practices into the socio-economic and legal conditions of these practices.
       </p>
