@@ -525,6 +525,8 @@ a.tag {
   border-bottom: 2px solid;*/
   margin-left: -1em;
   margin-right: -1em;
+  z-index: -1;
+  margin-top: 1em;
 }
 
 .trajectory-list section.trajectory--item {
@@ -538,6 +540,8 @@ a.tag {
   outline: 2px solid black;
   outline-offset: 0px;
   padding: 1em;
+  position: relative;
+  padding-bottom: 2em;
 }
 .trajectory-list section.trajectory--item img:nth-child(n+2) {
   display: none;
@@ -551,10 +555,15 @@ a.tag {
     text-align: center;
     margin-bottom: auto;
     display: block;
-    font-size: 1.6em;
+    font-size: 1.1em;
     letter-spacing: 0;
     margin-bottom: 0.5em;
 
+    padding-bottom: .25em;
+    left: 0;
+    margin-left: 0;
+    float: none;
+    display: inline-block;
 }
 
 .programme-item-list {
@@ -660,7 +669,7 @@ section.audio {
 	position: sticky;
 	top: -1em;
 	background: white;
-	z-index: 1;
+	z-index: 5;
 }
 
 .inline-navigation ul:before {
@@ -718,4 +727,19 @@ section.audio {
   width: 41px;
   padding-bottom: 20px;
   margin-left: 7px;
+  /*! position: absolute; */
+  /*! right: 0; */
+}
+
+.read-further {
+	margin-top: .5em;
+	/*! display: block; */
+	/*! float: right; */
+	position: absolute;
+	right: .5em;
+	bottom: .5em;
+}
+
+.long-text p + p {
+  margin-top: var(--line-height);
 }

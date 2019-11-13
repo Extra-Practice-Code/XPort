@@ -35,8 +35,11 @@
       {{ note.event.summary }}
     {% endif %}
     </section>
-    <h1>{{ note.title }}</h1>
-    {{ note.content }}
+    
+    <section class="long-text">
+      <h1>{{ note.title }}</h1>
+      {{ note.content }}
+    </section>
 {% endblock %}
 {% block footerresources %}
   <script src="{{ SITE_URL }}static/js/timejumper.js"></script>

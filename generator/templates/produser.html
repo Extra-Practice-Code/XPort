@@ -11,8 +11,10 @@
   <h1 class="produser">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</h1>
   {% if produser.trajectories %}
     {% for trajectory in produser.trajectories.targets %}
-      <h2>Trajectory</h2>
-      {{ trajectory.content }}
+      <section class="long-text">
+        <h2>Trajectory</h2>
+        {{ trajectory.content }}
+      </section>
     {% endfor %}
   {% endif %}
   
