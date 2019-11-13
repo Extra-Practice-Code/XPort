@@ -559,10 +559,34 @@ section.audio {
 .inline-navigation ul li:before {
 	display: none;
 }
+
 .inline-navigation ul {
-	margin: -2em 0 2em 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
+
+.inline-navigation {
+	margin: -2em 0 1em 0;
+	padding: 1em 0;
+	position: sticky;
+	top: -1em;
+	background: white;
+	z-index: 1;
+}
+
 .inline-navigation ul:before {
 	content: "Go to:";
+}
+
+.produser-list:target:before,
+.trajectory-list:target:before {
+  margin: -3.5em 0 0;
+	height: 3.5em;
+	content: '';
+	display: block;
+}
+
+.produser-list:target h3,
+.trajectory-list:target h3 {
+  color: var(--orange-karel);
 }
