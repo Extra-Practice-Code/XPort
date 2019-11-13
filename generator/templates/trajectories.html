@@ -44,18 +44,20 @@
           Critial considerations by the <em>Caveat</em> research team and 'dramaturgs' , and by invited guest writers put the research trajectories in different perspectives from their art historical, legal, sociological and other backgrounds.
       </p>
     {% endif %}
-    {% for trajectory in trajectories %}
-      <section class="trajectory--item">
-        <h2 class="produser">
-          <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
-        </h2>
-        {% if trajectory.summary %}
-          {{ trajectory.summary }}
-        {% else %}
-          {{ trajectory.content }}
-        {% endif %}
-      </section>
-    {% endfor %}
+    <section class="trajectory-list--grid">
+      {% for trajectory in trajectories %}
+        <section class="trajectory--item">
+          <h2 class="produser">
+            <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
+          </h2>
+          {% if trajectory.summary %}
+            {{ trajectory.summary }}
+          {% else %}
+            {{ trajectory.content }}
+          {% endif %}
+        </section>
+      {% endfor %}
+    </section>
   </section>  
   {% endfor %}
 {% endblock %}
