@@ -46,7 +46,7 @@
     <section class="trajectory-list--grid">
       {% for trajectory in trajectories %}
         <section class="trajectory--item">
-          {% if trajectory.title.value %}
+          {% if trajectory.title and trajectory.title.value %}
             <h2 class="produser">
               <a href="{{ trajectory.link }}">{{ trajectory.title }}</a>
             </h2>
