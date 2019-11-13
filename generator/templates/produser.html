@@ -71,7 +71,7 @@
   {% endif %}
   {% if produser.notes %}
     <h2>Notes</h2>
-    <ul>
+    <ul class="simplelist">
       {% for note in produser.notes.targets %}
         <li>
           <a href="{{ note.link }}" class="note">{{ note }}</a>

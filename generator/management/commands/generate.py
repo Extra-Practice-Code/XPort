@@ -3,6 +3,7 @@
 import os
 import os.path
 import shutil
+import re
 
 from math import inf
 from generator.index import make_index
@@ -167,10 +168,12 @@ def generate ():
   # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
   
   ## Tags
+  sorted_tags = sorted(tags.models, key=lambda m: re.subn(r'\W', '', str(m))[0].lower())
+  grouped_tags = regroup(sorted_tags, key=lambda m: re.subn(r'\W', '', str(m))[0].lower()[0])
   output(
     os.path.join(outputdir, 'tags.html'), 
     'tags.html', 
-    { 'tags': sorted(tags.models, key=getLabelAsSortKey) })
+    { 'tags': sorted_tags, 'grouped_tags': grouped_tags })
   
   ## Bibliography
   output(
