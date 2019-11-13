@@ -39,18 +39,4 @@
       {% endfor %}
     </section>  
   {% endfor %}
-  <section class="trajectory-list">
-    {% for trajectory in trajectories %}
-      <section class="trajectory">
-        <h2 class="produser">
-          <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
-        </h2>
-        {% if trajectory.summary %}
-          {{ trajectory.summary }}
-        {% else %}
-          {{ trajectory.content }}
-        {% endif %}
-      </section>
-    {% endfor %}
-  </section>  
 {% endblock %}

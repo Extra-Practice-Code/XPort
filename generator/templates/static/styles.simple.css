@@ -471,6 +471,7 @@ a.tag {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 1em;
+  margin-bottom: 3em;
 }
 
 .trajectory-list section.trajectory {
