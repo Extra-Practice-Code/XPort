@@ -47,11 +47,12 @@ class LinkDifferentContentTypeError(Exception):
   The link object, the link field will in the end be filled with these
 """
 class Link (object):
-  def __init__ (self, target, contentType, inline=False, direct=False, source=None):
+  def __init__ (self, target, contentType, inline=False, direct=False, source=None, label=None):
     self.target = target
     self.contentType = contentType
     self.inline = inline
     self._id = ''.join([str(random.randint(0,9)) for x in range(15)])
+    self.label = label
     
     if direct and source:
       self.resolved = True
@@ -112,6 +113,7 @@ class ReverseLink (object):
     self.reverse = True
     self.resolved = link.resolved
     self.broken = link.broken
+    self.label = link.label
 
   @property
   def id (self):
@@ -170,9 +172,9 @@ class LinkField(object):
 
   # Directly construct a link
   # Circumvents the resolving through a collection
-  def makeLink(self, source, target, inline=False):
+  def makeLink(self, source, target, inline=False, label=None):
     if not self.resolved:
-      link = Link(target, self.contentType, inline, True, source)
+      link = Link(target, self.contentType, inline, True, source, label=label)
       self.value = link
       # if we have a reverse link, set it
       if self.reverse:
@@ -212,12 +214,12 @@ class MultiLinkField(object):
 
       self.value.append(Link(target, self.contentType, inline))
 
-  def makeLink(self, source, target, inline=False):
+  def makeLink(self, source, target, inline=False, label=None):
     for existingLink in self.value:
       if existingLink.target == target:
         return existingLink
 
-    link = Link(target, self.contentType, inline, direct=True, source=source)
+    link = Link(target, self.contentType, inline, direct=True, source=source, label=label)
     self.value.append(link)
 
     if self.reverse:
@@ -424,10 +426,10 @@ def parseReference(match, collector=None, source=None):
         # setattr(source, contentType, target)
         if target.contentType in source.metadata and is_link(source.metadata[target.contentType]):
           ## FIXME what if it's an existing reverse
-          link = source.metadata[target.contentType].makeLink(source, target, inline=True)
+          link = source.metadata[target.contentType].makeLink(source, target, inline=True, label=display_label)
         elif target.contentType + 's' in source.metadata and is_multi_link(source.metadata[target.contentType + 's']):
           ## FIXME what if it's an existing reverse?
-          link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True)
+          link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True, label=display_label)
         else:
           link = None
 
