@@ -18,7 +18,7 @@
       <h2>Produsers</h2>
       <ul class="simplelist">
         {% for link, _, produser in tag.produsers|link_iterator %}
-          <li><a href="{{ produser.link }}#{{ link.id }}">{% if link.label %}{{ link.label }} → {% endif %}{{ produser }}</a></li>
+          <li><a href="{{ produser.link }}#{{ link.id }}">{% if link.label %}<span class="tag">{{ link.label }} → </span>{% endif %}{{ produser }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -27,7 +27,7 @@
       <h2>Trajectories</h2>
       <ul class="simplelist">
         {% for link, _, trajectory in tag.trajectories|link_iterator %}
-          <li><a href="{{ trajectory.produser.value.target.link }}#{{ link.id }}">{% if link.label %}{{ link.label }} → {% endif %}{{ trajectory.produser }}</a></li>
+          <li><a href="{{ trajectory.produser.value.target.link }}#{{ link.id }}">{% if link.label %}<span class="tag">{{ link.label }} → </span>{% endif %}{{ trajectory.produser }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -36,7 +36,7 @@
       <h2>Activities</h2>
       <ul class="simplelist">
         {% for link, _, event in tag.events|link_iterator %}
-          <li><a href="{{ event.link }}#{{ link.id }}">{% if link.label %}{{ link.label }} → {% endif %}{{ event }}</a></li>
+          <li><a href="{{ event.link }}#{{ link.id }}">{% if link.label %}<span class="tag">{{ link.label }} → </span>{% endif %}{{ event }}</a></li>
         {% endfor %}
       </ul>   
     {% endif %}
@@ -45,7 +45,7 @@
       <h2>Bibliography</h2>
       <ul class="simplelist">
         {% for link, _, bibliography in tag.bibliography|link_iterator %}
-          <li>{% if link.label %}{{ link.label }} → {% endif %}{{ bibliography }}</li>
+          <li>{% if link.label %}<span class="tag">{{ link.label }} → </span>{% endif %}{{ bibliography }}</li>
         {% endfor %}   
       </ul>
     {% endif %}
@@ -77,10 +77,10 @@
   {% endif %}
   {% if tag.notes %}
     <h2>Notes</h2>
-    <ul>
+    <ul class="simplelist">
       {% for link, _, note in tag.notes|link_iterator %}
         <li>
-          <a href="{{ note.link }}#{{ link.id }}" class="note">{% if link.label %}{{ link.label }} → {% endif %}{{ note }}</a>
+          <a href="{{ note.link }}#{{ link.id }}" class="note">{% if link.label %}<span class="tag">{{ link.label }} → </span>{% endif %}{{ note }}</a>
         </li>
       {% endfor %}
     </ul>
