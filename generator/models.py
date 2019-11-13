@@ -168,7 +168,8 @@ class LinkField(object):
     if type(target) is list:
       self.set(target[0], inline)
 
-    self.value = Link(keyFilter(target), self.contentType, inline)
+    target = keyFilter(target)
+    self.value = Link(target, self.contentType, inline)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
@@ -208,6 +209,7 @@ class MultiLinkField(object):
       for t in target:
         self.set(t, inline)
     else:
+      target = keyFilter(target)
       for existingLink in self.value:
         if existingLink.target == target:
           return existingLink
