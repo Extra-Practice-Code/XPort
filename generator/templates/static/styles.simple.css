@@ -165,6 +165,7 @@ h1 {
   -webkit-text-stroke-color: var(--bleu-bille);
   color: white;
   margin: 0;
+  margin-bottom: 0.15em;
   /* display: none; */
 }
 
@@ -517,7 +518,6 @@ a.tag {
 .trajectory-list section.trajectory--item h2.produser {
 
     text-align: center;
-    margin: auto;
     margin-bottom: auto;
     display: block;
     font-size: 1.6em;

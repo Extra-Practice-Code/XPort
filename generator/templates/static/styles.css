@@ -447,7 +447,7 @@ blockquote+p, .event-infos+blockquote {
   margin: 0;
   margin-bottom: 0.5em;
 }
-section.event-summary a::before {
+/*section.event-summary a::before {
   content: '';
   background: url(images/jump-arrow.svg) no-repeat;
   display: block;
@@ -455,7 +455,7 @@ section.event-summary a::before {
   width: 45px;
   padding-bottom: 20px;
   float: left;
-}
+}*/
 section.event-summary a::after {
     content: '';
     background: url(images/jump-arrow.svg) no-repeat;
