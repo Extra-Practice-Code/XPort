@@ -4,6 +4,8 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.conf import settings
 
+import re
+
 register = template.Library()
 
 # @register.filter
@@ -24,3 +26,8 @@ def link_target_iterator (field):
     if link:
       yield link.target
 
+@register.filter
+def cut_from_start (value, arg):
+  print(value)
+  print('should be removed', arg)
+  return re.sub('^' + str(arg), '', re.I)

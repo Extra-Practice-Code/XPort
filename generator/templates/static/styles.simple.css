@@ -510,7 +510,6 @@ a.tag {
 	margin: 0;
 }
 
-5
 .trajectory-list {
   margin-bottom: 1.5em;
   /*! margin-left: -1em; */
@@ -529,7 +528,7 @@ a.tag {
 }
 
 .trajectory-list section.trajectory--item {
-  max-height: 300px;
+  /* max-height: 300px; */
   overflow: hidden;
 /*  border-top: 2px solid;
 *//*  background: linear-gradient(transparent 81.2%, var(--font-size-small) 98.5%);
@@ -539,6 +538,9 @@ a.tag {
   outline: 2px solid black;
   outline-offset: 0px;
   padding: 1em;
+}
+.trajectory-list section.trajectory--item img:nth-child(n+2) {
+  display: none;
 }
 .trajectory-list section.trajectory--item:hover {
   background: white;
@@ -707,4 +709,13 @@ section.audio {
 }
 .taglist li.letter:before {
   content: '';
+}
+.read-further:after {
+  content: '';
+  background: url(images/jump-arrow.svg) no-repeat;
+  display: inline-block;
+  height: -7px;
+  width: 41px;
+  padding-bottom: 20px;
+  margin-left: 7px;
 }

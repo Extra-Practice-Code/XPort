@@ -52,8 +52,9 @@
           {% if trajectory.summary %}
             {{ trajectory.summary }}
           {% else %}
-            {{ trajectory.content|truncatewords_html:30 }}
+            {{ trajectory.content|truncatewords_html:60 }}
           {% endif %}
+            <a href="{{ trajectory.produser.target.link }}" class="read-further">read further</a>
         </section>
       {% endfor %}
     </section>
