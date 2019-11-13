@@ -173,7 +173,10 @@ h1 {
   margin-bottom: 0.15em;
   /* display: none; */
 }
-
+.breadcrumbs + h1 {
+    -webkit-text-stroke-width: 0px;
+      color: var(--bleu-bille);
+ }
 h2, h4 {
   font-family: "U001";
   text-transform: uppercase;
@@ -238,7 +241,7 @@ main, aside {
   font-weight: bold;
   font-size: 1em;
   line-height: 1.1em;
-  margin-bottom: 1.1em;
+  margin-bottom: calc(2 * var(--line-height));
 }
 
 main p {
@@ -280,6 +283,10 @@ p.page-intro {
   padding-bottom: 20px;
   float: left;
 }*/
+
+.info .produser {
+  font-family: "u001";
+}
 /* ==========================================================================
   tags
   ========================================================================== */
@@ -405,6 +412,7 @@ footer {
   top: -1em;
   background:white;
   z-index: 1;
+  margin-bottom: 15px;
 }
 
 .item-reference {
@@ -585,6 +593,11 @@ a.tag {
 	font-size: 180%;
 	font-weight: bolder;
 	line-height: 1em;
+    -webkit-text-stroke-width: 0.9px;
+  -webkit-text-stroke-color: var(--red-question);
+  color: white;
+  margin: 10px 1.9em;
+  display: block;
 }
 
 section.audio {
