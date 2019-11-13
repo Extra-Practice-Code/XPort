@@ -548,7 +548,7 @@ a.tag {
 
 .trajectory-list section.trajectory--item h2.produser {
 
-    text-align: center;
+    text-align: left;
     margin-bottom: auto;
     display: block;
     font-size: 1.1em;
