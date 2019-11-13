@@ -89,7 +89,7 @@ class Link (object):
     if self.target and not self.resolved:
       debug(self.target, self.contentType)
       self.source = source
-      target = collectionFor(self.contentType).get(self.target)
+      target = collectionFor(self.contentType).get(self.target, label=self.label)
       if target:
         self.target = target
       else:
@@ -168,8 +168,8 @@ class LinkField(object):
     if type(target) is list:
       self.set(target[0], inline)
 
-    target = keyFilter(target)
-    self.value = Link(target, self.contentType, inline)
+    key = keyFilter(target)
+    self.value = Link(key, self.contentType, inline, label=target)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
@@ -209,12 +209,12 @@ class MultiLinkField(object):
       for t in target:
         self.set(t, inline)
     else:
-      target = keyFilter(target)
+      key = keyFilter(target)
       for existingLink in self.value:
-        if existingLink.target == target:
+        if existingLink.target == key:
           return existingLink
 
-      self.value.append(Link(target, self.contentType, inline))
+      self.value.append(Link(key, self.contentType, inline, label=target))
 
   def makeLink(self, source, target, inline=False, label=None):
     for existingLink in self.value:
