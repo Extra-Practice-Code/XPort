@@ -748,3 +748,7 @@ section.audio {
 .long-text p + p {
   margin-top: var(--line-height);
 }
+
+main > :last-child {
+	margin-bottom: calc(3 * var(--line-height));
+}
