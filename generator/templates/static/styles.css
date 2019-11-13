@@ -460,9 +460,10 @@ section.event-summary a::after {
     content: '';
     background: url(images/jump-arrow.svg) no-repeat;
     display: inline-block;
-    height: 10px;
-    width: 45px;
+    height: -7px;
+    width: 41px;
     padding-bottom: 20px;
+    margin-left: 7px;
 }
 
 
