@@ -7,7 +7,27 @@
     Caveat gathers these as 'trajectories', since they are process-based, durational,
     and do not necessarily have a tangible outcome.  
   </p>
+  <nav class="inline-navigation">
+    <ul>
+    {% for category, _ in grouped_trajectories %}
+      <li>
+        <a href="#{{ category }}">
+          {% if category == 'artisttrajectory' %}
+            Artist trajectories
+          {% elif category == 'designertractory' %}
+            Designer trajectories
+          {% elif category == 'reflection' %}
+            Reflections
+          {% else %}
+            {{ category}}
+          {% endif %}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
+  </nav>
   {% for category, trajectories in grouped_trajectories %}
+  <section id="{{ category }}" class="trajectory-list">
     {% if category == 'artisttrajectory' %}
       <h3>Artists trajectories</h3>
       <p>
@@ -24,19 +44,18 @@
           Critial considerations by the <em>Caveat</em> research team and 'dramaturgs' , and by invited guest writers put the research trajectories in different perspectives from their art historical, legal, sociological and other backgrounds.
       </p>
     {% endif %}
-    <section class="trajectory-list">
-      {% for trajectory in trajectories %}
-        <section class="trajectory">
-          <h2 class="produser">
-            <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
-          </h2>
-          {% if trajectory.summary %}
-            {{ trajectory.summary }}
-          {% else %}
-            {{ trajectory.content }}
-          {% endif %}
-        </section>
-      {% endfor %}
-    </section>  
+    {% for trajectory in trajectories %}
+      <section class="trajectory--item">
+        <h2 class="produser">
+          <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
+        </h2>
+        {% if trajectory.summary %}
+          {{ trajectory.summary }}
+        {% else %}
+          {{ trajectory.content }}
+        {% endif %}
+      </section>
+    {% endfor %}
+  </section>  
   {% endfor %}
 {% endblock %}

@@ -10,20 +10,39 @@
     to rethink the interplay between exchange value and use value for a community of users, between private property and the commons.
     As <em>Caveat</em> is an ongoing research, the produsers below are regularly updated. 
   </p>
+  <nav class="inline-navigation">
+    <ul>
+    {% for role, _ in grouped_produsers %}
+      <li>
+        <a href="#{{ role }}">
+          {% if role != 'team' %}
+            {{ role }}s
+          {% else %}
+            {{ role }}
+          {% endif %}
+        </a>
+      </li>
+    {% endfor%}
+    </ul>
+  </nav>
   {% for role, produsers in grouped_produsers %}
+  <section id="{{ role }}" class="produser-list">
     {% if role != 'team' %}
-      <h2>{{ role }}s</h2>
+      <h3>{{ role|capfirst }}s</h3>
     {% else %}
-      <h2>{{ role }}</h2>
+      <h3>{{ role|capfirst }}</h3>
     {% endif %}
     {% if role == 'dramaturg' %}
     <p>External experts who, in their role as 'dramaturg', follow the research from their own expertise.</p>
     {% endif %}
     {% for produser in produsers %}
-    <h2 class="produser"><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h2>
-    {% if produser.content %}
-    {{ produser.content|truncatechars_html:200 }}
-    {% endif %}
+    <section class="produser--item">
+      <h2 class="produser"><a href="produsers/{{ produser.key }}.html">{% if produser.name %}{{ produser.name }}{% else %}{{ produser.produser }}{% endif %}</a></h2>
+      {% if produser.content %}
+      {{ produser.content|truncatechars_html:200 }}
+      {% endif %}
+    </section>
     {% endfor %}
+  </section>
   {% endfor %}
 {% endblock %}

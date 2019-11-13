@@ -474,7 +474,7 @@ a.tag {
   margin-bottom: 3em;
 }
 
-.trajectory-list section.trajectory {
+.trajectory-list section.trajectory--item {
   max-height: 300px;
   overflow: hidden;
   border-bottom: 2px solid;
@@ -551,4 +551,18 @@ section.audio {
 
 .tag:target {
   color: var(--orange-karel);
+}
+
+.inline-navigation ul li {
+	display: inline-block;
+}
+.inline-navigation ul li:before {
+	display: none;
+}
+.inline-navigation ul {
+	margin: -2em 0 2em 0;
+	padding: 0;
+}
+.inline-navigation ul:before {
+	content: "Go to:";
 }
