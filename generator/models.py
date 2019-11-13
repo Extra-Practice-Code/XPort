@@ -826,6 +826,7 @@ class Produser (Model):
 
 class Trajectory (Model):
   contentType = 'trajectory'
+  prefix = 'trajectories'
 
   def _metadataFields (self):
     return {

@@ -47,10 +47,11 @@
       {% for trajectory in trajectories %}
         <section class="trajectory--item">
           {% if trajectory.title.value %}
-            <h2 class="produser">
+            <h2>
+              <a href="{{ trajectory.link }}">{{ trajectory }}</a>
             </h2>
           {% else %}
-            <h2>
+            <h2 class="produser">
               <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
             </h2>
           {% endif %}
@@ -59,7 +60,7 @@
           {% else %}
             {{ trajectory.content|truncatewords_html:60 }}
           {% endif %}
-            <a href="{{ trajectory.produser.target.link }}" class="read-further">read further</a>
+          <a href="{{ trajectory.link }}" class="read-further">read further</a>
         </section>
       {% endfor %}
     </section>

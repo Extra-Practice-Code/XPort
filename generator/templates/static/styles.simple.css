@@ -546,15 +546,16 @@ a.tag {
   background: white;
 }
 
+.trajectory-list section.trajectory--item h2,
 .trajectory-list section.trajectory--item h2.produser {
-
+    margin-top: 0;
     text-align: left;
     margin-bottom: auto;
     display: block;
     font-size: 1.1em;
     letter-spacing: 0;
     margin-bottom: 0.5em;
-
+    text-transform: none;
     padding-bottom: .25em;
     left: 0;
     margin-left: 0;

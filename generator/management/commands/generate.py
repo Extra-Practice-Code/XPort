@@ -202,7 +202,7 @@ def generate ():
 
   for trajectory in trajectories.models:
     if not trajectory.produser.value:
-      output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', lambda t: { 'trajectory': t })
+      output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', { 'trajectory': trajectory })
 
   ## Questions
   output(
