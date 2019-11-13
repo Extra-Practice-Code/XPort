@@ -4,9 +4,12 @@
 
 {% block content %}
   <h1>Tags</h1>
-  <ul>
-    {% for tag in tags %}
-      <li><a href="{{ tag.link }}">{{ tag }} ({{ tag.link_count }})</a></li>
+  <ul class="taglist">
+    {% for letter, tags in grouped_tags %}
+      <li id="{{ letter }}" class="letter"><h3>{{ letter|upper }}</h3></li>
+      {% for tag in tags %}
+        <li><a href="{{ tag.link }}">{{ tag }}&nbsp;({{ tag.link_count }})</a></li>
+      {% endfor %}
     {% endfor %}
   </ul>
 {% endblock %}

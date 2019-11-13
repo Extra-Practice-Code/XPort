@@ -5,7 +5,7 @@ MENU_ITEMS = [
   ('Produsers', 'produsers.html' ),
 #   ('Bibliography', 'bibliography.html' ),
 #   ('Related Projects', 'external-projects.html'),
-#   ('Tags', 'tags.html' ),
+  ('Tags', 'tags.html' ),
 #   ('Contact', 'pages/contact.html')
 ]
 

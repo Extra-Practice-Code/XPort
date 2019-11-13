@@ -299,13 +299,15 @@ code {
 body {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 20px;
   bottom: 0;
-  left: 0;
+  left: 20px;
   overflow: hidden;
   display: grid;
   grid-template-columns: [left sidebar-start] 1fr [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
   grid-template-rows: [top] repeat(2, 1fr) [footer] min-content [bottom];
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
 
 main, footer {
@@ -664,4 +666,35 @@ section.audio {
 
 .trajectory-list .trajectory--item:nth-child(-n+2) {
 	border-top: 0px;
+}
+
+.taglist {
+	column-width: 12.5em;
+	column-gap: 1.5em;
+  line-height: 140%;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.taglist h3 {
+	margin-top: 1em;
+}
+.taglist :first-child h3 {
+	margin-top: 0;
+}
+.taglist li {
+  padding-left: .5em;
+  position: relative;
+}
+.taglist li:before {
+  content: '-';
+  position: absolute;
+  left: 0em;
+  margin-left: 0;
+}
+.taglist li.letter {
+  padding-left: 0;
+}
+.taglist li.letter:before {
+  content: '';
 }
