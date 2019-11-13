@@ -55,7 +55,7 @@
               <a href="{{ trajectory.produser.target.link }}">{{ trajectory.produser }}</a>
             </h2>
           {% endif %}
-          {% if trajectory.summary %}
+          {% if trajectory.summary.value %}
             {{ trajectory.summary }}
           {% else %}
             {{ trajectory.content|truncatewords_html:60 }}
