@@ -211,7 +211,7 @@ class MultiLinkField(object):
     else:
       key = keyFilter(target)
       for existingLink in self.value:
-        if existingLink.target == key:
+        if existingLink.target == key or existingLink.target == target:
           return existingLink
 
       self.value.append(Link(key, self.contentType, inline, label=target))

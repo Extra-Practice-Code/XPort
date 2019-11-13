@@ -21,7 +21,7 @@
     {{ produser.content }}
   {% endif %}
   
-  {% if produser.events %}
+  {% if produser.events and produser.events.targets %}
     <h2>Activities</h2>
     <ul class="simplelist">
       {% for event in produser.events.targets %}
@@ -35,7 +35,7 @@
     </ul>
   {% endif %}
 
-  {% if produser.bibliography %}
+  {% if produser.bibliography and produser.bibliography.targets %}
     <h2>Bibliography</h2>
     <ul class="simplelist">
       {% for entry in produser.bibliography.targets %}
