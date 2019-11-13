@@ -531,11 +531,6 @@ a.tag {
 }
 
 .trajectory-list section.trajectory--item {
-  /* max-height: 300px; */
-  overflow: hidden;
-/*  border-top: 2px solid;
-*//*  background: linear-gradient(transparent 81.2%, var(--font-size-small) 98.5%);
-*/  z-index: 1000;
   background: var(--rose-pale); 
   padding: 1em;
   outline: 2px solid black;
@@ -669,12 +664,13 @@ section.audio {
 }
 
 .inline-navigation {
-	margin: -2em 0 1em 0;
-	padding: 1em 0;
+	margin: -2em -1em 1em -1em;
+	padding: 1em 1em;
 	position: sticky;
 	top: -1em;
 	background: white;
 	z-index: 5;
+	border-bottom: 2px solid;
 }
 
 .inline-navigation ul:before {
@@ -687,14 +683,6 @@ section.audio {
 	height: 3.5em;
 	content: '';
 	display: block;
-}
-
-.trajectory--item:nth-child(odd) {
-	border-right: 2px solid;
-}
-
-.trajectory-list .trajectory--item:nth-child(-n+2) {
-	border-top: 0px;
 }
 
 .taglist {
