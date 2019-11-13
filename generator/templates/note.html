@@ -13,7 +13,6 @@
     <ul>
       {% if note.programmeItem.resolved %}
       <li><a href="../index.html">Timeline</a></li>
-      <li><a href="{{ note.programmeItem.target.event.target.link }}">{{ note.programmeItem.target.event.target }}</a></li>
       <li><a href="{{ note.programmeItem.target.link }}">{{ note.programmeItem }}</a></li>
       {% elif note.event.resolved %}
       <li><a href="../index.html">Timeline</a></li>

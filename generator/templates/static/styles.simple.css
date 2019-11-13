@@ -332,7 +332,7 @@ header {
 }
 
 header nav {
-  flex: 0 0;
+  flex: 0 0 auto;
   border-bottom: 2px solid black;
   display: flex;
   padding: 1em;
