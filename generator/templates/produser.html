@@ -19,8 +19,10 @@
   {% endif %}
   
   {% if produser.content %}
-    <h2>Biography</h2>
-    {{ produser.content }}
+    <section class="long-text">
+      <h2>Biography</h2>
+      {{ produser.content }}
+    </section>
   {% endif %}
   
   {% if produser.events and produser.events.targets %}

@@ -573,6 +573,10 @@ a.tag {
   list-style-type: none;
 }
 
+.programme-item-list h2 {
+  margin-top: .5em;
+}
+
 .programme-item-list > li {
   border-bottom: 2px solid black;
   padding: 1em;

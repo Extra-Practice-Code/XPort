@@ -217,7 +217,7 @@ nav ul {
   /* width: 23px; */
   /* left: 0; */
   position: relative;
-  margin-top: 40px;
+  margin-top: 19px;
 }
 
 nav ul li {
@@ -795,4 +795,8 @@ div .pad {
   width: 100%;
   margin-top: .5em;
   margin-bottom: .5em;
+}
+
+main > :last-child {
+	margin-bottom: calc(3 * var(--line-height));
 }
