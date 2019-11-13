@@ -101,6 +101,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
   os.mkdir(os.path.join(outputdir, 'questions'))
+  os.mkdir(os.path.join(outputdir, 'trajectories'))
   
   models = parse_pads()
 
@@ -198,6 +199,10 @@ def generate ():
       'trajectories': sorted_trajectories,
       'grouped_trajectories': grouped_trajectories 
     })
+
+  for trajectory in trajectories.models:
+    if not trajectory.produser.value:
+      output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', lambda t: { 'trajectory': t })
 
   ## Questions
   output(
