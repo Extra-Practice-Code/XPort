@@ -596,7 +596,6 @@ def pad_read(request, mode="r", slug=None):
 
         meta_list = list(meta.items())
 
-        print(meta_list)
 
     tpl_params = { 'pad'                : pad,
                    'meta'               : meta,      # to access by hash, like meta.author
