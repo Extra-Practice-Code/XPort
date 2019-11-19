@@ -16,7 +16,7 @@
         {% endfor %}
         {% for pad in tree.pads %}
             <li>
-              <a data-uid="{{ pad.display_slug }}" href="{% url 'pad-read' mode='r' slug=pad.display_slug %}" class="pad-link">
+              <a data-uid="{{ pad.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=pad.display_slug %}" class="pad-link">
                 {{ pad.display_slug|stripPath:folderPath|dewikify }}
                 {% if pad.is_public %}(public){% endif %}
               </a>

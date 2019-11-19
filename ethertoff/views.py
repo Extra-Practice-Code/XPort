@@ -348,7 +348,7 @@ def padPrivate(request, pk):
         con
     )
 
-def pad(request, pk=None, slug=None):
+def pad(request, pk=None, slug=None, mode=None):
     if slug:
         pad = get_object_or_404(Pad, display_slug=slug)
     else:
@@ -713,7 +713,14 @@ def manage(request, path=[]):
 
     folders.sort(key=str.lower)
 
-    return render(request, "manage-tree.html", {'tree': tree, 'folderPath': path, 'crumbs': crumbs, 'folders': folders, 'folderPathString': '/'.join(path) if path else None })
+    return render(request, "manage-tree.html", {
+        'tree': tree,
+        'folderPath': path,
+        'crumbs': crumbs,
+        'folders': folders,
+        'folderPathString': '/'.join(path) if path else None,
+        'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
+    })
     
 def all(request):
     if request.user.is_authenticated:

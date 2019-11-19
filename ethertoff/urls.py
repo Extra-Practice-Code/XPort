@@ -35,8 +35,10 @@ urlpatterns = [
     re_path(r'^public/(?P<pk>\d+)/$', views.padPublic, name='pad-public'),
     re_path(r'^private/(?P<pk>\d+)/$', views.padPrivate, name='pad-private'),
     re_path(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', views.pad_read, name='pad-read'),
+    re_path(r'(?P<mode>[r|s|p])/(?P<slug>[^/]+)$', views.pad_read, name='pad'),
+    re_path(r'(?P<mode>[w])/(?P<slug>[^/]+)$', views.pad, name='pad'),
     #re_path(r'r/(?P<slug>[^/]+)$', views.pad, name='pad-read'),
     #re_path(r's/(?P<slug>[^/]+)$', views.pad, name='pad-slide'),
     #re_path(r'p/(?P<slug>[^/]+)$', views.pad, name='pad-print'),
-    re_path(r'w/(?P<slug>[^/]+)$', views.pad, name='pad-write'),
+    re_path(r'w/(?P<slug>[^/]+)$', views.pad, name='pad-write')
 ]

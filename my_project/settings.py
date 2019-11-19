@@ -128,7 +128,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
@@ -157,3 +156,5 @@ except NameError:
         pass
 
 API_LOCAL_URL = None
+
+TREE_PAD_OPEN_MODE = 'w'
