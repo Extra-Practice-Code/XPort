@@ -329,6 +329,7 @@ header {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  max-height: 100vh;
 }
 
 header nav {
@@ -385,6 +386,7 @@ main {
   grid-row: top / footer;
   grid-column: content-start /  content-end;
   overflow-y: auto;
+  max-height: 100vh;
 }
 
 
