@@ -15,14 +15,15 @@
             Artist trajectories
           {% elif category == 'designertrajectory' %}
             Designer trajectories
-          {% elif category == 'reflection' %}
-            Reflections
           {% else %}
             {{ category}}
           {% endif %}
         </a>
       </li>
     {% endfor %}
+    {% if relflections %}
+      <a href="#reflections">Reflections</a>
+    {% endif %}
     </ul>
   </nav>
   {% for category, trajectories in grouped_trajectories %}
@@ -66,4 +67,27 @@
     </section>
   </section>  
   {% endfor %}
+  {% if reflections %}
+  <section id="reflections" class="trajectory-list">
+    <h3>Reflections</h3>
+    <p>
+        Critial considerations by the <em>Caveat</em> research team and 'dramaturgs' , and by invited guest writers put the research trajectories in different perspectives from their art historical, legal, sociological and other backgrounds.
+    </p>
+    <section class="trajectory-list--grid">
+      {% for reflection in reflections %}
+        <section class="trajectory--item">
+          <h2>
+            <a href="{{ reflection.link }}">{{ reflection }}</a>
+          </h2>
+          {% if reflection.summary.value %}
+            {{ reflection.summary }}
+          {% else %}
+            {{ reflection.content|truncatewords_html:60 }}
+          {% endif %}
+          <a href="{{ reflection.link }}" class="read-further">read further</a>
+        </section>
+      {% endfor %}
+    </section>
+  </section>  
+  {% endif %}
 {% endblock %}

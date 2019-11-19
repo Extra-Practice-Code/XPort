@@ -839,6 +839,25 @@ class Trajectory (Model):
 
   @property
   def link (self):
+    # if self.title.value:
+    #   return os.path.join(SITE_URL, self.prefix, '{}.html'.format(keyFilter(self.title.value)))
+    # else:
+    return self.produser.target.link
+
+class Reflection (Model):
+  contentType = 'reflection'
+  prefix = 'reflections'
+
+  def _metadataFields (self):
+    return {
+      'produser': linkMultiReverse('produser', 'reflections'),
+      'tags': multiLinkMultiReverse('tag', 'reflections'),
+      'summary': fields.Single(fields.MarkdownField()),
+      'title': fields.Single(fields.StringField())
+    }
+
+  @property
+  def link (self):
     if self.title.value:
       return os.path.join(SITE_URL, self.prefix, '{}.html'.format(keyFilter(self.title.value)))
     else:
@@ -1019,20 +1038,21 @@ class ContentType (object):
 # Might also need to include the outputfolder here
 # rather than on the model?
 contentTypes = {
+    'audio': ContentType(Audio, InstantiatingCollection),
+    'bibliography': ContentType(Bibliography, InstantiatingCollection),
     'event': ContentType(Event),
-    'programme-item': ContentType(ProgrammeItem),
-    'produser': ContentType(Produser),
-    'trajectory': ContentType(Trajectory),
+    'external-project': ContentType(ExternalProject, InstantiatingCollection),
+    'image': ContentType(Image, InstantiatingCollection),
+    'notes': ContentType(Note),
     'pad': ContentType(Pad),
     'page': ContentType(Page),
+    'programme-item': ContentType(ProgrammeItem),
+    'produser': ContentType(Produser),
+    'reflection': ContentType(Reflection),
+    'trajectory': ContentType(Trajectory),
     'tag': ContentType(Tag, InstantiatingCollection),
-    'bibliography': ContentType(Bibliography, InstantiatingCollection),
     'video': ContentType(Video, InstantiatingCollection),
-    'audio': ContentType(Audio, InstantiatingCollection),
-    'image': ContentType(Image, InstantiatingCollection),
     'text': ContentType(Text),
-    'notes': ContentType(Note),
-    'external-project': ContentType(ExternalProject, InstantiatingCollection),
     'question': ContentType(Question, InstantiatingCollection)
   }
 

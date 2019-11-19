@@ -101,7 +101,8 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'tags'))
   os.mkdir(os.path.join(outputdir, 'notes'))
   os.mkdir(os.path.join(outputdir, 'questions'))
-  os.mkdir(os.path.join(outputdir, 'trajectories'))
+  # os.mkdir(os.path.join(outputdir, 'trajectories'))
+  os.mkdir(os.path.join(outputdir, 'reflections'))
   
   models = parse_pads()
 
@@ -117,6 +118,7 @@ def generate ():
   notes = collectionFor('notes')
   trajectories = collectionFor('trajectory')
   questions = collectionFor('question')
+  reflections = collectionFor('reflection')
 
   def getProduserSortKey (produser):
     attr = try_attributes(produser, ['sortname', 'name', 'produser'])
@@ -197,12 +199,13 @@ def generate ():
     'trajectories.html', 
     {
       'trajectories': sorted_trajectories,
-      'grouped_trajectories': grouped_trajectories 
+      'grouped_trajectories': grouped_trajectories,
+      'reflections': sorted(reflections.models, getLabelAsSortKey)
     })
 
-  for trajectory in trajectories.models:
-    if trajectory.title.value:
-      output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', { 'trajectory': trajectory })
+  # for trajectory in trajectories.models:
+  #   if trajectory.title.value:
+  #     output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', { 'trajectory': trajectory })
 
   ## Questions
   output(
@@ -224,7 +227,7 @@ def generate ():
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
   generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
   generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
-  
+  generate_single_pages(reflections.models, 'reflection.html', outputdir, lambda reflection: { 'reflection': reflection })
 
   output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
