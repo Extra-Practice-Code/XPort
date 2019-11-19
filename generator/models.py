@@ -856,13 +856,6 @@ class Reflection (Model):
       'title': fields.Single(fields.StringField())
     }
 
-  @property
-  def link (self):
-    if self.title.value:
-      return os.path.join(SITE_URL, self.prefix, '{}.html'.format(keyFilter(self.title.value)))
-    else:
-      return self.produser.target.link
-
 class Pad (Model):
   contentType = 'pad'
 
