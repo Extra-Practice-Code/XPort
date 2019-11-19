@@ -4,7 +4,7 @@
 {% block content %}
     <ul id="pads_list">
         {% for pad in publicpads %}
-            <li><a data-uid="{{ pad.display_slug }}" href="{% url 'pad-write' slug=pad.display_slug %}" class="pad-link">{{ pad.display_slug|dewikify }}</a></li>
+            <li><a data-uid="{{ pad.display_slug }}" href="{% url 'pad-read' mode='r' slug=pad.display_slug %}" class="pad-link">{{ pad.display_slug|dewikify }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
