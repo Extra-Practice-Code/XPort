@@ -842,7 +842,10 @@ class Trajectory (Model):
     # if self.title.value:
     #   return os.path.join(SITE_URL, self.prefix, '{}.html'.format(keyFilter(self.title.value)))
     # else:
-    return self.produser.target.link
+    if self.produser.resolved:
+      return self.produser.target.link
+    else:
+      return None
 
 class Reflection (Model):
   contentType = 'reflection'
