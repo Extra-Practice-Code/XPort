@@ -200,7 +200,7 @@ def generate ():
     {
       'trajectories': sorted_trajectories,
       'grouped_trajectories': grouped_trajectories,
-      'reflections': sorted(reflections.models, getLabelAsSortKey)
+      'reflections': sorted(reflections.models, key=getLabelAsSortKey)
     })
 
   # for trajectory in trajectories.models:
