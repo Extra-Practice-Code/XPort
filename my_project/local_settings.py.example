@@ -35,3 +35,4 @@ MEDIA_ROOT = ''
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = '/home/osp/static-ethertoff-collected/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
