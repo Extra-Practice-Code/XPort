@@ -4,6 +4,7 @@ from django.contrib.sites.models import Site
 from django.urls import reverse
 from aasniff import AAApp
 import rdflib
+from ... import settings as app_settings
 
 
 class Conf(object):
@@ -12,22 +13,18 @@ class Conf(object):
         'HtmlSniffer',
     ]
 
-    STORE = {
-        'ENGINE': 'sqlite',
-        'NAME': 'aasniff.sqlite',
-    }
+    STORE = app_settings.STORE 
 
 
 class Command(BaseCommand):
     args = ''
-    help = 'Indexes pages'
+    help = 'Print indexed data and texts'
 
     def handle(self, *args, **options):
         app = AAApp(conf=Conf)
-        # print(rt)
 
-        # for quad in graph.quads():
-        #     print(quad)
+        for quad in app.graph.quads():
+            print(quad)
 
         node = rdflib.URIRef("http://purl.org/dc/terms/title")
         NS = {
@@ -54,7 +51,6 @@ class Command(BaseCommand):
             }
         """, initBindings={'predicate': node}, initNs=NS)
 
-        print(as_predicate)
         for i in as_predicate:
             print(i[1])
 

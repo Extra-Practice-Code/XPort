@@ -9,6 +9,7 @@ from django.test import Client
 import html5lib
 from rdflib.plugins.memory import IOMemory
 import rdflib
+from ... import settings as app_settings
 
 
 def tidy(string):
@@ -32,11 +33,7 @@ class Conf(object):
         'HtmlSniffer',
     ]
 
-    STORE = {
-        'ENGINE': 'sqlite',
-        'NAME': 'aasniff.sqlite',
-    }
-
+    STORE = app_settings.STORE 
 
 class Command(BaseCommand):
     args = ''
