@@ -1,4 +1,5 @@
 from django.contrib.auth import views as auth_views
+from django.conf.urls import include
 from django.urls import path, re_path
 from . import views
 
@@ -22,12 +23,6 @@ urlpatterns = [
     path('css-offset/', views.offsetprint, name='css-offset'),
     path('css-slide/', views.css_slide, name='css-slide'),
     re_path(r'^(?P<slug>[^/]+)\.xhtml$', views.xhtml, name='xhtml'),
-    path('accounts/login', auth_views.LoginView.as_view(),
-        {'template_name': 'login.html'}, name='login'),
-    path('accounts/logout', auth_views.LogoutView.as_view(),
-        {'template_name': 'logout.html'}, name='logout'),
-    path('accounts/password_change', auth_views.PasswordChangeView.as_view(), name="password_change"),
-    path('accounts/password_change_done', auth_views.PasswordChangeDoneView.as_view(), name="password_change_done"),
     path('create/', views.padCreate, name='pad-create'),
     path('create/<path:prefix>', views.padCreate, name='pad-create'),
     re_path(r'^rename/(?P<pk>\d+)/$', views.padRename, name='pad-rename'),
