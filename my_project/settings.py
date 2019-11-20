@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # 'example_theme', ## Add your theme here if any
     'ethertoff',
+    'ethertoff_rdf_index',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
