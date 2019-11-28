@@ -48,9 +48,15 @@ def parse_pads ():
 
     name, extension = os.path.splitext(pad.display_slug)
     padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
-    source = epclient.getText(padID)['text']
-
+    
     info('Reading {}'.format(pad.display_slug))
+
+    try:
+      source = epclient.getText(padID)['text']
+    except ValueError:
+      warn('Could not find pad {}'.format(pad.display_slug))
+      continue
+
 
     if extension in ['.md', '.markdown']:
       # source, collectedLinkTargets = resolveReferences(source, source=None)

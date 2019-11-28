@@ -84,7 +84,9 @@ def generate ():
   resetCollections(contentTypes)
   basedir = os.path.join(settings.BASE_DIR, 'generator')
   staticdir = os.path.join(basedir, 'templates', 'static')
-  outputdir = os.path.join(basedir, 'static', 'generated')
+  backupdir = os.path.join(basedir, 'static', 'generated.old')
+  finaldir = os.path.join(basedir, 'static', 'generated')
+  outputdir = os.path.join(basedir, 'static', 'generated.new')
 
   if os.path.exists(outputdir):
     shutil.rmtree(outputdir)
@@ -235,6 +237,22 @@ def generate ():
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
+
+
+  info('Making backup of previous version, putting new version in place')
+
+  if os.path.exists(outputdir):
+    # Test whether there is an existing version of the site
+    if os.path.exists(finaldir):
+      # Removing old backup if it exists
+      if os.path.exists(backupdir):
+        shutil.rmtree(backupdir)
+      
+      # Put new backup in place
+      shutil.move(finaldir, backupdir)
+    
+    # Put new version of the site in place
+    shutil.move(outputdir, finaldir)
 
   if not settings.DEBUG:
     print('Collecting static')

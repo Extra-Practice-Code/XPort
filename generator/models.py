@@ -330,7 +330,8 @@ def includeAudio(audio, display_label):
   return render_to_string('snippets/audio.html', { 'audio': audio })
 
 def includeImage(image, display_label):
-  return '<img src="{}" />'.format(image.image)
+  return render_to_string('snippets/image.html', { 'image': image })
+  # return '<img src="{}" />'.format(image.image)
 
 def includeQuestion(question, display_label):
   return render_to_string('snippets/question.html', { 'question': question })
