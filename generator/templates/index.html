@@ -161,6 +161,8 @@
       var image = entry.dataset.image;
       showImage(image);
     }
+
+    setImageListeners();
   }
 
   function show(entry, entries) {
@@ -220,5 +222,19 @@
       body.className = body.className.replace(/\s*prolog-expanded/, '');
     }
   });
+
+  function setImageListeners () {
+    var images = document.querySelectorAll('aside.right img');
+
+    for (var i=0; i < images.length; i++) {
+      images[i].addEventListener('click', function () {
+        if (this.parentElement && this.parentElement.tagName.toLowerCase() == 'figure') {
+          this.parentElement.classList.toggle('full');
+        } else {
+          this.classList.toggle('full');
+        }
+      })
+    }
+  };
 
 </script>

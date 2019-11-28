@@ -793,12 +793,12 @@ div .pad {
   margin-left: 0;
 }
 
-main img.full,
-main figure.full img {
+.content img.full,
+.content figure.full img {
   cursor: zoom-out;
 }
 
-.content img.full
+.content img.full,
 .content figure.full,
 .content audio,
 .content video {
