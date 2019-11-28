@@ -13,6 +13,8 @@ from django.utils.safestring import mark_safe
 
 from generator.settings import SITE_URL
 
+VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
+
 """
   - Alternatively: make and register models before parsing their fields.
     Then unknown resources / objects are easier to spot.
@@ -947,11 +949,23 @@ class Video (Model):
   contentType = 'video'
   keyField = 'video'
   labelField = 'video'
-  
+
+  @property
+  def vimeoId (self):
+    # Find more elegant solution?
+    video = self.video.value
+    if video:
+      m = VIMEO_VIDEO_URL_PATTERN.match(video)
+
+      if m:
+        return m.group(1)
+    
+    return None
+
   def _metadataFields (self):
     return {
       'video': fields.Single(fields.StringField()),
-      'type': fields.Single(fields.StringField()),
+      'type': fields.Single(fields.StringField(['video/mp4'])),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
       'tags': multiLinkMultiReverse('tag', 'video'),
@@ -966,7 +980,7 @@ class Audio (Model):
   def _metadataFields (self):
     return {
       'audio': fields.Single(fields.StringField()),
-      'type': fields.Single(fields.StringField()),
+      'type': fields.Single(fields.StringField(['audio/mp3'])),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
       'tags': multiLinkMultiReverse('tag', 'audio'),
