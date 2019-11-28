@@ -47,7 +47,7 @@
 
       for (var i=0; i < images.length; i++) {
         images[i].addEventListener('click', function () {
-          if (this.parentElement && this.parentElement.tagName.lower() == 'figure') {
+          if (this.parentElement && this.parentElement.tagName.toLowerCase() == 'figure') {
             this.parentElement.classList.toggle('full');
           } else {
             this.classList.toggle('full');

@@ -476,6 +476,10 @@ main img, main figure {
   clear: left;
 }
 
+main figure {
+  margin-left: 0;
+}
+
 main img.full, main figure.full img {
   cursor: zoom-out;
 }
