@@ -47,7 +47,11 @@
 
       for (var i=0; i < images.length; i++) {
         images[i].addEventListener('click', function () {
-          this.classList.toggle('full');
+          if (this.parentElement && this.parentElement.tagName.lower() == 'figure') {
+            this.parentElement.classList.toggle('full');
+          } else {
+            this.classList.toggle('full');
+          }
         })
       }
     })();
