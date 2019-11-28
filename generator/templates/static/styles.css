@@ -778,7 +778,8 @@ div .pad {
   }
 }
 
-.content img {
+.content img,
+.content figure {
   width: 33%;
   float: left;
   margin-right: .5em;
@@ -788,13 +789,38 @@ div .pad {
   clear: left;
 }
 
-.content img.full,
+.content figure {
+  margin-left: 0;
+}
+
+main img.full,
+main figure.full img {
+  cursor: zoom-out;
+}
+
+.content img.full
+.content figure.full,
 .content audio,
 .content video {
-  max-width: 100%;
+  max-width: 47.5em;
   width: 100%;
-  margin-top: .5em;
-  margin-bottom: .5em;
+  /* margin-top: .5em; */
+  /* margin-bottom: .5em; */
+}
+
+.content figure img {
+	width: 100%;
+	float: none;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.content figure.full figcaption {
+  width: 80%;
+}
+
+figcaption {
+  font-size: 80%;
 }
 
 main > :last-child {

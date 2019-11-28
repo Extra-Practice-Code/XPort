@@ -487,9 +487,15 @@ main img.full, main figure.full img {
 main img.full,
 main audio,
 main video,
-main figure.full figcaption {
+main figure.full {
   max-width: 47.5em;
   width: 100%;
+  /* margin-top: .5em; */
+  /* margin-bottom: .5em; */
+}
+
+main figure.full figcaption {
+  width: 80%;
 }
 
 main figure img {
