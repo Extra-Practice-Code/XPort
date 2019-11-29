@@ -4,10 +4,11 @@
 
 {% block content %}
   <h1>Activities</h1>
-  <ul>
+  <ul class="simplelist">
     {% for event in events %}
       <li>
-        <a href="{{ event.link }}">{{ event.event}}</a>
+        <a href="{{ event.link }}"><h4>{{ event }}</h4></a>
+        {{ event.date }} {% if event.time.value %}, {{ event.time }}{% endif %}
       </li>
     {% endfor %}
   </ul>
