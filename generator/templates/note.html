@@ -26,12 +26,12 @@
       Note related to:
       {% if note.programmeItem.resolved %}
         <a href="{{ note.programmeItem.target.link }}">
-          {{ note.programmeItem.target.date }} {{ note.programmeItem.target.time }} {{ note.target.programmeItem }}
+          {{ note.target.programmeItem }}{% if note.programmeItem.target.date.value %}, {{ note.programmeItem.target.date }}{% endif %}{% if note.programmeItem.target.time.value %}, {{ note.programmeItem.target.time }}{% endif %}
         </a>
         {{ note.programmeItem.summary }}
       {% elif note.event.resolved %}
         <a href="{{ note.event.target.link }}">
-          {{ note.event.target.date }} {{ note.event.target.time }} {{ note.event }}
+          {{ note.event }}{% if note.event.target.date.value %}, {{ note.event.target.date }}{% endif %}{% if note.event.target.time.value %}, {{ note.event.target.time }}{% endif %}
         </a>
         {{ note.event.summary }}
       {% endif %}
