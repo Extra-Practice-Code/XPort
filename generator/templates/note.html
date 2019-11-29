@@ -23,10 +23,10 @@
   </nav>
   <section class="item-reference">
     <p>
-      Note related to:
+      Note for:
       {% if note.programmeItem.resolved %}
         <a href="{{ note.programmeItem.target.link }}">
-          {{ note.target.programmeItem }}{% if note.programmeItem.target.date.value %}, {{ note.programmeItem.target.date }}{% endif %}{% if note.programmeItem.target.time.value %}, {{ note.programmeItem.target.time }}{% endif %}
+          {{ note.programmeItem }}{% if note.programmeItem.target.date.value %}, {{ note.programmeItem.target.date }}{% endif %}{% if note.programmeItem.target.time.value %}, {{ note.programmeItem.target.time }}{% endif %}
         </a>
         {{ note.programmeItem.summary }}
       {% elif note.event.resolved %}
