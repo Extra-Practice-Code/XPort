@@ -817,7 +817,7 @@ class ProgrammeItem (Model):
       'time': fields.Single(fields.TimeField()),
       'produser': multiLinkMultiReverse('produser', 'events'),
       'participant': multiLinkMultiReverse('produser', 'events_participant'),
-      'event': multiLinkMultiReverse('event', 'programmeItems'),
+      'event': linkMultiReverse('event', 'programmeItems'),
       'title': fields.Single(fields.InlineMarkdownField()),
       'summary': fields.Single(fields.MarkdownField()),
       'location': fields.Single(fields.StringField()),
