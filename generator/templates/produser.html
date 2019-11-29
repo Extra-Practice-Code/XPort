@@ -99,7 +99,7 @@
   
   {% if produser.notes_participant %}
   <h2>Notes (participant)</h2>
-  <ul>
+  <ul class="simplelist">
     {% for note in produser.notes_participant.targets %}
       <li>
         <a href="{{ note.link }}" class="note">{{ note }}</a>
