@@ -22,24 +22,26 @@
     </ul>
   </nav>
   <section class="item-reference">
-    Note related to:
-    {% if note.programmeItem.resolved %}
-      <a href="{{ note.programmeItem.link }}">
-        <h2>{{ note.programmeItem.date }} {{ note.programmeItem.time }} {{ note.programmeItem }}</h2>
-      </a>
-      {{ note.programmeItem.summary }}
-    {% elif note.event.resolved %}
-      <a href="{{ note.event.link }}">
-        <h2>{{ note.event.date }} {{ note.event.time }} {{ note.event }}</h2>
-      </a>
-      {{ note.event.summary }}
-    {% endif %}
-    </section>
-    
-    <section class="long-text">
-      <h1>{{ note.title }}</h1>
-      {{ note.content }}
-    </section>
+    <p>
+      Note related to:
+      {% if note.programmeItem.resolved %}
+        <a href="{{ note.programmeItem.target.link }}">
+          {{ note.programmeItem.target.date }} {{ note.programmeItem.target.time }} {{ note.target.programmeItem }}
+        </a>
+        {{ note.programmeItem.summary }}
+      {% elif note.event.resolved %}
+        <a href="{{ note.event.target.link }}">
+          {{ note.event.target.date }} {{ note.event.target.time }} {{ note.event }}
+        </a>
+        {{ note.event.summary }}
+      {% endif %}
+    </p>
+  </section>
+  
+  <section class="long-text">
+    <h1>{{ note.title }}</h1>
+    {{ note.content }}
+  </section>
 {% endblock %}
 {% block footerresources %}
   <script src="{{ SITE_URL }}static/js/timejumper.js"></script>
