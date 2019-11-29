@@ -32,6 +32,16 @@
       </ul>
     {% endif %}
     
+    {% if tag.reflections %}
+      <h3>reflections</h3>
+      <ul class="simplelist">
+        {% for link, _, reflection in tag.reflections|link_iterator %}
+          <li><a href="{{ reflection.link }}#{{ link.id }}">{% if link.label %}<span class="tag">{{ link.label }}</span> → {% endif %}{{ reflection }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    
+
     {% if tag.events %}
       <h3>Activities</h3>
       <ul class="simplelist">

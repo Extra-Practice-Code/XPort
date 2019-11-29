@@ -50,6 +50,8 @@
   {% endif %}
 {% endblock %}
 
+{% block sidebar-class %}programme-items{% endblock %}
+
 {% block sidebar %}
   <ul class="programme-item-list">
     {% for date, events in groupedProgrammeItems %}

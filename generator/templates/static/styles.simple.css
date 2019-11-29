@@ -236,6 +236,10 @@ main, aside {
   color: var(--bleu-bille);
 }
 
+aside.programme-items {
+  scroll-padding-top: 3em;
+}
+
 .info {
   font-family: "Junicode-condensed";
   font-weight: bold;
@@ -387,6 +391,7 @@ main {
   grid-column: content-start /  content-end;
   overflow-y: auto;
   max-height: 100vh;
+  scroll-padding-top: 5em;
 }
 
 
@@ -432,7 +437,7 @@ footer {
 }
 
 .breadcrumbs li {
-  display: inline-block;
+  display: inline;
 }
 
 .breadcrumbs ul > li:before {
@@ -623,6 +628,11 @@ a.tag {
   z-index: 1;
 }
 
+.programme-item-list .list-header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .question {
 	font-family: "Junicode-Condensed";
 	font-size: 180%;
@@ -648,12 +658,12 @@ section.audio {
   padding-top: 1em;
 }
 
-.programme-item-list :target:before {
+/* .programme-item-list :target:before {
 	margin: -3em 0 0;
 	height: 3em;
 	content: '';
 	display: block;
-}
+} */
 
 .tag {
   border-width: 0px 1px 1px 0px;
@@ -666,6 +676,13 @@ section.audio {
 
 .tag:target {
   color: var(--orange-karel);
+}
+
+.tag:target:before {
+	margin: -6em 0 0;
+	height: 6em;
+	content: '';
+	display: inline-block;
 }
 
 .inline-navigation ul li {
