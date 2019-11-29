@@ -64,31 +64,32 @@ def make_index (models):
     collection = collectionFor(contentType)
     for obj in collection.models:
       if obj.source_path:
-        buff += '<li><a href="https://ethertoff.caveat.be/w/{link}">{label}</a> ({type})'.format(
+        buff += '<li><strong><a href="https://ethertoff.caveat.be/w/{link}">{label}</a></strong> ({type})'.format(
           label=str(obj),
           type=obj.contentType,
           link=obj.source_path.replace('#', '%23')
         )
       else:
-        buff += '<li>{label} ({type})'.format(
+        buff += '<li><strong>{label}</strong>({type})'.format(
           label=str(obj),
           type=obj.contentType
         )
       for attr in dir(obj):
-        # Attributes noted in the metafields list, plus content,
-        # the link property and the sourcepath
-        buff += '<dt>{attr}</dt>'.format(attr=attr)
-        if hasattr(obj, attr):
-          field = getattr(obj, attr)
-          if is_multi_link(field) or is_reverse_multi_link(field):
-            for link in field.value:
-              buff += display_link(link)
-          elif is_link(field) or is_reverse_link(field):
-            buff += display_link(field.value)
+        if attr != 'content':
+          # Attributes noted in the metafields list, plus content,
+          # the link property and the sourcepath
+          buff += '<dt>{attr}</dt>'.format(attr=attr)
+          if hasattr(obj, attr):
+            field = getattr(obj, attr)
+            if is_multi_link(field) or is_reverse_multi_link(field):
+              for link in field.value:
+                buff += display_link(link)
+            elif is_link(field) or is_reverse_link(field):
+              buff += display_link(field.value)
+            else:
+              buff += display_field(field)
           else:
-            buff += display_field(field)
-        else:
-          buff += display_empty()
+            buff += display_empty()
 
         # if attr in obj.metadata \
         #   and is_link(obj.metadata[attr]):
