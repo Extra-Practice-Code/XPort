@@ -1,5 +1,5 @@
 from . import fields
-from .utils import debug, CMAGENTA, keyFilter, try_attributes, render_to_string
+from .utils import debug, warn, CMAGENTA, keyFilter, try_attributes, render_to_string
 import os.path
 import re
 import random
@@ -402,8 +402,19 @@ def parseReferenceMetadata (raw):
   else:
     return (None, raw.strip())
 
+
+def resolveContentType(attr, model):
+  if attr in model.metadata and (is_link(model.metadata[attr])):
+    return model.metadata[attr].contentType
+  elif knownContentType(attr):
+    return attr
+  else:
+    warn("Unknown contenttype '{}'".format(attr))
+    return None
+
 def parseReference(match, collector=None, source=None):
-  contentType = match.group(1).strip().lower()
+  referenceName = match.group(1).strip().lower()
+  contentType = resolveContentType(referenceName, source) # match.group(1).strip().lower()
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
   debug()
@@ -425,18 +436,27 @@ def parseReference(match, collector=None, source=None):
           # fill it with the metadata that was inserted on the reference
           target.fill(metadata)
 
-        debug('FOUND TARGET', target)
+        debug("Found target '{}' of type '{}'".format(target, contentType))
+
+        if referenceName in source.metadata and is_link(source.metadata[referenceName]):
+          ## FIXME what if it's an existing reverse
+          link = source.metadata[referenceName].makeLink(source, target, inline=True, label=display_label)
+        elif referenceName + 's' in source.metadata and is_multi_link(source.metadata[referenceName + 's']):
+          ## FIXME what if it's an existing reverse?
+          link = source.metadata[referenceName + 's'].makeLink(source, target, inline=True, label=display_label)
+        else:
+          link = None
 
         # Here we should create the link between the source and the target
         # setattr(source, contentType, target)
-        if target.contentType in source.metadata and is_link(source.metadata[target.contentType]):
-          ## FIXME what if it's an existing reverse
-          link = source.metadata[target.contentType].makeLink(source, target, inline=True, label=display_label)
-        elif target.contentType + 's' in source.metadata and is_multi_link(source.metadata[target.contentType + 's']):
-          ## FIXME what if it's an existing reverse?
-          link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True, label=display_label)
-        else:
-          link = None
+        # if target.contentType in source.metadata and is_link(source.metadata[target.contentType]):
+        #   ## FIXME what if it's an existing reverse
+        #   link = source.metadata[target.contentType].makeLink(source, target, inline=True, label=display_label)
+        # elif target.contentType + 's' in source.metadata and is_multi_link(source.metadata[target.contentType + 's']):
+        #   ## FIXME what if it's an existing reverse?
+        #   link = source.metadata[target.contentType + 's'].makeLink(source, target, inline=True, label=display_label)
+        # else:
+        #   link = None
 
         # link = Link(source, target)
         collector.append(target)
