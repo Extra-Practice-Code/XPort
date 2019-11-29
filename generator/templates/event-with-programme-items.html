@@ -18,11 +18,11 @@
   <section class="info">
     <time datetime="2019-05-24">{{ event.date }}</time>
     <p>
-      {{ event.location }}<br />
-      {% if event.address %}
-        {% for addressline in event.address %}
-          {{ addressline }}<br />
-        {% endfor %}
+      {% if event.time.value %}
+        {{ event.time }}<br />
+      {% endif %}
+      {% if event.location.value %}
+        {{ event.location }}<br />
       {% endif %}
     </p>
     {% if event.participant or event.produser %}
@@ -60,7 +60,7 @@
       </li>
       {% for item in events %}
         <li id="{{ item.key }}">
-          <h2>{{ item.time }} {{ item }}</h2>
+          <h2>{% if item.time.value %}{{ item.time }}{% endif %} {{ item }}</h2>
           <p class="event-infos"> 
             {% for produser in item.produser|link_target_iterator %}
             <a href="{{ produser.link }}" class="produser">{{ produser }}</a>

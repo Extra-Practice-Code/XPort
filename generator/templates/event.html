@@ -15,10 +15,15 @@
   </nav>
   <h1>{{ event }}</h1>
   <section class="info">
-    <time datetime="2019-05-24">{{ event.date }}</time>
+    <time>{{ event.date }}</time>
     <p>
-      {{ event.location }}<br />
-      {% if event.address %}
+      {% if event.time.value %}
+        {{ event.time }}<br />
+      {% endif %}
+      {% if event.location.value %}
+        {{ event.location }}<br />
+      {% endif %}
+      {% if event.address.value %}
         {% for addressline in event.address.value %}
           {{ addressline }}<br />
         {% endfor %}

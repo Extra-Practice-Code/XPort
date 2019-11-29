@@ -602,6 +602,10 @@ a.tag {
   margin-top: .5em;
 }
 
+.programme-item-list :target h2 {
+  color: var(--orange-karel);
+}
+
 .programme-item-list > li {
   border-bottom: 2px solid black;
   padding: 1em;

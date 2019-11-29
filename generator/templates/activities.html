@@ -8,7 +8,7 @@
     {% for event in events %}
       <li>
         <a href="{{ event.link }}"><h4>{{ event }}</h4></a>
-        {{ event.date }} {% if event.time.value %}, {{ event.time }}{% endif %}
+        {{ event.date }}{% if event.time.value %}, {{ event.time }}{% endif %}
       </li>
     {% endfor %}
   </ul>

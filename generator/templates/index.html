@@ -51,6 +51,7 @@
                 <div class="event-detail-header">
                   <p class="event-date"><time datetime="2019-05-24">{{ event.date }}</time></p>
                   <h2 class="event-title">{{ event }}</h2>
+
                   <section class="event-summary">
                     {% if event.programmeItems %}
                       <p><a href="{{ event.link }}">See programme</a></p>
@@ -59,7 +60,12 @@
                   </section>
 
                   <section class="event-detail">
-                    <p class="event-infos">{{ event.location }}</p>
+                    {% if event.time.value %}
+                      <p class="event-infos">{{ event.time }}</p>
+                    {% endif %}
+                    {% if event.location.value %}
+                      <p class="event-infos">{{ event.location }}</p>
+                    {% endif %}
                     {% for line in event.address.value %}
                       <p class="event-infos">{{ line }}</p>
                     {% endfor %}
