@@ -876,7 +876,7 @@ class Reflection (Model):
 
   def _metadataFields (self):
     return {
-      'produser': linkMultiReverse('produser', 'reflections'),
+      'produser': multiLinkMultiReverse('produser', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
       'summary': fields.Single(fields.MarkdownField()),
       'title': fields.Single(fields.StringField())
