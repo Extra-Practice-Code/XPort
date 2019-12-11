@@ -95,5 +95,16 @@
       {% endfor %}
     </ul>
   {% endif %}
+
+  {% if tag.pages %}
+  <h3>Notes</h3>
+    <ul class="simplelist">
+      {% for link, _, page in tag.pages|link_iterator %}
+        <li>
+          <a href="{{ page.link }}#{{ link.id }}" class="page">{% if link.label %}<span class="tag">{{ link.label }}</span> → {% endif %}{{ page }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
     
 {% endblock %}

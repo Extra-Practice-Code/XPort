@@ -1,0 +1,30 @@
+{% extends "generator_base_two_columns.html" %}
+{% load generator_utils %}
+
+{% block title %}Caveat{% endblock %}
+
+{% if event.image %}
+  {% block sidebar_image %}{{ event.image }}{% endblock %}
+{% endif %}
+
+{% block content_class %}home event-list{% endblock %}
+
+{% block content %}
+  {% for event in events %}
+    <article id="{{ event.key }}" class="event presentation" data-image="{{ event.image }}">
+      <time datetime="2019-05-24" class="date-header">{{ event.date }}</time>
+      <h2 class="event-title">{{ event }}</h2>
+      {{ event.summary }}
+      {% if event.programmeItems %}
+        <p><a href="{{ event.link }}" class="read-further">See programme ({{ event.programmeItems.value|length }} events)</a></p>
+      {% endif %}
+    </article>
+  {% endfor %}
+
+{% endblock %}
+
+{% block sidebar_class %}home event-detail{% endblock %}
+
+{% block sidebar %}
+  
+{% endblock %}

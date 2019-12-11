@@ -46,6 +46,7 @@
   
   <section class="long-text">
     <h1>{{ note.title }}</h1>
+    {% with item=note %}{% include "snippets/metadata.html" %}{% endwith %}
     {{ note.content }}
   </section>
 {% endblock %}

@@ -1,11 +1,11 @@
 {% extends "page_structure.html" %}
 {% block body_classes %}two-columns{% endblock %}
 {% block main %}
-  <main>
+  <main class="{% block content_class %}{% endblock %}">
     {% block content %}
     {% endblock %}
   </main>
-  <aside class="{% block sidebar-class %}{% endblock %}">
+  <aside class="{% block sidebar_class %}{% endblock %}">
     {% block sidebar %}
     {% endblock %}
   </aside>

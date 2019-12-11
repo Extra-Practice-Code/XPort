@@ -12,6 +12,7 @@
   </nav>
   <section class="long-text">
     <h1>{{ reflection.title }}</h1>
+    {% with item=reflection %}{% include "snippets/metadata.html" %}{% endwith %}
     {{ reflection.content }}
   </section>
 {% endblock %}

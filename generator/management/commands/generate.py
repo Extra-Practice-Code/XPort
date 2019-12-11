@@ -234,7 +234,8 @@ def generate ():
   output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
   output(os.path.join(outputdir, 'index.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
-
+  output(os.path.join(outputdir, 'index.new.html'), 'index.new.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 

@@ -73,17 +73,29 @@
       {% endfor %}   
     </ul>
   {% endif %}
+
   {% if produser.notes %}
-    <h2>Notes</h2>
-    <ul class="simplelist">
-      {% for note in produser.notes.targets %}
-        <li>
-          <a href="{{ note.link }}" class="note">{{ note }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+  <h2>Notes</h2>
+  <ul class="simplelist">
+    {% for note in produser.notes.targets %}
+      <li>
+        <a href="{{ note.link }}" class="note">{{ note }}</a>
+      </li>
+    {% endfor %}
+  </ul>
   {% endif %}
   
+  {% if produser.reflections %}
+  <h2>Reflections</h2>
+  <ul class="simplelist">
+    {% for reflection in produser.reflections.targets %}
+      <li>
+        <a href="{{ reflection.link }}" class="reflection">{{ reflection }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
   {% if produser.events_participant %}
   <h2>Activities (participant)</h2>
   <ul class="simplelist">
