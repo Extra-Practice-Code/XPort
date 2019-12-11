@@ -505,6 +505,11 @@ ul.inlinelist > li:after {
   display: inline-block;
 }
 
+ul.inlinelist > li:last-child:after {
+  content: '';
+  display: none;
+}
+
 main img, main figure {
   width: 33%;
   float: left;
@@ -844,4 +849,29 @@ main.event-list {
 .read-further:hover:after,
 .event:hover .read-further:hover:after {
   background: url(images/jump-arrow-orange.svg) no-repeat;
+}
+
+
+div.footnote hr {
+  display: none;
+}
+
+div.footnote > ol > li {
+  margin-bottom: var(--line-height);
+}
+
+sup:target,
+.footnote :target:marker,
+.footnote :target::marker {
+  color: var(--orange-karel);
+}
+
+sup {
+	font-size: 80%;
+	line-height: 80%;
+}
+
+sup a {
+	text-decoration: none;
+	border-bottom: 0;
 }

@@ -8,16 +8,18 @@
   </ul>
 </section>
 {% endif %}
-{% if item.participant and item.participant.targets or item.produser and item.produser.targets %}
+{% item.produser and item.produser.targets %}
 <section class="item--produsers item--metadata ">
-  <h4>Produsers & Participants</h4>
+  <h4>Produsers</h4>
   <ul class="inlinelist">
   {% for produser in item.produser.targets %}
     <li><a class="produser" href="{{ produser.link }}">{{ produser }}</a></li>
   {% endfor %}
+  {% if item.participant %}
   {% for participant in item.participant.targets %}
     <li><a class="produser" href="{{ participant.link }}">{{ participant }}</a></li>
   {% endfor %}
+  {% endif %}
   </ul>
 </section>
 {% endif %}
