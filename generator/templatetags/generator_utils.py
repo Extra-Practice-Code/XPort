@@ -31,3 +31,23 @@ def cut_from_start (value, arg):
   print(value)
   print('should be removed', arg)
   return re.sub('^' + str(arg), '', re.I)
+
+
+
+@register.filter
+def without_inline_links (field):
+  return list(filter(lambda l: not l.inline, field))
+
+@register.simple_tag
+def combine_linkfields (*fields):
+  combined = []
+  targets = []
+
+  for field in fields:
+    if field:
+      for link in field:
+        if link.target not in targets:
+          combined.append(link)
+          targets.append(link.target)
+
+  return combined

@@ -2,6 +2,10 @@
 
 {% block title %}Caveat → events → {{ event.title|striptags }}{% endblock %}
 
+{% if page.image %}
+  {% block sidebar_image %}{{ page.image }}{% endblock %}
+{% endif %}
+
 {% block content %}
   <section class="long-text">
     <h1>{{ page.title }}</h1>

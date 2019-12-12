@@ -29,18 +29,7 @@
         {% endfor %}
       {% endif %}
     </p>
-    {% if event.participant or event.produser %}
-    <h4>Participants</h4>
-    <p>
-      {% for produser in event.produser.targets %}
-      <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
-      {% endfor %}
-      {% for produser in event.produser.targets %}
-      <a href="{{ produser.link }}" class="produser">
-        {{ produser }}</a>{% if not forloop.last %},{% endif %}
-      {% endfor %}
-    </p>
-    {% endif %}
+    {% with item=event %}{% include "snippets/metadata.html" %}{% endwith %}
   </section>
   {{ event.summary }}
   {{ event.content }}

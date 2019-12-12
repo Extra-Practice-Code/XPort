@@ -1,25 +1,23 @@
-{% if item.tags and item.tags.targets %}
+{% load generator_utils %}
+
+{% combine_linkfields item.produser item.participant as produser_combined %}
+
+{% if item.tags and item.tags|without_inline_links %}
 <section class="item--metadata item--tags">
   <h4>Tags</h4>
   <ul class="inlinelist">
-  {% for tag in item.tags.targets %}
+  {% for tag in item.tags|without_inline_links|link_target_iterator %}
     <li><a href="{{ tag.link }}" class="tag">{{ tag }}</a></li>
   {% endfor %}
   </ul>
 </section>
 {% endif %}
-{% if item.produser and item.produser.targets %}
-<section class="item--produsers item--metadata ">
+{% if produser_combined %}
+<section class="item--produsers item--metadata">
   <h4>Produsers</h4>
   <ul class="inlinelist">
-  {% for produser in item.produser.targets %}
+  {% for produser in produser_combined|link_target_iterator %}
     <li><a class="produser" href="{{ produser.link }}">{{ produser }}</a></li>
   {% endfor %}
-  {% if item.participant %}
-  {% for participant in item.participant.targets %}
-    <li><a class="produser" href="{{ participant.link }}">{{ participant }}</a></li>
-  {% endfor %}
-  {% endif %}
-  </ul>
 </section>
 {% endif %}

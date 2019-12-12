@@ -861,7 +861,6 @@ div.footnote > ol > li {
 }
 
 sup:target,
-.footnote :target:marker,
 .footnote :target::marker {
   color: var(--orange-karel);
 }
