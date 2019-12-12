@@ -1,0 +1,7 @@
+{% load generator_utils %}
+
+<ul class="inlinelist">
+{% for tag in tags|link_target_iterator %}
+  <li><a href="{{ tag.link }}" class="tag">{{ tag }}</a></li>
+{% endfor %}
+</ul>

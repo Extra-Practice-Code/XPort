@@ -1,23 +1,21 @@
 {% load generator_utils %}
 
+{% with item.tags|without_inline_links as tags %}
+  {% if tags %}
+    <section class="item--metadata item--tags">
+      <h4>Tags</h4>
+      {% include "snippets/tags.html" %}
+    </section>
+  {% endif %}
+{% endwith %}
+
 {% combine_linkfields item.produser item.participant as produser_combined %}
 
-{% if item.tags and item.tags|without_inline_links %}
-<section class="item--metadata item--tags">
-  <h4>Tags</h4>
-  <ul class="inlinelist">
-  {% for tag in item.tags|without_inline_links|link_target_iterator %}
-    <li><a href="{{ tag.link }}" class="tag">{{ tag }}</a></li>
-  {% endfor %}
-  </ul>
-</section>
-{% endif %}
 {% if produser_combined %}
-<section class="item--produsers item--metadata">
-  <h4>Produsers</h4>
-  <ul class="inlinelist">
-  {% for produser in produser_combined|link_target_iterator %}
-    <li><a class="produser" href="{{ produser.link }}">{{ produser }}</a></li>
-  {% endfor %}
-</section>
+  <section class="item--produsers item--metadata">
+    <h4>Produsers</h4>
+    {% with produsers=produser_combined %}    
+      {% include "snippets/produsers.html" %}
+    {% endwith %}
+  </section>
 {% endif %}

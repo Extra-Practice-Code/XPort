@@ -50,11 +50,7 @@
       {% for item in events %}
         <li id="{{ item.key }}">
           <h2>{% if item.time.value %}{{ item.time }}{% endif %} {{ item }}</h2>
-          <p class="event-infos"> 
-            {% for produser in item.produser|link_target_iterator %}
-            <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
-            {% endfor %}
-          </p>
+          {% with item=item %}{% include "snippets/metadata.html" %}{% endwith %}
           {% if item.summary %}
             {{ item.summary }}
           {% else %}
@@ -68,7 +64,6 @@
             {% endfor %}
           </ul>
           {% endif %}
-          {% with item=item %}{% include "snippets/metadata.html" %}{% endwith %}
         </li>
       {% endfor %}
     {% endfor %}

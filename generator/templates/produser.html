@@ -15,6 +15,11 @@
         <h2>Trajectory</h2>
         {{ trajectory.content }}
       </section>
+      {% with trajectory.tags|without_inline_links as tags %}
+        {% if tags %}
+          {% include "snippets/tags.html" %}
+        {% endif %}
+      {% endwith %}
     {% endfor %}
   {% endif %}
   
