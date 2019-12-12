@@ -197,11 +197,12 @@ class LinkField(object):
   Field for multiple links, every link will be a single linkfield.
 """
 class MultiLinkField(object):
-  def __init__ (self, contentType = None, reverse = None):
+  def __init__ (self, contentType = None, reverse = None, unique = True):
     self.contentType = contentType
     self.value = []
     self.target = None
     self.reverse = reverse
+    self.unique = unique
 
   def __iter__ (self):
     return iter(self.value)
@@ -212,16 +213,18 @@ class MultiLinkField(object):
         self.set(t, inline)
     else:
       key = keyFilter(target)
-      for existingLink in self.value:
-        if existingLink.target == key or existingLink.target == target:
-          return existingLink
+      if self.unique:
+        for existingLink in self.value:
+          if existingLink.target == key or existingLink.target == target:
+            return existingLink
 
       self.value.append(Link(key, self.contentType, inline, label=target))
 
   def makeLink(self, source, target, inline=False, label=None):
-    for existingLink in self.value:
-      if existingLink.target == target:
-        return existingLink
+    if self.unique:
+      for existingLink in self.value:
+        if existingLink.target == target:
+          return existingLink
 
     link = Link(target, self.contentType, inline, direct=True, source=source, label=label)
     self.value.append(link)
@@ -266,10 +269,11 @@ class ReverseLinkField(object):
       return self.value.target
 
 class ReverseMultiLinkField(ReverseLinkField):
-  def __init__ (self, name):
+  def __init__ (self, name, unique=True):
     self.name = name
     self.value = []
     self.id = ''.join([str(random.randint(0, 9)) for r in range(3)])
+    self.unique = unique
 
   def __iter__ (self):
     return iter(self.value)
@@ -284,10 +288,11 @@ class ReverseMultiLinkField(ReverseLinkField):
       # UNIQUE LINK UNIQUE_LINK
       # Check whether there is already a link to this target
       # on source, for now don't set it if this is the case.
-      for exisitingLink in link.source.metadata[self.name].value:
-        if exisitingLink.target == link.target:
-          # This link already exists, for now we ignore it.
-          return False
+      if self.unique:
+        for exisitingLink in link.source.metadata[self.name].value:
+          if exisitingLink.target == link.target:
+            # This link already exists, for now we ignore it.
+            return False
 
     link.source.metadata[self.name].value.append(link)
 
@@ -319,8 +324,8 @@ def is_reverse_multi_link (obj):
 def linkMultiReverse(contentType, reverseName):
   return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
 
-def multiLinkMultiReverse(contentType, reverseName):
-  return MultiLinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
+def multiLinkMultiReverse(contentType, reverseName, unique=True):
+  return MultiLinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName, unique=unique), unique=unique)
 
 def linkReference(target, display_label):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)
@@ -575,12 +580,6 @@ class Model(object):
       debug('Setting label!', self.labelField)
       self.__setattr__(self.labelField, label)
 
-    # print('Model::init metadata ', metadata)
-    for key, value in metadata.items():
-      # print(row, metadata[row])
-      # self.metadata[key].set(value)
-      self.__setattr__(key, value)
-
     if source_path:
       self.source_path = source_path
 
@@ -604,8 +603,8 @@ class Model(object):
 
   def setMetadata(self, metadata=None):
     if metadata:
-      for key in metadata:
-        self.__setattr__(key, metadata[key])
+      for key, value in metadata.items():
+        self.__setattr__(key, value)
 
   # TODO: deal with objects which already have data
   # Overwrite or extend data. Etc.
@@ -793,7 +792,7 @@ class Event (Model):
       'summary': fields.Single(fields.MarkdownField()),
       'location': fields.Single(fields.StringField()),
       'address': fields.StringField(),
-      'tags': multiLinkMultiReverse('tag', 'events'),
+      'tags': multiLinkMultiReverse('tag', 'events', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'events'),
       'image': fields.Single(fields.StringField()),
     }
@@ -822,7 +821,7 @@ class ProgrammeItem (Model):
       'summary': fields.Single(fields.MarkdownField()),
       'location': fields.Single(fields.StringField()),
       'address': fields.StringField(),
-      'tags': multiLinkMultiReverse('tag', 'events'),
+      'tags': multiLinkMultiReverse('tag', 'events', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'events'),
     }
 
@@ -838,7 +837,7 @@ class Produser (Model):
       'name': fields.Single(fields.InlineMarkdownField()),
       'sortname': fields.Single(fields.StringField()),
       'produser': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'produsers'),
+      'tags': multiLinkMultiReverse('tag', 'produsers', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
     }
 
@@ -855,7 +854,7 @@ class Trajectory (Model):
     return {
       'produser': linkMultiReverse('produser', 'trajectories'),
       'category': fields.Single(fields.StringField(['artisttrajectory'])),
-      'tags': multiLinkMultiReverse('tag', 'trajectories'),
+      'tags': multiLinkMultiReverse('tag', 'trajectories', unique=False),
       'summary': fields.Single(fields.MarkdownField()),
       'title': fields.Single(fields.StringField())
     }
@@ -877,7 +876,7 @@ class Reflection (Model):
   def _metadataFields (self):
     return {
       'produser': multiLinkMultiReverse('produser', 'reflections'),
-      'tags': multiLinkMultiReverse('tag', 'reflections'),
+      'tags': multiLinkMultiReverse('tag', 'reflections', unique=False),
       'summary': fields.Single(fields.MarkdownField()),
       'title': fields.Single(fields.StringField())
     }
@@ -890,7 +889,7 @@ class Pad (Model):
       'produser': multiLinkMultiReverse('produser', 'pads'),
       'event': linkMultiReverse('event', 'pads'),
       'trajectory': linkMultiReverse('trajectory', 'pads'),
-      'tags': multiLinkMultiReverse('tag', 'pads'),
+      'tags': multiLinkMultiReverse('tag', 'pads', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'pads'),
     }
 
@@ -905,7 +904,7 @@ class Note (Model):
       'participant': multiLinkMultiReverse('produser', 'notes_participant'),
       'event': linkMultiReverse('event', 'notes'),
       'programme-item': linkMultiReverse('programme-item', 'notes'),
-      'tags': multiLinkMultiReverse('tag', 'notes'),
+      'tags': multiLinkMultiReverse('tag', 'notes', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
       'title': fields.Single(fields.InlineMarkdownField()),
     }
@@ -919,7 +918,7 @@ class Page (Model):
   def _metadataFields (self):
     return {
       'title': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'pages'),
+      'tags': multiLinkMultiReverse('tag', 'pages', unique=False),
       'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
     }
 
@@ -961,7 +960,7 @@ class Bibliography (Model):
   def _metadataFields (self):
     return {
       'bibliography': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'bibliography'),
+      'tags': multiLinkMultiReverse('tag', 'bibliography', unique=False),
       'produser': multiLinkMultiReverse('produser', 'bibliography')
     }
 
@@ -988,7 +987,7 @@ class Video (Model):
       'type': fields.Single(fields.StringField(['video/mp4'])),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'video'),
+      'tags': multiLinkMultiReverse('tag', 'video', unique=False),
       'produser': multiLinkMultiReverse('produser', 'video'),
     }
 
@@ -1003,7 +1002,7 @@ class Audio (Model):
       'type': fields.Single(fields.StringField(['audio/mp3'])),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'audio'),
+      'tags': multiLinkMultiReverse('tag', 'audio', unique=False),
       'produser': multiLinkMultiReverse('produser', 'audio'),
     }
 
@@ -1015,7 +1014,7 @@ class Image (Model):
   def _metadataFields (self):
     return {
       'image': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'image'),
+      'tags': multiLinkMultiReverse('tag', 'image', unique=False),
       'produser': multiLinkMultiReverse('produser', 'image'),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
@@ -1030,7 +1029,7 @@ class ExternalProject (Model):
     return {
       'project': fields.Single(fields.StringField()),
       'link': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'externalProject'),
+      'tags': multiLinkMultiReverse('tag', 'externalProject', unique=False),
     }
 
 class Text (Model):
@@ -1041,7 +1040,7 @@ class Text (Model):
   def _metadataFields (self):
     return {
       'title': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'image'),
+      'tags': multiLinkMultiReverse('tag', 'image', unique=False),
       'produser': multiLinkMultiReverse('produser', 'text'),
       'event': multiLinkMultiReverse('event', 'text')
     }
