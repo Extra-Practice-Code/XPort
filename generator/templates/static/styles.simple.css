@@ -857,17 +857,32 @@ div.footnote hr {
 }
 
 div.footnote > ol > li {
-  margin-bottom: var(--line-height);
+  padding: calc(0.5 * var(--line-height));
+  margin-left: calc(-.5 * var(--line-height));
 }
 
-sup:target,
-.footnote :target::marker {
+sup:target {
   color: var(--orange-karel);
 }
 
+.footnote li:target {
+  background: var(--rose-pale);
+}
+
 sup {
-	font-size: 80%;
-	line-height: 80%;
+  border: 1px solid currentColor;
+	padding: .07em .2em .05em .2em;
+	background: transparent;
+	font-size: 70%;
+  line-height: 60%;
+	position: relative;
+	margin: 0 .25em;
+	vertical-align: middle;
+	top: -.2em;
+}
+
+sup:hover {
+  color: var(--orange-karel);
 }
 
 sup a {
