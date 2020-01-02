@@ -1,0 +1,35 @@
+{% load generator_utils %}
+
+<article class="long-text">
+  <time datetime="2019-05-24" class="date-header"><a href="{{ event.link }}">{{ event.date }}</a></time>
+  <h2 class="event-title"><a href="{{ event.link }}">{{ event }}</a></h2>
+  {% if event.time.value %}
+    <p class="event-infos">{{ event.time }}</p>
+  {% endif %}
+  {% if event.location.value %}
+    <p class="event-infos">{{ event.location }}</p>
+  {% endif %}
+  {% for line in event.address.value %}
+    <p class="event-infos">{{ line }}</p>
+  {% endfor %}
+  <p class="event-infos">
+    {% for link, source, produser in event.produser|link_iterator %}
+    <a href="{{ produser.link }}">{{ produser }}</a>
+    {% endfor %}
+  </p>
+  {% if event.programmeItems %}
+    <p><a href="{{ event.link }}">See programme</a></p>
+  {% endif %}
+  {{ event.content }}
+  {% if event.notes %}
+  <h4>Related documents</h4>
+  <ul class="simplelist">
+    {% for note in event.notes.targets %}
+    <li><a href="{{ note.link }}" class="note">{{ note }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if event.programmeItems %}
+    <p><a href="{{ event.link }}">See programme</a></p>
+  {% endif %}
+</article>

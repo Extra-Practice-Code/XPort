@@ -510,7 +510,7 @@ ul.inlinelist > li:last-child:after {
   display: none;
 }
 
-main img, main figure {
+img.content-image, figure.content-image {
   width: 33%;
   float: left;
   margin-right: .5em;
@@ -520,29 +520,29 @@ main img, main figure {
   clear: left;
 }
 
-main figure {
+figure.content-image {
   margin-left: 0;
 }
 
-main img.full, main figure.full img {
+img.content-image.full, figure.content-image.full img {
   cursor: zoom-out;
 }
 
-main img.full,
-main audio,
-main video,
-main figure.full {
+img.full,
+audio,
+video,
+figure.full {
   max-width: 47.5em;
   width: 100%;
   /* margin-top: .5em; */
   /* margin-bottom: .5em; */
 }
 
-main figure.full figcaption {
+figure.content-image.full figcaption {
   width: 80%;
 }
 
-main figure img {
+figure.content-image img {
 	width: 100%;
 	float: none;
 	margin-top: 0;
@@ -821,36 +821,10 @@ section.audio {
   margin-top: var(--line-height);
 }
 
-main > :last-child {
+main > :last-child,
+aside.event-detail > :last-child {
 	margin-bottom: calc(3 * var(--line-height));
 }
-
-main.event-list {
-  padding: 0;
-}
-
-.event-list .event {
-	border-bottom: 2px solid currentColor;
-	padding: calc(.5 * var(--line-height)) 1em var(--line-height) 1em;
-	cursor: pointer;
-}
-
-.event-list .event.active,
-.event-list .event:hover {
-  background-color: var(--bleu-bille);
-  color: white;
-}
-
-.event:hover .read-further:after {
-  background: url(images/jump-arrow-white.svg) no-repeat;
-}
-
-
-.read-further:hover:after,
-.event:hover .read-further:hover:after {
-  background: url(images/jump-arrow-orange.svg) no-repeat;
-}
-
 
 div.footnote hr {
   display: none;
@@ -888,4 +862,53 @@ sup:hover {
 sup a {
 	text-decoration: none;
 	border-bottom: 0;
+}
+
+/**
+  Homepage
+*/
+
+main.event-list {
+  padding: 0;
+}
+
+.event-list .event {
+	border-bottom: 2px solid black; /* currentColor */
+	padding: calc(.5 * var(--line-height)) 1em var(--line-height) 1em;
+	cursor: pointer;
+}
+
+.event-list .event[data-active],
+.event-list .event:hover {
+  background-color: var(--bleu-bille);
+  color: white;
+}
+
+.event[data-active] .read-further:after,
+.event:hover .read-further:after {
+  background: url(images/jump-arrow-white.svg) no-repeat;
+}
+
+
+.read-further:hover:after,
+.event:hover .read-further:hover:after,
+.event[data-active] .read-further:hover:after{
+  background: url(images/jump-arrow-orange.svg) no-repeat;
+}
+
+aside.event-detail {
+	background: var(--bleu-bille);
+	color: white;
+	padding: var(--line-height) 1em;
+}
+
+.home h2 a,
+.home time a {
+  border-bottom: none;
+}
+
+
+aside.event-detail .question {
+  -webkit-text-stroke: 1.1px white;
+  color: transparent;
 }

@@ -105,6 +105,8 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'questions'))
   # os.mkdir(os.path.join(outputdir, 'trajectories'))
   os.mkdir(os.path.join(outputdir, 'reflections'))
+  os.mkdir(os.path.join(outputdir, 'api'))
+  os.mkdir(os.path.join(outputdir, 'api', 'activities'))
   
   models = parse_pads()
 
@@ -228,6 +230,7 @@ def generate ():
   generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
   generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
   generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
+  generate_single_pages(events.models, 'snippets/home_event_detail.html', os.path.join(outputdir, 'api'), lambda event: { 'event': event })
   generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
   generate_single_pages(reflections.models, 'reflection.html', outputdir, lambda reflection: { 'reflection': reflection })
 
