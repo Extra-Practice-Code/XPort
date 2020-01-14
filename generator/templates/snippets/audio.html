@@ -1,4 +1,7 @@
 <section class="audio">
+  {% if audio.title.value %}
+  <h3>{{ audio.title }}</h3>
+  {% endif %}
   <audio controls>
     <source src="{{ audio.audio }}" type="{% if audio.type.value %}{{ audio.type }}{% else %}audio/mpeg{% endif %}">
   </audio>
