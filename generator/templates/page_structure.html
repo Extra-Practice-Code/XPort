@@ -8,34 +8,32 @@
   <title>{% block title %}Caveat{% endblock %}</title>
 </head>
 <body class="{% block body_classes %}{% endblock %}">
-  <header>
-    <nav>
-      <a href="{{ SITE_URL }}index.html" id="site-logo">
-        <img src="{{ SITE_URL }}static/images/logos/caveat.png" />
-      </a>
-      <ul>
-        {% for label, url in MENU_ITEMS %}
-          <li><a href="{{ SITE_URL}}{{ url }}">{{ label }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-    <section id="header-map" style="background-image:url({% block sidebar_image %}{{ SITE_URL }}static/images/maps/reading-room8-cover.png{% endblock %});">
-
-    </section>
-    <section id="header-content">
-      {% block header-text %}
-        <p>
-          <em>Caveat</em> is a collective research into the ecology of artistic practice.
-          It is initiated by Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78.
-          <em>Caveat</em> tries to find more sustainable, balanced ways of operating within the existing legal frameworks.
-          And when the limits of the existing system are reached, it tries to come up with possible new narratives that
-          open up space for reflection.
-        </p>
-      {% endblock %}
-    </section>
-  </header>
-    {% block main %}
+  <nav id="nav--main">
+    <a href="{{ SITE_URL }}index.html" id="site-logo">
+      <img src="{{ SITE_URL }}static/images/logos/caveat.png" />
+    </a>
+    <button id="toggle--menu">MENU</button>
+    <ul>
+      {% for label, url in MENU_ITEMS %}
+        <li><a href="{{ SITE_URL}}{{ url }}">{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  <section id="map" style="background-image:url({% block sidebar_image %}{{ SITE_URL }}static/images/maps/reading-room8-cover.png{% endblock %});"></section>
+  <section id="header-content">
+    {% block header-text %}
+      <p>
+        <em>Caveat</em> is a collective research into the ecology of artistic practice.
+        It is initiated by Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78.
+        <em>Caveat</em> tries to find more sustainable, balanced ways of operating within the existing legal frameworks.
+        And when the limits of the existing system are reached, it tries to come up with possible new narratives that
+        open up space for reflection.
+      </p>
     {% endblock %}
+  </section>
+  {% block main %}
+  <main></main>
+  {% endblock %}
   <footer>
       <p class="">
         <strong>Caveat</strong> is a collective research project convened by the Brussels-based artists’ initiative Jubilee, in partnership with Open Source Publishing, No New Enemies and Été 78. Supported by Innoviris Brussels Institute for Research and Innovation, Flanders State of the Arts, and Vlaamse Gemeenschapscommissie.
@@ -54,6 +52,13 @@
           }
         })
       }
+    })();
+
+    (function () {
+      var toggle = document.querySelector('#toggle--menu')
+        .addEventListener('click', function () {
+          document.body.classList.toggle('menu--expanded');
+        });
     })();
   </script>
   <script src="{{ SITE_URL }}static/js/links.js"></script>

@@ -58,8 +58,8 @@
 /* ==========================================================================
    Custom medias definitions
    ========================================================================== */
-@custom-media --mobile only screen and (max-width: 767px);
-@custom-media --mobile-landscape only screen and (max-width: 767px) and (orientation: landscape);
+/* @custom-media --mobile only screen and (max-width: 767px); */
+/* @custom-media --mobile-landscape only screen and (max-width: 767px) and (orientation: landscape); */
 
 /* ==========================================================================
   Variables
@@ -83,7 +83,7 @@ body {
   line-height: var(--line-height);
   font-family: "U001";
   padding: 0px;
-  margin: 0px !important;
+  margin: 0px;
 }
 
 /* ==========================================================================
@@ -322,8 +322,8 @@ body {
   left: 20px;
   overflow: hidden;
   display: grid;
-  grid-template-columns: [left sidebar-start] 1fr [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
-  grid-template-rows: [top] repeat(2, 1fr) [footer] min-content [bottom];
+  grid-template-columns: [left sidebar-start] minmax(200px, 1fr) [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
+  grid-template-rows: [top navbar] min-content [map] 2fr [header-content] 1fr [footer] min-content [bottom]; /* possible add 'main' and 'aside' as names for top line. But might be more confusing than adding clarity */
   border-left: 2px solid black;
   border-right: 2px solid black;
 }
@@ -332,47 +332,44 @@ main, footer {
   padding: 1em;
 }
 
-header {
+#nav--main {
   grid-column: sidebar-start;
-  grid-row: top / footer;
-  border-right: 2px solid;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  max-height: 100vh;
-}
-
-header nav {
+  grid-row: navbar;
   flex: 0 0 auto;
   border-bottom: 2px solid black;
   display: flex;
   padding: 1em;
 }
 
-header nav a {
+#nav--main a {
   text-decoration: none;
   border: none;
 }
 
-header nav a:hover {
+#nav--main a:hover {
   color: var(--bleu-bille);
 }
 
-header nav #site-logo {
+#nav--main #site-logo {
   flex: 0 0 100px;
 }
 
-header nav #site-logo img {
+#nav--main #site-logo img {
   max-width: 100px;
 }
 
-header nav ul {
+#nav--main ul {
   flex: 1 0;
   margin: 0;
 }
 
-header #header-map {
-  flex: 2 1;
+#toggle--menu {
+  display: none;
+}
+
+#map {
+  grid-row: map;
+  grid-column: sidebar-start;
   background: var(--rose-pale);
   border-bottom: 2px solid black;
   background-repeat: no-repeat;
@@ -381,7 +378,8 @@ header #header-map {
 }
 
 #header-content {
-  flex: 1 0;
+  grid-row: header-content;
+  grid-column: sidebar-start;
   overflow-y: auto;
   padding: 1em;
 }
@@ -398,6 +396,7 @@ main {
   overflow-y: auto;
   max-height: 100vh;
   scroll-padding-top: 5em;
+  border-left: 2px solid black;
 }
 
 
@@ -438,7 +437,7 @@ footer {
 .breadcrumbs ul {
   list-style-type: none;
   margin: 0;
-  padding: .5em;
+  padding: .25em .5em;
   font-size: var(--font-size-small);
 }
 
@@ -456,6 +455,10 @@ footer {
 
 .breadcrumbs ul > li:nth-child(n+2) {
   margin-left: 1em;
+}
+
+.breadcrumbs a {
+  border-bottom: none;
 }
 
 footer .logo-partners {
@@ -600,7 +603,7 @@ a.tag {
 .trajectory-list section.trajectory--item {
   background: var(--rose-pale); 
   padding: 1em;
-  outline: 2px solid black;
+  outline: 2px solid;
   outline-offset: 0px;
   padding: 1em;
   position: relative;
@@ -737,7 +740,7 @@ section.audio {
   display: block;
   height: 10px;
   width: 45px;
-  padding-bottom: 20px;
+  padding-bottom: 12px;
   float: left;
 }
 
@@ -747,23 +750,24 @@ section.audio {
 }
 
 .inline-navigation {
-	margin: -2em -1em 1em -1em;
-	padding: .75em 1em .5em 1em;
+	margin: -2em -1.25em 1em -1.25em;
+	padding: .75em 1.25em .5em 1.25em;
 	position: sticky;
-	top: -1em;
+	top: -1.25em;
 	background: white;
-	z-index: 5;
-	border-bottom: 2px solid;
+	z-index: 1;
+  border-bottom: 2px solid;
+  font-size: var(--font-size-small);
 }
 
 .inline-navigation ul:before {
-	content: "Go to:";
+	content: "Jump to:";
 }
 
 .produser-list:target:before,
 .trajectory-list:target:before {
-  margin: -3.5em 0 0;
-	height: 3.5em;
+  margin: -5.5em 0 0;
+	height: 5.5em;
 	content: '';
 	display: block;
 }
@@ -878,28 +882,10 @@ main.event-list {
 	cursor: pointer;
 }
 
-.event-list .event[data-active],
-.event-list .event:hover {
-  background-color: var(--bleu-bille);
-  color: white;
-}
-
-.event[data-active] .read-further:after,
-.event:hover .read-further:after {
-  background: url(images/jump-arrow-white.svg) no-repeat;
-}
-
-
-.read-further:hover:after,
-.event:hover .read-further:hover:after,
-.event[data-active] .read-further:hover:after{
-  background: url(images/jump-arrow-orange.svg) no-repeat;
-}
-
 aside.event-detail {
 	background: var(--bleu-bille);
 	color: white;
-	padding: var(--line-height) 1em;
+	padding: calc(.5 * var(--line-height)) 1em var(--line-height) 1em;
 }
 
 .home h2 a,
@@ -911,4 +897,244 @@ aside.event-detail {
 aside.event-detail .question {
   -webkit-text-stroke: 1.1px white;
   color: transparent;
+}
+
+/**
+* Header for activities listing
+*/
+.sticky-section-header {
+  display: block;
+  padding: .25em .5em;
+  font-size: var(--font-size-small);
+  border-bottom: 2px solid black;
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  background: white;
+}
+
+.chrome {
+	position: sticky;
+	top: 0;
+	margin-right: -.25em;
+	float: right;
+	/* background: white; */
+}
+
+/* .chrome button {
+  color: inherit;
+  font-family: inherit;
+  border: none;
+  background: none;
+  font-size: inherit;
+} */
+
+.chrome button {
+	color: black;
+	font-family: inherit;
+	border: none;
+	background: white;
+	font-size: inherit;
+  border: 2px solid black;
+  font-size: var(--font-size-small);
+}
+
+@media screen and (min-width: 768px) {
+  .event-list .event[data-active],
+  .event-list .event:hover {
+    background-color: var(--bleu-bille);
+    color: white;
+  }
+
+  .event[data-active] .read-further:after,
+  .event:hover .read-further:after {
+    background: url(images/jump-arrow-white.svg) no-repeat;
+  }
+
+
+  .read-further:hover:after,
+  .event:hover .read-further:hover:after,
+  .event[data-active] .read-further:hover:after{
+    background: url(images/jump-arrow-orange.svg) no-repeat;
+  }
+
+  .chrome {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 767px) {
+
+  :root {
+    --font-size: 13pt;
+    --line-height: 16pt;
+  }
+
+  body {
+    position: relative;
+    top: initial;
+    right: initial;
+    bottom: initial;
+    left: initial;
+    overflow: initial;
+    /* Redefining the grid. */
+    grid-template-columns: [left content-start] 1fr [content-end right];
+    grid-template-rows: [top navbar] calc(2.5 * var(--line-height)) [map] min-content [header-content] min-content [main] min-content [aside] min-content [footer] min-content [bottom];
+    margin-left: .25em;
+    margin-right: .25em;
+  }
+
+ #nav--main {
+   grid-row: top;
+   grid-column: left / right;
+   position: sticky;
+   top: 0;
+   background: white;
+   z-index: 2;
+   padding: .5em;
+   justify-content: space-between;
+ }
+
+  #map {
+    height: 35vh;
+  }
+
+  #header-content, #map {
+    border-bottom: 2px solid black;
+    grid-column: left / right;
+    display: none;
+  }
+
+  .home #header-content,
+  .home #map {
+    display: initial;
+  }
+
+  main {
+    grid-row: main;
+    grid-column: left / right;
+    overflow-y: initial;
+    max-height: initial;
+    border-left: initial;
+    border-right: initial;
+  }
+
+
+  .two-columns main {
+    grid-row: main;
+    grid-column: left / right;
+    border-left: initial;
+    border-right: initial;
+  }
+
+  .two-columns aside {
+    grid-row: aside;
+    grid-column: left / right;
+    overflow-y: initial;
+    border-left: initial;
+    border-right: initial;
+  }
+
+  footer {
+    border-top: 2px solid;
+    grid-column: left / right;
+    grid-row: footer;
+    background: var(--rose-karel);
+  }
+
+  #site-logo img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  #nav--main ul {
+    display: none;
+  }
+
+  #nav--main #toggle--menu {
+    display: initial;
+    align-self: center;
+    background: none;
+    border: none;
+    color: black;
+    font-family: inherit;
+    font-size: var(--font-size-small);
+  }
+  
+  .menu--expanded #nav--main #toggle--menu:before {
+    content: "CLOSE "
+  }
+
+  .menu--expanded #nav--main ul {
+    display: block;
+    position: fixed;
+    top: calc(2.5 * var(--line-height));
+    background: var(--bleu-bille);
+    color: white;
+    left: calc(.25em + 2px);
+    right: calc(.25em + 2px);
+    bottom: 0;
+    padding-top: var(--line-height);
+    padding-left: 1em;
+    z-index: 2;
+  }
+
+  .menu--expanded #nav--main ul li:nth-of-type(n+2) {
+    margin-top: calc(.5 * var(--line-height));
+  }
+
+  .inline-navigation {
+    top: calc(2.5 * var(--line-height));
+  }
+  
+  .breadcrumbs {
+    border-bottom: 2px solid black;
+    margin: -1em -1em 0 -1em;
+    position: sticky;
+    top: calc(2.5 * var(--line-height));
+    padding: 0;
+  }
+
+  /**
+  * Header for activities listing
+  */
+  .sticky-section-header {
+    top: calc(2.5 * var(--line-height));
+  }
+
+  .home aside {
+    display: none;
+  }
+
+  .home.aside-active-through-click {
+    overflow: hidden;
+  }
+
+  .home.aside-active-through-click aside {
+    display: block;
+    position: fixed;
+    top: calc(2.5 * var(--line-height));
+    left: calc(0.25em + 2px);
+    right: calc(0.25em + 2px);
+    z-index: 1;
+    bottom: 0;
+    overflow: auto;
+  }
+
+  .chrome {
+    float: right;
+  }
+  
+  .trajectory-list--grid {
+    display: grid;
+    grid-auto-columns: minmax(300px, 1fr);
+    grid-template-columns: initial;
+  }
+}
+
+[data-loading="true"]:before {
+  display: block;
+  content: "Loading...";
+  text-align: center;
+  padding-top: calc(3 * var(--line-height));
 }

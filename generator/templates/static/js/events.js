@@ -1,5 +1,6 @@
 (function () {
-  var entries = NodeList;
+  var entries = NodeList
+      eventCache = {};
   
   // var eventCloseButton = document.querySelector('#detail-container .close-button');
   // eventCloseButton.addEventListener('click', function () {
@@ -22,15 +23,13 @@
   };
 
   function setHash(hash) {
-    if (hash) {
-      hash = '#' + hash;
-    }
-    else {
-      hash = '/';
-    }
-
     if (history.pushState) {
-      history.pushState(null, null, hash);
+      if (hash) {
+        history.pushState(null, null, location.pathname + '#' + hash);
+      }
+      else {
+        history.pushState(null, null, location.pathname);
+      }
     }
     else {
       location.hash = hash;
@@ -53,21 +52,39 @@
 
     entry.dataset.active = 'true';
     var container = document.querySelector('aside.home.event-detail');
+    container.dataset.loading = 'true';
+    container.innerHTML = '';
 
-    fetch('/api/activities/' + entry.id + '.html', {
-      method: "GET"
-    }).then(function (response) {
-      if (response.ok) {
-        response.text().then(function (text) {
-          container.innerHTML = text;
-          setImageListeners();
-        });
-      }
-    });
+    if (entry.id in eventCache) {
+      delete container.dataset.loading;
+      container.innerHTML = eventCache[entry.id];
+      setImageListeners();
+      container.querySelector('[data-role="close"]').addEventListener('click', close);
+    } else {
+      fetch('/api/activities/' + entry.id + '.html', {
+        method: "GET"
+      }).then(function (response) {
+        if (response.ok) {
+          response.text().then(function (text) {
+            delete container.dataset.loading;
+            eventCache[entry.id] = text;
+            container.innerHTML = text;
+            setImageListeners();
+            container.querySelector('[data-role="close"]').addEventListener('click', close);
+          });
+        }
+      });
+    }
+
+  }
+
+  function close () {
+    setHash(null);
+    document.body.classList.remove('event-active-through-click', 'aside-active-through-click');
   }
 
   function show(entry, entries) {
-    document.body.className += ' event-active-through-click';
+    document.body.classList.add('event-active-through-click', 'aside-active-through-click');
     activate(entry, entries);
   }
 
@@ -80,6 +97,13 @@
     }
 
     return false
+  }
+
+  function unwrap (node) {
+    var parent = node.parentElement;
+    while (node.firstChild) {
+      parent.insertBefore(node.firstChild, node);
+    }
   }
 
   if (window.location.hash) {
@@ -96,7 +120,7 @@
     if (entry) {
       show(entry, entries);
     } else {
-      document.body.className = document.body.className.replace(/\s*event-active-through-click/, '');
+      document.body.classList.remove('event-active-through-click', 'aside-active-through-click');
     }
   };
 
@@ -104,10 +128,13 @@
     entries = document.querySelectorAll('.event-list .event');
     
     for (var i = 0; i < entries.length; i++) {
+      unwrap(entries[i].querySelector('h2 a'))
+      unwrap(entries[i].querySelector('time a'));
+
       (function (entry, entries) {
         entry.addEventListener('click', function () {
           setHash(entry.id);
-          show(entry, entries)
+          show(entry, entries);
         });
       })(entries[i], entries);
     }

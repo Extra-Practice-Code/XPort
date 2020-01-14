@@ -27,8 +27,10 @@
     </p>
     {% with item=event %}{% include "snippets/metadata.html" %}{% endwith %}
   </section>
-  {{ event.summary }}
-  {{ event.content }}
+  <section class="long-text">
+    {{ event.summary }}
+    {{ event.content }}
+  </section>
   {% if event.notes %}
   <h4>Related documents</h4>
   <ul class="simplelist">
