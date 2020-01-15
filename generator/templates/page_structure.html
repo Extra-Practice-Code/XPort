@@ -19,7 +19,7 @@
       {% endfor %}
     </ul>
   </nav>
-  <section id="map" style="background-image:url({% block sidebar_image %}{{ SITE_URL }}static/images/maps/reading-room8-cover.png{% endblock %});"></section>
+  <section id="map" style="background-image:url({% block sidebar_image %}{% endblock %});"></section>
   <section id="header-content">
     {% block header-text %}
       <p>
@@ -58,10 +58,16 @@
     })();
 
     (function () {
-      var toggle = document.querySelector('#toggle--menu')
+      document.querySelector('#toggle--menu')
         .addEventListener('click', function () {
           document.body.classList.toggle('menu--expanded');
         });
+      var map = document.querySelector('#map'),
+          bgImg = map.style.backgroundImage;
+
+      if (!bgImg || bgImg == 'url()' || bgImg == 'url("")' || bgImg == 'url("None")' || bgImg == 'url("null")') {
+        map.dataset.hidden = true;
+      }
     })();
   </script>
   <script src="{{ SITE_URL }}static/js/links.js"></script>

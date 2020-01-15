@@ -37,11 +37,17 @@
   }
 
   function showImage(path) {
-    var holder = document.getElementById('prolog');
-    if (path && path != 'None') {
-      holder.style.backgroundImage = 'url(' + path + ')';
-    } else {
-      holder.style.removeProperty('background-image');
+    var map = document.getElementById('map');
+    if (path && path.toLowerCase() == 'none') {
+      path = null;
+    }
+    if (path) {
+      map.style.backgroundImage = 'url(' + path + ')';
+      delete map.dataset.hidden;
+    }
+    else {
+      map.style.backgroundImage = '';
+      map.dataset.hidden = true;
     }
   }
 
@@ -54,6 +60,7 @@
     var container = document.querySelector('aside.home.event-detail');
     container.dataset.loading = 'true';
     container.innerHTML = '';
+    showImage(entry.dataset.image);
 
     if (entry.id in eventCache) {
       delete container.dataset.loading;

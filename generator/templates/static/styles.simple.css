@@ -323,7 +323,7 @@ body {
   overflow: hidden;
   display: grid;
   grid-template-columns: [left sidebar-start] minmax(200px, 1fr) [sidebar-end content-start] 1fr [content-middle] 1fr [content-end right];
-  grid-template-rows: [top navbar] min-content [map] 2fr [header-content] 1fr [footer] min-content [bottom]; /* possible add 'main' and 'aside' as names for top line. But might be more confusing than adding clarity */
+  grid-template-rows: [top navbar] min-content [map] min-content [header-content] 1fr [footer] min-content [bottom]; /* possible add 'main' and 'aside' as names for top line. But might be more confusing than adding clarity */
   border-left: 2px solid black;
   border-right: 2px solid black;
 }
@@ -375,6 +375,7 @@ main, footer {
   background-repeat: no-repeat;
   background-position: right;
   background-size: cover;
+  height: 50vh;
 }
 
 #header-content {
@@ -1137,4 +1138,8 @@ aside.event-detail .question {
   content: "Loading...";
   text-align: center;
   padding-top: calc(3 * var(--line-height));
+}
+
+#map[data-hidden="true"] {
+  display: none;
 }
