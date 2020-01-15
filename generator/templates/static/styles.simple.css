@@ -328,8 +328,13 @@ body {
   border-right: 2px solid black;
 }
 
-main, footer {
+main {
   padding: 1em;
+}
+
+footer {
+  padding: .25em 1em;
+  font-size: var(--font-size-small);
 }
 
 #nav--main {
@@ -375,7 +380,7 @@ main, footer {
   background-repeat: no-repeat;
   background-position: right;
   background-size: cover;
-  height: 50vh;
+  height: 40vh;
 }
 
 #header-content {
