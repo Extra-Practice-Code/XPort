@@ -12,7 +12,11 @@
     </section>
     <ul id="pads_list" class="manage_list">
         {% for folder in folders %}
-            <li><a href="{% url 'manage' folder|addPath:folderPath %}">&#128448; {{ folder }}</a></li>
+            <li><a href="{% url 'manage' folder|addPath:folderPath %}">&#128448; {{ folder }}</a>
+              <section class="actions">
+                <a href="{% url 'folder-rename' folder|addPath:folderPath %}" class="button button--rename">rename</a>
+              </section>
+            </li>
         {% endfor %}
         {% for pad in tree.pads %}
             <li>

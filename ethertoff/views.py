@@ -46,6 +46,11 @@ from generator.management.commands.generate import generate as generateStatic
 
 from . import forms as ethertoffForms
 
+from ethertoff.forms import RenameFolderForm
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+
+
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
     HOME_PAD = settings.HOME_PAD
@@ -296,6 +301,31 @@ def padRename(request, pk):
         'pad-rename.html',
         context
     )
+
+class RenameFolderView(FormView):
+    template_name = 'folder-rename.html'
+    form_class = RenameFolderForm
+    success_url = reverse_lazy('manage')
+
+    def get_initial(self):
+        """Return the initial data to use for forms on this view."""
+        old_name = self.kwargs.get("prefix", "") 
+        old_name = old_name.replace('/', settings.PAD_NAMESPACE_SEPARATOR)
+        old_name = old_name.strip(":")  # avoids leading and trailing "::"
+        self.initial.update({"old_name": old_name})
+        self.initial.update({"new_name": old_name})
+        return super().get_initial()
+
+
+    def form_valid(self, form):
+        old_name = form.cleaned_data.get('old_name')
+        new_name = form.cleaned_data.get('new_name')
+        for pad in Pad.objects.filter(display_slug__startswith=old_name):
+            current_display_slug = pad.display_slug
+            new_display_slug = new_name + current_display_slug[len(old_name):]
+            pad.display_slug = new_display_slug
+            pad.save()
+        return super().form_valid(form)
 
 @login_required(login_url='/etherpad')
 def padPublic(request, pk):
