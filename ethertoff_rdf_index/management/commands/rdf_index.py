@@ -52,16 +52,16 @@ class Command(BaseCommand):
             c = Client()
             path = reverse('pad-read', kwargs={'mode': 'r', 'slug': pad.display_slug})
             response = c.get(path)
-            url = f"http://{domain}{path}"
+            url = "http://{}{}".format(domain, path)
             
-            print(f"parsing {url}")
+            print("parsing {}".format(url))
             if response.status_code == 200:
                 try:
                     app.graph.parse(data=tidy(response.content), format="rdfa", publicID=url)
                 except:
-                    print(f"couldn't parse {url}")
+                    print("couldn't parse {}".format(url))
             else:
-                print(f"failed to parse {url}")
+                print("failed to parse {}".format(url))
 
 
         # for quad in graph.quads():
