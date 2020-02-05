@@ -1161,6 +1161,7 @@ aside.event-detail .question {
   }
 
   div.footnote > ol {
+    margin: 0;
     padding-left: 2em;
   }
 
