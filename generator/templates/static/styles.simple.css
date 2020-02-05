@@ -1059,10 +1059,7 @@ aside.event-detail .question {
   }
 
   #nav--main #site-logo img {
-    max-height: 100%;
-    max-width: initial;
-    width: auto;
-    height: auto;
+    width: 46px;
   }
 
   #nav--main ul {
