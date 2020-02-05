@@ -426,7 +426,7 @@ footer {
 
 .breadcrumbs {
   border-bottom: 2px solid black;
-  margin: -1em -1em 0 -1em;
+  margin: -1em -1em var(--line-height) -1em;
   position: -webkit-sticky;
   position: sticky;
   top: -1em;
@@ -1106,7 +1106,6 @@ aside.event-detail .question {
   
   .breadcrumbs {
     border-bottom: 2px solid black;
-    margin: -1em -1em 0 -1em;
     position: -webkit-sticky;
     position: sticky;
     top: calc(2.5 * var(--line-height));
