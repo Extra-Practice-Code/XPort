@@ -109,11 +109,11 @@ main ul > li::before {
 
 
 a {
-  text-decoration: none;
+  text-decoration: underline;
   color: inherit;
   border: 0px solid currentColor;
   font-size: 1em;
-  border-bottom: 2px solid;
+  /* border-bottom: 2px solid; */
 }
 a:hover {
   color: var(--orange-karel);
@@ -394,11 +394,6 @@ footer {
   font-family: "Junicode-Condensed";
   font-size: 1.7em;
   line-height: 1em;
-}
-
-#header-content p a {
-  border-bottom: none;
-  background: linear-gradient(to bottom, transparent .925em, black .925em, black calc(.925em + 2px), transparent calc(.925em + 2px));
 }
 
 main {
@@ -1064,10 +1059,10 @@ aside.event-detail .question {
   }
 
   #nav--main #site-logo img {
-    max-height: initial;
+    max-height: 100%;
     max-width: initial;
-    width: initial;
-    height: 100%;
+    width: auto;
+    height: auto;
   }
 
   #nav--main ul {
