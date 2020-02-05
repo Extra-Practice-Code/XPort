@@ -427,6 +427,7 @@ footer {
 .breadcrumbs {
   border-bottom: 2px solid black;
   margin: -1em -1em 0 -1em;
+  position: -webkit-sticky;
   position: sticky;
   top: -1em;
   background:white;
@@ -674,6 +675,7 @@ a.tag {
 }
 
 .list-header {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background: white;
@@ -758,6 +760,7 @@ section.audio {
 .inline-navigation {
 	margin: -2em -1.25em 1em -1.25em;
 	padding: .75em 1.25em .5em 1.25em;
+  position: -webkit-sticky;
 	position: sticky;
 	top: -1.25em;
 	background: white;
@@ -913,6 +916,7 @@ aside.event-detail .question {
   padding: .25em .5em;
   font-size: var(--font-size-small);
   border-bottom: 2px solid black;
+  position: -webkit-sticky;
   position: sticky;
   z-index: 1;
   top: 0;
@@ -920,6 +924,7 @@ aside.event-detail .question {
 }
 
 .chrome {
+  position: -webkit-sticky;
 	position: sticky;
 	top: 0;
 	margin-right: -.25em;
@@ -990,16 +995,17 @@ aside.event-detail .question {
     margin-right: .25em;
   }
 
- #nav--main {
+  #nav--main {
    grid-row: top;
    grid-column: left / right;
+   position: -webkit-sticky;
    position: sticky;
    top: 0;
    background: white;
    z-index: 2;
    padding: .5em;
    justify-content: space-between;
- }
+  }
 
   #map {
     height: 35vh;
@@ -1048,9 +1054,14 @@ aside.event-detail .question {
     background: var(--rose-karel);
   }
 
+  #nav--main #site-logo {
+    flex: 0 0 50px;
+  }
+
   #site-logo img {
     max-height: 100%;
     max-width: 100%;
+    width: initial;
   }
 
   #nav--main ul {
@@ -1096,6 +1107,7 @@ aside.event-detail .question {
   .breadcrumbs {
     border-bottom: 2px solid black;
     margin: -1em -1em 0 -1em;
+    position: -webkit-sticky;
     position: sticky;
     top: calc(2.5 * var(--line-height));
     padding: 0;
@@ -1136,6 +1148,26 @@ aside.event-detail .question {
     grid-auto-columns: minmax(300px, 1fr);
     grid-template-columns: initial;
   }
+
+  .breadcrumbs ul {
+    display: flex;
+    width: calc(100vw - 2em);
+  }
+
+  .breadcrumbs li {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  div.footnote > ol {
+    padding-left: 2em;
+  }
+
+  div.footnote > ol > li {
+    padding: calc(0.5 * var(--line-height)) 0;
+    margin-left: calc(-.5 * var(--line-height));
+  }
 }
 
 [data-loading="true"]:before {
@@ -1147,4 +1179,8 @@ aside.event-detail .question {
 
 #map[data-hidden="true"] {
   display: none;
+}
+
+.autolink {
+	word-break: break-all;
 }

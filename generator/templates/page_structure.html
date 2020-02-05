@@ -58,6 +58,18 @@
     })();
 
     (function () {
+      // Find links where href is similar to label and 
+      // allow to break everywhere inside
+      var links = document.querySelectorAll('a');
+
+      for (var i = 0; i < links.length; i++) {
+        if (links[i].href == links[i].innerText) {
+          links[i].classList.add('autolink');
+        }
+      }
+    })();
+
+    (function () {
       document.querySelector('#toggle--menu')
         .addEventListener('click', function () {
           document.body.classList.toggle('menu--expanded');
