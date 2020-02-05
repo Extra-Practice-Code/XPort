@@ -396,6 +396,11 @@ footer {
   line-height: 1em;
 }
 
+#header-content p a {
+  border-bottom: none;
+  background: linear-gradient(to bottom, transparent .925em, black .925em, black calc(.925em + 2px), transparent calc(.925em + 2px));
+}
+
 main {
   grid-row: top / footer;
   grid-column: content-start /  content-end;
@@ -1058,10 +1063,11 @@ aside.event-detail .question {
     flex: 0 0 50px;
   }
 
-  #site-logo img {
-    max-height: 100%;
-    max-width: 100%;
+  #nav--main #site-logo img {
+    max-height: initial;
+    max-width: initial;
     width: initial;
+    height: 100%;
   }
 
   #nav--main ul {
