@@ -8,6 +8,9 @@ class ContactForm(forms.Form):
     subject      = forms.CharField(max_length=100, label=_("Subject"))
     message      = forms.CharField(widget=forms.Textarea(), label=_("Message"))
 
+class RenameFolderForm(forms.Form):
+    old_name = forms.CharField(label=_("Old name"), required=False)
+    new_name = forms.CharField(label=_("New name"), required=False)
 
 class PadRename(forms.Form):
     pk = forms.HiddenInput()

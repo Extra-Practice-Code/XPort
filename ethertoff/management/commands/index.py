@@ -5,7 +5,11 @@
 import os
 import json
 from urllib import error
-from time import clock
+try:
+    from time import clock
+except ImportError:
+    # Python >= 3.8
+    from time import perf_counter as clock
 
 # PyPi imports
 
