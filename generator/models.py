@@ -542,7 +542,7 @@ def parseTimecodes (content):
 
 def parseShortTimecodes (content):
   # return re.sub(r'(?<=[\s|^])\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\]', insertTimecode, content)
-  return re.sub(r'(?<=^|\s)\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?=\s|$)', insertTimecode, content)
+  return re.sub(r'(?:(?<=\s)|(?<=^))\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?:(?=\s)|(?=$))', insertTimecode, content)
 
 def expandTags (content):
   return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[tag: \\1]]', content)
