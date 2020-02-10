@@ -826,3 +826,26 @@ figcaption {
 main > :last-child {
 	margin-bottom: calc(3 * var(--line-height));
 }
+
+.mc-field-group {
+	margin-bottom: calc(.5 * var(--line-height));
+}
+
+input {
+	font-size: inherit;
+	font-family: inherit;
+	padding: calc(.1 * var(--line-height));
+}
+
+label {
+	width: 8em;
+	display: inline-block;
+}
+
+input[type="text"], input[type="email"] {
+	width: 17em;
+}
+
+fieldset {
+	border: none;
+}
