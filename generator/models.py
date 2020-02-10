@@ -15,6 +15,8 @@ from generator.settings import SITE_URL
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 
+
+
 """
   - Alternatively: make and register models before parsing their fields.
     Then unknown resources / objects are easier to spot.
@@ -539,7 +541,8 @@ def parseTimecodes (content):
   return re.sub(r'\[\[t(?:imecode)?\s*:\s*([\d:]+)\]\]', insertTimecode, content)
 
 def parseShortTimecodes (content):
-  return re.sub(r'\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\]', insertTimecode, content)
+  # return re.sub(r'(?<=[\s|^])\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\]', insertTimecode, content)
+  return re.sub(r'(?<=^|\s)\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?=\s|$)', insertTimecode, content)
 
 def expandTags (content):
   return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[tag: \\1]]', content)

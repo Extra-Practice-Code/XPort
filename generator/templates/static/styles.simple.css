@@ -1182,3 +1182,26 @@ aside.event-detail .question {
 .autolink {
 	word-break: break-all;
 }
+
+.mc-field-group {
+	margin-bottom: calc(.5 * var(--line-height));
+}
+
+input {
+	font-size: inherit;
+	font-family: inherit;
+	padding: calc(.1 * var(--line-height));
+}
+
+label {
+	width: 8em;
+	display: inline-block;
+}
+
+input[type="text"], input[type="email"] {
+	width: 17em;
+}
+
+fieldset {
+	border: none;
+}
