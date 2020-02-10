@@ -69,6 +69,11 @@
       }
     })();
 
+    document.getElementById('map').addEventListener('click', function () {
+      var body = document.body;
+      body.classList.toggle('map--expanded');
+    });
+
     (function () {
       document.querySelector('#toggle--menu')
         .addEventListener('click', function () {

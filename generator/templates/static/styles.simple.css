@@ -1179,6 +1179,30 @@ aside.event-detail .question {
   display: none;
 }
 
+#map {
+  cursor: -webkit-zoom-in;
+  cursor: zoom-in;
+}
+
+.map--expanded nav, 
+.map--expanded main, 
+.map--expanded aside,
+.map--expanded section {
+  display: none;
+}  
+
+.map--expanded #map {
+  display: block;
+  background-position: center center;
+  background-size: contain;
+  background-color: #ffdbdb;
+  cursor: -webkit-zoom-out;
+  cursor: zoom-out;
+  grid-column: left / right;
+  grid-row: top / footer;
+  height: initial;
+}
+
 .autolink {
 	word-break: break-all;
 }
