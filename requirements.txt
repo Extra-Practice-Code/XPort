@@ -18,3 +18,5 @@ six>=1.11.0
 South>=1.0.2
 html5lib
 mdx_semanticdata
+git+https://github.com/aleray/aa.sniff.git
+rdflib_sqlalchemy
