@@ -226,6 +226,7 @@ h3 {
 
 .produser a {
   border: none;
+  text-decoration: none;
 }
 
 .produser--item {
