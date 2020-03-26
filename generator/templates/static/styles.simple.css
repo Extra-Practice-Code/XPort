@@ -544,7 +544,7 @@ video,
 figure.full {
   max-width: 47.5em;
   width: 100%;
-  /* margin-top: .5em; */
+  margin-top: calc(0.25 * var(--line-height));
   /* margin-bottom: .5em; */
 }
 
@@ -717,7 +717,11 @@ section.audio {
 	content: '';
 	display: block;
 } */
-
+.taglist li a,
+a.tag {
+  text-decoration: none;
+}
+.taglist li a,
 .tag {
   border-width: 0px 1px 1px 0px;
 	border-style: dotted;
@@ -725,6 +729,8 @@ section.audio {
 	padding: 0 .15em;
 	border-left: 0px;
 	border-top: 0px;
+  background: var(--rose-pale);
+
 }
 
 .tag:target {
