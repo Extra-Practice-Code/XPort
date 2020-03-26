@@ -501,6 +501,12 @@ ul.simplelist, ul.simplelist > li {
 ul.simplelist > li:before {
   content: "";
   margin: 0;
+  content: '';
+  background: url(images/jump-arrow-blue.svg) no-repeat;
+  float: left;
+  height: 10px;
+  width: 45px;
+  padding-bottom: 12px;
 }
 
 ul.inlinelist, ul.inlinelist > li {
