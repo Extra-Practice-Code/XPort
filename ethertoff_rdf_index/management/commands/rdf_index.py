@@ -57,7 +57,7 @@ class Command(BaseCommand):
             print("parsing {}".format(url))
             if response.status_code == 200:
                 try:
-                    app.graph.parse(data=tidy(response.content), format="rdfa", publicID=url)
+                    app.graph.parse(data=tidy(response.content), format="rdfa", publicID='//{}{}'.format(domain, path))
                 except:
                     print("couldn't parse {}".format(url))
             else:
