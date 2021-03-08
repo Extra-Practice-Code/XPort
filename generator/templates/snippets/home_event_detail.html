@@ -18,6 +18,11 @@
     <a href="{{ produser.link }}">{{ produser }}</a>
     {% endfor %}
   </p>
+  <p class="event-infos">
+    {% for link, source, tag in event.tags|link_iterator %}
+    <a href="{{ tag.link }}">{{ tag }}</a>
+    {% endfor %}
+  </p>
   {% if event.programmeItems %}
     <p><a href="{{ event.link }}">See programme</a></p>
   {% endif %}

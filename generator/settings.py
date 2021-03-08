@@ -3,6 +3,7 @@ MENU_ITEMS = [
   ('Timeline', 'index.html'),
   ('Research trajectories', 'trajectories.html'),
   ('Produsers', 'produsers.html' ),
+  ('Reflections', 'trajectories.html#reflections'),
 #   ('Bibliography', 'bibliography.html' ),
 #   ('Related Projects', 'external-projects.html'),
   ('Tags', 'tags.html' ),
