@@ -15,7 +15,7 @@
   {% endfor %}
   <p class="event-infos">
     {% for link, source, produser in event.produser|link_iterator %}
-    <a href="{{ produser.link }}">{{ produser }}</a>
+    <a href="{{ produser.link }}" class="produser">{{ produser }}</a>
     {% endfor %}
   </p>
   <p class="event-infos">
