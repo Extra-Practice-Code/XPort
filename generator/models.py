@@ -393,21 +393,22 @@ def parseReferenceMetadata (raw):
   # print('Raw metadata ', raw)
   if ':' in raw:
     m = re.match(r'(.+)(?:\|?([^:\|]+))?$', raw)
-    raw_meta = m.group(1)
-    label = m.group(2)
+    if m:
+      raw_meta = m.group(1)
+      label = m.group(2)
 
-    for m in re.finditer(r'([\w\._-]+):([^\|]+)', raw_meta):
-      key = m.group(1).strip()
-      value = m.group(2).strip()
+      for m in re.finditer(r'([\w\._-]+):([^\|]+)', raw_meta):
+        key = m.group(1).strip()
+        value = m.group(2).strip()
 
-      if key not in data:
-        data[key] = []
+        if key not in data:
+          data[key] = []
+        
+        data[key].append(value)
       
-      data[key].append(value)
-    
-    return (data, label)
-  else:
-    return (None, raw.strip())
+      return (data, label)
+  
+  return (None, raw.strip())
 
 
 def resolveContentType(attr, model):
