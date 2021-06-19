@@ -50,6 +50,8 @@ from ethertoff.forms import RenameFolderForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 
+from django.views.decorators.clickjacking import xframe_options_exempt
+
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
@@ -523,6 +525,8 @@ def pad_write(request, pad):
 def xhtml(request, slug):
     return pad_read(request, "r", slug + '.md')
 
+
+@xframe_options_exempt
 def pad_read(request, mode="r", slug=None):
     """Read only pad
     """
