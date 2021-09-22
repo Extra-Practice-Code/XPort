@@ -9,6 +9,9 @@ LINK_DIRECTION_IN = 'in'
 def display_field (field):
   return '<dd class="attribute">{label}</dd>'.format(label=str(field))
 
+def display_url (field):
+  return '<dd class="attribute"><a href="{label}">{label}</a></dd>'.format(label=str(field))
+
 def display_empty ():
   return '<dd class="attribute empty-attribute">not set</dd>'.format()
 
@@ -86,6 +89,8 @@ def make_index (models):
                 buff += display_link(link)
             elif is_link(field) or is_reverse_link(field):
               buff += display_link(field.value)
+            elif attr  == 'link':
+              buff += display_url(field)
             else:
               buff += display_field(field)
           else:

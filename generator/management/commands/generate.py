@@ -101,6 +101,11 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'demonstrations'))
   os.mkdir(os.path.join(outputdir, 'protocols'))
   os.mkdir(os.path.join(outputdir, 'themes'))
+  os.mkdir(os.path.join(outputdir, 'locations'))
+  os.mkdir(os.path.join(outputdir, 'tools'))
+  os.mkdir(os.path.join(outputdir, 'shores'))
+  os.mkdir(os.path.join(outputdir, 'images'))
+  os.mkdir(os.path.join(outputdir, 'audio'))
   
   models = parse_pads()
 
@@ -111,6 +116,12 @@ def generate ():
   demonstrations = collectionFor('demonstration')
   conversations = collectionFor('conversation')
   themes = collectionFor('theme')
+  elements = collectionFor('element')
+  locations = collectionFor('location')
+  tools = collectionFor('tool')
+  shores = collectionFor('shore')
+  images = collectionFor('image')
+  audios = collectionFor('audio')
   
   # events = collectionFor('event')
   # pages = collectionFor('page')
@@ -223,6 +234,9 @@ def generate ():
   # #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
 
+  generate_single_pages(conversations.models, 'conversation.html', outputdir, lambda conversation: { 'conversation': conversation })
+  generate_single_pages(locations.models, 'location.html', outputdir, lambda location: { 'location': location })
+
   # generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
   # generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
   # generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
@@ -235,10 +249,23 @@ def generate ():
   # output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
   # output(os.path.join(outputdir, 'index.old.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
-  # output(os.path.join(outputdir, 'index.html'), 'index.new.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  output(os.path.join(outputdir, 'index.html'), 'index.html', { 
+    'protocols': protocols.models,
+    'demonstrations': demonstrations.models,
+    'conversations': conversations.models,
+    'themes': themes.models,
+    'elements': elements.models,
+    'locations': locations.models,
+    'tools': tools.models,
+    'shores': shores.models,
+    'images': images.models,
+    'audios': audios.models
+   })
   
-  # with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
-  #   w.write(make_index(models))
+  print(conversations.models[0].link)
+
+  with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
+    w.write(make_index(models))
 
 
   # info('Making backup of previous version, putting new version in place')

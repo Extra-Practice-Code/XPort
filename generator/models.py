@@ -171,9 +171,9 @@ class LinkField(object):
   def set (self, target, inline=False):
     if type(target) is list:
       self.set(target[0], inline)
-
-    key = keyFilter(target)
-    self.value = Link(key, self.contentType, inline, label=target)
+    else:
+      key = keyFilter(target)
+      self.value = Link(key, self.contentType, inline, label=target)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
@@ -841,6 +841,7 @@ class Location (Model):
   contentType = 'location'
   keyField = 'location'
   labelField = 'location'
+  prefix = 'locations'
 
   def _metadataFields (self):
     return {
@@ -862,6 +863,7 @@ class Protocol (Model):
   contentType = 'protocol'
   keyField = 'protocol'
   labelField = 'protocol'
+  prefix = 'protocols'
 
   def _metadataFields (self):
     return {
@@ -877,6 +879,7 @@ class Conversation (Model):
   contentType = 'conversation'
   keyField = 'conversation'
   labelField = 'conversation'
+  prefix = 'conversations'
 
   def _metadataFields (self):
     return {
@@ -895,6 +898,7 @@ class Demonstration (Model):
   contentType = 'demonstration'
   keyField = 'demonstration'
   labelField = 'demonstration'
+  prefix = 'demonstrations'
 
   def _metadataFields (self):
     return {

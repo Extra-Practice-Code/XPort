@@ -9,7 +9,11 @@
 </head>
 
 <body>
-  {% for conversation in conversations %}
-    <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+  <h1>{{ location }}</h1>
+  <h2>Conversations</h2>
+  <ul>
+  {% for conversation in location.conversations %}
+    <li><a href="{{ conversation.target.link }}">{{ conversation }}</a></li>
   {% endfor %}
+  </ul>
 </body>
