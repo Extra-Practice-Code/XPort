@@ -22,7 +22,7 @@ from generator.templatetags.generator_utils import link_iterator, link_target_it
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
 
-FIELD_DATE_FORMAT = '%d-%m-%Y'
+FIELD_DATE_FORMAT = '%d.%m.%Y'
 FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
 FIELD_TIME_FORMAT = '%H:%M'
 
@@ -97,170 +97,168 @@ def generate ():
   shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
 
   print('Parsing pads')
-  os.mkdir(os.path.join(outputdir, 'produsers'))
-  os.mkdir(os.path.join(outputdir, 'activities'))
-  os.mkdir(os.path.join(outputdir, 'pages'))
-  os.mkdir(os.path.join(outputdir, 'tags'))
-  os.mkdir(os.path.join(outputdir, 'notes'))
-  os.mkdir(os.path.join(outputdir, 'questions'))
-  # os.mkdir(os.path.join(outputdir, 'trajectories'))
-  os.mkdir(os.path.join(outputdir, 'reflections'))
-  os.mkdir(os.path.join(outputdir, 'api'))
-  os.mkdir(os.path.join(outputdir, 'api', 'activities'))
+  os.mkdir(os.path.join(outputdir, 'conversations'))
+  os.mkdir(os.path.join(outputdir, 'demonstrations'))
+  os.mkdir(os.path.join(outputdir, 'protocols'))
+  os.mkdir(os.path.join(outputdir, 'themes'))
   
   models = parse_pads()
 
   print('Read pads')
   print('Generating output')
 
-  produsers = collectionFor('produser')
-  events = collectionFor('event')
-  pages = collectionFor('page')
-  tags = collectionFor('tag')
-  bibliography = collectionFor('bibliography')
-  externalProjects = collectionFor('external-project')
-  notes = collectionFor('notes')
-  trajectories = collectionFor('trajectory')
-  questions = collectionFor('question')
-  reflections = collectionFor('reflection')
-
-  def getProduserSortKey (produser):
-    attr = try_attributes(produser, ['sortname', 'name', 'produser'])
-
-    if attr and attr.value:
-      return attr.value.lower()
-    else:
-      return None
-
-  def getTrajectorySortKey (trajectory):
-    if trajectory.produser.resolved:
-      return getProduserSortKey(trajectory.produser.target)
-    else:
-      return ''
-
-  def getLabelAsSortKey (model):
-    label = getattr(model, model.labelField)
-
-    if label and label.value:
-      return label.value.lower()
-    else:
-      return ''
-
-  def makeGroupSorter (order):
-    def sorter (line):
-      sortKey = line[0]
-      return order.index(sortKey) if sortKey in order else inf
-
-    return sorter
-
-  def makeAttributeSorter(attributes):
-    def sorter (model):
-      return str(try_attributes(model, attributes)).lower()
-
-    return sorter
-
-  ## Produsers
-  ## First 
-  produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
-  sorted_produsers = sorted(produsers.models, key=getProduserSortKey)
-  grouped_produsers = sorted(regroup(sorted_produsers, 'role'), key=makeGroupSorter(produser_role_sorting))
-
-  output(
-    os.path.join(outputdir, 'produsers.html'), 
-    'produsers.html', 
-    { 
-      'produsers': sorted(produsers.models, key=makeAttributeSorter(['sortname', 'name', 'produser', 'key'])), 
-      'grouped_produsers': grouped_produsers })
+  protocols = collectionFor('protocol')
+  demonstrations = collectionFor('demonstration')
+  conversations = collectionFor('conversation')
+  themes = collectionFor('theme')
   
-  # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
+  # events = collectionFor('event')
+  # pages = collectionFor('page')
+  # tags = collectionFor('tag')
+  # bibliography = collectionFor('bibliography')
+  # externalProjects = collectionFor('external-project')
+  # notes = collectionFor('notes')
+  # trajectories = collectionFor('trajectory')
+  # questions = collectionFor('question')
+  # reflections = collectionFor('reflection')
+
+  # def getProduserSortKey (produser):
+  #   attr = try_attributes(produser, ['sortname', 'name', 'produser'])
+
+  #   if attr and attr.value:
+  #     return attr.value.lower()
+  #   else:
+  #     return None
+
+  # def getTrajectorySortKey (trajectory):
+  #   if trajectory.produser.resolved:
+  #     return getProduserSortKey(trajectory.produser.target)
+  #   else:
+  #     return ''
+
+  # def getLabelAsSortKey (model):
+  #   label = getattr(model, model.labelField)
+
+  #   if label and label.value:
+  #     return label.value.lower()
+  #   else:
+  #     return ''
+
+  # def makeGroupSorter (order):
+  #   def sorter (line):
+  #     sortKey = line[0]
+  #     return order.index(sortKey) if sortKey in order else inf
+
+  #   return sorter
+
+  # def makeAttributeSorter(attributes):
+  #   def sorter (model):
+  #     return str(try_attributes(model, attributes)).lower()
+
+  #   return sorter
+
+  # ## Produsers
+  # ## First 
+  # produser_role_sorting = ['artist', 'co-producer', 'other professional', 'team', 'partner']
+  # sorted_produsers = sorted(produsers.models, key=getProduserSortKey)
+  # grouped_produsers = sorted(regroup(sorted_produsers, 'role'), key=makeGroupSorter(produser_role_sorting))
+
+  # output(
+  #   os.path.join(outputdir, 'produsers.html'), 
+  #   'produsers.html', 
+  #   { 
+  #     'produsers': sorted(produsers.models, key=makeAttributeSorter(['sortname', 'name', 'produser', 'key'])), 
+  #     'grouped_produsers': grouped_produsers })
   
-  ## Tags
-  sorted_tags = sorted(tags.models, key=lambda m: re.subn(r'\W', '', str(m))[0].lower())
-  grouped_tags = regroup(sorted_tags, key=lambda m: re.subn(r'\W', '', str(m))[0].lower()[0])
-  output(
-    os.path.join(outputdir, 'tags.html'), 
-    'tags.html', 
-    { 'tags': sorted_tags, 'grouped_tags': grouped_tags })
+  # # output(os.path.join(outputdir, 'produsers.layout.html'), 'produsers.layout.html', { 'produsers': sorted(produsers.models, key=lambda r: str(r.key)), 'grouped_produsers': grouped_produsers  })
   
-  ## Bibliography
-  output(
-    os.path.join(outputdir, 'bibliography.html'),
-    'bibliography.html', 
-    { 'bibliography': sorted(bibliography.models, key=getLabelAsSortKey) })
+  # ## Tags
+  # sorted_tags = sorted(tags.models, key=lambda m: re.subn(r'\W', '', str(m))[0].lower())
+  # grouped_tags = regroup(sorted_tags, key=lambda m: re.subn(r'\W', '', str(m))[0].lower()[0])
+  # output(
+  #   os.path.join(outputdir, 'tags.html'), 
+  #   'tags.html', 
+  #   { 'tags': sorted_tags, 'grouped_tags': grouped_tags })
   
-  ## External projects
-  output(
-    os.path.join(outputdir, 'external-projects.html'),
-    'external-projects.html',
-    { 'externalProjects': sorted(externalProjects.models, key=getLabelAsSortKey) })
+  # ## Bibliography
+  # output(
+  #   os.path.join(outputdir, 'bibliography.html'),
+  #   'bibliography.html', 
+  #   { 'bibliography': sorted(bibliography.models, key=getLabelAsSortKey) })
   
-  ## Trajectories
-  trajectory_category_sorting = ['artisttrajectory', 'designertrajectory', 'reflection']
-  sorted_trajectories = sorted(trajectories.models, key=getTrajectorySortKey)
-  grouped_trajectories = sorted(regroup(sorted_trajectories, 'category'), key=makeGroupSorter(trajectory_category_sorting))
-  output(
-    os.path.join(outputdir, 'trajectories.html'),
-    'trajectories.html', 
-    {
-      'trajectories': sorted_trajectories,
-      'grouped_trajectories': grouped_trajectories,
-      'reflections': sorted(reflections.models, key=getLabelAsSortKey)
-    })
-
-  # for trajectory in trajectories.models:
-  #   if trajectory.title.value:
-  #     output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', { 'trajectory': trajectory })
-
-  ## Questions
-  output(
-    os.path.join(outputdir, 'questions.html'),
-    'questions.html',
-    { 'questions': questions.models }
-  )
-
-  # for produser in produsers.models:
-  #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
-
-  # for event in events.models:
-  #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
-
-
-  generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
-  generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
-  generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
-  generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
-  generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
-  generate_single_pages(events.models, 'snippets/home_event_detail.html', os.path.join(outputdir, 'api'), lambda event: { 'event': event })
-  generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
-  generate_single_pages(reflections.models, 'reflection.html', outputdir, lambda reflection: { 'reflection': reflection })
-
-  output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  # ## External projects
+  # output(
+  #   os.path.join(outputdir, 'external-projects.html'),
+  #   'external-projects.html',
+  #   { 'externalProjects': sorted(externalProjects.models, key=getLabelAsSortKey) })
   
-  output(os.path.join(outputdir, 'index.old.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
-  output(os.path.join(outputdir, 'index.html'), 'index.new.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  # ## Trajectories
+  # trajectory_category_sorting = ['artisttrajectory', 'designertrajectory', 'reflection']
+  # sorted_trajectories = sorted(trajectories.models, key=getTrajectorySortKey)
+  # grouped_trajectories = sorted(regroup(sorted_trajectories, 'category'), key=makeGroupSorter(trajectory_category_sorting))
+  # output(
+  #   os.path.join(outputdir, 'trajectories.html'),
+  #   'trajectories.html', 
+  #   {
+  #     'trajectories': sorted_trajectories,
+  #     'grouped_trajectories': grouped_trajectories,
+  #     'reflections': sorted(reflections.models, key=getLabelAsSortKey)
+  #   })
+
+  # # for trajectory in trajectories.models:
+  # #   if trajectory.title.value:
+  # #     output(os.path.join(outputdir, trajectory.prefix, '{}.html'.format(keyFilter(trajectory.title))), 'trajectory.html', { 'trajectory': trajectory })
+
+  # ## Questions
+  # output(
+  #   os.path.join(outputdir, 'questions.html'),
+  #   'questions.html',
+  #   { 'questions': questions.models }
+  # )
+
+  # # for produser in produsers.models:
+  # #   output(os.path.join(outputdir, produser.prefix, '{}.html'.format(produser.key)), 'produser.html', { 'produser': produser })
+
+  # # for event in events.models:
+  # #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
+
+
+  # generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
+  # generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
+  # generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
+  # generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
+  # generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
+  # generate_single_pages(events.models, 'snippets/home_event_detail.html', os.path.join(outputdir, 'api'), lambda event: { 'event': event })
+  # generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
+  # generate_single_pages(reflections.models, 'reflection.html', outputdir, lambda reflection: { 'reflection': reflection })
+
+  # output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
-  with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
-    w.write(make_index(models))
+  # output(os.path.join(outputdir, 'index.old.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  # output(os.path.join(outputdir, 'index.html'), 'index.new.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
+  
+  # with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
+  #   w.write(make_index(models))
 
 
-  info('Making backup of previous version, putting new version in place')
+  # info('Making backup of previous version, putting new version in place')
 
-  if os.path.exists(outputdir):
-    # Test whether there is an existing version of the site
-    if os.path.exists(finaldir):
-      # Removing old backup if it exists
-      if os.path.exists(backupdir):
-        shutil.rmtree(backupdir)
+  # if os.path.exists(outputdir):
+  #   # Test whether there is an existing version of the site
+  #   if os.path.exists(finaldir):
+  #     # Removing old backup if it exists
+  #     if os.path.exists(backupdir):
+  #       shutil.rmtree(backupdir)
       
-      # Put new backup in place
-      shutil.move(finaldir, backupdir)
+  #     # Put new backup in place
+  #     shutil.move(finaldir, backupdir)
     
-    # Put new version of the site in place
-    shutil.move(outputdir, finaldir)
+  #   # Put new version of the site in place
+  #   shutil.move(outputdir, finaldir)
 
-  if not settings.DEBUG:
-    print('Collecting static')
-    call_command('collectstatic', interactive=False)
+  # if not settings.DEBUG:
+  #   print('Collecting static')
+  #   call_command('collectstatic', interactive=False)
 
   print('Done')
 

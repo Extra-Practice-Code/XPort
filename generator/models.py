@@ -323,6 +323,9 @@ def is_reverse_single_link (obj):
 def is_reverse_multi_link (obj):
   return isinstance(obj, (ReverseMultiLinkField,))
 
+def linkReverse(contentType, reverseName):
+  return LinkField(contentType=contentType, reverse=ReverseLinkField(reverseName))
+
 def linkMultiReverse(contentType, reverseName):
   return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
 
@@ -778,221 +781,16 @@ class InstantiatingCollection (Collection):
       else:
         return self.instantiate(key=key, label=[key])
 
+class Image (Model):
+  contentType = 'image'
+  keyField = 'image'
+  labelField = 'image'
 
-class Event (Model):
-  contentType = 'event'
-  prefix = 'activities'
-  labelField = 'title'
- 
   def _metadataFields (self):
     return {
-      'date': fields.Single(fields.DateField()),
-      'end_date': fields.Single(fields.DateField()),
-      'time': fields.Single(fields.TimeField()),
-      'produser': multiLinkMultiReverse('produser', 'events'),
-      'participant': multiLinkMultiReverse('produser', 'events_participant'),
-      'event': fields.Single(fields.StringField()),
-      'title': fields.Single(fields.InlineMarkdownField()),
-      'summary': fields.Single(fields.MarkdownField()),
-      'location': fields.Single(fields.StringField()),
-      'address': fields.StringField(),
-      'tags': multiLinkMultiReverse('tag', 'events', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'events'),
       'image': fields.Single(fields.StringField()),
-    }
-
-class ProgrammeItem (Model):
-  contentType = 'programme-item'
-  labelField = 'title'
-
-  def link (self):
-    if is_multi_link(self.event) or is_reverse_multi_link(self.event):
-      return self.event.targets[0].link + '#' + self.key
-    elif is_single_link(self.event) or is_reverse_single_link(self.event):
-      return self.event.target.link + '#' + self.key
-    else:
-      return '#broken'
-
-  def _metadataFields (self):
-    return {
-      'date': fields.Single(fields.DateField()),
-      'end_date': fields.Single(fields.DateField()),
-      'time': fields.Single(fields.TimeField()),
-      'produser': multiLinkMultiReverse('produser', 'events'),
-      'participant': multiLinkMultiReverse('produser', 'events_participant'),
-      'event': linkMultiReverse('event', 'programmeItems'),
-      'title': fields.Single(fields.InlineMarkdownField()),
-      'summary': fields.Single(fields.MarkdownField()),
-      'location': fields.Single(fields.StringField()),
-      'address': fields.StringField(),
-      'tags': multiLinkMultiReverse('tag', 'events', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'events'),
-    }
-
-class Produser (Model):
-  contentType = 'produser'
-  keyField = 'produser'
-  labelField = 'name'
-  prefix = 'produsers'
-
-  def _metadataFields (self):
-    return {
-      'role': fields.Single(fields.StringField()),
-      'name': fields.Single(fields.InlineMarkdownField()),
-      'sortname': fields.Single(fields.StringField()),
-      'produser': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'produsers', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'produsers'),
-    }
-
-  @property
-  def content_without_name (self):
-    name = self.name.value if self.name.value else self.produser.value
-    return mark_safe(re.sub('^<p>' + name, '<p>', self.content, re.I))
-
-class Trajectory (Model):
-  contentType = 'trajectory'
-  prefix = 'trajectories'
-
-  def _metadataFields (self):
-    return {
-      'produser': linkMultiReverse('produser', 'trajectories'),
-      'category': fields.Single(fields.StringField(['artisttrajectory'])),
-      'tags': multiLinkMultiReverse('tag', 'trajectories', unique=False),
-      'summary': fields.Single(fields.MarkdownField()),
-      'title': fields.Single(fields.StringField())
-    }
-
-  @property
-  def link (self):
-    # if self.title.value:
-    #   return os.path.join(SITE_URL, self.prefix, '{}.html'.format(keyFilter(self.title.value)))
-    # else:
-    if self.produser.resolved:
-      return self.produser.target.link
-    else:
-      return None
-
-class Reflection (Model):
-  contentType = 'reflection'
-  prefix = 'reflections'
-
-  def _metadataFields (self):
-    return {
-      'produser': multiLinkMultiReverse('produser', 'reflections'),
-      'tags': multiLinkMultiReverse('tag', 'reflections', unique=False),
-      'summary': fields.Single(fields.MarkdownField()),
-      'title': fields.Single(fields.StringField())
-    }
-
-class Pad (Model):
-  contentType = 'pad'
-
-  def _metadataFields (self):
-    return {
-      'produser': multiLinkMultiReverse('produser', 'pads'),
-      'event': linkMultiReverse('event', 'pads'),
-      'trajectory': linkMultiReverse('trajectory', 'pads'),
-      'tags': multiLinkMultiReverse('tag', 'pads', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'pads'),
-    }
-
-class Note (Model):
-  contentType = 'note'
-  labelField = 'title'
-  prefix = 'notes'
-
-  def _metadataFields (self):
-    return {
-      'produser': multiLinkMultiReverse('produser', 'notes'),
-      'participant': multiLinkMultiReverse('produser', 'notes_participant'),
-      'event': linkMultiReverse('event', 'notes'),
-      'programme-item': linkMultiReverse('programme-item', 'notes'),
-      'tags': multiLinkMultiReverse('tag', 'notes', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'notes'),
-      'title': fields.Single(fields.InlineMarkdownField()),
-    }
-
-class Page (Model):
-  contentType = 'page'
-  keyField = 'title'
-  labelField = 'title'
-  prefix = 'pages'
-
-  def _metadataFields (self):
-    return {
-      'title': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'pages', unique=False),
-      'bibliography': multiLinkMultiReverse('bibliography', 'pages'),
-    }
-
-class Tag (Model):
-  contentType = 'tag'
-  keyField = 'tag'
-  labelField = 'tag'
-  prefix = 'tags'
-
-  @property
-  def link_count (self):
-    counter = 0
-    
-    # debug(self.metadata)
-    # Loop through all fields, if they are multilinks or multireverselinks
-    # increase the counter with their length
-    # if they are simple links, which are resolved and not broken increase
-    # the counter as well
-    for fieldname in self.metadata:
-      field = self.metadata[fieldname]
-      if is_multi_link(field) or is_reverse_multi_link(field):
-        counter += len(field.value)
-      elif (is_link(field) or is_reverse_link(field)) \
-        and field.resolved and not field.broken:
-        counter += 1
-
-    return counter
-
-  def _metadataFields (self):
-    return {
-      'tag': fields.Single(fields.StringField())
-    }
-
-class Bibliography (Model):
-  contentType = 'bibliography'
-  keyField = 'bibliography'
-  labelField = 'bibliography'
-
-  def _metadataFields (self):
-    return {
-      'bibliography': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'bibliography', unique=False),
-      'produser': multiLinkMultiReverse('produser', 'bibliography')
-    }
-
-class Video (Model):
-  contentType = 'video'
-  keyField = 'video'
-  labelField = 'video'
-
-  @property
-  def vimeoId (self):
-    # Find more elegant solution?
-    video = self.video.value
-    if video:
-      m = VIMEO_VIDEO_URL_PATTERN.match(video)
-
-      if m:
-        return m.group(1)
-    
-    return None
-
-  def _metadataFields (self):
-    return {
-      'video': fields.Single(fields.StringField()),
-      'type': fields.Single(fields.StringField(['video/mp4'])),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'video', unique=False),
-      'produser': multiLinkMultiReverse('produser', 'video'),
     }
 
 class Audio (Model):
@@ -1005,59 +803,112 @@ class Audio (Model):
       'audio': fields.Single(fields.StringField()),
       'type': fields.Single(fields.StringField(['audio/mp3'])),
       'title': fields.Single(fields.InlineMarkdownField()),
-      'caption': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'audio', unique=False),
-      'produser': multiLinkMultiReverse('produser', 'audio'),
+      'caption': fields.Single(fields.InlineMarkdownField())
     }
 
-class Image (Model):
-  contentType = 'image'
-  keyField = 'image'
-  labelField = 'image'
+class Shore (Model):
+  contentType = 'shore'
+  keyField = 'shore'
+  labelField = 'shore'
 
   def _metadataFields (self):
     return {
-      'image': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'image', unique=False),
-      'produser': multiLinkMultiReverse('produser', 'image'),
-      'title': fields.Single(fields.InlineMarkdownField()),
-      'caption': fields.Single(fields.InlineMarkdownField()),
+      'shore': fields.Single(fields.StringField()),
+      'image': linkReverse('image', 'shore'),
     }
 
-class ExternalProject (Model):
-  contentType = 'external-project'
-  keyField = 'project'
-  labelField = 'project'
+class Element (Model):
+  contentType = 'element'
+  keyField = 'element'
+  labelField = 'element'
 
   def _metadataFields (self):
     return {
-      'project': fields.Single(fields.StringField()),
-      'link': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'externalProject', unique=False),
+      'element': fields.Single(fields.StringField()),
     }
 
-class Text (Model):
-  contentType = 'text'
-  keyField = 'title'
-  labelField = 'title'
+class Tool (Model):
+  contentType = 'tool'
+  keyField = 'tool'
+  labelField = 'tool'
 
   def _metadataFields (self):
     return {
-      'title': fields.Single(fields.InlineMarkdownField()),
-      'tags': multiLinkMultiReverse('tag', 'image', unique=False),
-      'produser': multiLinkMultiReverse('produser', 'text'),
-      'event': multiLinkMultiReverse('event', 'text')
+      'tool': fields.Single(fields.StringField()),
     }
 
-class Question (Model):
-  contentType = 'question'
-  keyField = 'question'
-  labelField = 'question'
+class Location (Model):
+  contentType = 'location'
+  keyField = 'location'
+  labelField = 'location'
 
   def _metadataFields (self):
     return {
-      'question': fields.Single(fields.InlineMarkdownField())
+      'location': fields.Single(fields.StringField()),
     }
+
+class Theme (Model):
+  contentType = 'theme'
+  keyField = 'theme'
+  labelField = 'theme'
+
+  def _metadataFields (self):
+    return {
+      'theme': fields.Single(fields.StringField()),
+      'words': fields.StringField(),
+    }
+
+class Protocol (Model):
+  contentType = 'protocol'
+  keyField = 'protocol'
+  labelField = 'protocol'
+
+  def _metadataFields (self):
+    return {
+      'protocol': fields.Single(fields.StringField()),
+      'location': linkMultiReverse('location', 'protocols'),
+      'tools': multiLinkMultiReverse('tool', 'protocols'),
+      'elements': multiLinkMultiReverse('element', 'protocols'),
+      'themes': multiLinkMultiReverse('theme', 'protocols'),
+      'shores': multiLinkMultiReverse('shore', 'protocols'),
+    }
+
+class Conversation (Model):
+  contentType = 'conversation'
+  keyField = 'conversation'
+  labelField = 'conversation'
+
+  def _metadataFields (self):
+    return {
+      'conversation': fields.Single(fields.StringField()),
+      'person': fields.Single(fields.StringField()),
+      'date': fields.Single(fields.DateField()),
+      'address': fields.Single(fields.StringField()),
+      'location': linkMultiReverse('location', 'conversations'),
+      'tools': multiLinkMultiReverse('tool', 'conversations'),
+      'elements': multiLinkMultiReverse('element', 'conversations'),
+      'themes': multiLinkMultiReverse('theme', 'conversations'),
+      'shores': multiLinkMultiReverse('shore', 'conversations'),
+    }
+
+class Demonstration (Model):
+  contentType = 'demonstration'
+  keyField = 'demonstration'
+  labelField = 'demonstration'
+
+  def _metadataFields (self):
+    return {
+      'demonstration': fields.Single(fields.StringField()),
+      'person': fields.Single(fields.StringField()),
+      'date': fields.Single(fields.DateField()),
+      'address': fields.Single(fields.StringField()),
+      'location': linkMultiReverse('location', 'demonstrations'),
+      'tools': multiLinkMultiReverse('tool', 'demonstrations'),
+      'elements': multiLinkMultiReverse('element', 'demonstrations'),
+      'themes': multiLinkMultiReverse('theme', 'demonstrations'),
+      'shores': multiLinkMultiReverse('shore', 'demonstrations'),
+    }
+
 
 class ContentType (object):
   def __init__ (self, model, collection = Collection):
@@ -1073,21 +924,15 @@ class ContentType (object):
 # rather than on the model?
 contentTypes = {
     'audio': ContentType(Audio, InstantiatingCollection),
-    'bibliography': ContentType(Bibliography, InstantiatingCollection),
-    'event': ContentType(Event),
-    'external-project': ContentType(ExternalProject, InstantiatingCollection),
     'image': ContentType(Image, InstantiatingCollection),
-    'notes': ContentType(Note),
-    'pad': ContentType(Pad),
-    'page': ContentType(Page),
-    'programme-item': ContentType(ProgrammeItem),
-    'produser': ContentType(Produser),
-    'reflection': ContentType(Reflection),
-    'trajectory': ContentType(Trajectory),
-    'tag': ContentType(Tag, InstantiatingCollection),
-    'video': ContentType(Video, InstantiatingCollection),
-    'text': ContentType(Text),
-    'question': ContentType(Question, InstantiatingCollection)
+    'shore': ContentType(Shore, InstantiatingCollection),
+    'element': ContentType(Element, InstantiatingCollection),
+    'tool': ContentType(Tool, InstantiatingCollection),
+    'location': ContentType(Location, InstantiatingCollection),
+    'theme': ContentType(Location, InstantiatingCollection),
+    'protocol': ContentType(Protocol),
+    'conversation': ContentType(Conversation),
+    'demonstration': ContentType(Demonstration)
   }
 
 def knownContentTypes():

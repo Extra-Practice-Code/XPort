@@ -208,7 +208,7 @@ class Command(BaseCommand):
     args = ''
     help = 'Create an index of all the articles’ metadata'
 
-    print("Starting to index, this might take some time...")
     def handle(self, *args, **options):
+        print("Starting to index, this might take some time...")
         return snif()
 
