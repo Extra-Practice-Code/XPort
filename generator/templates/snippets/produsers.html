@@ -1,7 +1,0 @@
-{% load generator_utils %}
-
-<ul class="inlinelist">
-  {% for produser in produsers|link_target_iterator %}
-    <li><a class="produser" href="{{ produser.link }}">{{ produser }}</a></li>
-  {% endfor %}
-</ul>

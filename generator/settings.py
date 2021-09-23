@@ -10,12 +10,13 @@ MENU_ITEMS = [
 #   ('Contact', 'pages/contact.html')
 ]
 
-SITE_URL = ''
+SITE_URL = 'http://localhost:8000/static/generated'
+PAD_BASE_URL = 'https://oceanographies.osp.kitchen/w/'
 DEFAULT_CONTENT_TYPE = 'pad'
 SHOW_LOG_MESSAGES = True
 SHOW_DEBUG_MESSAGES = True
 
-FIELD_DATE_FORMATS = ['%d-%m-%Y', '%d %m %Y', '%d/%m/%Y', '%d %b %Y', '%d %B %Y']
+FIELD_DATE_FORMATS = ['%d.%m.%Y', '%d-%m-%Y', '%d %m %Y', '%d/%m/%Y', '%d %b %Y', '%d %B %Y']
 FIELD_TIME_FORMAT = '%H:%M'
 
 TIME_OUTPUT_FORMAT = '%H:%M'

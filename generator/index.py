@@ -2,6 +2,8 @@ from generator.models import collectionFor, knownContentTypes, \
   is_link, is_multi_link, is_reverse_link, is_reverse_multi_link, \
   Model
 from generator.utils import try_attributes
+from generator.settings import PAD_BASE_URL
+import os.path
 
 LINK_DIRECTION_OUT = 'out'
 LINK_DIRECTION_IN = 'in'
@@ -45,38 +47,35 @@ def display_link (link):
       label=link.target
     )
   else:
-    padname = link.target.source_path
-
-    if padname:
-      return '<dd>{direction} {arrow} <a href="https://ethertoff.caveat.be/w/{padname}">{label}</a></dd>'.format(
-          direction=direction,
-          arrow=arrow,
-          label=str(link.target),
-          padname=padname.replace('#', '%23')
-        )
-    else:
-      return '<dd>{direction} {arrow} {label}</dd>'.format(
-          direction=direction,
-          arrow=arrow,
-          label=str(link.target),
-        )
+    return '<dd>{direction} {arrow} <a href="#{id}">{label}</a></dd>'.format(
+        direction=direction,
+        arrow=arrow,
+        label=str(link.target),
+        id=link.target._id
+      )
 
 def make_index (models):
-  buff = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><ul>'
+  buff = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'
+  buff += '<h1>Debug / data overview</h1>'
   for contentType in knownContentTypes():
+    buff += '<details open><summary><strong>{}</strong></summary>'.format(contentType)
     collection = collectionFor(contentType)
     for obj in collection.models:
+      buff += '<details id="{}">'.format(obj._id)
+      # Object has a real pad attached
       if obj.source_path:
-        buff += '<li><strong><a href="https://ethertoff.caveat.be/w/{link}">{label}</a></strong> ({type})'.format(
+        buff += '<summary><strong>{label}</strong> <a href="{link}">(pad)</a></summary>'.format(
           label=str(obj),
           type=obj.contentType,
-          link=obj.source_path.replace('#', '%23')
+          link=os.path.join(PAD_BASE_URL, obj.source_path.replace('#', '%23'))
         )
       else:
-        buff += '<li><strong>{label}</strong>({type})'.format(
+        buff += '<summary><strong>{label}</strong></summary>'.format(
           label=str(obj),
           type=obj.contentType
         )
+
+      buff += '<dl>'
       for attr in dir(obj):
         if attr != 'content':
           # Attributes noted in the metafields list, plus content,
@@ -121,15 +120,22 @@ def make_index (models):
         #         buff += display_link('in', try_attributes(entry, [entry.labelField, 'pk']), entry.source_path)
         #   elif isinstance(val, Model):
         #     buff += display_link('in', try_attributes(val, [val.labelField, 'pk']), val.source_path)
-      buff += '</li>'
-  buff += '</ul><style>li { margin-top: 1em; }</style></body></html>'
+
+      buff += '</dl>'
+      buff += '</details>'
+    buff += '</details>'
+  buff += """<style>
+details {
+	padding-left: 2em;
+	padding-bottom: 2em;
+}
+summary {
+	margin-left: -2em;
+	margin-bottom: 1em;
+}
+body {
+	margin: 2em 3em;
+}
+</style></body></html>"""
+
   return buff
-# for obj in models:
-#   '{type}: {label} -- {padurl}'.format({ 'type': obj.type, 'label': getattr(obj, obj.labelField), 'padurl': padurl })
-#   for (prop, val) in dir(obj):
-#     if is_link(val):
-#       print('{targetname}: {targetcontenttype} {targetgcontentpadurl}').format({
-#         'targetname': '',
-#         'targetcontenttype': '',
-#         'targetgcontentpadurl': ''
-#       })\\\

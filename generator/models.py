@@ -15,7 +15,11 @@ from generator.settings import SITE_URL
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 
+from string import ascii_letters, digits
 
+def make_id (length):
+  tokens = ascii_letters + digits
+  return ''.join([random.choice(tokens) for _ in range(15)])
 
 """
   - Alternatively: make and register models before parsing their fields.
@@ -594,6 +598,8 @@ class Model(object):
 
     if metadata or content:
       self.fill(metadata=metadata, content=content)
+
+    self._id = make_id(15)
   
   @classmethod
   def extractKey(cls, data):

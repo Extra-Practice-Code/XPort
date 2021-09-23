@@ -1,0 +1,44 @@
+{% extends "generator/base.html" %}
+{% load generator_utils %}
+{% block content %}
+  <h1>{{ protocol }}</h1>
+  <dl>
+    {% if protocol.location %}
+      <dt>Location</dt>
+      <dd><a href="{{ protocol.location.target.link }}">{{ protocol.location }}</a></dd>
+    {% endif %}
+    {% if protocol.themes and protocol.themes.targets %}
+      <dt>Themes</dt>
+      <dd>
+        {% for theme in protocol.themes.targets %}
+          <a href="{{ theme.link }}">{{ theme }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if protocol.tools and protocol.tools.targets %}
+      <dt>Tools</dt>
+      <dd>
+        {% for tool in protocol.tools.targets %}
+          <a href="{{ tool.link }}">{{ tool }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if protocol.elements and protocol.elements.targets %}
+      <dt>Elements</dt>
+      <dd>
+        {% for element in protocol.elements.targets %}
+          <a href="{{ element.link }}">{{ element }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if protocol.shores and protocol.shores.targets %}
+      <dt>Shores</dt>
+      <dd>
+        {% for shore in protocol.shores.targets %}
+          <a href="{{ shore.link }}">{{ shore }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+  </dl>
+  {{ protocol.content }}
+{% endblock %}

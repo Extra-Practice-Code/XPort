@@ -1,0 +1,56 @@
+{% extends "generator/base.html" %}
+{% load generator_utils %}
+{% block content %}
+  <h1>{{ conversation }}</h1>
+  <dl>
+    {% if conversation.person %}
+      <dt>Person</dt>
+      <dd>{{ conversation.person }}</dd>
+    {% endif %}
+    {% if conversation.date %}
+      <dt>Date</dt>
+      <dd>{{ conversation.date }}</dd>
+    {% endif %}
+    {% if conversation.address %}
+      <dt>Address</dt>
+      <dd>{{ conversation.address }}</dd>
+    {% endif %}
+    {% if conversation.location %}
+      <dt>Location</dt>
+      <dd><a href="{{ conversation.location.target.link }}">{{ conversation.location }}</a></dd>
+    {% endif %}
+    {% if conversation.themes and conversation.themes.targets %}
+      <dt>Themes</dt>
+      <dd>
+        {% for theme in conversation.themes.targets %}
+          <a href="{{ theme.link }}">{{ theme }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if conversation.tools and conversation.tools.targets %}
+      <dt>Tools</dt>
+      <dd>
+        {% for tool in conversation.tools.targets %}
+          <a href="{{ tool.link }}">{{ tool }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if conversation.elements and conversation.elements.targets %}
+      <dt>Elements</dt>
+      <dd>
+        {% for element in conversation.elements.targets %}
+          <a href="{{ element.link }}">{{ element }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+    {% if conversation.shores and conversation.shores.targets %}
+      <dt>Shores</dt>
+      <dd>
+        {% for shore in conversation.shores.targets %}
+          <a href="{{ shore.link }}">{{ shore }}</a>
+        {% endfor %}
+      </dd>
+    {% endif %}
+  </dl>
+  {{ conversation.content }}
+{% endblock %}

@@ -234,22 +234,22 @@ def generate ():
   # #   output(os.path.join(outputdir, event.prefix, '{}.html'.format(event.key)), 'event.html', { 'event': event })
 
 
-  generate_single_pages(conversations.models, 'conversation.html', outputdir, lambda conversation: { 'conversation': conversation })
-  generate_single_pages(locations.models, 'location.html', outputdir, lambda location: { 'location': location })
+  generate_single_pages(conversations.models, 'generator/conversation.html', outputdir, lambda conversation: { 'conversation': conversation })
+  generate_single_pages(demonstrations.models, 'generator/demonstration.html', outputdir, lambda demonstration: { 'demonstration': demonstration })
+  generate_single_pages(protocols.models, 'generator/protocol.html', outputdir, lambda protocol: { 'protocol': protocol })
 
-  # generate_single_pages(produsers.models, 'produser.html', outputdir, lambda produser: { 'produser': produser })
-  # generate_single_pages(pages.models, 'page.html', outputdir, lambda page: { 'page': page })
-  # generate_single_pages(tags.models, 'tag.html', outputdir, lambda tag: { 'tag': tag })
-  # generate_single_pages(filter(lambda e: not hasattr(e, 'programmeItems') or not e.programmeItems, events.models), 'event.html', outputdir, lambda event: { 'event': event })
-  # generate_single_pages(filter(lambda e: hasattr(e, 'programmeItems') and e.programmeItems, events.models), 'event-with-programme-items.html', outputdir, lambda event: { 'event': event, 'groupedProgrammeItems': groupedProgrammeItems(event)})
-  # generate_single_pages(events.models, 'snippets/home_event_detail.html', os.path.join(outputdir, 'api'), lambda event: { 'event': event })
-  # generate_single_pages(notes.models, 'note.html', outputdir, lambda note: { 'note': note })
-  # generate_single_pages(reflections.models, 'reflection.html', outputdir, lambda reflection: { 'reflection': reflection })
+  generate_single_pages(locations.models, 'generator/object.html', outputdir, lambda location: { 'object': location })
+  generate_single_pages(elements.models, 'generator/object.html', outputdir, lambda element: { 'object': element })
+  generate_single_pages(themes.models, 'generator/object.html', outputdir, lambda theme: { 'object': theme })
+  generate_single_pages(tools.models, 'generator/object.html', outputdir, lambda tool: { 'object': tool })
+  generate_single_pages(shores.models, 'generator/object.html', outputdir, lambda shore: { 'object': shore })
+  generate_single_pages(images.models, 'generator/object.html', outputdir, lambda image: { 'object': image })
+  generate_single_pages(audios.models, 'generator/object.html', outputdir, lambda audio: { 'object': audio })
 
   # output(os.path.join(outputdir, 'activities.html'), 'activities.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
   
   # output(os.path.join(outputdir, 'index.old.html'), 'index.html', { 'events': sorted(events.models, key=datesorter, reverse=True) })
-  output(os.path.join(outputdir, 'index.html'), 'index.html', { 
+  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', { 
     'protocols': protocols.models,
     'demonstrations': demonstrations.models,
     'conversations': conversations.models,
@@ -261,31 +261,29 @@ def generate ():
     'images': images.models,
     'audios': audios.models
    })
-  
-  print(conversations.models[0].link)
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 
 
-  # info('Making backup of previous version, putting new version in place')
+  info('Making backup of previous version, putting new version in place')
 
-  # if os.path.exists(outputdir):
-  #   # Test whether there is an existing version of the site
-  #   if os.path.exists(finaldir):
-  #     # Removing old backup if it exists
-  #     if os.path.exists(backupdir):
-  #       shutil.rmtree(backupdir)
+  if os.path.exists(outputdir):
+    # Test whether there is an existing version of the site
+    if os.path.exists(finaldir):
+      # Removing old backup if it exists
+      if os.path.exists(backupdir):
+        shutil.rmtree(backupdir)
       
-  #     # Put new backup in place
-  #     shutil.move(finaldir, backupdir)
+      # Put new backup in place
+      shutil.move(finaldir, backupdir)
     
-  #   # Put new version of the site in place
-  #   shutil.move(outputdir, finaldir)
+    # Put new version of the site in place
+    shutil.move(outputdir, finaldir)
 
-  # if not settings.DEBUG:
-  #   print('Collecting static')
-  #   call_command('collectstatic', interactive=False)
+  if not settings.DEBUG:
+    print('Collecting static')
+    call_command('collectstatic', interactive=False)
 
   print('Done')
 

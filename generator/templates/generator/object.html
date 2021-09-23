@@ -1,0 +1,28 @@
+{% extends "generator/base.html" %}
+{% block content %}
+  <h1>{{ object }}</h1>
+  {% if object.conversations and object.conversations.targets %}
+    <h2>Conversations</h2>
+    <ul>
+    {% for conversation in object.conversations %}
+      <li><a href="{{ conversation.target.link }}">{{ conversation }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  {% if object.demonstrations and object.demonstrations.targets %}
+    <h2>Demonstrations</h2>
+    <ul>
+    {% for demonstration in object.demonstrations %}
+      <li><a href="{{ demonstration.target.link }}">{{ demonstration }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  {% if object.protocols and object.protocols.targets %}
+    <h2>Protocols</h2>
+    <ul>
+    {% for protocol in object.protocols %}
+      <li><a href="{{ protocol.target.link }}">{{ protocol }}</a></li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

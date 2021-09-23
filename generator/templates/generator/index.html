@@ -1,0 +1,6 @@
+{% extends "generator/base.html" %}
+{% block content %}
+{% for conversation in conversations %}
+  <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+{% endfor %}
+{% endblock %}
