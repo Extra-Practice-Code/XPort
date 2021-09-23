@@ -1,17 +1,15 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
-{% block content %}
-  <h1>{{ demonstration }}</h1>
-  <dl>
-    {% if demonstration.person %}
+{% block sidebar_left %}<dl>
+    {% if demonstration.person.value %}
       <dt>Person</dt>
       <dd>{{ demonstration.person }}</dd>
     {% endif %}
-    {% if demonstration.date %}
+    {% if demonstration.date.value %}
       <dt>Date</dt>
       <dd>{{ demonstration.date }}</dd>
     {% endif %}
-    {% if demonstration.address %}
+    {% if demonstration.address.value %}
       <dt>Address</dt>
       <dd>{{ demonstration.address }}</dd>
     {% endif %}
@@ -52,5 +50,8 @@
       </dd>
     {% endif %}
   </dl>
+{% endblock %}
+{% block content %}
+  <h1>{{ demonstration }}</h1>
   {{ demonstration.content }}
 {% endblock %}

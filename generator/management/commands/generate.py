@@ -37,7 +37,7 @@ from generator.settings import DATE_OUTPUT_FORMAT
 # Feed content to templates
 
 def output (path, template, context):
-  
+
   with open(path, 'w', encoding='utf-8') as w:
     info('Writing {} -> {}'.format(template, path))
     w.write(render_to_string(template, context))
@@ -102,6 +102,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'demonstrations'))
   os.mkdir(os.path.join(outputdir, 'protocols'))
   os.mkdir(os.path.join(outputdir, 'themes'))
+  os.mkdir(os.path.join(outputdir, 'elements'))
   os.mkdir(os.path.join(outputdir, 'locations'))
   os.mkdir(os.path.join(outputdir, 'tools'))
   os.mkdir(os.path.join(outputdir, 'shores'))

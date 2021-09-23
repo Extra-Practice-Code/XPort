@@ -1,7 +1,6 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
-{% block content %}
-  <h1>{{ protocol }}</h1>
+{% block sidebar_left %}
   <dl>
     {% if protocol.location %}
       <dt>Location</dt>
@@ -40,5 +39,8 @@
       </dd>
     {% endif %}
   </dl>
+{% endblock %}
+{% block content %}
+  <h1>{{ protocol }}</h1>
   {{ protocol.content }}
 {% endblock %}

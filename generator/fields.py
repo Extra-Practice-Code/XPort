@@ -87,7 +87,10 @@ class Field (object):
     return repr(self.value)
 
   def __str__ (self):
-    return str(self.value)
+    if self.value:
+      return str(self.value)
+    else:
+      return ''
 
   def __iter__ (self):
     return iter(self.value)
@@ -201,7 +204,10 @@ class FloatField(Field):
 
 class StringField(Field):
   def parse (self, value):
-    return str(value)
+    if value:
+      return str(value)
+    else:
+      return None
 
 class MarkdownField(Field):
   def parse (self, value):

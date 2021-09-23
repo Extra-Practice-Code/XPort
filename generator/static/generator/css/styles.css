@@ -165,8 +165,16 @@ dl {
   font-size: 75%;
 }
 
+dt {
+  margin-top: var(--line-height);
+}
+
 dd {
   margin: 0;
+}
+
+dd a:not(:last-child)::after {
+  content: ',';
 }
 
 p {
