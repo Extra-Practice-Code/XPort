@@ -1,5 +1,6 @@
 {% extends "generator/base.html" %}
 {% block content %}
+  <h2>{{ object.contentType }} </h2>
   <h1>{{ object }}</h1>
   {% if object.conversations and object.conversations.targets %}
     <h2>Conversations</h2>
