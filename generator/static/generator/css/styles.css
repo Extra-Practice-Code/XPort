@@ -202,6 +202,10 @@ dd {
   margin: 0;
 }
 
+dd a:not(:last-child)::after {
+  content: ',';
+}
+
 p {
   margin-top: 0;
   margin-bottom: 1.3em;
