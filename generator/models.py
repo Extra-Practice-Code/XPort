@@ -863,6 +863,7 @@ class Theme (Model):
   contentType = 'theme'
   keyField = 'theme'
   labelField = 'theme'
+  prefix = 'themes'
 
   def _metadataFields (self):
     return {
