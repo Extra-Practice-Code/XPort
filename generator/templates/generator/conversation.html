@@ -2,23 +2,23 @@
 {% load generator_utils %}
 {% block sidebar_left %}
   <dl>
-    {% if conversation.voice %}
+    {% if conversation.voice.value %}
       <dt>voice</dt>
       <dd>{{ conversation.voice }}</dd>
     {% endif %}
-    {% if conversation.space %}
+    {% if conversation.space.value %}
       <dt>Space</dt>
       <dd>{{ conversation.space }}</dd>
     {% endif %}
-    {% if conversation.person %}
+    {% if conversation.person.value %}
       <dt>Person</dt>
       <dd>{{ conversation.person }}</dd>
     {% endif %}
-    {% if conversation.date %}
+    {% if conversation.date.value %}
       <dt>Date</dt>
       <dd>{{ conversation.date }}</dd>
     {% endif %}
-    {% if conversation.address %}
+    {% if conversation.address.value %}
       <dt>Address</dt>
       <dd>{{ conversation.address }}</dd>
     {% endif %}

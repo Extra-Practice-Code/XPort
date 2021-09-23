@@ -194,6 +194,10 @@ dl {
   font-size: 75%;
 }
 
+dt {
+  margin-top: var(--line-height);
+}
+
 dd {
   margin: 0;
 }

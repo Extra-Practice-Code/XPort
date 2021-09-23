@@ -3,15 +3,15 @@
 {% block content %}
   <h1>{{ demonstration }}</h1>
   <dl>
-    {% if demonstration.person %}
+    {% if demonstration.person.value %}
       <dt>Person</dt>
       <dd>{{ demonstration.person }}</dd>
     {% endif %}
-    {% if demonstration.date %}
+    {% if demonstration.date.value %}
       <dt>Date</dt>
       <dd>{{ demonstration.date }}</dd>
     {% endif %}
-    {% if demonstration.address %}
+    {% if demonstration.address.value %}
       <dt>Address</dt>
       <dd>{{ demonstration.address }}</dd>
     {% endif %}
