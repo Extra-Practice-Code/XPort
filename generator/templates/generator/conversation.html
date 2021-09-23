@@ -1,8 +1,15 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
-{% block content %}
-  <h1>{{ conversation }}</h1>
+{% block sidebar_left %}
   <dl>
+    {% if conversation.voice %}
+      <dt>voice</dt>
+      <dd>{{ conversation.voice }}</dd>
+    {% endif %}
+    {% if conversation.space %}
+      <dt>Space</dt>
+      <dd>{{ conversation.space }}</dd>
+    {% endif %}
     {% if conversation.person %}
       <dt>Person</dt>
       <dd>{{ conversation.person }}</dd>
@@ -52,5 +59,23 @@
       </dd>
     {% endif %}
   </dl>
+{% endblock %}
+{% block content %}
+  <h1>{{ conversation }}</h1>
   {{ conversation.content }}
 {% endblock %}
+{% block sidebar_right %}{% spaceless %}
+{% if conversation.protocols and conversation.protocols.targets %}
+    <section class="panel--heading">
+      Protocols
+    </section>
+    {% for protocol in conversation.protocols.targets %}
+    <section class="subpanel">
+      <h2>{{ protocol }}</h2>
+      <section class="content">
+        {{ protocol.content }}
+      </section>
+    </section>
+    {% endfor %}
+{% endif %}
+{% endspaceless %}{% endblock %}

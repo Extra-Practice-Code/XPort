@@ -36,7 +36,8 @@ from generator.settings import DATE_OUTPUT_FORMAT
 # Go through them, record information
 # Feed content to templates
 
-def output (path, template, context):  
+def output (path, template, context):
+  
   with open(path, 'w', encoding='utf-8') as w:
     info('Writing {} -> {}'.format(template, path))
     w.write(render_to_string(template, context))
@@ -83,18 +84,18 @@ def generate ():
   # Clear existing collections
   resetCollections(contentTypes)
   basedir = os.path.join(settings.BASE_DIR, 'generator')
-  staticdir = os.path.join(basedir, 'templates', 'static')
-  backupdir = os.path.join(basedir, 'static', 'generated.old')
-  finaldir = os.path.join(basedir, 'static', 'generated')
-  outputdir = os.path.join(basedir, 'static', 'generated.new')
+  # staticdir = os.path.join(basedir, 'templates', 'static')
+  backupdir = os.path.join(basedir, 'static', 'generator', 'generated.old')
+  finaldir = os.path.join(basedir, 'static', 'generator', 'generated')
+  outputdir = os.path.join(basedir, 'static', 'generator', 'generated.new')
 
   if os.path.exists(outputdir):
     shutil.rmtree(outputdir)
   
   os.mkdir(outputdir)
   
-  print('Copying static files')
-  shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
+  # print('Copying static files')
+  # shutil.copytree(staticdir, os.path.join(outputdir, 'static'))
 
   print('Parsing pads')
   os.mkdir(os.path.join(outputdir, 'conversations'))

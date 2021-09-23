@@ -791,6 +791,7 @@ class Image (Model):
   contentType = 'image'
   keyField = 'image'
   labelField = 'image'
+  prefix = 'images'
 
   def _metadataFields (self):
     return {
@@ -803,6 +804,7 @@ class Audio (Model):
   contentType = 'audio'
   keyField = 'audio'
   labelField = 'audio'
+  prefix = 'audio'
 
   def _metadataFields (self):
     return {
@@ -816,6 +818,7 @@ class Shore (Model):
   contentType = 'shore'
   keyField = 'shore'
   labelField = 'shore'
+  prefix = 'shores'
 
   def _metadataFields (self):
     return {
@@ -827,6 +830,7 @@ class Element (Model):
   contentType = 'element'
   keyField = 'element'
   labelField = 'element'
+  prefix = 'elements'
 
   def _metadataFields (self):
     return {
@@ -837,6 +841,7 @@ class Tool (Model):
   contentType = 'tool'
   keyField = 'tool'
   labelField = 'tool'
+  prefix = 'tools'
 
   def _metadataFields (self):
     return {
@@ -889,6 +894,8 @@ class Conversation (Model):
 
   def _metadataFields (self):
     return {
+      'space': fields.Single(fields.InlineMarkdownField()),
+      'voice': fields.Single(fields.InlineMarkdownField()),
       'conversation': fields.Single(fields.StringField()),
       'person': fields.Single(fields.StringField()),
       'date': fields.Single(fields.DateField()),
@@ -898,6 +905,7 @@ class Conversation (Model):
       'elements': multiLinkMultiReverse('element', 'conversations'),
       'themes': multiLinkMultiReverse('theme', 'conversations'),
       'shores': multiLinkMultiReverse('shore', 'conversations'),
+      'protocols': multiLinkMultiReverse('protocol', 'conversations'),
     }
 
 class Demonstration (Model):

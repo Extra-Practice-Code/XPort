@@ -2,7 +2,7 @@
 
 from .settings import SHOW_LOG_MESSAGES
 from .settings import SHOW_DEBUG_MESSAGES
-from .settings import SITE_URL, MENU_ITEMS
+from .settings import SITE_URL, MENU_ITEMS, STATIC_URL
 
 from django.template import loader
 
@@ -70,6 +70,7 @@ def keyFilter (value):
 
 def render_to_string(template, context):
   context['SITE_URL'] = SITE_URL
+  context['STATIC_URL'] = STATIC_URL
   context['MENU_ITEMS'] = MENU_ITEMS
 
   return loader.render_to_string(template, context)

@@ -10,7 +10,8 @@ MENU_ITEMS = [
 #   ('Contact', 'pages/contact.html')
 ]
 
-SITE_URL = 'http://localhost:8000/static/generated'
+SITE_URL = 'http://localhost:8000/static/generator/generated'
+STATIC_URL = 'http://localhost:8000/static/generator'
 PAD_BASE_URL = 'https://oceanographies.osp.kitchen/w/'
 DEFAULT_CONTENT_TYPE = 'pad'
 SHOW_LOG_MESSAGES = True
