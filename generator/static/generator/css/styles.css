@@ -185,6 +185,11 @@ h6 {
   font-weight: normal;
 }
 
+h2 {
+	font-size: 1.5rem;
+	margin-bottom: 1em;
+}
+
 nav {
   box-sizing: border-box;
   padding: var(--line-height) calc(2 * var(--line-height));

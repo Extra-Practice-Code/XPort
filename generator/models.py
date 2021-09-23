@@ -947,7 +947,7 @@ contentTypes = {
     'element': ContentType(Element, InstantiatingCollection),
     'tool': ContentType(Tool, InstantiatingCollection),
     'location': ContentType(Location, InstantiatingCollection),
-    'theme': ContentType(Location, InstantiatingCollection),
+    'theme': ContentType(Theme, InstantiatingCollection),
     'protocol': ContentType(Protocol),
     'conversation': ContentType(Conversation),
     'demonstration': ContentType(Demonstration)
