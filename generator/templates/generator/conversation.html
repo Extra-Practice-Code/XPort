@@ -79,4 +79,22 @@
     </section>
     {% endfor %}
 {% endif %}
-{% endspaceless %}{% endblock %}
+{% endspaceless %}
+{% endblock %}
+{% block bodyscript %}
+  <script>
+    (function () {
+      var panels = document.querySelectorAll('.subpanel');
+
+      panels.forEach(p => {
+        p.addEventListener('click', function () {
+          if ('active' in this.dataset) {
+            delete this.dataset.active;
+          } else {
+            this.dataset.active = 'active';
+          }
+        });
+      });
+    })();
+  </script>
+{% endblock %}

@@ -30,6 +30,12 @@
     --font-size-small: 12px;
     --highlight-color: #f2f2ff;
     --blue-ocean: #271192;
+    --c--one: #e6e6ff;
+    --c--two: #0606ff;
+    --c--three: #3d3dff;
+    --c--four: #7f7fff;
+    --c--five: #4c4cff;
+    --c--six: #3333ff;
 }
 
 html, body {
@@ -104,7 +110,7 @@ aside:empty {
 section.subpanel {
   padding: var(--line-height) calc(2 * var(--line-height));
   width: 80vw;
-  background: var(--blue-ocean);
+  background: var(--background-color);
   flex: 1 0;
   margin-right: calc(-1 * 80vw);
   transition: .2s left;
@@ -135,7 +141,7 @@ section.subpanel .content {
   width: 100%;
   top: 100%;
   min-height: 40vh;
-  background: var(--blue-ocean);
+  background: var(--background-color);
   display: none;
   margin-left:  calc(-2 * var(--line-height));
   margin-right:  calc(-2 * var(--line-height));
@@ -146,6 +152,28 @@ section.subpanel .content {
 section.subpanel:hover .content,
 section.subpanel[data-active] .content {
   display: block;
+}
+
+section.subpanel:nth-of-type(1) {
+  --background-color: var(--c--one);
+  color: var(--blue-ocean);
+}
+
+section.subpanel:nth-of-type(2) {
+  color: white;
+  --background-color: var(--c--two);
+}
+
+section.subpanel:nth-of-type(3),
+section.subpanel:nth-of-type(7) {
+  color: white;
+  --background-color: var(--c--three);
+}
+
+section.subpanel:nth-of-type(4),
+section.subpanel:nth-of-type(8) {
+  color: white;
+  --background-color: var(--c--four);
 }
 
 h1,
