@@ -221,24 +221,24 @@ nav #logo {
   line-height: 1em;
 }
 
-main {
+.home main {
   display: flex;
   flex-direction: row;
 }
 
-.panel {
+.home .panel {
   flex: 0 0 50px;
   animation: flex-grow .2s;
   position: relative;
   overflow: hidden;
 }
 
-.panel:hover {
+.home .panel:hover {
   flex-grow: 1;
   animation: flex-grow .2s;
 }
 
-.panel > h2 {
+.home .panel > h2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -249,7 +249,7 @@ main {
   text-align: right;
 }
 
-.panel .content {
+.home .panel .content {
   position: absolute;
   top: 0;
   bottom: 0;
