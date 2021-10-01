@@ -149,13 +149,13 @@ def generate ():
   #   else:
   #     return ''
 
-  # def getLabelAsSortKey (model):
-  #   label = getattr(model, model.labelField)
+  def getLabelAsSortKey (model):
+    label = getattr(model, model.labelField)
 
-  #   if label and label.value:
-  #     return label.value.lower()
-  #   else:
-  #     return ''
+    if label and label.value:
+      return label.value.lower()
+    else:
+      return ''
 
   # def makeGroupSorter (order):
   #   def sorter (line):
@@ -164,9 +164,12 @@ def generate ():
 
   #   return sorter
 
-  # def makeAttributeSorter(attributes):
-  #   def sorter (model):
-  #     return str(try_attributes(model, attributes)).lower()
+  def makeAttributeSorter(attributes):
+    def sorter (model):
+      return str(try_attributes(model, attributes)).lower()
+
+  def sortedByLabel(models):
+    return sorted(models, key=getLabelAsSortKey)
 
   #   return sorter
 
@@ -255,11 +258,11 @@ def generate ():
     'protocols': protocols.models,
     'demonstrations': demonstrations.models,
     'conversations': conversations.models,
-    'themes': themes.models,
-    'elements': elements.models,
-    'locations': locations.models,
-    'tools': tools.models,
-    'shores': shores.models,
+    'themes':  sortedByLabel(themes.models),
+    'elements': sortedByLabel(elements.models),
+    'locations': sortedByLabel(locations.models),
+    'tools': sortedByLabel(tools.models),
+    'shores': sortedByLabel(shores.models),
     'images': images.models,
     'audios': audios.models
    })

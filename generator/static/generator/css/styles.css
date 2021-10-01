@@ -162,6 +162,14 @@ h2 {
 	margin-bottom: 1em;
 }
 
+h3 {
+  font-size: 0.8em;
+}
+
+h2 + h3 {
+  margin-top: 3em;
+}
+
 nav {
   box-sizing: border-box;
   padding: var(--line-height) calc(0.5 * var(--line-height));
@@ -213,3 +221,39 @@ nav #logo {
   line-height: 1em;
 }
 
+main {
+  display: flex;
+  flex-direction: row;
+}
+
+.panel {
+  flex: 0 0 50px;
+  animation: flex-grow .2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel:hover {
+  flex-grow: 1;
+  animation: flex-grow .2s;
+}
+
+.panel > h2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  writing-mode: tb;
+  margin-left: 0;
+  transform: rotate(180deg);
+  text-align: right;
+}
+
+.panel .content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50px;
+  right: 50px;
+  overflow-y: auto;
+}
