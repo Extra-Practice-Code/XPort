@@ -16,7 +16,7 @@
       {% if theme.conversations.targets %}
         <h3><a href="{{ theme.link }}">{{ theme }}</a></h3>
         {% for conversation in theme.conversations %}
-          <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+          <h2><a href="{{ conversation.target.link }}">{{ conversation }}</a></h2>
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -29,7 +29,7 @@
       {% if location.conversations.targets %}
         <h3><a href="{{ location.link }}">{{ location }}</a></h3>
         {% for conversation in location.conversations %}
-          <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+          <h2><a href="{{ conversation.target.link }}">{{ conversation }}</a></h2>
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -42,7 +42,7 @@
       {% if shore.conversations.targets %}
         <h3><a href="{{ shore.link }}">{{ shore }}</a></h3>
         {% for conversation in shore.conversations %}
-          <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+          <h2><a href="{{ conversation.target.link }}">{{ conversation }}</a></h2>
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -55,7 +55,7 @@
       {% if element.conversations.targets %}
         <h3><a href="{{ element.link }}">{{ element }}</a></h3>
         {% for conversation in element.conversations %}
-          <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+          <h2><a href="{{ conversation.target.link }}">{{ conversation }}</a></h2>
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -68,7 +68,7 @@
       {% if tool.conversations.targets %}
         <h3><a href="{{ tool.link }}">{{ tool }}</a></h3>
         {% for conversation in tool.conversations %}
-          <h2><a href="{{ conversation.link }}">{{ conversation }}</a></h2>
+          <h2><a href="{{ conversation.target.link }}">{{ conversation }}</a></h2>
         {% endfor %}
       {% endif %}
     {% endfor %}
