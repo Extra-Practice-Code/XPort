@@ -37,6 +37,10 @@
         {% endfor %}
     </ul>
     <section class="pad-list--actions">
-        <a href="{% url 'pad-create' folderPathString %}">+ create pad</a>
+        {% if folderPathString %}
+          <a href="{% url 'pad-create' folderPathString %}">+ create pad</a>
+        {% else %}
+          <a href="{% url 'pad-create' %}">+ create pad</a>
+        {% endif %}
     </section>
 {% endblock %}
