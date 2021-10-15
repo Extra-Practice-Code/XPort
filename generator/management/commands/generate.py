@@ -102,7 +102,7 @@ def generate ():
   os.mkdir(os.path.join(outputdir, 'demonstrations'))
   os.mkdir(os.path.join(outputdir, 'protocols'))
   os.mkdir(os.path.join(outputdir, 'themes'))
-  os.mkdir(os.path.join(outputdir, 'elements'))
+  # os.mkdir(os.path.join(outputdir, 'elements'))
   os.mkdir(os.path.join(outputdir, 'locations'))
   os.mkdir(os.path.join(outputdir, 'tools'))
   os.mkdir(os.path.join(outputdir, 'shores'))
@@ -118,7 +118,7 @@ def generate ():
   demonstrations = collectionFor('demonstration')
   conversations = collectionFor('conversation')
   themes = collectionFor('theme')
-  elements = collectionFor('element')
+  # elements = collectionFor('element')
   locations = collectionFor('location')
   tools = collectionFor('tool')
   shores = collectionFor('shore')
@@ -244,7 +244,7 @@ def generate ():
   generate_single_pages(protocols.models, 'generator/protocol.html', outputdir, lambda protocol: { 'protocol': protocol })
 
   generate_single_pages(locations.models, 'generator/object.html', outputdir, lambda location: { 'object': location })
-  generate_single_pages(elements.models, 'generator/object.html', outputdir, lambda element: { 'object': element })
+  # generate_single_pages(elements.models, 'generator/object.html', outputdir, lambda element: { 'object': element })
   generate_single_pages(themes.models, 'generator/object.html', outputdir, lambda theme: { 'object': theme })
   generate_single_pages(tools.models, 'generator/object.html', outputdir, lambda tool: { 'object': tool })
   generate_single_pages(shores.models, 'generator/object.html', outputdir, lambda shore: { 'object': shore })
@@ -259,7 +259,7 @@ def generate ():
     'demonstrations': demonstrations.models,
     'conversations': conversations.models,
     'themes':  sortedByLabel(themes.models),
-    'elements': sortedByLabel(elements.models),
+    # 'elements': sortedByLabel(elements.models),
     'locations': sortedByLabel(locations.models),
     'tools': sortedByLabel(tools.models),
     'shores': sortedByLabel(shores.models),
