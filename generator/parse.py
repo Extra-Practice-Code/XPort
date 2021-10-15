@@ -6,6 +6,7 @@ from .models import modelFor, collectionFor, UnknownContentTypeError, knownConte
 from .utils import info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
+from markdown_strikethrough import StrikethroughExtension
 from py_etherpad import EtherpadLiteClient
 
 from django.core.management.base import BaseCommand
@@ -130,7 +131,7 @@ def parse_pads ():
       # Render inline references
       content, _ = resolveReferences(model) # Second return are the collected references
       # render markdown
-      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
+      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list', 'nl2br', StrikethroughExtension()])
       model.content = mark_safe(md.convert(content))
       
   return models

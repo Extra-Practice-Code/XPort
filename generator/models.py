@@ -826,16 +826,16 @@ class Shore (Model):
       'image': linkReverse('image', 'shore'),
     }
 
-class Element (Model):
-  contentType = 'element'
-  keyField = 'element'
-  labelField = 'element'
-  prefix = 'elements'
+# class Element (Model):
+#   contentType = 'element'
+#   keyField = 'element'
+#   labelField = 'element'
+#   prefix = 'elements'
 
-  def _metadataFields (self):
-    return {
-      'element': fields.Single(fields.StringField()),
-    }
+#   def _metadataFields (self):
+#     return {
+#       'element': fields.Single(fields.StringField()),
+#     }
 
 class Tool (Model):
   contentType = 'tool'
@@ -895,16 +895,17 @@ class Conversation (Model):
 
   def _metadataFields (self):
     return {
+      'conversation': fields.Single(fields.StringField()),
       'space': fields.Single(fields.InlineMarkdownField()),
       'voice': fields.Single(fields.InlineMarkdownField()),
-      'conversation': fields.Single(fields.StringField()),
       'person': fields.Single(fields.StringField()),
       'date': fields.Single(fields.DateField()),
       'address': fields.Single(fields.StringField()),
       'location': linkMultiReverse('location', 'conversations'),
       'tools': multiLinkMultiReverse('tool', 'conversations'),
-      'elements': multiLinkMultiReverse('element', 'conversations'),
-      'themes': multiLinkMultiReverse('theme', 'conversations'),
+      # 'elements': multiLinkMultiReverse('element', 'conversations'),
+      'demonstrations': multiLinkMultiReverse('demonstration', 'conversations'),
+      'themes': multiLinkMultiReverse('theme', 'conversations', unique=False),
       'shores': multiLinkMultiReverse('shore', 'conversations'),
       'protocols': multiLinkMultiReverse('protocol', 'conversations'),
     }
@@ -945,7 +946,7 @@ contentTypes = {
     'audio': ContentType(Audio, InstantiatingCollection),
     'image': ContentType(Image, InstantiatingCollection),
     'shore': ContentType(Shore, InstantiatingCollection),
-    'element': ContentType(Element, InstantiatingCollection),
+    # 'element': ContentType(Element, InstantiatingCollection),
     'tool': ContentType(Tool, InstantiatingCollection),
     'location': ContentType(Location, InstantiatingCollection),
     'theme': ContentType(Theme, InstantiatingCollection),
