@@ -365,6 +365,10 @@ def includeTag(tag, display_label, source, link):
   # print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
   return '<a class="tag" id="{id}" href="{url}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
 
+def includeTheme(tag, display_label, source, link):
+  return '<a class="theme inline-reference" id="{id}" href="{url}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
+
+
 def labelReference(target, display_label):
   return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))
 
@@ -383,6 +387,8 @@ def renderReference(target, display_label, source, link):
     return labelReference(target, display_label)
   elif target.contentType == 'tag':
     return includeTag(target, display_label, source, link)
+  elif target.contentType == 'theme':
+    return includeTheme(target, display_label, source, link)
   else:
     return linkReference(target, display_label)
 
@@ -563,7 +569,7 @@ def resolveReferences (model):
     content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
+    return (mark_safe(re.sub(r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])

@@ -1,12 +1,17 @@
 {% extends "generator/base.html" %}
+{% load generator_utils %}
 {% block content %}
   <h2>{{ object.contentType }} </h2>
   <h1>{{ object }}</h1>
   {% if object.conversations and object.conversations.targets %}
     <h2>Conversations</h2>
     <ul>
-    {% for conversation in object.conversations %}
-      <li><a href="{{ conversation.target.link }}">{{ conversation }}</a></li>
+    {% for link, _, conversation in object.conversations|link_iterator %}
+      {% if link.inline %}
+        <li><a href="{{ conversation.link }}#{{ link.id }}">{{ conversation }}</a></li>
+      {% else %}
+        <li><a href="{{ conversation.link }}">{{ conversation }}</a></li>
+      {% endif %}
     {% endfor %}
     </ul>
   {% endif %}

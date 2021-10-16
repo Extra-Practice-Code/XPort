@@ -285,3 +285,8 @@ nav #logo {
   right: 50px;
   overflow-y: auto;
 }
+
+.inline-reference:target {
+	outline: 1px dotted currentColor;
+	outline-offset: .15em;
+}
