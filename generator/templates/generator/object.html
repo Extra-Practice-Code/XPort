@@ -8,7 +8,7 @@
     <ul>
     {% for link, _, conversation in object.conversations|link_iterator %}
       {% if link.inline %}
-        <li><a href="{{ conversation.link }}#{{ link.id }}">{{ conversation }}</a></li>
+        <li><a href="{{ conversation.link }}#{{ link.id }}">{{ link.context }}</a></li>
       {% else %}
         <li><a href="{{ conversation.link }}">{{ conversation }}</a></li>
       {% endif %}

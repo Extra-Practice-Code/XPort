@@ -20,3 +20,5 @@ html5lib
 mdx_semanticdata
 git+https://github.com/aleray/aa.sniff.git
 rdflib_sqlalchemy
+django-filer
+bs4

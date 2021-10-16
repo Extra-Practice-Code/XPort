@@ -286,7 +286,8 @@ nav #logo {
   overflow-y: auto;
 }
 
-.inline-reference:target {
+.inline-reference:target,
+.inline-reference[data-link-marked] {
 	outline: 1px dotted currentColor;
 	outline-offset: .15em;
 }
