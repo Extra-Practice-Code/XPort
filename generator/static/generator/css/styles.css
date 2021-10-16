@@ -290,3 +290,15 @@ nav #logo {
 	outline: 1px dotted currentColor;
 	outline-offset: .15em;
 }
+
+mark {
+  background: initial;
+  color: inherit;
+  text-decoration: underline;
+}
+
+.markdown--circled {
+  outline: 1px solid currentColor;
+  outline-offset: .25em;
+  border-radius: 1.25rem/50%;
+}
