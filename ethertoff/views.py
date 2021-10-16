@@ -17,6 +17,7 @@ from markdown.extensions.toc import TocExtension
 from my_project.markdown_del_extension import DelExtension
 from my_project.markdown_mark_extension import MarkExtension
 from my_project.markdown_circled_extension import CircledExtension
+from generator.markdown_inline_reference import InlineReferenceExtension
 # from mdx_semanticdata import SemanticDataExtension
 from py_etherpad import EtherpadLiteClient
 import dateutil.parser
@@ -588,7 +589,7 @@ def pad_read(request, mode="r", slug=None):
         # we don’t want Etherpads automatically generated HTML, we want plain text.
         text = epclient.getText(padID)['text']
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', 'nl2br', DelExtension(), MarkExtension(), CircledExtension()])
+            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', 'nl2br', DelExtension(), MarkExtension(), CircledExtension(), InlineReferenceExtension()])
             text = md.convert(text)
             try:
                 meta = md.Meta
