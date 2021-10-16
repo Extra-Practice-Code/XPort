@@ -1,7 +1,7 @@
 from django.urls import path
 
 from django.conf import settings
-from django.conf.urls import include
+from django.conf.urls import include, url
 from django.conf.urls.static import static
 
 # Uncomment the next two lines to enable the admin:
@@ -22,6 +22,7 @@ except AttributeError:
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    url(r'^filer/', include('filer.urls')),
     path('', include("ethertoff.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
