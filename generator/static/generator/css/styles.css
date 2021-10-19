@@ -49,8 +49,8 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-size: 1vw;
-  line-height: 1.3;
+font-size: 1.4vw;
+line-height: 1.2;
 }
 
 @media screen and (max-width: 1400px) {
@@ -79,10 +79,12 @@ main {
   flex: 1 0;
   background: white;
   color: var(--blue-ocean);
-  padding: var(--line-height) calc(3 * var(--line-height));
+  padding: 0;
   overflow-y: auto;
 }
-
+main .panel {
+  padding: var(--line-height) 0 ;
+}
 aside {
   flex: 0 1 400px;
   background: var(--blue-ocean);
@@ -202,7 +204,19 @@ nav {
   box-sizing: border-box;
   padding: var(--line-height) calc(0.5 * var(--line-height));
 }
+nav dl {
+  font-size: 55%;
+  padding-right: 20px;
+      font-weight: 600;
 
+}
+nav dt {
+  margin-top: 10px;
+}
+nav dd {
+  margin: 0;
+  text-indent: var(--line-height);
+}
 dl {
   font-size: 75%;
 }
@@ -243,10 +257,27 @@ nav a:hover {
   color: blue;
 }
 
+.home nav #logo {
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1em;
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
 nav #logo {
-  font-size: 1.4em;
-  font-weight: 600;
-  line-height: 1em;
+    font-size: 0.8em;
+    font-weight: 600;
+    line-height: 1.1em;
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+nav #logo a {
+width: min-content;
+display: inline-block;
 }
 
 .home main {
@@ -255,12 +286,28 @@ nav #logo {
 }
 
 .home .panel {
-  flex: 0 0 50px;
+  flex: 0 0 80px;
   animation: flex-grow .2s;
   position: relative;
   overflow: hidden;
+  background-color: var(--blue-ocean);
+  color: white;
 }
-
+.home .panel[data-grouped-by=theme] {
+  background-color: #473891;
+}
+.home .panel[data-grouped-by=location] {
+  background-color: #5e558e;
+}
+.home .panel[data-grouped-by=shore]{
+  background-color: #757091;
+}
+.home .panel[data-grouped-by=element] {
+  background-color: #87858c;
+}
+.home .panel[data-grouped-by=tool] {
+  background-color: #b9b9b9;
+}
 .home .panel:hover {
   flex-grow: 1;
   animation: flex-grow .2s;
@@ -268,20 +315,31 @@ nav #logo {
 
 .home .panel > h2 {
   position: absolute;
-  top: 0;
-  left: 0;
   bottom: 0;
   writing-mode: tb;
   margin-left: 0;
   transform: rotate(180deg);
   text-align: right;
+  font-size: 1.4em;
+  left: 12px;
 }
 
-.home .panel .content {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50px;
-  right: 50px;
-  overflow-y: auto;
+.home .panel .content{
+position: absolute;
+top: 0;
+bottom: 0;
+left: 63px;
+right: 0;
+overflow-y: auto;
+width: 100%;
+}
+.home .panel .content a {
+  color: white;
+}
+.home .panel .content h2 {
+font-size: 1.4rem;
+margin-bottom: 0;
+}
+.home .about p {
+      font-size: 0.7em;
 }
