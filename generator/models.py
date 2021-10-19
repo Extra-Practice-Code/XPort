@@ -61,6 +61,8 @@ class Link (object):
     self.inline = inline
     self._id = ''.join([str(random.randint(0,9)) for x in range(15)])
     self.label = label
+    self.reverse_link = None
+    self.context = None
     
     if direct and source:
       self.resolved = True
@@ -122,6 +124,7 @@ class ReverseLink (object):
     self.resolved = link.resolved
     self.broken = link.broken
     self.label = link.label
+    self.original = link
 
   @property
   def id (self):
@@ -133,6 +136,10 @@ class ReverseLink (object):
 
   def __str__ (self):
     return str(self.target)
+
+  @property
+  def context (self):
+    return self.original.context
 
 """
   Field for a links, holds more information, like the contenttype and whether
@@ -363,7 +370,11 @@ def includeTag(tag, display_label, source, link):
   #   except AttributeError:
   #     model.tags = [tag]
   # print('<span class="tag" id="{id}">{label}</span>'.format(label=display_label if display_label else str(tag), id=link.id))
-  return '<a class="tag" id="{id}" href="{url}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
+  return '<a class="tag" id="{id}" href="{url}" data-link-id="{id}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
+
+def includeTheme(tag, display_label, source, link):
+  return '<a class="theme inline-reference" id="{id}" href="{url}" data-link-id="{id}">{label}</a>'.format(label=display_label if display_label else str(tag), id=link.id, url=tag.link)
+
 
 def labelReference(target, display_label):
   return '<span class="{}">{}</span>'.format(target.contentType, display_label if display_label else str(target))
@@ -383,6 +394,8 @@ def renderReference(target, display_label, source, link):
     return labelReference(target, display_label)
   elif target.contentType == 'tag':
     return includeTag(target, display_label, source, link)
+  elif target.contentType == 'theme':
+    return includeTheme(target, display_label, source, link)
   else:
     return linkReference(target, display_label)
 
@@ -474,7 +487,7 @@ def parseReference(match, collector=None, source=None):
         #   link = None
 
         # link = Link(source, target)
-        collector.append(target)
+        collector.append(link)
 
         return renderReference(target, display_label=display_label, source=source, link=link)
       else:
@@ -557,13 +570,13 @@ def expandTags (content):
 
 def resolveReferences (model):
   # return content
-  collector = [] # Collects all the targets
+  collector = [] # Collects all the links
   content = model.content
   if content:
     content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[([\w\._\-]+):([^\|\]]+)(?:\|(.[^\]+]+))?\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
+    return (mark_safe(re.sub(r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])

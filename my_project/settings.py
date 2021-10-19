@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'etherpadlite',
-    'generator'
+    'generator',
+    'easy_thumbnails',
+    'filer',
+    'mptt'
     #'south'
 ]
 
@@ -159,3 +162,5 @@ except NameError:
 API_LOCAL_URL = None
 
 TREE_PAD_OPEN_MODE = 'w'
+
+THUMBNAIL_HIGH_RESOLUTION = True

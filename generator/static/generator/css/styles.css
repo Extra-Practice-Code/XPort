@@ -343,3 +343,22 @@ margin-bottom: 0;
 .home .about p {
       font-size: 0.7em;
 }
+
+
+.inline-reference:target,
+.inline-reference[data-link-marked] {
+	outline: 1px dotted currentColor;
+	outline-offset: .15em;
+}
+
+mark {
+  background: initial;
+  color: inherit;
+  text-decoration: underline;
+}
+
+.markdown--circled {
+  outline: 1px solid currentColor;
+  outline-offset: .25em;
+  border-radius: 1.25rem/50%;
+}

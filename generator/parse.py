@@ -21,6 +21,57 @@ from django.conf import settings
 
 from generator.extract_meta import extract_meta
 
+from bs4 import BeautifulSoup
+import copy
+
+def findContextParent (element):
+  eligible = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'div']
+  parent = element.parent
+
+  if parent:
+    if parent.name in eligible:
+      return parent
+    else:
+      return findContextParent(parent)
+  else:
+    return None
+
+def findLink(link_id, links):
+  for link in links:
+    if link.id == link_id:
+      return link
+
+  return None
+
+"""
+  Add context parent for inline links.
+"""
+def addContextForReferences (html, links):
+  # try:
+  soup = BeautifulSoup(html, 'html.parser')
+  references = soup.select('[data-link-id]')
+  for reference in references:
+    link_id = reference.get('data-link-id')
+    link = findLink(link_id, links)
+
+    if link:
+      context = copy.copy(findContextParent(reference))
+      # Make a copy, remove link elements, keep a span
+      # for the marked link
+      for a in context.select('a'):
+        if a['data-link-id'] == link_id:
+          span = soup.new_tag('span')
+          span['data-link-marked'] = 'true'
+          span['class'] = 'inline-reference'
+          span.string = a.string
+          a.replace_with(span)
+        else:
+          a.unwrap()
+          
+      link.context = mark_safe(str(context))
+  # except ET.ParseError:
+  #   print('Could not parse {}'.format(html))
+
 """
   
   Loop through all the pads and 'parse' them as markdown.
@@ -123,7 +174,7 @@ def parse_pads ():
 
     info('Read {}'.format(pad.display_slug))
 
-    # Excecuting links
+  # Excecuting links
   for model in models:
     # resolve links
     # collect inline links
@@ -131,10 +182,13 @@ def parse_pads ():
     
     if model.content:
       # Render inline references
-      content, _ = resolveReferences(model) # Second return are the collected references
+      content, links = resolveReferences(model) # Second return are the collected references
       # render markdown
       md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list', 'nl2br', DelExtension(), MarkExtension(), CircledExtension()])
       model.content = mark_safe(md.convert(content))
+      # Load context into references?
+      if model.content:
+        addContextForReferences(model.content, links)
       
   return models
 
