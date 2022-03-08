@@ -6,9 +6,6 @@ from .models import modelFor, collectionFor, UnknownContentTypeError, knownConte
 from .utils import info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
-from my_project.markdown_del_extension import DelExtension
-from my_project.markdown_mark_extension import MarkExtension
-from my_project.markdown_circled_extension import CircledExtension
 from py_etherpad import EtherpadLiteClient
 
 from django.core.management.base import BaseCommand
@@ -184,7 +181,7 @@ def parse_pads ():
       # Render inline references
       content, links = resolveReferences(model) # Second return are the collected references
       # render markdown
-      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list', 'nl2br', DelExtension(), MarkExtension(), CircledExtension()])
+      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
       model.content = mark_safe(md.convert(content))
       # Load context into references?
       if model.content:
