@@ -8,20 +8,24 @@
 {% block content %}
   {% if not user.is_authenticated %}
       {% if form.errors %}
-      <p class="error">{% trans "Your username and password didn't match. Please try again." %}</p>
+        <p class="error">{% trans "Your username and password didn't match. Please try again." %}</p>
       {% endif %}
     
       <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
-            {{ form.username.label_tag }}
-            {{ form.username }}
-            {{ form.password.label_tag }}
-            {{ form.password }}
-    
-        <input class="submit" type="submit" value="{% trans "Login" %}" />
-        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'home' %}{% endif %}" />
+            
+        <div class="form-row">
+          {{ form.username.label_tag }}{{ form.username }}
+        </div>
+        <div class="form-row">
+            {{ form.password.label_tag }}{{ form.password }}
+        </div>
+        <div class="form-row--button">
+          <input class="submit" type="submit" value="{% trans "Login" %}" />
+          <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{% url 'home' %}{% endif %}" />
+        </div>
       </form>
     {% else %}
-    <p>You are already logged in—welcome!</p>
+      <p>You are already logged in—welcome!</p>
     {% endif %}
 {% endblock %}

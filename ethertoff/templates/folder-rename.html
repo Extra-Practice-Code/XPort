@@ -5,18 +5,24 @@
       <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
       <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
 {% endblock %}
-  
+
 {% block title %}
       <h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
-  <form action="{% url 'folder-rename' %}" method="post">
-        {% csrf_token %}
-        Old folder name: "{{ form.old_name.value }}"<br />  
-        {{ form.old_name.as_hidden }}
-        {{ form.new_name }}
-        <input class="submit" type="submit" value="{% trans "Rename" %}" />
-  </form>
-  <legend></legend>
+      <form action="{% url 'folder-rename' %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                  {{ form.old_name.label_tag }}{{ form.old_name.value }}
+            </div>
+            <div class="form-row">
+                  {{ form.new_name.label_tag }}{{ form.new_name }}
+            </div>
+            <div class="form-row--button">
+                  {{ form.old_name.as_hidden }}
+                  <input class="submit" type="submit" value="{% trans "Rename" %}" />
+            </div>
+      </form>
+      <legend></legend>
 {% endblock %}

@@ -5,18 +5,21 @@
       <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
       <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
 {% endblock %}
-  
+
 {% block title %}
       <h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
-  <form action="{% url 'pad-create' %}" method="post">
-        {% csrf_token %}
-        Pad name
-        {{ form.name }}
-        {{ form.group }}
-        <input class="submit" type="submit" value="{%trans "Create" %}" />
-  </form>
-  <legend></legend>
+      <form action="{% url 'pad-create' %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                  {{ form.name.label_tag }}{{ form.name }}
+                  {{ form.group }}
+            </div>
+            <div class="form-row--button">
+                  <input class="submit" type="submit" value="{%trans " Create" %}" />
+            </div>
+      </form>
+      <legend></legend>
 {% endblock %}

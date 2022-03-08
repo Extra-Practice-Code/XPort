@@ -5,17 +5,23 @@
       <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
       <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
 {% endblock %}
-  
+
 {% block title %}
       <h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
-  <form action="{% url 'pad-rename' pk=pk %}" method="post">
-        {% csrf_token %}
-        {% trans "Old pad name" %}: {{ name }}<br />  
-        {% trans "New pad name" %}: {{ form.name }}
-        <input class="submit" type="submit" value="{% trans "Rename" %}" />
-  </form>
-  <legend></legend>
+      <form action="{% url 'pad-rename' pk=pk %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                  {{ form.old_name.label_tag }}{{ form.old_name.value }}
+            </div>
+            <div class="form-row">
+                  {{ form.new_name.label_tag }}{{ form.new_name }}
+            </div>
+            <div class="form-row--button">
+                  <input class="submit" type="submit" value="{% trans "Rename" %}" />
+            </div>
+      </form>
+      <legend></legend>
 {% endblock %}

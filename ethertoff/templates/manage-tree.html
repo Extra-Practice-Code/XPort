@@ -1,46 +1,48 @@
 {% extends "base.html" %}
 {% load wikify %}
-
+{% block title %}
+  <h2>Pads</h2>
+{% endblock %}
 {% block content %}
     <section class="pad-list--path">
         <a href="{% url 'manage' %}">root</a>
         {% for name, path in crumbs %}
             {% if path %}
-                > <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
+              <span class="pad-list--path--separator"></span>
+              <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
             {% endif %}
         {% endfor %}
-    </section>
-    <ul id="pads_list" class="manage_list">
-        {% for folder in folders %}
-            <li><a href="{% url 'manage' folder|addPath:folderPath %}">&#128448; {{ folder }}</a>
-              <section class="actions">
-                <a href="{% url 'folder-rename' folder|addPath:folderPath %}" class="button button--rename">rename</a>
-              </section>
-            </li>
-        {% endfor %}
-        {% for pad in tree.pads %}
-            <li>
-              <a data-uid="{{ pad.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=pad.display_slug %}" class="pad-link">
-                {{ pad.display_slug|stripPath:folderPath|dewikify }}
-                {% if pad.is_public %}(public){% endif %}
-              </a>
-              <section class="actions">
-                {% if pad.is_public %}
-                    <a href="{% url 'pad-private' pad.pk %}" class="button button--private">make private</a>
-                {% else %}
-                    <a href="{% url 'pad-public' pad.pk %}" class="button button--public">make public</a>
-                {% endif %}
-                <a href="{% url 'pad-rename' pad.pk %}" class="button button--rename">rename</a>
-                <a href="{% url 'pad-delete' pad.pk %}" class="button button--delete">delete</a>
-              </section>
-            </li>
-        {% endfor %}
-    </ul>
-    <section class="pad-list--actions">
-        {% if folderPathString %}
-          <a href="{% url 'pad-create' folderPathString %}">+ create pad</a>
+        {% if currentPath %}
+          <a href="{% url 'pad-create' currentPath|pathString %}" class="button push">+ create pad</a>
         {% else %}
-          <a href="{% url 'pad-create' %}">+ create pad</a>
+          <a href="{% url 'pad-create' %}" class="button push">+ create pad</a>
         {% endif %}
     </section>
+    <ul id="pads_list" class="manage_list">
+        {% for key, type, object in dir_list %}
+            {% if type == 'pad' %}
+              <li class="pad">
+                <a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">
+                  {{ object.display_slug|stripPath:currentPath|dewikify }}
+                  {% if object.is_public %}(public){% endif %}
+                </a>
+                <section class="actions">
+                  {% if object.is_public %}
+                      <a href="{% url 'pad-private' object.pk %}" class="button button--private">make private</a>
+                  {% else %}
+                      <a href="{% url 'pad-public' object.pk %}" class="button button--public">make public</a>
+                  {% endif %}
+                  <a href="{% url 'pad-rename' object.pk %}" class="button button--rename">rename</a>
+                  <a href="{% url 'pad-delete' object.pk %}" class="button button--delete">delete</a>
+                </section>
+              </li>
+            {% else %}
+              <li class="folder"><a href="{% url 'manage' key|addPath:currentPath %}">{{ key }}</a>
+                <section class="actions">
+                  <a href="{% url 'folder-rename' key|addPath:currentPath %}" class="button button--rename">rename</a>
+                </section>
+              </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -11,8 +11,6 @@
         <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
     {% endblock %}
 
-
-    <script src="{% static 'js/less-1.4.1.min.js' %}" type="text/javascript"> </script>
     <script src="{% static 'js/jquery-1.11.1.min.js' %}" type="text/javascript"> </script>
     <script src="{% static 'js/underscore.js' %}" type="text/javascript"> </script>
 
@@ -24,7 +22,7 @@
 <body class="pad-{{ pad.display_name|slugify }} {{ mode }}-mode {% if user.is_authenticated and author %}logged-in{% else %}logged-out{% endif %} {% block bodyclasses %}{% endblock %}">
     <nav id="nav-left">
         <h1><a id="logo" data-article="{% block data_article %}{% endblock%}" href="/">{{ site_name }}</a></h1>
-        <a class="button screen-only" href="/r/About.md">About</a>
+        <a class="button--nav screen-only" href="/r/About.md">About</a>
         
         <!-- 
         <div id="sort-by">Sort by:
@@ -34,68 +32,64 @@
         </div>-->
         {% block extra_nav %}{% endblock %}
         
-        <a class="button screen-only" href="{% url 'all' %}">List</a>
+        <a class="button--nav screen-only" href="{% url 'all' %}">List</a>
 
         {% if user.is_authenticated and author %}
         <div id="staff-menu" class="private">
             <span class="screen-only">{{ author.full_name_with_prefix }}</span>
-            <a class="button screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
-            <a class="button screen" href="{% url 'password_change' %}">Change password</a>
-            <a class="button screen-only" href="{% url 'pad-create' %}">Create</a>
-            <a class="button screen-only" href="{% url 'generate' %}">Generate static version</a>
-            <a class="button screen-only" href="/static/generator/generated/index.html">View static version</a>
-            <a class="button screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
-            <a class="button screen-only" href="/w/screen.css">screen.css</a>
-            <a class="button screen-only" href="/w/laser.css">laser.css</a>
-            <a class="button screen-only" href="/w/offset.css">offset.css</a>
-            <a class="button screen-only" href="/w/documentation.md">documentation</a>
+            <a class="button--nav screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
+            <a class="button--nav screen" href="{% url 'password_change' %}">Change password</a>
+            <a class="button--nav screen-only" href="{% url 'pad-create' %}">Create Pad</a>
+            <a class="button--nav screen-only" href="{% url 'generate' %}">Generate static version</a>
+            <a class="button--nav screen-only" href="/static/generator/generated/index.html">View static version</a>
+            <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
+            <a class="button--nav screen-only" href="/w/screen.css">screen.css</a>
+            <a class="button--nav screen-only" href="/w/laser.css">laser.css</a>
+            <a class="button--nav screen-only" href="/w/offset.css">offset.css</a>
+            <a class="button--nav screen-only" href="/w/documentation.md">documentation</a>
             {% else %}
-            <a class="button" href="{% url 'login' %}">Log in</a>
+            <a class="button--nav" href="{% url 'login' %}">Log in</a>
             {% endif %}
         </div>
     </nav>
     <nav id="nav-right">
         {% if pad %}
-            <a class="button screen-only read-button" href="{% url 'pad-read' 'r' pad.display_slug %}">Read</a>
-            <a class="button screen-only slide-button" href="{% url 'pad-read' 's' pad.display_slug %}">Slide</a>
-            <a class="button screen-only" href="{% url 'pad-read' 'p' pad.display_slug %}">Print</a>
+            <a class="button--nav screen-only read-button" href="{% url 'pad-read' 'r' pad.display_slug %}">Read</a>
+            <a class="button--nav screen-only slide-button" href="{% url 'pad-read' 's' pad.display_slug %}">Slide</a>
+            <a class="button--nav screen-only" href="{% url 'pad-read' 'p' pad.display_slug %}">Print</a>
             {% if pad.is_public or user.is_authenticated %}
-                <a class="button screen-only write-button" href="{% url 'pad-write' pad.display_slug %}">Write</a>
+                <a class="button--nav screen-only write-button" href="{% url 'pad-write' pad.display_slug %}">Write</a>
             {% else %}
-                <a class="button screen-only write-button login-required" href="{% url 'login' %}">Write</a>
+                <a class="button--nav screen-only write-button login-required" href="{% url 'login' %}">Write</a>
             {% endif %}
         {% endif %}
     </nav>
-    <div class="wrap">
-        <div class="left-side screen-only">
-            {% block title_left %}{% endblock %}
-        </div>
 
-        <div class="middle">
-            {% block title %}{% endblock %}
-        </div>
+    <aside id="title-left" class="left-side screen-only">
+        {% block title_left %}{% endblock %}
+    </aside>
 
-        <div class="right-side screen-only">
-            {% block title_right %}{% endblock %}
-        </div>
-    </div>
+    <header id="title" class="middle">
+        {% block title %}{% endblock %}
+    </header>
 
-    <div class="wrap">
-        <div class="left-side screen-only">
-        </div>
-        <div class="middle">
-            <div id="content" class="{% block contentclasses %}{% endblock %}">
-                {% block content %}{% endblock %}
-            </div>
-        </div>
-        <div class="right-side screen-only">
-            {% block rightside %}{% endblock %}
-        </div>
-    </div>
+    <aside id="title-right" class="right-side screen-only">
+        {% block title_right %}{% endblock %}
+    </aside>
+
+    <aside id="content-left" class="left-side screen-only">
+        {% block leftside %}{% endblock %}
+    </aside>
+    <main id="content" class="middle {% block contentclasses %}{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+    <aside id="content-right" class="right-side screen-only">
+        {% block rightside %}{% endblock %}
+    </aside>
+
     {% block extraui %}{% endblock %}
 
-
-    
+    <footer id="footer"></footer>
 
     <script src="{% static 'js/ethertoff.js' %}" type="text/javascript" charset="utf-8"> </script>
     <script src="{% static 'js/comments/comments.js' %}" type="text/javascript" charset="utf-8"> </script>
@@ -109,6 +103,6 @@
     {% endif %}
 
 
-{% block scripts %}{% endblock %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>

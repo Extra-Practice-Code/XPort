@@ -14,9 +14,6 @@ import os
 
 import markdown
 from markdown.extensions.toc import TocExtension
-from my_project.markdown_del_extension import DelExtension
-from my_project.markdown_mark_extension import MarkExtension
-from my_project.markdown_circled_extension import CircledExtension
 from generator.markdown_inline_reference import InlineReferenceExtension
 # from mdx_semanticdata import SemanticDataExtension
 from py_etherpad import EtherpadLiteClient
@@ -50,7 +47,7 @@ from generator.management.commands.generate import generate as generateStatic
 
 from . import forms as ethertoffForms
 
-from ethertoff.forms import RenameFolderForm
+from ethertoff.forms import RenameFolderForm, RenamePadForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 
@@ -81,29 +78,6 @@ Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
 
-def makeLeaf ():
-    return { 'folders': {}, 'pads': [] }
-
-def insertAt (path=[], tree=[], pad=''):
-    if len(path) > 1:
-        key = path.pop(0)
-        if not key in tree['folders']:
-            tree['folders'][key] = makeLeaf()
-
-        tree['folders'][key] = insertAt(path, tree['folders'][key], pad)
-    else:
-        tree['pads'].append(pad)
-
-    return tree
-
-def insertPad (pad, tree):
-    if settings.PAD_NAMESPACE_SEPARATOR in pad.display_slug:
-        path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
-    else:
-        path = []
-    
-    return insertAt(path, tree, pad)
-
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
     if not pad.is_public:
@@ -112,7 +86,7 @@ def makePadPublic (pad, n=0):
         publicid = pad.name+tail
 
         try:
-            res = epclient.sendClientsMessage(pad.padid, "Please continue editing in the publicversion of this pad")
+            res = epclient.sendClientsMessage(pad.padid, "Please continue editing in the public version of this pad")
             print(res)
             res = epclient.copyPad(pad.padid, publicid)
             pad.is_public = True
@@ -143,7 +117,7 @@ def filterPadSlug(slug):
 
     return slug 
 
-def ensurePadExtension(slug):
+def ensureExtension(slug):
     name, ext = os.path.splitext(slug)
 
     if settings.PAD_FORCE_EXTENSION:
@@ -154,17 +128,19 @@ def ensurePadExtension(slug):
 
     return '{}{}'.format(name, ext.lower()) 
 
-# FIXME: better name
-def numerizePadName (name, n=0):
-    name, ext = os.path.splitext(name)
-
+def insertNumberBeforeExtension (name, n=0):
     if n > 0:
+        name, ext = os.path.splitext(name)
         name = '{}-{}'.format(name, n)
 
-    return '{}{}'.format(name, ext)
+        return '{}{}'.format(name, ext)
+    else:
+        return name
 
 def treatPadName(slug, n):
-    return numerizePadName(ensurePadExtension(filterPadSlug(slug)), n)
+    return insertNumberBeforeExtension(
+        ensureExtension(
+            filterPadSlug(slug)), n)
 
 def createPad (slug, server, group, n=0):
     if n < 25:
@@ -259,6 +235,11 @@ def padDelete(request, pk):
     )
 
 
+"""
+    Renames a pad to the given slug.
+    If the desired name already exists a number is added before the extension.
+    name.md → name-1.md
+"""
 def renamePad(pad, slug, n=0):
     pad.display_slug = treatPadName(slug, n)
     
@@ -268,35 +249,38 @@ def renamePad(pad, slug, n=0):
         except IntegrityError:
             return renamePad(pad, slug, n+1)
 
+    raise IntegrityError
 
 @login_required(login_url='/etherpad')
 def padRename(request, pk):
     pad = get_object_or_404(Pad, pk=pk)
 
     if request.method == 'POST':
-        form = ethertoffForms.PadRename(request.POST)
+        form = ethertoffForms.RenamePadForm(request.POST)
         if form.is_valid():
-            slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
+            slug = re.sub(r'\s+', '_', form.cleaned_data['new_name'])
             slug = slug.strip(":")  # avoids leading and trailing "::"
             renamePad(pad, slug)
 
             path = getFolderName(pad.display_slug)
+
             if path:
-                path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
+                path = path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
                 return redirect('manage', path=path)
             else:
                 return redirect('manage')
 
     else:
-        form = ethertoffForms.PadRename({
+        print(pad.pk)
+        form = ethertoffForms.RenamePadForm({
             'pk': pad.pk,
-            'name': pad.display_slug
+            'old_name': pad.display_slug,
+            'new_name': pad.display_slug,
         })
 
     context = {
         'form': form,
         'pk': pad.pk,
-        'name': pad.display_slug,
         'title': _('Rename pad {}').format(str(pad))
     }
 
@@ -307,6 +291,10 @@ def padRename(request, pk):
         'pad-rename.html',
         context
     )
+
+class RenamePadView(FormView):
+    template_name = 'pad-rename.html'
+    form_class = RenamePadForm
 
 class RenameFolderView(FormView):
     template_name = 'folder-rename.html'
@@ -329,8 +317,10 @@ class RenameFolderView(FormView):
         for pad in Pad.objects.filter(display_slug__startswith=old_name):
             current_display_slug = pad.display_slug
             new_display_slug = new_name + current_display_slug[len(old_name):]
-            pad.display_slug = new_display_slug
-            pad.save()
+            # Use renamePad function to deal with name conflicts
+            renamePad(pad, new_display_slug)
+            # pad.display_slug = new_display_slug
+            # pad.save()
         return super().form_valid(form)
 
 @login_required(login_url='/etherpad')
@@ -589,7 +579,7 @@ def pad_read(request, mode="r", slug=None):
         # we don’t want Etherpads automatically generated HTML, we want plain text.
         text = epclient.getText(padID)['text']
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', 'nl2br', DelExtension(), MarkExtension(), CircledExtension(), InlineReferenceExtension()])
+            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', InlineReferenceExtension()])
             text = md.convert(text)
             try:
                 meta = md.Meta
@@ -726,36 +716,39 @@ def generate(request):
 
 
 @login_required(login_url='/accounts/login')
-# def manage(request, page=1):
 def manage(request, path=[]):
+    prefix = ''
+
     if len(path) > 0:
         path = path.split('/')
-        pads = Pad.objects.filter(display_slug__startswith=settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR).order_by('name')
+        prefix = settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
+        pads = Pad.objects.filter(display_slug__startswith=prefix).order_by('name')
     else:
         pads = Pad.objects.all().order_by('name')
-    # paginator = Paginator(pads, settings.PADS_PER_PAGE)
 
-    tree = makeLeaf()
+    dir_list = []
+    seen_dirs = []
 
+    # Loop through pads. If it is within a subfolder only show first folder.
     for pad in pads:
-        tree = insertPad(pad, tree)
-    
-    if len(path) > 0:
-        for key in path:
-            tree = tree['folders'][key]
+        relativePath = pad.display_slug[len(prefix):]
+
+        if settings.PAD_NAMESPACE_SEPARATOR in relativePath:
+            key = relativePath.split(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
+            if key not in seen_dirs:
+                dir_list.append((key, 'directory', None))
+                seen_dirs.append(key)
+        else:
+            key = relativePath
+            dir_list.append((key, 'pad', pad))
+            
 
     crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
 
-    folders = [key for key in tree['folders'].keys()]
-
-    folders.sort(key=str.lower)
-
     return render(request, "manage-tree.html", {
-        'tree': tree,
-        'folderPath': path,
+        'dir_list': dir_list,
+        'currentPath': path,
         'crumbs': crumbs,
-        'folders': folders,
-        'folderPathString': '/'.join(path) if path else None,
         'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
     })
     

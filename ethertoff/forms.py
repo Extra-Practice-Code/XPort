@@ -12,6 +12,7 @@ class RenameFolderForm(forms.Form):
     old_name = forms.CharField(label=_("Old name"), required=False)
     new_name = forms.CharField(label=_("New name"), required=False)
 
-class PadRename(forms.Form):
+class RenamePadForm(forms.Form):
     pk = forms.HiddenInput()
-    name = forms.CharField(label=_("Name"))
+    old_name = forms.CharField(label=_("Old name"), required=False)
+    new_name = forms.CharField(label=_("New name"))
