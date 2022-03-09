@@ -70,8 +70,10 @@ Etherpad’s HTML entities.
 cf http://fredericiana.com/2010/10/08/decoding-html-entities-to-text-in-python/
 """
 
-h = HTMLParser()
-unescape = h.unescape
+# Removed in Python 3.9
+# @Fixme, replace....
+# h = HTMLParser()
+# unescape = h.unescape
 
 """
 Create a regex for our include template tag
@@ -573,7 +575,7 @@ def pad_read(request, mode="r", slug=None):
         # Though is not alwasy dependable
         text = epclient.getHtml(padID)['html']
         # Quick and dirty hack to allow HTML in pads
-        text = unescape(text)
+        # text = unescape(text)
     else:
         # If a pad is named something.css, something.html, something.md etcetera,
         # we don’t want Etherpads automatically generated HTML, we want plain text.

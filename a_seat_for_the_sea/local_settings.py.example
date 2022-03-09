@@ -27,12 +27,22 @@ HOME_PAD = 'About.md'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
+#MEDIA_ROOT = '/srv/ethertoff/media/'   
 MEDIA_ROOT = ''
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = '/home/osp/static-ethertoff-collected/'
+#STATIC_ROOT = '/srv/ethertoff/static/'
+STATIC_ROOT = ''
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+FILER_ALLOW_REGULAR_USERS_TO_ADD_ROOT_FOLDERS = True
+
+STATICFILES_DIRS = [
+    PROJECT_DIR + "/static",
+]
+
+DEBUG = False
