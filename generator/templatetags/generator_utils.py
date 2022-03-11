@@ -4,6 +4,8 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.conf import settings
 
+from generator.settings import SITE_URL as GENERATED_SITE_URL
+
 import re
 
 register = template.Library()
@@ -51,3 +53,8 @@ def combine_linkfields (*fields):
           targets.append(link.target)
 
   return combined
+
+
+@register.simple_tag
+def generated_site_url ():
+  return GENERATED_SITE_URL

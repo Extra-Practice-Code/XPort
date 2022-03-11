@@ -1,4 +1,4 @@
-{% load wikify ethertoff_tags static %}<!DOCTYPE HTML>
+{% load wikify ethertoff_tags static generator_utils %}<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" {% if meta.language %} lang="{{ meta.language.0 }}" {% endif %} moznomarginboxes mozdisallowselectionprint>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -41,7 +41,7 @@
             <a class="button--nav screen" href="{% url 'password_change' %}">Change password</a>
             <a class="button--nav screen-only" href="{% url 'pad-create' %}">Create Pad</a>
             <a class="button--nav screen-only" href="{% url 'generate' %}">Generate static version</a>
-            <a class="button--nav screen-only" href="/static/generator/generated/index.html">View static version</a>
+            <a class="button--nav screen-only" href="{% generated_site_url %}">View static version</a>
             <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
             <a class="button--nav screen-only" href="/w/screen.css">screen.css</a>
             <a class="button--nav screen-only" href="/w/laser.css">laser.css</a>

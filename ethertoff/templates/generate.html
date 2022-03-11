@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static generator_utils %}
 
 {% block extra_styles %}
     <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
@@ -10,7 +10,7 @@
 {% block content %}
   {% if generated %}
   <p style="background-color: white">Site regenerated</p>
-  <p>View <a href="/static/generator/generated/index.html">home page</a></p>
+  <p>View <a href="{% generated_site_url %}">home page</a></p>
   {% else %}
   <div id="loading">
       <div class="meter red">
