@@ -4,7 +4,7 @@ MENU_ITEMS = [
 
 SITE_URL = 'http://localhost:8000/static/generator/generated'
 STATIC_URL = 'http://localhost:8000/static/generator'
-PAD_BASE_URL = 'https://oceanographies.osp.kitchen/w/'
+PAD_BASE_URL = 'http://localhost:8000/w/'
 DEFAULT_CONTENT_TYPE = 'pad'
 SHOW_LOG_MESSAGES = True
 SHOW_DEBUG_MESSAGES = True

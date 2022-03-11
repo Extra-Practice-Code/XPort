@@ -1,7 +1,5 @@
-from generator.models import collectionFor, knownContentTypes, \
-  is_link, is_multi_link, is_reverse_link, is_reverse_multi_link, \
-  Model
-from generator.utils import try_attributes
+from generator.collection import collectionFor, knownContentTypes
+from generator.links import is_link, is_multi_link, is_reverse_link, is_reverse_multi_link
 from generator.settings import PAD_BASE_URL
 import os.path
 

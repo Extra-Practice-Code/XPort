@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from .settings import SHOW_LOG_MESSAGES
-from .settings import SHOW_DEBUG_MESSAGES
-from .settings import SITE_URL, MENU_ITEMS, STATIC_URL
+from generator.settings import SHOW_LOG_MESSAGES
+from generator.settings import SHOW_DEBUG_MESSAGES
+from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL
 
 from django.template import loader
 
 import re
+import random
+from string import ascii_letters, digits
 
 CRED = '\033[91m'
 CGREEN = '\033[92m'
@@ -15,19 +17,23 @@ CMAGENTA = '\033[95m'
 CCYAN = '\033[96m'
 CEND = '\033[0m'
 
-def info(*args):
+def print_in_color(*messages, color=CEND):
+  messages = ' '.join(map(str, messages))
+  print('{}{}{}'.format(color, messages, CEND))
+
+def info(*messages):
   if SHOW_LOG_MESSAGES:
-    print(*[str(a).encode('utf-8') for a in args])
+    print(' '.join(map(str, messages)))
 
-def debug(*args, color=CCYAN):
+def debug(*messages, color=CCYAN):
   if SHOW_DEBUG_MESSAGES:
-    print(color, *[str(a).encode('utf-8') for a in args], CEND)
+    print_in_color(*messages, color=color)
 
-def warn(*args):
-  print(CYELLOW, *[str(a).encode('utf-8') for a in args], CEND)
+def warn(*messages):
+  print_in_color(*messages, color=CYELLOW)
 
-def error(*args):
-  print(CRED, *[str(a).encode('utf-8') for a in args], CEND)
+def error(*messages):
+  print_in_color(*messages, color=CRED)
 
 
 def regroup (iterable, key):
@@ -68,9 +74,14 @@ def keyFilter (value):
     return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower().strip()))
 
 
-def render_to_string(template, context):
+def render_template_to_string(template, context):
   context['SITE_URL'] = SITE_URL
   context['STATIC_URL'] = STATIC_URL
   context['MENU_ITEMS'] = MENU_ITEMS
 
   return loader.render_to_string(template, context)
+
+
+def make_id (length=15): 
+  tokens = ascii_letters + digits
+  return ''.join([random.choice(tokens) for _ in range(length)])

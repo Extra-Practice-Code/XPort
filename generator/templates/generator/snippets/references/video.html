@@ -1,0 +1,19 @@
+<section class="video">
+  {% if video.title %}
+    <h3>{{  video.title }}</h3>
+  {% endif %}
+  {% if video.vimeoId %}
+    <iframe src="https://player.vimeo.com/video/{{ video.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <!-- @FIXME find a way to include the player js only once -->
+    <script src="https://player.vimeo.com/api/player.js"></script>
+  {% else %}
+    <video controls>
+      <source src="{{ video.video }}" type="{{ video.type }}">
+    </video>
+  {% endif %}
+  {% if video.description %}
+    <p>
+      {{ video.description }}
+    </p>
+  {% endif %}
+</section>

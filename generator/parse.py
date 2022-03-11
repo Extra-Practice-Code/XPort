@@ -2,8 +2,9 @@ import markdown
 import os.path
 import urllib
 
-from .models import modelFor, collectionFor, UnknownContentTypeError, knownContentTypes, resolveReferences, knownContentType
-from .utils import info, debug, warn, keyFilter
+from generator.models import resolveReferences
+from generator.collection import collectionFor, UnknownContentTypeError, knownContentType
+from generator.utils import error, info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
 from py_etherpad import EtherpadLiteClient
@@ -118,7 +119,6 @@ def parse_pads ():
       label = None
 
       try:
-        # meta = md.Meta
         meta['pk'] = pad.pk
 
         # if the first line of the metadata is a known contenttype
@@ -135,56 +135,45 @@ def parse_pads ():
             warn('Both valid contenttype present in the first row ({0}) as well as a type declaration ({1}), using {0}'.format(contentType, meta['type'][0]), pad.display_slug)
         else:
           if 'type' in meta:
-            if meta['type'] == ['biography']:
-              warn("Outdated contenttype biography. for pad: {}".format(pad.display_slug))
-              meta['type'] = ['produser']
             contentType = meta['type'][0]
           else:
-            debug("No contenttype found, applied default contenttype for pad: {}".format(pad.display_slug))
+            debug("No contenttype found, applied default contenttype ({}) for: {}".format(DEFAULT_CONTENT_TYPE, pad.display_slug))
             contentType = DEFAULT_CONTENT_TYPE
-          key = modelFor(contentType).extractKey(meta)
+
+          key = collectionFor(contentType).model.extractKey(meta)
 
         collection = collectionFor(contentType)
         
         debug('Extracted key: {}'.format(key))
         model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug)
         models.append(model)
-        # resolveReferences()
-
-        # if collectedLinkTargets:
-        #   # print('Collected link targets')
-        #   for linkTarget in collectedLinkTargets:
-        #     # print(linkTarget.contentType, linkTarget)
-
-        #     # TODO, simplify linking process
-        #     # make references to more than just tags
-        #     if linkTarget.contentType == 'tag' and 'tags' in model.metadataFields:
-        #       current = model.tags if hasattr(model, 'tags') else []
-
-        #       if linkTarget not in current:
-        #         model.tags = current + model.metadataFields['tags']([str(linkTarget)], model)
 
       except UnknownContentTypeError as e:
-        debug('Skipped `{}`'.format(name))
-        debug(e)
+        error(e)
+        error('Skipped `{}`'.format(name))
         pass
 
     info('Read {}'.format(pad.display_slug))
 
   # Excecuting links
   for model in models:
+    info('Parsing {} ({})'.format(model.label, model.source_path))
     # resolve links
-    # collect inline links
+    debug('Resolving links in the header')
     model.resolveLinks()
     
     if model.content:
       # Render inline references
+      debug('Resoving inline references')
       content, links = resolveReferences(model) # Second return are the collected references
       # render markdown
+      debug('Parsing markdown')
       md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
       model.content = mark_safe(md.convert(content))
       # Load context into references?
       if model.content:
+        debug('Enriching references with context')
+        # As a plugin / optional?
         addContextForReferences(model.content, links)
       
   return models
@@ -196,10 +185,3 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
     parse_pads()
-
-    for produser in collectionFor('produser').models:
-      for k in dir(produser):
-        info(getattr(produser, k))
-
-    # print(collectionFor('produser').models)
-    # print(collectionFor('event').models, collectionFor('event').models[0].metadata, collectionFor('event').models[0].metadata['produser'].metadata)

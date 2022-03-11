@@ -72,9 +72,10 @@ class DateRange (object):
     return list(reversed(chunks))
 
 class Field (object):
-  def __init__ (self, default = []):
+  def __init__ (self, default = [], filter = None):
     self.default = default
     self._value = None
+    self.filter = filter
 
   # no-op
   def parse (self, value):
@@ -98,6 +99,9 @@ class Field (object):
   @property
   def value (self):
     if self._value:
+      if self.filter and callable(self.filter):
+        return list(map(self.filter, self._value))
+      
       return self._value
     else:
       return self.default
@@ -167,9 +171,9 @@ class DateField (Field):
       start, end = dateRange
       return DateRange(self.parse(start), self.parse(end))
     else:
-      for frm in FIELD_DATE_FORMATS:
+      for date_format in FIELD_DATE_FORMATS:
         try:
-          date = datetime.datetime.strptime(value, frm).date()
+          date = datetime.datetime.strptime(value, date_format).date()
           return Date(date)
         except ValueError:
           pass
@@ -179,14 +183,17 @@ class DateField (Field):
 
 class DateTimeField (Field):
   def parse (self, value):
-    try:
-      return datetime.datetime.strptime(value, '{} {}'.format(FIELD_DATE_FORMAT, FIELD_TIME_FORMAT))
-    except ValueError:
-      return datetime.datetime.strptime(value, '{} {}'.format(FIELD_DATE_FORMAT_ALT, FIELD_TIME_FORMAT))
+    for date_format in FIELD_DATE_FORMATS:
+      try:
+        return datetime.datetime.strptime(value, '{} {}'.format(date_format, FIELD_TIME_FORMAT))
+      except ValueError:
+        pass
+
+    return None
 
 class TimeField (Field):
   def parse (self, value):
-    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―|─]\s*(\d{1,2}\:\d{1,2})', value)
+    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―|─|→]\s*(\d{1,2}\:\d{1,2})', value)
     if m:
       start = datetime.datetime.strptime(m.group(1), FIELD_TIME_FORMAT).time()
       end = datetime.datetime.strptime(m.group(2), FIELD_TIME_FORMAT).time()
