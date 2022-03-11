@@ -2,9 +2,18 @@ MENU_ITEMS = [
   #   ('Contact', 'pages/contact.html')
 ]
 
-SITE_URL = 'http://localhost:8000/static/generator/generated'
-STATIC_URL = 'http://localhost:8000/static/generator'
-PAD_BASE_URL = 'http://localhost:8000/w/'
+# Base url
+# SITE_URL = 'https://www.example.com/' 
+SITE_URL = ''
+
+# Base url for static
+# STATIC_URL = SITE_URL + 'static/generator'
+STATIC_URL = ''
+
+# Base url for pad writing interface, used in debug page
+# PAD_BASE_URL = 'https://ethertoff.example.com/w/'
+PAD_BASE_URL = ''
+
 DEFAULT_CONTENT_TYPE = 'pad'
 SHOW_LOG_MESSAGES = True
 SHOW_DEBUG_MESSAGES = True
