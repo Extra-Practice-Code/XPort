@@ -1,4 +1,9 @@
 {% extends "generator/base.html" %}
 {% block extrabodyclass %}home{% endblock %}
 {% block content %}
+<ul>
+  {% for voice in voices %}
+    <li><a href="{{ voice.url }}">{{ voice }}</a></li>
+  {% endfor %}
+</ul>
 {% endblock %}

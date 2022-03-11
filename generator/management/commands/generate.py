@@ -72,7 +72,7 @@ def generate ():
 
     if model.generateSinglePages and collection.models:
       os.mkdir(os.path.join(outputdir, model.prefix))
-      generate_single_pages(collection.models, model.singlePageTemplate, outputdir, lambda model: { '__object__': model, model.contentType: model })
+      generate_single_pages(collection.models, model.singlePageTemplate, outputdir, lambda model: { 'object': model, model.contentType: model })
 
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {

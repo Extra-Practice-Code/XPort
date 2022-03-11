@@ -7,9 +7,6 @@ VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(
 
 @contentType(InstantiatingCollection)
 class Image (Model):
-  contentType = 'image'
-  keyField = 'image'
-  labelField = 'image'
   generateSinglePages = False
   referenceTemplate = 'generator/snippets/references/image.html'
 
@@ -23,9 +20,6 @@ class Image (Model):
 
 @contentType(InstantiatingCollection)
 class Audio (Model):
-  contentType = 'audio'
-  keyField = 'audio'
-  labelField = 'audio'
   generateSinglePages = False
   referenceTemplate = 'generator/snippets/references/audio.html'
 
@@ -39,9 +33,6 @@ class Audio (Model):
 
 @contentType(InstantiatingCollection)
 class Video (Model):
-  contentType = 'video'
-  keyField = 'video'
-  labelField = 'video'
   generateSinglePages = False
   referenceTemplate = 'generator/snippets/references/video.html'
 
@@ -71,11 +62,21 @@ class Video (Model):
     }
 
 
+# @contentType()
+# class Pad (Model):
+#   contentType = 'pad'
+#   keyField = 'pad'
+#   labelField = 'pad'
+
+#   def _metadataFields (self):
+#     return {
+#       'pad': fields.Single(fields.StringField()),
+#     }
+
+
 @contentType()
 class Voice (Model):
-  contentType = 'voice'
-  keyField = 'voice'
-  labelField = 'voice'
+  # Use a metaclass to have better default values?
 
   def _metadataFields (self):
     return {

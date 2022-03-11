@@ -1,7 +1,7 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block content %}
-  <h2>{{ __object__.contentType }} </h2>
-  <h1>{{ __object__ }}</h1>
-  {{ __object__.content }}
+  <h2>{{ object.contentType }} </h2>
+  <h1>{{ object }}</h1>
+  {{ object.content }}
 {% endblock %}

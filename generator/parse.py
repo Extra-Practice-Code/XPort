@@ -121,6 +121,8 @@ def parse_pads ():
       try:
         meta['pk'] = pad.pk
 
+        # Add the sourcepath as an entry in the metadata?
+
         # if the first line of the metadata is a known contenttype
         # use it as such. It's value becomes the key and potentially
         # the label

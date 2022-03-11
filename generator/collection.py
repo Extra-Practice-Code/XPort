@@ -43,7 +43,7 @@ class Collection(object):
   def register (self, model):
     if isinstance(model, self.model):
       if not self.has(model.key):
-        self.models.append(model)
+        self._models.append(model)
         self.index[model.key] = model
       elif self.index[model.key].stub:
         debug('Updating metadata for stub {} with key {}'.format(model.key, model.label.value))
@@ -63,6 +63,7 @@ class Collection(object):
 
   @property
   def models (self):
+    # Check whether sorted' copying bevahiour causes 
     return sorted(self._models, key = lambda m: m.getSortKey())
 
 """ 
@@ -126,6 +127,21 @@ def modelFor (contentType):
 
 def contentType (collection=Collection):
   def decorator (model):
+
+    if not hasattr(model, 'contentType') or not model.contentType:
+      model.contentType = model.__name__.lower()
+
+    if not hasattr(model, 'keyField') or not model.keyField:
+      model.keyField = model.__name__.lower()
+
+    if not hasattr(model, 'labelField') or not model.labelField:
+      model.labelField = model.__name__.lower()
+
+    if not hasattr(model, 'plural') or not model.plural:
+      model.plural = '{}s'.format(model.__name__.lower())
+
+    if not hasattr(model, 'prefix') or not model.prefix:
+      model.prefix = '{}s'.format(model.__name__.lower())
 
     contentTypes[model.contentType] = ContentType(model, collection=collection)
     return model

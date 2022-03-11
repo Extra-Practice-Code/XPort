@@ -1,6 +1,6 @@
 
 from generator import links
-from generator.utils import debug, make_id, warn, keyFilter, render_template_to_string
+from generator.utils import debug, error, make_id, warn, keyFilter, render_template_to_string
 import re
 from collections import OrderedDict
 from generator.collection import UnknownContentTypeError, collectionFor, knownContentType
@@ -197,14 +197,14 @@ def resolveReferences (model):
 class Model(object):
   content = None
   source_path = None
-  keyField = 'id'
-  labelField = 'title'
+  keyField = None
+  labelField = None
+  prefix = None
+  plural = None
   sortKey = None
   referenceTemplate = 'generator/snippets/references/reference.html'
   singlePageTemplate = 'generator/object.html'
   generateSinglePages = True
-  prefix = None
-  plural = None
 
   def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
@@ -229,12 +229,6 @@ class Model(object):
 
     if metadata or content:
       self.fill(metadata=metadata, content=content)
-
-    if not self.plural:
-      self.plural = '{}s'.format(self.contentType)
-
-    if not self.prefix:
-      self.prefix = self.plural
 
     self._id = make_id(15)
   
@@ -335,9 +329,10 @@ class Model(object):
 
   def getSortKey (self):
     if self.sortKey:
-      return getattr(self, self.sortKey)
+      return getattr(self, self.sortKey).value
     else:
-      return getattr(self, self.labelField)
+      return getattr(self, self.labelField).value
+
   # @property
   # def key (self):
   #   return self.metadata[self.keyField]
