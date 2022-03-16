@@ -96,6 +96,9 @@ class Field (object):
   def __iter__ (self):
     return iter(self.value)
   
+  def __bool__ (self):
+    return True if self.value else False
+
   @property
   def value (self):
     if self._value:
@@ -112,13 +115,23 @@ class Field (object):
   #   else:
   #     return self.default
 
+
 """
   Wrapper for a field object to turn it into a single field
 """
 class Single(object):
   def __init__ (self, field):
     self.field = field
-  
+
+  def __bool__ (self):
+    return True if self.field.value else False  
+
+  def __repr__ (self):
+    return repr(self.value)
+
+  def __str__ (self):
+    return str(self.value)
+
   def set (self, value):
     self.field.set(value)
 
@@ -129,11 +142,17 @@ class Single(object):
     else:
       return None
 
-  def __repr__ (self):
-    return repr(self.value)
+
+class SingleImageField (Single):
+  def __init__ (self):
+    self.field = ImageField()
+
+  def __repr__(self):
+    return self.value.canonical_url if self.value else ''
 
   def __str__ (self):
-    return str(self.value)
+    return self.value.canonical_url if self.value else ''
+
 
 
 class DateField (Field):
@@ -215,6 +234,23 @@ class StringField(Field):
       return str(value)
     else:
       return None
+
+from filer.models import Image
+
+class ImageField(Field):
+  # re_file_id_from_url = re.compile(r'canonical/(?P<uploaded_at>[0-9]+)/(?P<file_id>[0-9]+)/$')
+
+  # def parse (self, value):
+  #   print(value)
+  #   m = self.re_file_id_from_url.search(value)
+  #   print(m, type(Image.objects.get(pk=m.group('file_id'), is_public=True)))
+  #   if m:
+  #     return Image.objects.get(pk=m.group('file_id'), is_public=True)
+  #   else:
+  #     return None
+
+  def parse (self, value):
+    return Image.objects.get(pk=value, is_public=True)
 
 class MarkdownField(Field):
   def parse (self, value):

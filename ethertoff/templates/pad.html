@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ethertoff_tags wikify %}
+{% load ethertoff_tags wikify generator_utils %}
 
 {% block extra_styles %}
   <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
@@ -37,22 +37,6 @@
     {% endfor %}
   </section>
   <iframe id="ether" src="{{link}}?userName={{uname}}"> </iframe>
-
-  <script type="text/javascript">
-      /**
-       * This little script is necessary for some browsers that don't respect the
-       * height css attribute on iframes.
-       */
-      function resizeEtherpad() {
-        height = jQuery(window).height()*94/100;
-        jQuery('#wrapper iframe').height(height);
-      }
-
-      jQuery(document).ready( function() {
-        resizeEtherpad()
-        jQuery(window).resize(resizeEtherpad);
-      });
-  </script>
   {% endif %}
 
 {% endblock %}

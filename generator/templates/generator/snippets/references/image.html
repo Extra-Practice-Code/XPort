@@ -1,0 +1,11 @@
+<figure class="image">
+  {% if object.title %}
+    <h3>{{  object.title }}</h3>
+  {% endif %}
+  <img src="{{ object.image }}" />
+  {% if object.caption %}
+    <caption>
+      {{ object.caption }}
+    </caption>
+  {% endif %}
+  </figure>

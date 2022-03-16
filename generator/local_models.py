@@ -12,7 +12,7 @@ class Image (Model):
 
   def _metadataFields (self):
     return {
-      'image': fields.Single(fields.StringField()),
+      'image': fields.SingleImageField(),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
     }

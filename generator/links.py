@@ -117,6 +117,9 @@ class LinkField(object):
   def __str__ (self):
     return str(self.value)
 
+  def __bool__ (self):
+    return True if self.value else False
+
   def resolve (self, source):
     if self.value:
       self.value.resolve(source)
@@ -179,6 +182,9 @@ class MultiLinkField(object):
 
   def __iter__ (self):
     return iter(self.value)
+  
+  def __bool__ (self):
+    return (len(self.value) > 0)
 
   def set (self, target, inline=False):
     if type(target) is list:
@@ -227,6 +233,9 @@ class ReverseLinkField(object):
 
   def __str__ (self):
     return str(self.value)
+
+  def __bool__ (self):
+    return (len(self.value) > 0)
 
   def resolve (self, link):
     self.value = link

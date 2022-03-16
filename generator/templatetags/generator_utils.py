@@ -7,6 +7,7 @@ from django.conf import settings
 from generator.settings import SITE_URL as GENERATED_SITE_URL
 
 import re
+import os.path
 
 register = template.Library()
 
@@ -57,4 +58,16 @@ def combine_linkfields (*fields):
 
 @register.simple_tag
 def generated_site_url ():
-  return GENERATED_SITE_URL
+  return os.path.join(GENERATED_SITE_URL, 'index.html')
+
+
+from django.urls import reverse
+from django.utils.http import urlencode
+
+@register.simple_tag
+def file_picker_url ():
+  params = {}
+  params['_pick'] = 'file'
+  params['_popup'] = True
+  
+  return '{}?{}'.format(reverse('admin:filer-directory_listing-last'), urlencode(sorted(params.items())))
