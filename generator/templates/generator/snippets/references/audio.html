@@ -1,0 +1,13 @@
+<section class="audio">
+  {% if object.title %}
+    <h3>{{  object.title }}</h3>
+  {% endif %}
+  <audio controls>
+    <source src="{{ object.audio }}" type="{{ object.type }}">
+  </audio>
+  {% if object.description %}
+    <p>
+      {{ object.description }}
+    </p>
+  {% endif %}
+</section>

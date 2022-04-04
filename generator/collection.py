@@ -127,7 +127,8 @@ def modelFor (contentType):
 
 def contentType (collection=Collection):
   def decorator (model):
-
+    # Check whether the model has certain initial properties
+    # if not, set default values
     if not hasattr(model, 'contentType') or not model.contentType:
       model.contentType = model.__name__.lower()
 

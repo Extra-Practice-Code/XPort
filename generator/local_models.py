@@ -1,5 +1,7 @@
+from pydoc import pager
 from generator import fields, links
 from generator.models import Model
+from generator.links import linkMultiReverse, multiLinkMultiReverse
 from generator.collection import contentType, InstantiatingCollection
 import re
 
@@ -62,19 +64,15 @@ class Video (Model):
     }
 
 
-# @contentType()
-# class Pad (Model):
-#   contentType = 'pad'
-#   keyField = 'pad'
-#   labelField = 'pad'
-
-#   def _metadataFields (self):
-#     return {
-#       'pad': fields.Single(fields.StringField()),
-#     }
-
-
 @contentType()
+class Pad (Model):
+  def _metadataFields (self):
+    return {
+      'pad': fields.Single(fields.StringField()),
+    }
+
+
+@contentType(InstantiatingCollection)
 class Voice (Model):
   # Use a metaclass to have better default values?
 
@@ -83,3 +81,53 @@ class Voice (Model):
       'voice': fields.Single(fields.StringField()),
     }
 
+@contentType(InstantiatingCollection)
+class Tag (Model):
+  # Use a metaclass to have better default values?
+
+  def _metadataFields (self):
+    return {
+      'tag': fields.Single(fields.StringField()),
+    }
+
+
+@contentType()
+class Page (Model):
+  def _metadataFields (self):
+    return {
+      'page': fields.Single(fields.StringField()),
+      'station': linkMultiReverse('station', 'pages'),
+      'tags': multiLinkMultiReverse('tag', 'pages'),
+      'voices': multiLinkMultiReverse('voice', 'pages')
+    }
+
+class Station (Model):
+  sortKey = 'date'
+
+  def _metadataFields (self):
+    return {
+      'station': fields.Single(fields.StringField()),
+      'summary': fields.Single(fields.InlineMarkdownField()),
+      'date': fields.DateField(), 
+      'location': fields.StringField(),
+      'tags': multiLinkMultiReverse('tag', 'stations'),
+      'voices': multiLinkMultiReverse('voice', 'stations')
+    }
+
+class Contribution (Model):
+  def _metadataFields (self):
+    return {
+      'contribution': fields.Single(fields.StringField()),
+      'station': linkMultiReverse('station', 'contributions'),
+      'tags': multiLinkMultiReverse('tag', 'contributions'),
+      'voices': multiLinkMultiReverse('voice', 'contributions')
+    }
+
+class Reflection (Model):
+  def _metadataFields (self):
+    return {
+      'reflection': fields.Single(fields.StringField()),
+      'station': linkMultiReverse('station', 'reflections'),
+      'tags': multiLinkMultiReverse('tag', 'reflections'),
+      'voices': multiLinkMultiReverse('voice', 'reflections')
+    }

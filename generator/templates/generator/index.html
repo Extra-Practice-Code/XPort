@@ -2,8 +2,59 @@
 {% block extrabodyclass %}home{% endblock %}
 {% block content %}
 <ul>
-  {% for voice in voices %}
-    <li><a href="{{ voice.url }}">{{ voice }}</a></li>
+  {% for station in stations %}
+    <li>
+      <section class="station">
+        <h2>{{ station.station }}</h2>
+        <h3>{{ station.date }}</h3>
+        <h3>{{ station.location }}</h3>
+        {{ station.content }}
+
+        {% if station.voices %}
+        <h4>Voices</h4>
+        <ul>
+          {% for voice in station.voices %}
+          <li>
+            <a href="{{ voice.url }}">{{ voice }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if station.contributions %}
+        <h4>Contributions</h4>
+        <ul>
+          {% for contribution in station.contributions %}
+          <li>
+            <a href="{{ contribution.url }}">{{ contribution }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if station.reflections %}
+        <h4>reflections</h4>
+        <ul>
+          {% for reflection in station.reflections %}
+          <li>
+            <a href="{{ reflection.url }}">{{ reflection }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if station.tags %}
+        <h4>Tags</h4>
+        <ul>
+          {% for tag in station.tags %}
+          <li>
+            <a href="{{ tag.url }}">{{ tag }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+    </li>
   {% endfor %}
 </ul>
 {% endblock %}
