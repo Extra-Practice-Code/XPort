@@ -64,12 +64,12 @@ class Video (Model):
     }
 
 
-@contentType()
-class Pad (Model):
-  def _metadataFields (self):
-    return {
-      'pad': fields.Single(fields.StringField()),
-    }
+# @contentType()
+# class Pad (Model):
+#   def _metadataFields (self):
+#     return {
+#       'pad': fields.Single(fields.StringField()),
+#     }
 
 
 @contentType(InstantiatingCollection)
@@ -101,6 +101,7 @@ class Page (Model):
       'voices': multiLinkMultiReverse('voice', 'pages')
     }
 
+@contentType()
 class Station (Model):
   sortKey = 'date'
 
@@ -108,12 +109,14 @@ class Station (Model):
     return {
       'station': fields.Single(fields.StringField()),
       'summary': fields.Single(fields.InlineMarkdownField()),
-      'date': fields.DateField(), 
+      'date': fields.Single(fields.DateField()),
+      'time': fields.TimeField(),
       'location': fields.StringField(),
       'tags': multiLinkMultiReverse('tag', 'stations'),
       'voices': multiLinkMultiReverse('voice', 'stations')
     }
 
+@contentType()
 class Contribution (Model):
   def _metadataFields (self):
     return {
@@ -123,6 +126,7 @@ class Contribution (Model):
       'voices': multiLinkMultiReverse('voice', 'contributions')
     }
 
+@contentType()
 class Reflection (Model):
   def _metadataFields (self):
     return {

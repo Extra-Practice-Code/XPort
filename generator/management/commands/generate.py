@@ -48,6 +48,7 @@ def generate_single_pages (models, template, outputdir, make_context):
 def generate ():
   # Clear existing collections
   resetCollections(contentTypes)
+  print(contentTypes)
 
   basedir = os.path.join(settings.BASE_DIR, 'generator')
   backupdir = os.path.join(basedir, 'static', 'generator', 'generated.old')
@@ -70,13 +71,19 @@ def generate ():
     collection = contentType.collection
     model = collection.model
 
+
     if model.generateSinglePages and collection.models:
+      print(model.contentType)
       os.mkdir(os.path.join(outputdir, model.prefix))
       generate_single_pages(collection.models, model.singlePageTemplate, outputdir, lambda model: { 'object': model, model.contentType: model })
 
 
+  print({
+    contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
+  })
+
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
-    collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
+    contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
   })
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:

@@ -560,3 +560,9 @@ div#next a {
 .button--nav:hover {
     background-color: var(--button-color--hover);
 }
+.syntax-help {
+    font-size: 75%;
+    margin-left: 1em;
+    max-height: calc(100vh - 75px);
+    overflow: auto;
+}

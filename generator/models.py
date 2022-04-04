@@ -248,6 +248,7 @@ class Model(object):
 
   @property
   def url (self):
+    print(os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key)))
     return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
 
   def setMetadata(self, metadata=None):
