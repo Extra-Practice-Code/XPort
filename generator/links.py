@@ -37,7 +37,7 @@ class Link (object):
     self.reverse = False
 
   def __repr__ (self):
-    return 'Link between {} -> {}'.format(repr(self.source), repr(self.target))
+    return 'Link between {} ({}) -> {} ({})'.format(str(self.source), self.source.contentType, str(self.target), self.target.contentType)
 
   def __str__ (self):
     return str(self.target)
@@ -125,7 +125,7 @@ class LinkField(object):
       self.value.resolve(source)
       self.resolved = True
       # Should we also resolve the reverse link?
-      if not self.value.broken and self.reverse:
+      if not self.value.broken and self.reverse is not None:
         # If so provide a reversed version of the link
         self.reverse.resolve(ReverseLink(self.value))
     else:
@@ -180,8 +180,10 @@ class MultiLinkField(object):
     self.reverse = reverse
     self.unique = unique
 
+  # By default the link targets are returned
+  # to loop through the links, use the `links` property
   def __iter__ (self):
-    return iter(self.value)
+    return iter(self.targets)
   
   def __bool__ (self):
     return (len(self.value) > 0)
@@ -208,7 +210,7 @@ class MultiLinkField(object):
     link = Link(target, self.contentType, inline, direct=True, source=source, label=label)
     self.value.append(link)
 
-    if self.reverse:
+    if self.reverse is not None:
       self.reverse.resolve(ReverseLink(link))
 
     return link
@@ -218,12 +220,16 @@ class MultiLinkField(object):
   def resolve (self, source):
     for link in self.value:
       link.resolve(source)
-      if not link.broken and self.reverse:
+      if not link.broken and self.reverse is not None:
         self.reverse.resolve(ReverseLink(link))
 
   @property
   def targets (self):
     return [link.target for link in self.value]
+
+  @property
+  def links (self):
+    return self.value
 
 # This could as well be a partial?
 class ReverseLinkField(object):

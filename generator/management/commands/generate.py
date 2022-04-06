@@ -9,7 +9,7 @@ from generator.index import make_index
 
 from generator.parse import parse_pads
 from generator.collection import resetCollections, contentTypes
-from generator.utils import info, render_template_to_string, keyFilter
+from generator.utils import debug, info, render_template_to_string, keyFilter
 import generator.local_models
 
 from django.core.management.base import BaseCommand
@@ -24,9 +24,6 @@ FIELD_DATE_FORMAT = '%d.%m.%Y'
 FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
 FIELD_TIME_FORMAT = '%H:%M'
 
-import datetime
-
-from generator.fields import Date, DateRange, Time, TimeRange
 
 from generator.settings import DATE_OUTPUT_FORMAT
 
@@ -42,13 +39,13 @@ def output (path, template, context):
 
 def generate_single_pages (models, template, outputdir, make_context):
   for model in models:
-    output(os.path.join(outputdir, model.prefix, '{}.html'.format(keyFilter(model.key))), template, make_context(model))
+    debug('Generating single page for {}'.format(model))
+    output(os.path.join(outputdir, '{}.html'.format(keyFilter(model.key))), template, make_context(model))
 
 
 def generate ():
   # Clear existing collections
   resetCollections(contentTypes)
-  print(contentTypes)
 
   basedir = os.path.join(settings.BASE_DIR, 'generator')
   backupdir = os.path.join(basedir, 'static', 'generator', 'generated.old')
@@ -60,27 +57,24 @@ def generate ():
   
   os.mkdir(outputdir)
     
-  print('Parsing pads')
+  info('Parsing pads')
   models = parse_pads()
 
-  print('Read pads')
-  print('Generating output')
+  info('Read pads')
+  info('Generating output')
 
   
   for contentType in contentTypes.values():
     collection = contentType.collection
     model = collection.model
 
-
     if model.generateSinglePages and collection.models:
-      print(model.contentType)
-      os.mkdir(os.path.join(outputdir, model.prefix))
-      generate_single_pages(collection.models, model.singlePageTemplate, outputdir, lambda model: { 'object': model, model.contentType: model })
+      singlepagedir = os.path.join(outputdir, model.prefix)
+      if not os.path.exists(singlepagedir):
+        os.mkdir(singlepagedir)
+      debug('Generating single pages for {} in {}'.format(model.contentType, singlepagedir))
+      generate_single_pages(collection.models, model.singlePageTemplate, singlepagedir, lambda model: { 'object': model, model.contentType: model })
 
-
-  print({
-    contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
-  })
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
     contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()

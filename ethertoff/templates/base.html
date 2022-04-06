@@ -40,12 +40,12 @@
             <a class="button--nav screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
             <a class="button--nav screen" href="{% url 'password_change' %}">Change password</a>
             <a class="button--nav screen-only" href="{% url 'pad-create' %}">Create Pad</a>
+            <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
             <a class="button--nav screen-only" href="{% url 'generate' %}">Generate static version</a>
             <a class="button--nav screen-only" href="{% generated_site_url %}">View static version</a>
-            <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
-            <a class="button--nav screen-only" href="/w/screen.css">screen.css</a>
-            <a class="button--nav screen-only" href="/w/laser.css">laser.css</a>
-            <a class="button--nav screen-only" href="/w/offset.css">offset.css</a>
+            <!-- <a class="button--nav screen-only" href="/w/screen.css">screen.css</a> -->
+            <!-- <a class="button--nav screen-only" href="/w/laser.css">laser.css</a> -->
+            <!-- <a class="button--nav screen-only" href="/w/offset.css">offset.css</a> -->
             <a class="button--nav screen-only" href="/w/documentation.md">documentation</a>
             {% else %}
             <a class="button--nav" href="{% url 'login' %}">Log in</a>

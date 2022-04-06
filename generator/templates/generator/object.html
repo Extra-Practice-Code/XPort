@@ -3,5 +3,5 @@
 {% block content %}
   <h2>{{ object.contentType }} </h2>
   <h1>{{ object }}</h1>
-  {{ object.content }}
+  {% if object.content %}{{ object.content }}{% endif %}
 {% endblock %}

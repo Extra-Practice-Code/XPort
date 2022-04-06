@@ -36,7 +36,7 @@ def findContextParent (element):
 
 def findLink(link_id, links):
   for link in links:
-    if link.id == link_id:
+    if link and link.id == link_id:
       return link
 
   return None
@@ -50,23 +50,25 @@ def addContextForReferences (html, links):
   references = soup.select('[data-link-id]')
   for reference in references:
     link_id = reference.get('data-link-id')
-    link = findLink(link_id, links)
+    
+    if link_id:
+      link = findLink(link_id, links)
 
-    if link:
-      context = copy.copy(findContextParent(reference))
-      # Make a copy, remove link elements, keep a span
-      # for the marked link
-      for a in context.select('a'):
-        if a['data-link-id'] == link_id:
-          span = soup.new_tag('span')
-          span['data-link-marked'] = 'true'
-          span['class'] = 'inline-reference'
-          span.string = a.string
-          a.replace_with(span)
-        else:
-          a.unwrap()
-          
-      link.context = mark_safe(str(context))
+      if link:
+        context = copy.copy(findContextParent(reference))
+        # Make a copy, remove link elements, keep a span
+        # for the marked link
+        for a in context.select('a'):
+          if a['data-link-id'] == link_id:
+            span = soup.new_tag('span')
+            span['data-link-marked'] = 'true'
+            span['class'] = 'inline-reference'
+            span.string = a.string
+            a.replace_with(span)
+          else:
+            a.unwrap()
+            
+        link.context = mark_safe(str(context))
   # except ET.ParseError:
   #   print('Could not parse {}'.format(html))
 

@@ -53,6 +53,10 @@ def parseReferenceMetadata (raw):
   return (None, raw.strip())
 
 
+# Resolves content type for given attribute on given model
+# if the attribute is not a link, or not registered on the model
+# (can be the case on an inline reference) it'll try to look it
+# it up in the contentTypes
 def resolveContentType(attr, model):
   if attr in model.metadata and (links.is_link(model.metadata[attr])):
     return model.metadata[attr].contentType
@@ -67,9 +71,7 @@ def parseReference(match, collector=None, source=None):
   contentType = resolveContentType(referenceName, source) # match.group(1).strip().lower()
   label = match.group(2).strip()
   metadata, display_label = parseReferenceMetadata(match.group(3)) if match.group(3) else (None, None)
-  debug()
-  debug()
-  debug('*** Parsing reference')
+  debug('Parsing reference')
   debug(contentType, label, metadata, display_label)
 
   if label:
@@ -88,6 +90,8 @@ def parseReference(match, collector=None, source=None):
 
         debug("Found target '{}' of type '{}'".format(target, contentType))
 
+        # @FIXME references to contenttypes which do not have a (link)field are
+        # not encoded as a link currently. Introduce an extra collector.
         if referenceName in source.metadata and links.is_link(source.metadata[referenceName]):
           ## FIXME what if it's an existing reverse
           link = source.metadata[referenceName].makeLink(source, target, inline=True, label=display_label)
@@ -189,7 +193,12 @@ def resolveReferences (model):
     content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
-    return (mark_safe(re.sub(r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]', partial(parseReference, collector=collector, source=model), content)), collector)
+    # 
+    referenceParser = partial(parseReference, collector=collector, source=model)
+    referencePattern = r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]'
+    contentParsed = re.sub(referencePattern, referenceParser, content)
+
+    return (mark_safe(contentParsed), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
     return (content, [])
@@ -231,42 +240,6 @@ class Model(object):
       self.fill(metadata=metadata, content=content)
 
     self._id = make_id(15)
-  
-  @classmethod
-  def extractKey(cls, data):
-    if cls.keyField in data:
-      return keyFilter(data[cls.keyField])
-    elif 'pk' in data:
-      return keyFilter(data['pk'])
-    else:
-      raise ValueError("Object doesn't have any key")
-
-  @property
-  def link (self):
-    warn('Link property is outdated')
-    return self.url
-
-  @property
-  def url (self):
-    print(os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key)))
-    return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
-
-  def setMetadata(self, metadata=None):
-    if metadata:
-      for key, value in metadata.items():
-        self.__setattr__(key, value)
-
-  # TODO: deal with objects which already have data
-  # Overwrite or extend data. Etc.
-  def fill(self, metadata={}, content=None, source_path=None):
-    if metadata:
-      self.stub = False
-      self.setMetadata(metadata)
-    if content:
-      self.stub = False
-      self.content = content
-    if source_path:
-      self.source_path = source_path
 
   def __setattr__ (self, name, value):
     if name == 'metadata':
@@ -275,23 +248,6 @@ class Model(object):
       self.metadata[name].set(value)
     else:
       super().__setattr__(name, value)
-
-  def registerMetadataField (self, fieldName, field):
-    if fieldName not in self.metadata:
-      self.metadata[fieldName] = field
-
-  def resolveLinks(self):
-    debug('Resolving links')
-    debug(self.contentType)
-    # print(self.metadata, 'key: ', self.key)
-    fields = list(self.metadata.keys())
-    for fieldname in fields:
-      if links.is_link(self.metadata[fieldname]):
-        self.metadata[fieldname].resolve(self)
-      # print(fieldname, callable(fieldname))
-      # if callable(self.metadata[fieldname]):
-      #   result = self.metadata[fieldname](self)
-      #   self.metadata[fieldname] = result
 
   def __getattr__ (self, name):
     if name in self.metadata:
@@ -313,6 +269,59 @@ class Model(object):
       debug('Has not attr for to string {}'.format(self.metadata))
       return super().__str__()
 
+  def __dir__ (self):
+    return list(self.metadata.keys()) + ['content', 'url', 'source_path']
+
+  # @FIXME add a propery to loop through all linkfields
+  # have a unified linklist? To loop through different contenttypes
+  # in a single list
+
+  @classmethod
+  def extractKey(cls, data):
+    if cls.keyField in data:
+      return keyFilter(data[cls.keyField])
+    elif 'pk' in data:
+      return keyFilter(data['pk'])
+    else:
+      raise ValueError("Object doesn't have any key")
+
+  @property
+  def link (self):
+    warn('Link property is outdated')
+    return self.url
+
+  @property
+  def url (self):
+    return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
+
+  def setMetadata(self, metadata=None):
+    if metadata:
+      for key, value in metadata.items():
+        self.__setattr__(key, value)
+
+  # TODO: deal with objects which already have data
+  # Overwrite or extend data. Etc.
+  def fill(self, metadata={}, content=None, source_path=None):
+    if metadata:
+      self.stub = False
+      self.setMetadata(metadata)
+    if content:
+      self.stub = False
+      self.content = content
+    if source_path:
+      self.source_path = source_path
+
+  def registerMetadataField (self, fieldName, field):
+    if fieldName not in self.metadata:
+      self.metadata[fieldName] = field
+
+  def resolveLinks(self):
+    debug('Resolving links of {} ({})'.format(self, self.contentType))
+    fields = list(self.metadata.keys())
+    for fieldname in fields:
+      if links.is_link(self.metadata[fieldname]):
+        self.metadata[fieldname].resolve(self)
+
   @property
   def label (self):
     return self.metadata[self.labelField]
@@ -322,7 +331,7 @@ class Model(object):
       self.referenceTemplate,
       {
         'object': self,
-        'label': display_label, # Label, set in the pad
+        'label': display_label if display_label else self.label, # Label, set in the pad
         'source': source, # source (model), pad where the link is created
         'link': link  # link itself
       }
@@ -346,6 +355,4 @@ class Model(object):
   # def contentSetter (self, content):
   #   self._content = content
 
-  def __dir__ (self):
-    return list(self.metadata.keys()) + ['content', 'link', 'source_path']
 

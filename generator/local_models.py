@@ -79,11 +79,13 @@ class Voice (Model):
   def _metadataFields (self):
     return {
       'voice': fields.Single(fields.StringField()),
+      'tags': multiLinkMultiReverse('tag', 'voices'),
     }
 
 @contentType(InstantiatingCollection)
 class Tag (Model):
   # Use a metaclass to have better default values?
+  singlePageTemplate = 'generator/tag.html'
 
   def _metadataFields (self):
     return {

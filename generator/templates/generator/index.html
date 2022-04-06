@@ -15,7 +15,7 @@
         <ul>
           {% for voice in station.voices %}
           <li>
-            <a href="{{ voice.target.url }}">{{ voice }}</a>
+            <a href="{{ voice.url }}">{{ voice }}</a>
           </li>
           {% endfor %}
         </ul>
@@ -26,7 +26,7 @@
         <ul>
           {% for contribution in station.contributions %}
           <li>
-            <a href="{{ contribution.target.url }}">{{ contribution }}</a>
+            <a href="{{ contribution.url }}">{{ contribution }}</a>
           </li>
           {% endfor %}
         </ul>
@@ -37,7 +37,7 @@
         <ul>
           {% for reflection in station.reflections %}
           <li>
-            <a href="{{ reflection.target.url }}">{{ reflection }}</a>
+            <a href="{{ reflection.url }}">{{ reflection }}</a>
           </li>
           {% endfor %}
         </ul>
@@ -48,7 +48,7 @@
         <ul>
           {% for tag in station.tags %}
           <li>
-            <a href="{{ tag.target.url }}">{{ tag }}</a>
+            <a href="{{ tag.url }}">{{ tag }}</a>
           </li>
           {% endfor %}
         </ul>

@@ -86,7 +86,7 @@ def make_index (models):
                 buff += display_link(link)
             elif is_link(field) or is_reverse_link(field):
               buff += display_link(field.value)
-            elif attr  == 'link':
+            elif attr  == 'url':
               buff += display_url(field)
             else:
               buff += display_field(field)
