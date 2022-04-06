@@ -105,7 +105,7 @@ class Page (Model):
 
 @contentType()
 class Station (Model):
-  sortKey = 'date'
+  sortKey = '-date'
 
   def _metadataFields (self):
     return {

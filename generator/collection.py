@@ -64,7 +64,7 @@ class Collection(object):
   @property
   def models (self):
     # Check whether sorted' copying bevahiour causes 
-    return sorted(self._models, key = lambda m: m.getSortKey())
+    return sorted(self._models, key = lambda m: m.getSortKey(), reverse=True if self.model.getSortDirection() < 0 else False)
 
 """ 
   Instantiates a model if it isn't part of the collection.

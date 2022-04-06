@@ -1,0 +1,27 @@
+{% extends "generator/base.html" %}
+{% load generator_utils %}
+{% block content %}
+  <h2>{{ object.contentType }} </h2>
+  <h1>{{ object }}</h1>
+  {% if object.content %}{{ object.content }}{% endif %}
+  {% if object.stations %}
+  <h3>Stations</h3>
+  <ul>
+    {% for station in object.stations %}
+    <li>
+      <a href="{{ station.url }}">{{ station }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if object.voices %}
+  <h3>Voices</h3>
+  <ul>
+    {% for voice in object.voices %}
+    <li>
+      <a href="{{ voice.url }}">{{ voice }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% endblock %}

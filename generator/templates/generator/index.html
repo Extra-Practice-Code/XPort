@@ -6,8 +6,8 @@
     <li>
       <section class="station">
         <h2>{{ station.station }}</h2>
-        <h3>{{ station.date }}</h3>
-        <h3>{{ station.location }}</h3>
+        {% if station.date %}<h3>{{ station.date }}</h3>{% endif %}
+        {% if station.date %}<h3>{{ station.location }}</h3>{% endif %}
         {{ station.content }}
 
         {% if station.voices %}
