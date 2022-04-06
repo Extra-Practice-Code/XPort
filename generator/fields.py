@@ -151,7 +151,8 @@ class SingleImageField (Single):
     return self.value.canonical_url if self.value else ''
 
   def __str__ (self):
-    return self.value.canonical_url if self.value else ''
+    # return self.value.canonical_url if self.value else ''
+    return self.value.url if self.value else ''
 
 
 
