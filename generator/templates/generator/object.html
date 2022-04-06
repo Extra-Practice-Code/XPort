@@ -4,4 +4,12 @@
   <h2>{{ object.contentType }} </h2>
   <h1>{{ object }}</h1>
   {% if object.content %}{{ object.content }}{% endif %}
+
+  <ul>
+    {% for other in object|merged_links %}
+    <li>
+      <a href="{{ other.url }}">{{ other }} <em>({{ other.contentType }})</em></a>
+    </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

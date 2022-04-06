@@ -326,6 +326,10 @@ class Model(object):
   def label (self):
     return self.metadata[self.labelField]
 
+  @property
+  def fields (self):
+    return self.metadata
+
   def asReference (self, display_label, source, link):
     return render_template_to_string(
       self.referenceTemplate,

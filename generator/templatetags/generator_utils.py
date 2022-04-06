@@ -5,6 +5,7 @@ from django.template.defaultfilters import stringfilter
 from django.conf import settings
 
 from generator.settings import SITE_URL as GENERATED_SITE_URL
+from generator.links import is_link, is_multi_link, is_reverse_multi_link, is_reverse_single_link, is_single_link
 
 import re
 import os.path
@@ -35,7 +36,17 @@ def cut_from_start (value, arg):
   print('should be removed', arg)
   return re.sub('^' + str(arg), '', re.I)
 
+@register.filter
+def merged_links (model):
+  values = []
 
+  for field in model.fields.values():
+    if is_multi_link(field) or is_reverse_multi_link(field):
+      values.extend(field.targets)
+    elif is_single_link(field) or is_reverse_single_link(field):
+      values.append(field.target)
+
+  return sorted(values, key=lambda m: m.label.value.lower())
 
 @register.filter
 def without_inline_links (field):
