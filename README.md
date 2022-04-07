@@ -220,3 +220,16 @@ To run django and etherpad in the background.
     # Then run the apps daemon
     supervisord
     supervisorctl start app_name
+
+
+## Update on the server
+```
+ssh seat-for-the-sea './deploy-ethertoff.sh'
+```
+
+## Copy data from the remote server and load locally
+```
+ssh seat-for-the-sea './dump-data.sh'
+scp seat-for-the-sea:data.json ./
+./manage.py loaddata data.json
+```
