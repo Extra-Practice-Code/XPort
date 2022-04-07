@@ -22,7 +22,7 @@
 <body class="pad-{{ pad.display_name|slugify }} {{ mode }}-mode {% if user.is_authenticated and author %}logged-in{% else %}logged-out{% endif %} {% block bodyclasses %}{% endblock %}">
     <nav id="nav-left">
         <h1><a id="logo" data-article="{% block data_article %}{% endblock%}" href="/">{{ site_name }}</a></h1>
-        <a class="button--nav screen-only" href="/r/About.md">About</a>
+        <!-- <a class="button--nav screen-only" href="/r/About.md">About</a> -->
         
         <!-- 
         <div id="sort-by">Sort by:
@@ -43,10 +43,11 @@
             <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}">File manager</a>
             <a class="button--nav screen-only" href="{% url 'generate' %}">Generate static version</a>
             <a class="button--nav screen-only" href="{% generated_site_url %}">View static version</a>
+            <a class="button--nav screen-only" href="{% generated_site_debug_url %}">View debug information</a>
             <!-- <a class="button--nav screen-only" href="/w/screen.css">screen.css</a> -->
             <!-- <a class="button--nav screen-only" href="/w/laser.css">laser.css</a> -->
             <!-- <a class="button--nav screen-only" href="/w/offset.css">offset.css</a> -->
-            <a class="button--nav screen-only" href="/w/documentation.md">documentation</a>
+            <!-- <a class="button--nav screen-only" href="/w/documentation.md">documentation</a> -->
             {% else %}
             <a class="button--nav" href="{% url 'login' %}">Log in</a>
             {% endif %}

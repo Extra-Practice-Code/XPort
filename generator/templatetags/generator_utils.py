@@ -71,6 +71,9 @@ def combine_linkfields (*fields):
 def generated_site_url ():
   return os.path.join(GENERATED_SITE_URL, 'index.html')
 
+@register.simple_tag
+def generated_site_debug_url ():
+  return os.path.join(GENERATED_SITE_URL, 'debug.html')
 
 from django.urls import reverse
 from django.utils.http import urlencode
