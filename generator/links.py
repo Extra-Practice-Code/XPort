@@ -147,7 +147,8 @@ class LinkField(object):
       self.set(target[0], inline)
     else:
       key = keyFilter(target)
-      self.value = Link(key, self.contentType, inline, label=target)
+      if key:
+        self.value = Link(key, self.contentType, inline, label=target)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
@@ -194,12 +195,13 @@ class MultiLinkField(object):
         self.set(t, inline)
     else:
       key = keyFilter(target)
-      if self.unique:
-        for existingLink in self.value:
-          if existingLink.target == key or existingLink.target == target:
-            return existingLink
+      if key:
+        if self.unique:
+          for existingLink in self.value:
+            if existingLink.target == key or existingLink.target == target:
+              return existingLink
 
-      self.value.append(Link(key, self.contentType, inline, label=target))
+        self.value.append(Link(key, self.contentType, inline, label=target))
 
   def makeLink(self, source, target, inline=False, label=None):
     if self.unique:

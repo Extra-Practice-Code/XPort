@@ -73,16 +73,6 @@ class Video (Model):
 
 
 @contentType(InstantiatingCollection)
-class Voice (Model):
-  # Use a metaclass to have better default values?
-
-  def _metadataFields (self):
-    return {
-      'voice': fields.Single(fields.StringField()),
-      'tags': multiLinkMultiReverse('tag', 'voices'),
-    }
-
-@contentType(InstantiatingCollection)
 class Tag (Model):
   # Use a metaclass to have better default values?
   singlePageTemplate = 'generator/tag.html'
@@ -93,15 +83,29 @@ class Tag (Model):
     }
 
 
+@contentType(InstantiatingCollection)
+class Voice (Model):
+  # Use a metaclass to have better default values?
+
+  def _metadataFields (self):
+    return {
+      'voice': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
+      'tags': multiLinkMultiReverse('tag', 'voices'),
+    }
+
+
 @contentType()
 class Page (Model):
   def _metadataFields (self):
     return {
       'page': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'pages'),
       'tags': multiLinkMultiReverse('tag', 'pages'),
       'voices': multiLinkMultiReverse('voice', 'pages')
     }
+
 
 @contentType()
 class Station (Model):
@@ -110,6 +114,7 @@ class Station (Model):
   def _metadataFields (self):
     return {
       'station': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
       'summary': fields.Single(fields.InlineMarkdownField()),
       'date': fields.Single(fields.DateField()),
       'time': fields.TimeField(),
@@ -123,6 +128,7 @@ class Contribution (Model):
   def _metadataFields (self):
     return {
       'contribution': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'contributions'),
       'tags': multiLinkMultiReverse('tag', 'contributions'),
       'voices': multiLinkMultiReverse('voice', 'contributions')
@@ -133,6 +139,7 @@ class Reflection (Model):
   def _metadataFields (self):
     return {
       'reflection': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
       'voices': multiLinkMultiReverse('voice', 'reflections')

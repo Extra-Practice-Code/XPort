@@ -46,7 +46,7 @@ def merged_links (model):
     elif is_single_link(field) or is_reverse_single_link(field):
       values.append(field.target)
 
-  return sorted(values, key=lambda m: m.label.value.lower())
+  return sorted(values, key=lambda m: m.label.value.lower() if m else '')
 
 @register.filter
 def without_inline_links (field):

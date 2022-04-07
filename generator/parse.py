@@ -146,15 +146,27 @@ def parse_pads ():
 
           key = collectionFor(contentType).model.extractKey(meta)
 
-        collection = collectionFor(contentType)
         
-        debug('Extracted key: {}'.format(key))
-        model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug)
-        models.append(model)
+        if key != '':
+          debug('Extracted key: {}'.format(key))
+          collection = collectionFor(contentType)
+          model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug)
+
+          ## @FIXME perhaps move this into the model itself?
+          if 'status' in model.fields:
+            if model.fields['status'].value == 'published':
+              models.append(model)
+            else:
+              debug("Did not add {} ({}) because it has a status field but it wasn't set to published".format(model.label, model.contentType))
+              collection.remove(model)
+          else:
+            models.append(model)
+        else:
+          error("Skipped {}, no key".format(pad.display_slug))
 
       except UnknownContentTypeError as e:
         error(e)
-        error('Skipped `{}`'.format(name))
+        error('Skipped `{}`, no content type found'.format(name))
         pass
 
     info('Read {}'.format(pad.display_slug))

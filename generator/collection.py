@@ -51,7 +51,12 @@ class Collection(object):
       else:
         # Extend the object here
         debug('Already has {} with key {}'.format(model, model.key))
-        
+  
+  def remove (self, model):
+    if isinstance(model, self.model):
+      if self.has(model.key):
+        self._models.remove(model)
+        del self.index[model.key]
   """
     Instantiate a model for the given key, metadata and content
     and register it on the collection.

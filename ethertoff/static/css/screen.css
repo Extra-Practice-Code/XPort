@@ -280,7 +280,7 @@ form label, form textarea {
     font-family: inherit;
     font-size: inherit;
 }
-form input, form textarea {
+form input, form textarea, form select {
 	background: none;
 	border-style: solid;
 	border-color: #333;
@@ -298,7 +298,8 @@ form input:focus, form textarea:focus {
     background-color: white;
 }
 form input[type=text],
-form input[type=password] {
+form input[type=password],
+form select {
     padding: 5px;
     width: 30ch;
     display: inline-block;

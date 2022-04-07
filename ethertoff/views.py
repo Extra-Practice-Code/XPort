@@ -43,7 +43,9 @@ from etherpadlite import config
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
+# Generator commands
 from generator.management.commands.generate import generate as generateStatic
+from generator.collection import modelFor
 
 from . import forms as ethertoffForms
 
@@ -191,6 +193,16 @@ def padCreate(request, prefix=''):
             slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
             slug = slug.strip(":")  # avoids leading and trailing "::"
             pad = createPad(slug=slug, server=group.server, group=group)
+
+            template = None
+
+            # Make a template for the seleced datatype
+            if form.cleaned_data['template'] != 'none':
+                model = modelFor(form.cleaned_data['template'])(1)
+                template = '\n'.join(['{}: {}'.format(fieldName, field.value if field.value else '') for fieldName, field in model.fields.items()])
+
+                epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
+                epclient.setText(pad.padid, template)
 
             return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else: 

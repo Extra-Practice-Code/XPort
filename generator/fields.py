@@ -15,19 +15,146 @@ class TimeRange(object):
 
 
 class Time (object):
-  def __init__ (self, time):
+  def __init__ (self, time = None):
     self.time = time
   
   def __str__ (self):
-    return self.time.strftime(TIME_OUTPUT_FORMAT)
+    if self.time:
+      return self.time.strftime(TIME_OUTPUT_FORMAT)
+    else:
+      return None
 
+  def __bool__ (self):
+    return True if self.time else False
+
+  def __lt__ (self, other):
+    if self.time == other.time:
+      # equal, or both None
+      return False
+    elif not self.time:
+      # self is None, other is not None
+      return True
+    elif not other.time:
+      # other is none
+      return False
+    else:
+      return self.time < other.time
+
+  def __le__ (self, other):
+    if self.time == other.time:
+      # equal, or both None
+      return True
+    elif not self.time:
+      # self is None, other is not None
+      return True
+    elif not other.time:
+      # other is none
+      return False
+    else:
+      return self.time <= other.time
+
+  def __gt__ (self, other):
+    if self.time == other.time:
+      # equal, or both None
+      return False
+    elif not self.time:
+      # self is None, other is not None
+      return False
+    elif not other.time:
+      # other is none
+      return True
+    else:
+      return self.time > other.time
+
+  def __ge__ (self, other):
+    if self.time == other.time:
+      # equal, or both None
+      return True
+    elif not self.time:
+      # self is None, other is not None
+      return False
+    elif not other.time:
+      # other is none
+      return True
+    else:
+      return self.time > other.time
+
+  def __ne__ (self, other):
+    return self.time != other.time
+
+  def __eq__ (self, other):
+    return self.time == other.time
 
 class Date (object):
-  def __init__ (self, date):
+  def __init__ (self, date = None):
     self.date = date
 
   def __str__ (self):
-    return '{}'.format(self.date.strftime(DATE_OUTPUT_FORMAT))
+    if self.date:
+      return '{}'.format(self.date.strftime(DATE_OUTPUT_FORMAT))
+    else:
+      return ''
+  
+  def __bool__ (self):
+    return True if self.date else False
+
+  def __lt__ (self, other):
+    if self.date == other.date:
+      # equal, or both None
+      return False
+    elif not self.date:
+      # self is None, other is not None
+      return True
+    elif not other.date:
+      # other is none
+      return False
+    else:
+      return self.date < other.date
+
+  def __le__ (self, other):
+    if self.date == other.date:
+      # equal, or both None
+      return True
+    elif not self.date:
+      # self is None, other is not None
+      return True
+    elif not other.date:
+      # other is none
+      return False
+    else:
+      return self.date <= other.date
+
+  def __gt__ (self, other):
+    if self.date == other.date:
+      # equal, or both None
+      return False
+    elif not self.date:
+      # self is None, other is not None
+      return False
+    elif not other.date:
+      # other is none
+      return True
+    else:
+      return self.date > other.date
+
+  def __ge__ (self, other):
+    if self.date == other.date:
+      # equal, or both None
+      return True
+    elif not self.date:
+      # self is None, other is not None
+      return False
+    elif not other.date:
+      # other is none
+      return True
+    else:
+      return self.date > other.date
+
+  def __ne__ (self, other):
+    return self.date != other.date
+
+  def __eq__ (self, other):
+    return self.date == other.date
 
 class DateRange (object):
   def __init__ (self, start, end):
@@ -124,7 +251,7 @@ class Single(object):
     self.field = field
 
   def __bool__ (self):
-    return True if self.field.value else False  
+    return True if self.field.value and self.field.value[0] else False  
 
   def __repr__ (self):
     return repr(self.value)
@@ -198,7 +325,7 @@ class DateField (Field):
         except ValueError:
           pass
 
-      return None
+      return Date(None)
 
 
 class DateTimeField (Field):
@@ -213,13 +340,15 @@ class DateTimeField (Field):
 
 class TimeField (Field):
   def parse (self, value):
-    m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―|─|→]\s*(\d{1,2}\:\d{1,2})', value)
-    if m:
-      start = datetime.datetime.strptime(m.group(1), FIELD_TIME_FORMAT).time()
-      end = datetime.datetime.strptime(m.group(2), FIELD_TIME_FORMAT).time()
-      return TimeRange(start, end)
-    else:
-      return Time(datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time())
+    if self.value:
+      m = re.match(r'(\d{1,2}\:\d{1,2})\s*[-|―|─|→]\s*(\d{1,2}\:\d{1,2})', value)
+      if m:
+        start = datetime.datetime.strptime(m.group(1), FIELD_TIME_FORMAT).time()
+        end = datetime.datetime.strptime(m.group(2), FIELD_TIME_FORMAT).time()
+        return TimeRange(start, end)
+      else:
+        return Time(datetime.datetime.strptime(value, FIELD_TIME_FORMAT).time())
+    return Time(None)
 
 class IntField (Field):
   def parse (self, value):
