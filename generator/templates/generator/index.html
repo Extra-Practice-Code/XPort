@@ -8,7 +8,15 @@
         <h2>{{ station.station }}</h2>
         {% if station.date %}<h3>{{ station.date }}</h3>{% endif %}
         {% if station.date %}<h3>{{ station.location }}</h3>{% endif %}
+        {% if station.pads %}
+          <ul>
+          {% for pad in station.pads %}
+            <li><a href="{{ pad.url }}">{{ pad.pad.value|default:pad.display_slug }}</a></li>
+          {% endfor %}
+          </ul>
+        {% endif %}
         {{ station.content }}
+
 
         {% if station.voices %}
         <h4>Voices</h4>

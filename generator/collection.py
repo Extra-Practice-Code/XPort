@@ -61,8 +61,8 @@ class Collection(object):
     Instantiate a model for the given key, metadata and content
     and register it on the collection.
   """
-  def instantiate (self, key, label=None, metadata={}, content=None, source_path=''):
-    model = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path)
+  def instantiate (self, key, label=None, metadata={}, content=None, source_path='', source_pad=None):
+    model = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path, source_pad=source_pad)
     self.register(model)
     return model
 
@@ -132,7 +132,7 @@ def modelFor (contentType):
 
 def contentType (collection=Collection):
   def decorator (model):
-    debug("Registering content type {}".format(model.__name__.lower()))
+    # debug("Registering content type {}".format(model.__name__.lower()))
     # Check whether the model has certain initial properties
     # if not, set default values
     if not hasattr(model, 'contentType') or not model.contentType:

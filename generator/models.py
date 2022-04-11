@@ -211,11 +211,12 @@ class Model(object):
   prefix = None
   plural = None
   sortKey = None
+  source_pad = None
   referenceTemplate = 'generator/snippets/references/reference.html'
   singlePageTemplate = 'generator/object.html'
   generateSinglePages = True
 
-  def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None):
+  def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None, source_pad=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
     self.metadata = OrderedDict()
 
@@ -238,6 +239,8 @@ class Model(object):
 
     if metadata or content:
       self.fill(metadata=metadata, content=content)
+
+    self.source_pad = source_pad
 
     self._id = make_id(15)
 

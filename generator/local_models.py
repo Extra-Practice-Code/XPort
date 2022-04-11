@@ -1,9 +1,10 @@
 from pydoc import pager
 from generator import fields, links
-from generator.models import Model
+from generator.models import Model, keyFilter
 from generator.links import linkMultiReverse, multiLinkMultiReverse
 from generator.collection import contentType, InstantiatingCollection
 import re
+from django.urls import reverse
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 
@@ -64,12 +65,32 @@ class Video (Model):
     }
 
 
-# @contentType()
-# class Pad (Model):
-#   def _metadataFields (self):
-#     return {
-#       'pad': fields.Single(fields.StringField()),
-#     }
+@contentType()
+class Pad (Model):
+  generateSinglePages = False
+  
+  def _metadataFields (self):
+    return {
+      'pad': fields.Single(fields.StringField())
+    }
+
+  @classmethod
+  def extractKey(cls, data):
+    if cls.keyField in data:
+      return keyFilter(data[cls.keyField])
+    elif 'display_slug' in data:
+      return keyFilter(data['display_slug'])
+    elif 'pk' in data:
+      return keyFilter(data['pk'])
+    else:
+      raise ValueError("Object doesn't have any key")
+
+  def getSortKey(self):
+    return self.source_pad.display_slug
+
+  @property
+  def url (self):
+    return reverse('pad', kwargs={'mode': 'w', 'slug': self.source_pad.display_slug})
 
 
 @contentType(InstantiatingCollection)
@@ -120,7 +141,8 @@ class Station (Model):
       'time': fields.TimeField(),
       'location': fields.StringField(),
       'tags': multiLinkMultiReverse('tag', 'stations'),
-      'voices': multiLinkMultiReverse('voice', 'stations')
+      'voices': multiLinkMultiReverse('voice', 'stations'),
+      'pads': multiLinkMultiReverse('pad', 'stations')
     }
 
 @contentType()
