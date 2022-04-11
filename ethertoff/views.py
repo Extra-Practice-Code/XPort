@@ -194,17 +194,18 @@ def padCreate(request, prefix=''):
             slug = slug.strip(":")  # avoids leading and trailing "::"
             pad = createPad(slug=slug, server=group.server, group=group)
 
-            template = None
+            if pad:
+                template = None
 
-            # Make a template for the seleced datatype
-            if form.cleaned_data['template'] != 'none':
-                model = modelFor(form.cleaned_data['template'])(1)
-                template = '\n'.join(['{}: {}'.format(fieldName, field.value if field.value else '') for fieldName, field in model.fields.items()])
+                # Make a template for the seleced datatype
+                if form.cleaned_data['template'] != 'none':
+                    model = modelFor(form.cleaned_data['template'])(1)
+                    template = '\n'.join(['{}: {}'.format(fieldName, field.value if field.value else '') for fieldName, field in model.fields.items()])
 
-                epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-                epclient.setText(pad.padid, template)
+                    epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
+                    epclient.setText(pad.padid, template)
 
-            return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
+                return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else: 
         # No form to process so create a fresh one
         # prefix should contain the name of the folder

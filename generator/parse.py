@@ -122,6 +122,7 @@ def parse_pads ():
 
       try:
         meta['pk'] = pad.pk
+        meta['display_slug'] = pad.display_slug
 
         # Add the sourcepath as an entry in the metadata?
 
@@ -150,7 +151,7 @@ def parse_pads ():
         if key != '':
           debug('Extracted key: {}'.format(key))
           collection = collectionFor(contentType)
-          model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug)
+          model = collection.instantiate(key=key, label=label, metadata=meta, content=content, source_path=pad.display_slug, source_pad=pad)
 
           ## @FIXME perhaps move this into the model itself?
           if 'status' in model.fields:
