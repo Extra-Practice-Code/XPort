@@ -11,7 +11,7 @@
         {% if station.pads %}
           <ul>
           {% for pad in station.pads %}
-            <li><a href="{{ pad.url }}">{{ pad.pad.value|default:pad.display_slug }}</a></li>
+            <li><a href="ethertoff.aseatforthesea.com{{ pad.url }}">{{ pad.pad.value|default:pad.display_slug }}</a></li>
           {% endfor %}
           </ul>
         {% endif %}
