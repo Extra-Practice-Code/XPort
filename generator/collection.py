@@ -148,7 +148,7 @@ def contentType (collection=Collection):
       model.plural = '{}s'.format(model.__name__.lower())
 
     if not hasattr(model, 'prefix') or not model.prefix:
-      model.prefix = '{}s'.format(model.__name__.lower())
+      model.prefix = model.plural
 
     contentTypes[model.contentType] = ContentType(model, collection=collection)
     return model

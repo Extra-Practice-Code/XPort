@@ -122,6 +122,8 @@ class Voice (Model):
 
 @contentType()
 class Gallery (Model):
+  plural = 'galleries'
+  
   def _metadataFields (self):
     return {
       'gallery': fields.Single(fields.StringField()),
