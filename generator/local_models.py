@@ -119,6 +119,22 @@ class Voice (Model):
     }
 
 
+
+@contentType()
+class Gallery (Model):
+  def _metadataFields (self):
+    return {
+      'gallery': fields.Single(fields.StringField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
+      'images': multiLinkMultiReverse('image', 'galleries'),
+      'station': linkMultiReverse('station', 'galleries'),
+      'tags': multiLinkMultiReverse('tag', 'galleries'),
+      'voices': multiLinkMultiReverse('voice', 'galleries')
+    }
+
+
 @contentType()
 class Page (Model):
   def _metadataFields (self):
