@@ -4,6 +4,7 @@ import datetime
 import re
 import markdown
 from django.utils.safestring import mark_safe
+from django.core.exceptions import ObjectDoesNotExist
 
 class TimeRange(object):
   def __init__ (self, start, end):
@@ -380,7 +381,12 @@ class ImageField(Field):
   #     return None
 
   def parse (self, value):
-    return Image.objects.get(pk=value, is_public=True)
+    try:
+      return Image.objects.get(pk=value, is_public=True)
+    except ObjectDoesNotExist:
+      # Fixme, better solution for unfound image.
+      return Image()
+      return None
 
 class MarkdownField(Field):
   def parse (self, value):

@@ -8,6 +8,8 @@ from django.urls import reverse
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 
+# FIXME: 
+
 @contentType(InstantiatingCollection)
 class Image (Model):
   generateSinglePages = False
@@ -17,6 +19,7 @@ class Image (Model):
     return {
       'image': fields.SingleImageField(),
       'title': fields.Single(fields.InlineMarkdownField()),
+      'author': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
     }
 
