@@ -390,7 +390,8 @@ body {
 }
 /* Main content --------------------------------- */
 /* Insertion du pad dans la page */
-.write-mode #content {
+.write-mode #content,
+.write-public-mode #content {
     display: flex;
     flex-direction: column;
 }
@@ -400,7 +401,6 @@ iframe#ether {
     max-width: 50em;
     margin: auto;
     width: 100%;
-    height: 100%;
 }
 /* NAV ------------------------------------------ */
 /* Navigation */
