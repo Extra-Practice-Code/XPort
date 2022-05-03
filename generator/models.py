@@ -215,6 +215,8 @@ class Model(object):
   referenceTemplate = 'generator/snippets/references/reference.html'
   singlePageTemplate = 'generator/object.html'
   generateSinglePages = True
+  listPageTemplate = 'generator/list.html'
+  generateListPage = False
 
   def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None, source_pad=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))

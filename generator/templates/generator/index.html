@@ -1,68 +1,12 @@
 {% extends "generator/base.html" %}
 {% block extrabodyclass %}home{% endblock %}
 {% block content %}
-<ul>
-  {% for station in stations %}
-    <li>
-      <section class="station">
-        <h2>{{ station.station }}</h2>
-        {% if station.date %}<h3>{{ station.date }}</h3>{% endif %}
-        {% if station.date %}<h3>{{ station.location }}</h3>{% endif %}
-        {% if station.pads %}
-          <ul>
-          {% for pad in station.pads %}
-            <li><a href="//ethertoff.aseatforthesea.com{{ pad.url }}">{{ pad.pad.value|default:pad.display_slug }}</a></li>
-          {% endfor %}
-          </ul>
-        {% endif %}
-        {{ station.content }}
-
-
-        {% if station.voices %}
-        <h4>Voices</h4>
-        <ul>
-          {% for voice in station.voices %}
-          <li>
-            <a href="{{ voice.url }}">{{ voice }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if station.contributions %}
-        <h4>Contributions</h4>
-        <ul>
-          {% for contribution in station.contributions %}
-          <li>
-            <a href="{{ contribution.url }}">{{ contribution }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if station.reflections %}
-        <h4>reflections</h4>
-        <ul>
-          {% for reflection in station.reflections %}
-          <li>
-            <a href="{{ reflection.url }}">{{ reflection }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if station.tags %}
-        <h4>Tags</h4>
-        <ul>
-          {% for tag in station.tags %}
-          <li>
-            <a href="{{ tag.url }}">{{ tag }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </section>
-    </li>
-  {% endfor %}
-</ul>
+  <div class="item item--page--title">
+    <h1>A Seat for the Sea</h1>
+    <h2>A Seat for the Sea is an artistic-research project coordinated by Greet&nbsp;Brauwers, in duo with Raf&nbsp;Custers.</h2>
+  </div>
+  <div class="item item--main">
+    <p>In 2022 we travel via 7 stations towards enhanced comprehension of the sea, its existence and threats. Actors of all kinds but with particular sea experience are invited to take part in this journey. ASftS arose from previous work, new social developments and our concerns, particularly in relation to deep-sea mining.</p>
+    <p><a href="mailto:info@aseatforthesea.com">info@aseatforthesea.com</a></p>
+  </div>
 {% endblock %}

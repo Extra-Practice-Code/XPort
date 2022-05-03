@@ -5,6 +5,9 @@
 
   <div class="item item--page--title">
     <h1>{{ object }}</h1>
+    {% if object.question %}
+      <h2>{{ object.question }}</h2>
+    {% endif %}
   </div>
   {% if object.content %}
   <div class="item item--main">
@@ -13,5 +16,6 @@
   {% endif %}
 
   {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links only %}
-
+  
+  
 {% endblock %}

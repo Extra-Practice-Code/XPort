@@ -1,0 +1,24 @@
+<div class="item item--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
+  <a href="{{ object.url }}">
+    {% if object.image %}
+    <div class="item--image-wrapper">
+      <img
+        class="item--image"
+        src="{{ object.image }}"
+        alt="{{ object.alt }}"
+      />
+    </div>
+    {% endif %}
+    <div class="item--description">
+      <p>
+        {% if object.summary %}
+          {{ object.summary|truncatechars_html:300 }}
+        {% elif object.content %}
+          {{ object.content|truncatechars_html:300 }}
+        {% else %}
+          {{ object }}
+        {% endif %}
+      </p>
+    </div>
+  </a>
+</div>

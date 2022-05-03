@@ -73,12 +73,19 @@ def generate ():
       if not os.path.exists(singlepagedir):
         os.mkdir(singlepagedir)
       debug('Generating single pages for {} in {}'.format(model.contentType, singlepagedir))
-      generate_single_pages(collection.models, model.singlePageTemplate, singlepagedir, lambda model: { 'object': model, model.contentType: model })
+      generate_single_pages(collection.models, model.singlePageTemplate, singlepagedir, lambda model: { 'object': model, model.contentType: model, 'page_content': { 'collection': collection, 'content_type': model.contentType, 'model': model } })
 
+    if model.generateListPage:
+      output(os.path.join(outputdir, '{}.html'.format(model.plural)), model.listPageTemplate, {
+        'page_content': { 'collection': collection, 'content_type': model.contentType },
+        'title': model.plural.title(),
+        'objects': collection.models
+      })
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
     contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
   })
+
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))

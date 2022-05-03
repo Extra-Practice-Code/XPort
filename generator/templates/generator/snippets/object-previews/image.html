@@ -1,0 +1,16 @@
+<div class="item item--image item--reference" data-item-object-type="image">
+  <div class="item--image-wrapper">
+    <img
+      class="item--image"
+      src="{{ object.image }}"
+      alt="{{ object.alt }}"
+    />
+  </div>
+  {% if object.caption %}
+  <div class="item--description">
+    <p>
+      {{ object.caption|truncatechars_html:300 }}
+    </p>
+  </div>
+  {% endif %}
+</div>

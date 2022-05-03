@@ -1,0 +1,9 @@
+{% for object in objects %}
+  {% if object.contentType == "audio" %}    
+    {% include "generator/snippets/object-previews/audio.html" %}
+  {% elif object.contentType == "image" %}    
+      {% include "generator/snippets/object-previews/image.html" %}
+  {% else %}
+    {% include "generator/snippets/object-previews/object.html" %}
+  {% endif %}
+{% endfor %}

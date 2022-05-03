@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from generator.settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT, DATE_OUTPUT_FORMAT_DATE, DATE_OUTPUT_FORMAT_MONTH, DATE_OUTPUT_FORMAT_YEAR
+from fileinput import isfirstline
+from generator.settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT, DATE_OUTPUT_FORMAT_DATE, DATE_OUTPUT_FORMAT_MONTH, DATE_OUTPUT_FORMAT_YEAR, SUMMARY_FIELD_ALLOWED_TAGS
 import datetime
 import re
 import markdown
@@ -393,11 +394,40 @@ class MarkdownField(Field):
     md = markdown.Markdown(extensions=['extra', 'attr_list'])
     return mark_safe(md.convert(value))
 
+
+# Only one line of markdown. Assume it'll return a paragraph which
+# is unwrapped using a regex
 class InlineMarkdownField(Field):
   def parse (self, value):
     md = markdown.Markdown(extensions=['extra', 'attr_list'])
     return mark_safe(re.sub(r'<p>(.+)</p>', '\\1', md.convert(value)))
 
+import bleach
+
+class SummaryField (Field):
+  def __init__ (self, model=None, field='content', **kwargs):
+    super().__init__(*kwargs)
+    self.model = model
+    self.field = field
+
+  @property
+  def value (self):
+    if not self._value and self.model:
+      value = getattr(self.model, self.field)
+
+      if isinstance(value, str):
+        self.set([value])
+      elif isinstance(value, Single):
+        self.set([value.value])
+      elif value:
+        self.set(value.value)
+
+    return self._value
+    
+  def parse (self, value):
+    md = markdown.Markdown(extensions=['extra', 'attr_list'])
+    return mark_safe(bleach.clean(md.convert(value), tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
+    
 # # Maybe simplify to a function
 # class InlineLink(Field):
 #   def __init__ (self, target, label):

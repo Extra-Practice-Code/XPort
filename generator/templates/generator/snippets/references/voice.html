@@ -1,0 +1,14 @@
+<div class="item item--voice item--reference">
+  {% if object.image %}
+  <div class="item--image-wrapper">
+    <img
+      class="item--image"
+      src="{{ object.image }}"
+      alt="EstherKokmeijer"
+    />
+  </div>
+  {% endif %}
+  <p class="item--description">
+    {{ object.content }}
+  </p>
+</div>

@@ -1,26 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <!-- <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/reset.css" /> -->
-  <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/styles.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>A Seat for the Sea</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block page_title %}A Seat for the Sea{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/fonts/Inter.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/styles.css" />
+  </head>
+  <body data-content-type="{{ page_content.content_type}}" {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
+    <header>
+      <div id="nav--titles">
+        <h1 id="nav--titles-repulse">Re-Pulse</h1>
+        <h1 id="nav--titles-asfts">A Seat for the Sea</h1>
+        <a href="{{ SITE_URL }}/index.html"></a>
+      </div>
+      <nav>
+        <ul id="nav--main">
+          <li {% if page_content.content_type == "station" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/stations.html">Stations</a>
+          </li>
+          <li {% if page_content.content_type == "voice" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/voices.html">Voices</a>
+          </li>
+          <li {% if page_content.content_type == "reflection" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/reflections.html">Reflections</a>
+          </li>
+          <li {% if page_content.content_type == "gallery" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/galleries.html">Gallery</a>
+          </li>
+          <li {% if page_content.content_type == "tag" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/tags.html">Tags</a>
+          </li>
+          <li>
+            <a href="">About</a>
+          </li>
+        </ul>
+      </nav>
+      <!-- <nav id="nav--sub">
+        <ul>
+          <li  class="selected"><a href="">Station #1</a></li>
+          <li><a href="">Station #2</a></li>
+          <li><a href="">Station #3</a></li>
+          <li><a href="">Station #4</a></li>
+          <li><a href="">Station #5</a></li>
+          <li><a href="">Station #6</a></li>
+          <li><a href="">Station #7</a></li>
+        </ul>
+      </nav> -->
+    </header>
+    <div id="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <svg>
+      <filter id="titleNoise">
+        <feTurbulence
+          numOctaves="5"
+          baseFrequency="0.0050"
+          id="feTurbulence2360"
+          type="fractalNoise"
+        />
 
-<body class="{% block extrabodyclass %}{% endblock %}">
-  <nav>
-    <section id="logo">
-      <a href="{{ SITE_URL }}/index.html">A Seat for the Sea</a>
-    </section>
-    {% block sidebar_left %}
-    {% endblock %}
-  </nav>
-  <main>
-    {% block content %}
-    {% endblock %}
-  </main>
-  <aside>{% block sidebar_right %}{% endblock %}</aside>
-  {% block bodyscript %}{% endblock %}
-</body>
+        <feDisplacementMap
+          yChannelSelector="A"
+          xChannelSelector="A"
+          scale="40"
+          in="SourceGraphic"
+          in2="feTurbulence2360"
+          id="feDisplacementMap2364"
+          numOctaves="5"
+        />
+      </filter>
+      <animate
+        xlink:href="#feTurbulence2360"
+        attributeName="baseFrequency"
+        dur="120s"
+        keyTimes="0;0.5;1"
+        values="0.003 0.005;0.008 0.008;0.003 0.005"
+        repeatCount="indefinite"
+      />
+    </svg>
+    <script>
+      const rowHeight = 40,
+            gapHeight = 20;
+      const resizeObserver = new ResizeObserver(entries => {
+        
+        for (let entry of entries) {
+          let height;
+          if(entry.borderBoxSize && entry.borderBoxSize.length > 0) {
+            height = entry.borderBoxSize[0].blockSize;
+          } else {
+            height = entry.contentRect.height;
+          }
+
+          let span = Math.ceil(height / (rowHeight + gapHeight));
+
+          if (span * (rowHeight + gapHeight) - gapHeight < height) {
+            span += 1
+          }
+
+          entry.target.style.gridRowEnd = 'span ' + span;
+        }
+      });
+
+
+      var blocks = document.querySelectorAll('#container > div');
+
+      for (let i = 0; i < blocks.length; i++) {
+        resizeObserver.observe(blocks[i]);
+      }
+    </script>
+    {% block bodyscript %}{% endblock %}
+  </body>
 </html>

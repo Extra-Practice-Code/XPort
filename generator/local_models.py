@@ -98,8 +98,8 @@ class Pad (Model):
 
 @contentType(InstantiatingCollection)
 class Tag (Model):
+  generateListPage = True
   # Use a metaclass to have better default values?
-  singlePageTemplate = 'generator/tag.html'
 
   def _metadataFields (self):
     return {
@@ -110,12 +110,15 @@ class Tag (Model):
 @contentType(InstantiatingCollection)
 class Voice (Model):
   # Use a metaclass to have better default values?
+  generateListPage = True
 
   def _metadataFields (self):
     return {
       'voice': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'tags': multiLinkMultiReverse('tag', 'voices'),
+      'images': multiLinkMultiReverse('image', 'voices'),
+      'summary': fields.Single(fields.SummaryField(model=self))
     }
 
 
@@ -145,25 +148,30 @@ class Page (Model):
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'pages'),
       'tags': multiLinkMultiReverse('tag', 'pages'),
-      'voices': multiLinkMultiReverse('voice', 'pages')
+      'voices': multiLinkMultiReverse('voice', 'pages'),
+      'summary': fields.Single(fields.SummaryField(model=self))
     }
 
 
 @contentType()
 class Station (Model):
+  singlePageTemplate = 'generator/station.html'
   sortKey = '-date'
+  generateListPage = True
 
   def _metadataFields (self):
     return {
       'station': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'summary': fields.Single(fields.InlineMarkdownField()),
+      'summary': fields.Single(fields.SummaryField(model=self)),
+      'question': fields.Single(fields.InlineMarkdownField()),
       'date': fields.Single(fields.DateField()),
       'time': fields.TimeField(),
       'location': fields.StringField(),
       'tags': multiLinkMultiReverse('tag', 'stations'),
       'voices': multiLinkMultiReverse('voice', 'stations'),
-      'pads': multiLinkMultiReverse('pad', 'stations')
+      'pads': multiLinkMultiReverse('pad', 'stations'),
+      'images': multiLinkMultiReverse('image', 'stations')
     }
 
 @contentType()
@@ -174,16 +182,20 @@ class Contribution (Model):
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'contributions'),
       'tags': multiLinkMultiReverse('tag', 'contributions'),
-      'voices': multiLinkMultiReverse('voice', 'contributions')
+      'voices': multiLinkMultiReverse('voice', 'contributions'),
+      'summary': fields.Single(fields.SummaryField(model=self))
     }
 
 @contentType()
 class Reflection (Model):
+  generateListPage = True
+
   def _metadataFields (self):
     return {
       'reflection': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
-      'voices': multiLinkMultiReverse('voice', 'reflections')
+      'voices': multiLinkMultiReverse('voice', 'reflections'),
+      'summary': fields.Single(fields.SummaryField(model=self))
     }
