@@ -43,7 +43,6 @@
   }
 }
 
-
 @media screen and (min-width: 1600px) {
   :root {
     --columns: 6;
@@ -72,7 +71,7 @@ html, body {
   margin: 0;
   color: var(--color-dark);
   font-family: "Inter", sans-serif;
-  background-color: #f7fdfdff;
+  background-color: var(--color-light);
 }
 body {
   display: flex;
@@ -137,16 +136,16 @@ header {
   padding: 10px;
   height: 100%;
 
-  background-color: var(--color-dark);
-  color: #f7fdfdff;
+  background-color: var(--color-light);
+  color: var(--color-dark);
 
   font-size: var(--font-size--bigger);
   font-weight: 500;
 }
 
 #nav--titles-asfts {
-  background-color: #f7fdfdff;
-  color: var(--color-dark);
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
 #nav--main {
@@ -162,15 +161,20 @@ header {
   margin-bottom: 0;
 }
 
-#nav--main li:hover a,
-#nav--main li.selected a {
+#nav--main li:hover a {
   color: var(--color-contrast);
+}
+#nav--main li.selected a {
+  color: var(--color-light);
+  background-color: var(--color-dark);
 }
 
 #nav--main a {
+  display: block;
+  padding: 5px 15px;
   text-decoration: none;
-  font-size: 1.3rem;
-  color: var(--color-dark);
+  font-size: var(--font-size--normal); /* Was 1.3REM */
+  color: currentColor;
 }
 
 /* --------------- */
@@ -191,9 +195,12 @@ header {
   /* font-weight: 500; */
 }
 
-#nav--sub ul li:hover,
-#nav--sub ul li.selected {
+#nav--sub ul li:hover {
   color: var(--color-contrast);
+}
+#nav--sub ul li.selected {
+  color: var(--color-light);
+  background-color: var(--color-dark);
 }
 
 #nav--sub ul li a {
@@ -220,6 +227,11 @@ header {
   grid-auto-flow: row dense;
   gap: 20px;
   padding: 40px 30px;
+
+  background-image: url("misc/Logo.svg");
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: calc(((100% - (var(--columns) - 1) * 20px) / var(--columns) + 10px));
 }
 
 aside {
@@ -240,6 +252,11 @@ aside {
   position: relative;
 }
 
+.item a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .item--meta {
   font-weight: 500;
   padding-bottom: calc(2 * var(--line-height));
@@ -254,9 +271,11 @@ aside {
 }
 
 .item--image-wrapper .item--image {
-  object-fit: cover;
+  object-fit: none;
   width: 100%;
   height: 100%;
+
+  image-rendering: pixelated;
   mix-blend-mode: overlay;
 }
 
@@ -326,7 +345,7 @@ aside {
 }
 
 .item--reference:hover {
-  color: var(--color-dark)
+  color: var(--color-dark);
 }
 
 .item--reference:hover .item--image {
@@ -334,7 +353,8 @@ aside {
 }
 
 .item::before {
-  color: #f7fdfdff;
+  color: var(--color-light);
+  padding: 0 5px;
   position: absolute;
   top: 10px;
   left: 10px;
@@ -342,12 +362,12 @@ aside {
   font-weight: 500;
   letter-spacing: 1px;
   text-transform: uppercase;
-  text-shadow: 0px 0px 2px #666;
   font-size: var(--font-size--smaller);
 }
 
 [data-item-object-type]::before {
   content: attr(data-item-object-type);
+  background-color: var(--color-dark);
 }
 
 .item--voice {
