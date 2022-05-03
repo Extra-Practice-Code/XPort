@@ -21,6 +21,7 @@ class Image (Model):
       'title': fields.Single(fields.InlineMarkdownField()),
       'author': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
+      'alt': fields.Single(fields.InlineMarkdownField()),
     }
 
 
@@ -146,6 +147,7 @@ class Page (Model):
     return {
       'page': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
+      'images': multiLinkMultiReverse('image', 'pages'),
       'station': linkMultiReverse('station', 'pages'),
       'tags': multiLinkMultiReverse('tag', 'pages'),
       'voices': multiLinkMultiReverse('voice', 'pages'),
@@ -183,7 +185,8 @@ class Contribution (Model):
       'station': linkMultiReverse('station', 'contributions'),
       'tags': multiLinkMultiReverse('tag', 'contributions'),
       'voices': multiLinkMultiReverse('voice', 'contributions'),
-      'summary': fields.Single(fields.SummaryField(model=self))
+      'summary': fields.Single(fields.SummaryField(model=self)),
+      'images': multiLinkMultiReverse('image', 'contributions')
     }
 
 @contentType()
@@ -197,5 +200,6 @@ class Reflection (Model):
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
       'voices': multiLinkMultiReverse('voice', 'reflections'),
-      'summary': fields.Single(fields.SummaryField(model=self))
+      'summary': fields.Single(fields.SummaryField(model=self)),
+      'images': multiLinkMultiReverse('image', 'reflections')
     }

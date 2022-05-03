@@ -1,13 +1,18 @@
+{% load thumbnail %}
 <div class="item item--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
   <a href="{{ object.url }}">
     {% if object.images %}
-    <div class="item--image-wrapper">
-      <img
-        class="item--image"
-        src="{{ object.images.targets|first }}"
-        alt="{{ object.alt }}"
-      />
-    </div>
+      {% with image=object.images.targets|first %}
+        <div class="item--image-wrapper">
+          <img
+            class="item--image"
+            src="{% thumbnail image.image.value 400x400 dither="#000000" %}"
+            data-src-thumbnail="{% thumbnail image.image.value 400x400 %}"
+            data-src-full="{% thumbnail image.image.value 1200x1200 %}"
+            alt="{{ image.alt }}"
+          />
+        </div>
+      {% endwith %}
     {% endif %}
     <div class="item--description">
       <p>
