@@ -1,9 +1,16 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
+{% block subnav %}
+  <ul>
+  {% for station in page_content.collection %}
+    <li {% if page_content.model == station %}class="selected"{% endif %}><a href="{{ station.url }}">{{ station }}</a></li>
+  {% endfor %}
+  </ul>
+{% endblock %}
 {% block content %}
 
-  <div class="item item--page--title">
+  <div class="item item--page-title">
     <h1>{{ object }}</h1>
     {% if object.question %}
       <h2>{{ object.question }}</h2>

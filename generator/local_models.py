@@ -112,11 +112,13 @@ class Tag (Model):
 class Voice (Model):
   # Use a metaclass to have better default values?
   generateListPage = True
+  listPageTemplate = 'generator/list--voices.html'
 
   def _metadataFields (self):
     return {
       'voice': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
+      'type': fields.Single(fields.StringField(default=['voice'])),
       'tags': multiLinkMultiReverse('tag', 'voices'),
       'images': multiLinkMultiReverse('image', 'voices'),
       'summary': fields.Single(fields.SummaryField(model=self))
@@ -127,6 +129,7 @@ class Voice (Model):
 @contentType()
 class Gallery (Model):
   plural = 'galleries'
+  generateListPage = True
   
   def _metadataFields (self):
     return {

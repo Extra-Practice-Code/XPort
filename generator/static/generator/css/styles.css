@@ -181,6 +181,9 @@ header {
 
 #nav--sub {
   width: 100%;
+}
+
+#nav--sub:not(:empty) {
   border-top: 2px solid currentColor;
 }
 
@@ -252,9 +255,12 @@ aside {
   position: relative;
 }
 
-.item a {
+.item > a:only-child {
   color: inherit;
   text-decoration: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .item--meta {
@@ -313,17 +319,22 @@ aside {
   -webkit-line-clamp: 9;
 }
 
-.item--page--title {
+.item--page-title {
   grid-column-end: span 2;
   filter: url(#titleNoise);
   border: none;
   padding-bottom: calc(4 * var(--line-height));
 }
 
-.item--page--title h2 {
+.item--page-title h2 {
   max-width: 50ch;
 }
 
+.item--sub-title {
+  grid-column-end: span 1;
+  filter: url(#titleNoise);
+  border: none;
+}
 
 .item--reference {
   cursor: pointer;

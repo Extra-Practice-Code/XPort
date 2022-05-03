@@ -43,17 +43,7 @@
           </li>
         </ul>
       </nav>
-      <!-- <nav id="nav--sub">
-        <ul>
-          <li  class="selected"><a href="">Station #1</a></li>
-          <li><a href="">Station #2</a></li>
-          <li><a href="">Station #3</a></li>
-          <li><a href="">Station #4</a></li>
-          <li><a href="">Station #5</a></li>
-          <li><a href="">Station #6</a></li>
-          <li><a href="">Station #7</a></li>
-        </ul>
-      </nav> -->
+      <nav id="nav--sub">{% block subnav %}{% endblock %}</nav>
     </header>
     <div id="container">
       {% block content %}

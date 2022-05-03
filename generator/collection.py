@@ -14,7 +14,7 @@ class Collection(object):
     self.index = {}
 
   def __iter__ (self):
-    return self.models
+    return iter(self.models)
 
   """
     Retreive a model from the collection with the given label.
