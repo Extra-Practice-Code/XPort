@@ -5,12 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block page_title %}A Seat for the Sea{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    {% comment %} <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
-    />
+    /> {% endcomment %}
     <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/fonts/Inter.css" />
     <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/styles.css" />
   </head>
@@ -58,6 +58,16 @@
     <div id="container">
       {% block content %}
       {% endblock %}
+    </div>
+    <div id="modalbox" class="modal">
+      <!-- The Close Button -->
+      <span class="modalNav close">&times;</span>
+      <span class="modalNav arrow leftArrow">&ShortLeftArrow;</span>
+      <span class="modalNav arrow rightArrow">&ShortRightArrow;</span>
+      <!-- Modal Content (The Image) -->
+      <img class="modal-content" id="modalImage" />
+      <!-- Modal Caption (Image Text) -->
+      <div id="modalCaption"></div>
     </div>
     <svg>
       <filter id="titleNoise">
@@ -118,5 +128,6 @@
       }
     </script>
     {% block bodyscript %}{% endblock %}
+    <script src="{{ STATIC_URL }}/js/script.js"></script>
   </body>
 </html>
