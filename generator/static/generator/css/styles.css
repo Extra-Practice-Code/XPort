@@ -143,6 +143,12 @@ header {
   font-weight: 500;
 }
 
+#nav--titles-repulse a,
+#nav--titles-asfts a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 #nav--titles-asfts {
   background-color: var(--color-dark);
   color: var(--color-light);

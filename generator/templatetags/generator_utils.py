@@ -6,6 +6,7 @@ from django.conf import settings
 
 from generator.settings import SITE_URL as GENERATED_SITE_URL
 from generator.links import is_link, is_multi_link, is_reverse_multi_link, is_reverse_single_link, is_single_link
+from generator.collection import getObject
 
 import re
 import os.path
@@ -74,6 +75,12 @@ def generated_site_url ():
 @register.simple_tag
 def generated_site_debug_url ():
   return os.path.join(GENERATED_SITE_URL, 'debug.html')
+
+
+@register.simple_tag
+def get_object (contentType, key):
+  return getObject(contentType, key)
+
 
 from django.urls import reverse
 from django.utils.http import urlencode

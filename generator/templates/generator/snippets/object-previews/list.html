@@ -3,6 +3,8 @@
     {% include "generator/snippets/object-previews/audio.html" %}
   {% elif object.contentType == "image" %}    
       {% include "generator/snippets/object-previews/image.html" %}
+  {% elif object.contentType == "video" %}    
+      {% include "generator/snippets/object-previews/video.html" %}
   {% else %}
     {% include "generator/snippets/object-previews/object.html" %}
   {% endif %}

@@ -17,7 +17,7 @@ class Collection(object):
     return iter(self.models)
 
   """
-    Retreive a model from the collection with the given label.
+    Retreive a model from the collection with the given label or key.
     If instantiate is set to true an empty model will be created.
   """
   def get (self, key = None, label = None):
@@ -154,3 +154,12 @@ def contentType (collection=Collection):
     return model
   
   return decorator
+
+"""
+  Returns an object with given contentType and key
+"""
+def getObject(contentType, key):
+  collection = collectionFor(contentType)
+  if contentType:
+    return collection.get(key)
+  return None

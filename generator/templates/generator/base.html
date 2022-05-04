@@ -1,3 +1,4 @@
+{% load generator_utils %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,8 +18,9 @@
   <body data-content-type="{{ page_content.content_type}}" {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
       <div id="nav--titles">
-        <h1 id="nav--titles-repulse">Re-Pulse</h1>
-        <h1 id="nav--titles-asfts">A Seat for the Sea</h1>
+        {% get_object "page" "re-pulse" as page_re_pulse %}
+        <h1 id="nav--titles-repulse"><a href="{{ page_re_pulse.url }}">Re-Pulse</a></h1>
+        <h1 id="nav--titles-asfts"><a href="{{ SITE_URL }}/index.html">A Seat for the Sea</a></h1>
         <a href="{{ SITE_URL }}/index.html"></a>
       </div>
       <nav>
@@ -38,8 +40,9 @@
           <li {% if page_content.content_type == "tag" %}class="selected"{% endif %}>
             <a href="{{ SITE_URL }}/tags.html">Tags</a>
           </li>
-          <li>
-            <a href="">About</a>
+          {% get_object "page" "about" as page_about %}
+          <li {% if page_about and page_content.model == page_about %}class="selected"{% endif %}>
+            <a href="{{ page_about.url }}">About</a>
           </li>
         </ul>
       </nav>

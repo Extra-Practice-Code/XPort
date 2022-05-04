@@ -7,6 +7,7 @@ import re
 from django.urls import reverse
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
+YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
 
 # FIXME: 
 
@@ -59,6 +60,21 @@ class Video (Model):
     
     return None
 
+  """
+    If the video is recognized as a youtube video,
+    include it using their API.
+  """
+  @property
+  def youtubeId (self):
+    # Find more elegant solution?
+    video = self.video.value
+    if video:
+      m = YOUTUBE_VIDEO_URL_PATTERN.match(video)
+
+      if m:
+        return m.group(1)
+    
+    return None
 
   def _metadataFields (self):
     return {
@@ -176,7 +192,8 @@ class Station (Model):
       'tags': multiLinkMultiReverse('tag', 'stations'),
       'voices': multiLinkMultiReverse('voice', 'stations'),
       'pads': multiLinkMultiReverse('pad', 'stations'),
-      'images': multiLinkMultiReverse('image', 'stations')
+      'images': multiLinkMultiReverse('image', 'stations'),
+      'videos': multiLinkMultiReverse('video', 'stations')
     }
 
 @contentType()
