@@ -1,10 +1,6 @@
 <section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
   {% if object.title %}
-    <h3>{{  object.title }}</h3>f %}
-    {% if object.description %}
-      <p>
-        {{ object.description }}
-      </p>
+    <h3>{{  object.title }}</h3>
   {% endif %}
   {% if object.vimeoId %}
     <iframe src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
