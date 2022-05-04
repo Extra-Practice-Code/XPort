@@ -1,15 +1,20 @@
-<div class="item item--image item--reference" data-item-object-type="image">
-  <div class="item--image-wrapper">
+{% load thumbnail %}
+
+<div class="item item--gallery item--reference" data-item-object-type="image">
+  <div class="item--gallery--image-wrapper">
     <img
-      class="item--image"
-      src="{{ object.image }}"
+      class="item--gallery--image"
+      src="{% thumbnail object.image.value 600x400 dither="#000000" %}"
+      data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
+      data-src-full="{% thumbnail object.image.value 1200x1200 %}"
+      data-author="{{ object.author }}"
       alt="{{ object.alt }}"
     />
   </div>
-  {% if object.caption %}
-  <div class="item--description">
+  {% if object.author %}
+  <div class="item--author">
     <p>
-      {{ object.caption|truncatechars_html:300 }}
+      Photo by {{ object.author|truncatechars_html:300 }}
     </p>
   </div>
   {% endif %}

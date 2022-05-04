@@ -176,7 +176,8 @@ class Station (Model):
       'tags': multiLinkMultiReverse('tag', 'stations'),
       'voices': multiLinkMultiReverse('voice', 'stations'),
       'pads': multiLinkMultiReverse('pad', 'stations'),
-      'images': multiLinkMultiReverse('image', 'stations')
+      'images': multiLinkMultiReverse('image', 'stations'),
+      'galleries': multiLinkMultiReverse('gallery', 'stations')
     }
 
 @contentType()

@@ -1,8 +1,14 @@
+{% load thumbnail %}
 <figure class="image" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
   {% if object.title %}
     <h3>{{  object.title }}</h3>
   {% endif %}
-  <img src="{{ object.image }}" />
+  <img 
+    src="{% thumbnail object.image.value 400x0 dither="#000000" %}"
+    data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
+    data-src-full="{% thumbnail object.image.value 1200x1200 %}"
+    alt="{{ object.alt }}" 
+  />
   {% if object.caption %}
     <caption>
       {{ object.caption }}

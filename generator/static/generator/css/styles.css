@@ -9,7 +9,7 @@
   --color-tag: #cea6c6;
   --color-pad: #d9d926;
   --color-station: #cd79d2;
-  --color-gallery: #97b2bf;
+  --color-gallery: #09484d;
   --border-color: #09484d;
   --font-color: #09484d;
   --font-size--header: 26px;
@@ -55,7 +55,7 @@
 
 @media screen and (min-width: 1800px) {
   :root {
-    --columns: 7;
+    --columns: 8;
   }
 }
 
@@ -229,16 +229,17 @@ header {
   flex-grow: 1;
   max-width: 100%;
   display: grid;
-  grid-template-columns: [start] repeat(var(--columns), calc((100% - (var(--columns) - 1) * 20px) / var(--columns))) [end];
+  grid-template-columns: [start] repeat(var(--columns), calc((100% - (var(--columns) - 1) * 30px) / var(--columns))) [end];
   grid-auto-rows: 40px;
   grid-auto-flow: row dense;
   gap: 20px;
+  column-gap: 30px;
   padding: 40px 30px;
 
   background-image: url("misc/Logo.svg");
   background-repeat: no-repeat;
   background-position: 100% 100%;
-  background-size: calc(((100% - (var(--columns) - 1) * 20px) / var(--columns) + 10px));
+  background-size: calc(((100% - (var(--columns) - 1) * 30px) / var(--columns) + 10px));
 }
 
 aside {
@@ -310,7 +311,8 @@ aside {
 }
 
 .item--gallery--image-wrapper {
-  height: calc(150px + 4 * var(--line-height) + 10px);
+  /* height: calc(150px + 4 * var(--line-height) + 10px); */
+  height: 300px;
   flex-shrink: 1;
   margin: -20px -20px -10px -20px;
   background-color: currentColor;
@@ -324,7 +326,7 @@ aside {
   height: 100%;
 
   image-rendering: pixelated;
-  mix-blend-mode: overlay;
+  mix-blend-mode: lighten;
 }
 .item--gallery--image-wrapper::after {
   content: "";
@@ -495,7 +497,7 @@ aside {
 
 .item--video,
 .item--main {
-  grid-column-end: span 2;
+  grid-column-end: span 3;
 }
 
 [data-reference] {
@@ -525,6 +527,10 @@ aside {
 }
 
 [data-link-target-type="image"] {
+  color: var(--color-gallery);
+}
+
+[data-link-target-type="gallery"] {
   color: var(--color-gallery);
 }
 
