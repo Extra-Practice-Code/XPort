@@ -7,7 +7,9 @@
     <h1>{{ title }}</h1>
   </div>
 
-  {% include "generator/snippets/object-previews/list.html" %}
+  {% regroup objects by type.value as grouped_objects %}
+
+  {% include "generator/snippets/object-previews/grouped-list.html" %}
   
   
 {% endblock %}
