@@ -5,6 +5,8 @@
       {% include "generator/snippets/object-previews/image.html" %}
   {% elif object.contentType == "video" %}    
       {% include "generator/snippets/object-previews/video.html" %}
+  {% elif object.contentType == "gallery" %}
+      {% include "generator/snippets/object-previews/gallery.html" %}
   {% else %}
     {% include "generator/snippets/object-previews/object.html" %}
   {% endif %}

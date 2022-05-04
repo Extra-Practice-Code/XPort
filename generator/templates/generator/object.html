@@ -12,6 +12,6 @@
   </div>
   {% endif %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|unwrap_galleries|shuffle_items only %}
 
 {% endblock %}

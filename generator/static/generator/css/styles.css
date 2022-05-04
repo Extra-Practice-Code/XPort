@@ -5,7 +5,11 @@
   --color-voice: #e1762f;
   --color-voice-: #c18573;
   --color-voice--: #937c00;
-  --color-contribution: #96bfa0;
+  --color-contribution: #97bfa1;
+  --color-tag: #cea6c6;
+  --color-pad: #d9d926;
+  --color-station: #cd79d2;
+  --color-gallery: #09484d;
   --border-color: #09484d;
   --font-color: #09484d;
   --font-size--header: 26px;
@@ -51,7 +55,7 @@
 
 @media screen and (min-width: 1800px) {
   :root {
-    --columns: 7;
+    --columns: 8;
   }
 }
 
@@ -231,16 +235,17 @@ header {
   flex-grow: 1;
   max-width: 100%;
   display: grid;
-  grid-template-columns: [start] repeat(var(--columns), calc((100% - (var(--columns) - 1) * 20px) / var(--columns))) [end];
+  grid-template-columns: [start] repeat(var(--columns), calc((100% - (var(--columns) - 1) * 30px) / var(--columns))) [end];
   grid-auto-rows: 40px;
   grid-auto-flow: row dense;
   gap: 20px;
+  column-gap: 30px;
   padding: 40px 30px;
 
   background-image: url("misc/Logo.svg");
   background-repeat: no-repeat;
   background-position: 100% 100%;
-  background-size: calc(((100% - (var(--columns) - 1) * 20px) / var(--columns) + 10px));
+  background-size: calc(((100% - (var(--columns) - 1) * 30px) / var(--columns) + 10px));
 }
 
 aside {
@@ -307,6 +312,45 @@ aside {
   transform: rotate(1deg);
 }
 
+.item--gallery {
+  grid-column: span 2;
+}
+
+.item--gallery--image-wrapper {
+  /* height: calc(150px + 4 * var(--line-height) + 10px); */
+  height: 300px;
+  flex-shrink: 1;
+  margin: -20px -20px -10px -20px;
+  background-color: currentColor;
+  z-index: 1;
+  position: relative;
+}
+
+.item--gallery--image-wrapper .item--gallery--image {
+  object-fit: none;
+  width: 100%;
+  height: 100%;
+
+  image-rendering: pixelated;
+  mix-blend-mode: lighten;
+}
+.item--gallery--image-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  bottom: 10px;
+  right: 10px;
+  border: 2px solid currentColor;
+  pointer-events: none;
+  z-index: 1;
+}
+.item--author > p{
+  padding: 0;
+  margin: 0px -10px;
+  font-size: var(--font-size--smaller);
+}
+
 .item--description {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -366,7 +410,18 @@ aside {
 }
 
 .item--reference:hover .item--image {
+  /* mix-blend-mode: overlay; */
   mix-blend-mode: lighten;
+}
+
+.item--reference:hover .item--gallery--image {
+  /* mix-blend-mode: overlay; */
+  mix-blend-mode: lighten;
+  cursor: zoom-in;
+}
+
+.item--gallery::after {
+  border: none;
 }
 
 .item::before {
@@ -382,9 +437,34 @@ aside {
   font-size: var(--font-size--smaller);
 }
 
-[data-item-object-type]::before {
+/* [data-item-object-type]::before {
   content: attr(data-item-object-type);
   background-color: var(--color-dark);
+} */
+
+.item--voice::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-voice);
+}
+
+.item--contribution::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-contribution);
+}
+
+.item--tag::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-tag);
+}
+
+.item--pad::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-pad);
+}
+
+.item--station::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-station);
 }
 
 .item--voice {
@@ -393,6 +473,22 @@ aside {
 
 .item--contribution {
   color: var(--color-contribution);
+}
+
+.item--tag {
+  color: var(--color-tag)
+}
+
+.item--pad {
+  color: var(--color-pad)
+}
+
+.item--station {
+  color: var(--color-station)
+}
+
+.item--gallery {
+  color: var(--color-gallery);
 }
 
 .item--video {
@@ -407,7 +503,7 @@ aside {
 
 .item--video,
 .item--main {
-  grid-column-end: span 2;
+  grid-column-end: span 3;
 }
 
 [data-reference] {
@@ -436,6 +532,113 @@ aside {
   color: var(--color-reflection);
 }
 
+[data-link-target-type="image"] {
+  color: var(--color-gallery);
+}
+
+[data-link-target-type="gallery"] {
+  color: var(--color-gallery);
+}
+
 img {
   max-width: 100%;
 }
+
+
+/* ------ Modal CSS ----- */
+
+
+/* The Modal (background) */
+.modal {
+  top: 5%;
+  left: 5%;
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 8; /* Sit on top */
+  width: 90%; /* Full width */
+  height: 90%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: var(--color-light); /* Black w/ opacity */
+  border: 2px solid var(--border-color);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Modal Content (Image) */
+.modal-content {
+  max-height: 90%;
+  max-width: 90%;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#modalCaption {
+  max-width: 70%;
+  text-align: right;
+  color: var(--font-color);
+  font-size: var(--font-size--normal);
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content,
+#caption {
+  animation-name: zoom;
+  animation-duration: 0.4s;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* The Close Button */
+.modalNav {
+  position: absolute;
+  color: var(--font-color);
+  font-size: var(--font-size--header);
+  font-weight: bold;
+  transition: 0.3s;
+}
+.close {
+  top: 5px;
+  right: 20px;
+  z-index: 2;
+}
+
+.arrow {
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.leftArrow {
+  left: 20px;
+}
+
+.rightArrow {
+  right: 20px;
+}
+
+.modalNav:hover,
+.modalNav:focus {
+  color: var(--color-contrast);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens
+  @media only screen and (max-width: 700px){
+    .modal-content {
+      width: 100%;
+    }
+  } */

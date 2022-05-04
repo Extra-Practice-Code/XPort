@@ -193,7 +193,8 @@ class Station (Model):
       'voices': multiLinkMultiReverse('voice', 'stations'),
       'pads': multiLinkMultiReverse('pad', 'stations'),
       'images': multiLinkMultiReverse('image', 'stations'),
-      'videos': multiLinkMultiReverse('video', 'stations')
+      'videos': multiLinkMultiReverse('video', 'stations'),
+      'galleries': multiLinkMultiReverse('gallery', 'stations')
     }
 
 @contentType()

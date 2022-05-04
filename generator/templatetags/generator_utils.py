@@ -50,8 +50,28 @@ def merged_links (model):
   return sorted(values, key=lambda m: str(m).lower() if m else '')
 
 @register.filter
+def unwrap_galleries (models):
+  unwrapped = []
+
+  for model in models:
+    if model:
+      if model.contentType == 'gallery':
+        unwrapped.extend(model.images.targets)
+      else:
+        unwrapped.append(model)
+
+  return unwrapped
+
+@register.filter
 def without_inline_links (field):
   return list(filter(lambda l: not l.inline, field))
+
+from random import shuffle
+@register.filter
+def shuffle_items (value):
+    shuffle(value)
+    return value
+
 
 @register.simple_tag
 def combine_linkfields (*fields):
