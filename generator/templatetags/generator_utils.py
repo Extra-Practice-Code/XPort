@@ -37,17 +37,34 @@ def cut_from_start (value, arg):
   print('should be removed', arg)
   return re.sub('^' + str(arg), '', re.I)
 
+
+"""
+@FIXME: making sorting optional
+"""
 @register.filter
-def merged_links (model):
-  values = []
+def merged_targets (model):
+  targets = []
 
   for field in model.fields.values():
     if is_multi_link(field) or is_reverse_multi_link(field):
-      values.extend(field.targets)
+      targets.extend(field.targets)
     elif is_single_link(field) or is_reverse_single_link(field):
-      values.append(field.target)
+      targets.append(field.target)
 
-  return sorted(values, key=lambda m: str(m).lower() if m else '')
+  return sorted(targets, key=lambda m: str(m).lower() if m else '')
+
+@register.filter
+def merged_links (model):
+  links = []
+
+  for field in model.fields.values():
+    if is_multi_link(field) or is_reverse_multi_link(field):
+      links.extend(field.links)
+    elif is_single_link(field) or is_reverse_single_link(field):
+      links.append(field.link)
+
+  return links
+
 
 @register.filter
 def unwrap_galleries (models):
@@ -63,8 +80,16 @@ def unwrap_galleries (models):
   return unwrapped
 
 @register.filter
-def without_inline_links (field):
-  return list(filter(lambda l: not l.inline, field))
+def targets (links):
+  return [link.target for link in links if link]
+
+@register.filter
+def without_inline_links (links, forbidden):
+  if forbidden: 
+    forbiddenContentTypes = list(map(str.strip, forbidden.split(',')))
+    return list(filter(lambda l: l and not l.inline or (l and l.inline and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes), links))
+  else:
+    return list(filter(lambda l: l and not l.inline, links))
 
 from random import shuffle
 @register.filter
@@ -87,7 +112,6 @@ def combine_linkfields (*fields):
 
   return combined
 
-
 @register.simple_tag
 def generated_site_url ():
   return os.path.join(GENERATED_SITE_URL, 'index.html')
@@ -101,6 +125,13 @@ def generated_site_debug_url ():
 def get_object (contentType, key):
   return getObject(contentType, key)
 
+
+@register.simple_tag
+def remove_inline_links (links, *forbiddenContentTypes):
+  if forbiddenContentTypes:
+    return list(filter(lambda l: not l.inline or (l.inline and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes), links))
+  else:
+    return list(filter(lambda l: not l.inline, links))
 
 from django.urls import reverse
 from django.utils.http import urlencode

@@ -169,6 +169,11 @@ class LinkField(object):
   def target (self):
     if self.value:
       return self.value.target
+  
+  @property
+  def link (self):
+    if self.value:
+      return self.value
 
 """
   Field for multiple links, every link will be a single linkfield.
@@ -258,6 +263,11 @@ class ReverseLinkField(object):
     if self.value:
       return self.value.target
 
+  @property
+  def link (self):
+    if self.value:
+      return self.value
+
 class ReverseMultiLinkField(ReverseLinkField):
   def __init__ (self, name, unique=True):
     self.name = name
@@ -289,6 +299,10 @@ class ReverseMultiLinkField(ReverseLinkField):
   @property
   def targets (self):
     return [link.target for link in self.value]
+  
+  @property
+  def links (self):
+    return self.value
 
 # Returns true id the given object is a LinkField
 # or a MultiLinkField
