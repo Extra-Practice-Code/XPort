@@ -136,7 +136,7 @@ class Voice (Model):
     return {
       'voice': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'type': fields.Single(fields.StringField(default=['voice'])),
+      'type': fields.Single(fields.StringField(default=['artist'])),
       'tags': multiLinkMultiReverse('tag', 'voices'),
       'images': multiLinkMultiReverse('image', 'voices'),
       'summary': fields.Single(fields.SummaryField(model=self))

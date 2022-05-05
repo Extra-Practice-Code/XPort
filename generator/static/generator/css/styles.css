@@ -653,3 +653,10 @@ img {
       width: 100%;
     }
   } */
+
+/**
+  hide images in gallery body
+*/
+body[data-content-type="gallery"] .item-type--main figure {
+  display: none
+}
