@@ -1,6 +1,10 @@
 {% load thumbnail %}
 
-<div class="item item--gallery item--reference" data-item-object-type="image">
+{% if object.image.value.width > object.image.value.height %}
+  <div class="item item--gallery item--reference" data-item-object-type="image">
+{% else %}
+  <div class="item item--gallery item--reference" data-item-object-type="image" style="grid-column: span 1">
+{% endif %}
   <div class="item--gallery--image-wrapper">
     <img
       class="item--gallery--image"
