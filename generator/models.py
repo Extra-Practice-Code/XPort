@@ -349,7 +349,7 @@ class Model(object):
   def getSortKey (self):
     if self.sortKey:
       if isinstance(self.sortKey, tuple):
-        sortKey = (getattr(self, (key[1:] if key.startswith('-') else key)) for key in self.sortKey)
+        sortKey = tuple(getattr(self, (key[1:] if key.startswith('-') else key)) for key in self.sortKey)
         return sortKey
       else:
         sortKeyField = self.sortKey[1:] if self.sortKey.startswith('-') else self.sortKey
