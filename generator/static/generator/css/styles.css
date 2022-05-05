@@ -143,7 +143,7 @@ header {
   background-color: var(--color-light);
   color: var(--color-dark);
 
-  font-size: var(--font-size--bigger);
+  --font-size: var(--font-size--bigger);
   font-weight: 500;
 }
 
@@ -164,24 +164,23 @@ header {
 }
 
 #nav--main li {
-  padding: 0 20px;
+  padding: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 0;
 }
 
-#nav--main li:hover a {
+#nav--main li:hover {
   color: var(--color-contrast);
 }
-#nav--main li.selected a {
+#nav--main li.selected {
   color: var(--color-light);
   background-color: var(--color-dark);
 }
 
 #nav--main a {
-  display: block;
-  padding: 5px 15px;
+  padding: 5px 20px;
   text-decoration: none;
   font-size: var(--font-size--normal); /* Was 1.3REM */
   color: currentColor;
@@ -365,8 +364,12 @@ aside {
 }
 
 .item--description:only-child {
-  margin-top: var(--line-height);
+  margin-top: calc(var(--line-height) + 10px);
   -webkit-line-clamp: 9;
+}
+
+.item--description p:only-child {
+  margin-bottom: 0;
 }
 
 .item--page-title {
