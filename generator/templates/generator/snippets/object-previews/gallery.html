@@ -3,7 +3,7 @@
 <div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
   <a href="{{ object.url }}">z
     {% if object.images %}
-      {% with images=object.images.targets %}
+      {% with images=object.images.targets|slice:":4" %}
       <div class="item--image-collection">
         {% for image in images %}
         <div class="item--image-wrapper">
