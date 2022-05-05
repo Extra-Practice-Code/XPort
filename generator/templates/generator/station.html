@@ -22,6 +22,25 @@
   </div>
   {% endif %}
 
+  {% for event in station.events.targets %}
+  <div class="item item--event">
+    <p>
+      <strong>{{ event }}</strong><br>
+      {% for date in event.dates %}
+        <strong>{{ date|date:"d-m-y" }} {{ date|time:"H:i" }}</strong><br>
+      {% endfor %}
+      {% if event.location %}
+      {{ event.location }}
+      {% endif %}
+    </p>
+    {% if event.content %}
+    <p>
+      {{ event.content }}
+    </p>
+    {% endif %}
+  </div>
+  {% endfor %}
+
   {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|unwrap_galleries|shuffle_items  only %}
   
   

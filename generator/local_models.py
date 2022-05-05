@@ -91,7 +91,8 @@ class Pad (Model):
   
   def _metadataFields (self):
     return {
-      'pad': fields.Single(fields.StringField())
+      'pad': fields.Single(fields.StringField()),
+      'summary': fields.Single(fields.SummaryField(model=self))
     }
 
   @classmethod
@@ -129,6 +130,7 @@ class Voice (Model):
   # Use a metaclass to have better default values?
   generateListPage = True
   listPageTemplate = 'generator/list--voices.html'
+  sortKey = ('type', 'voice')
 
   def _metadataFields (self):
     return {
@@ -195,6 +197,24 @@ class Station (Model):
       'images': multiLinkMultiReverse('image', 'stations'),
       'videos': multiLinkMultiReverse('video', 'stations'),
       'galleries': multiLinkMultiReverse('gallery', 'stations')
+    }
+
+@contentType()
+class Event (Model):
+  sortKey = '-dates'
+  generateSinglePages = False
+
+  def _metadataFields (self):
+    return {
+      'event': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
+      'dates': fields.DateTimeField(),
+      'location': fields.Single(fields.InlineMarkdownField()),
+      'summary': fields.Single(fields.SummaryField(model=self)),
+      'station': linkMultiReverse('station', 'events'),
+      'voices': multiLinkMultiReverse('voice', 'events'),
+      'images': multiLinkMultiReverse('image', 'events'),
+      'galleries': multiLinkMultiReverse('gallery', 'events')
     }
 
 @contentType()
