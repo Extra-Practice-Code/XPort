@@ -1,7 +1,7 @@
 :root {
   --color-dark: #09484d;
   --color-light: #f7fdfd;
-  --color-contrast: rgb(92, 166, 202);
+  --color-contrast: #5ca6ca;
   --color-voice: #e1762f;
   --color-voice-: #c18573;
   --color-voice--: #937c00;
@@ -9,8 +9,8 @@
   --color-tag: #cea6c6;
   --color-pad: #d9d926;
   --color-station: #cd79d2;
-  --color-image: red;
-  --color-gallery: #09484d;
+  --color-image: #108189;
+  --color-gallery: #c18573;
   --border-color: #09484d;
   --font-color: #09484d;
   --font-size--header: 26px;
@@ -283,6 +283,7 @@ aside {
   grid-template-columns: repeat(2, 1fr);
   row-gap: 40px;
   column-gap: 60px;
+  margin-top: -30px;
 }
 .item--image-wrapper {
   height: 150px;
@@ -349,7 +350,7 @@ aside {
 
 .item--author > p{
   padding: 0;
-  margin: 0px -10px;
+  margin: 5px -10px;
   font-size: var(--font-size--smaller);
 }
 
@@ -444,10 +445,10 @@ aside {
   font-size: var(--font-size--smaller);
 }
 
-[data-item-object-type]::before {
+/* [data-item-object-type]::before {
   content: attr(data-item-object-type);
   background-color: var(--color-dark);
-}
+} */
 
 .item-type--voice::before{
   content: attr(data-item-object-type);
@@ -459,19 +460,24 @@ aside {
   background-color: var(--color-contribution);
 }
 
-.item--tag::before{
+.item-type--tag::before{
   content: attr(data-item-object-type);
   background-color: var(--color-tag);
 }
 
-.item--pad::before{
+.item-type--pad::before{
   content: attr(data-item-object-type);
   background-color: var(--color-pad);
 }
 
-.item--station::before{
+.item-type--station::before{
   content: attr(data-item-object-type);
   background-color: var(--color-station);
+}
+
+.item-type--gallery::before{
+  content: attr(data-item-object-type);
+  background-color: var(--color-gallery);
 }
 
 .item-type--voice {
