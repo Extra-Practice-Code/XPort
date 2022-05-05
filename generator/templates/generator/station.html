@@ -10,19 +10,19 @@
 {% endblock %}
 {% block content %}
 
-  <div class="item item--page-title">
+  <div class="item item-type--page-title">
     <h1>{{ object }}</h1>
     {% if object.question %}
       <h2>{{ object.question }}</h2>
     {% endif %}
   </div>
   {% if object.content %}
-  <div class="item item--main">
+  <div class="item item-type--main">
     {{ object.content }}
   </div>
   {% endif %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|unwrap_galleries|shuffle_items  only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|shuffle_items  only %}
   
   
 {% endblock %}
