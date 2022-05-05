@@ -348,14 +348,18 @@ class Model(object):
 
   def getSortKey (self):
     if self.sortKey:
-      sortKeyField = self.sortKey[1:] if self.sortKey.startswith('-') else self.sortKey
-      return getattr(self, sortKeyField).value
+      if isinstance(self.sortKey, tuple):
+        sortKey = tuple(getattr(self, (key[1:] if key.startswith('-') else key)).value for key in self.sortKey)
+        return sortKey
+      else:
+        sortKeyField = self.sortKey[1:] if self.sortKey.startswith('-') else self.sortKey
+        return getattr(self, sortKeyField).value
     else:
       return getattr(self, self.labelField).value
 
   @classmethod
   def getSortDirection (cls):
-    return -1 if cls.sortKey and cls.sortKey.startswith('-') else 1
+    return -1 if cls.sortKey and not isinstance(cls.sortKey, tuple) and cls.sortKey.startswith('-') else 1
 
   # @property
   # def key (self):
