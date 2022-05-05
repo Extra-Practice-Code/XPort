@@ -9,7 +9,7 @@ const rightBtn = document.getElementsByClassName('rightArrow')[0];
 let imageArray = []
 let imgIndex = 0;
 
-document.querySelectorAll('.item--gallery--image').forEach(element => {
+document.querySelectorAll('.item-type--image .item--image').forEach(element => {
     imageArray.push(element.dataset)
     
     element.addEventListener('click', (ele) => {

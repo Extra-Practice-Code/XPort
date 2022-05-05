@@ -3,11 +3,11 @@
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
 {% block content %}
 
-  <div class="item item--page-title">
+  <div class="item item-type--page-title">
     <h1>{{ object }}</h1>
   </div>
   {% if object.content %}
-  <div class="item item--main">
+  <div class="item item-type--main">
     {{ object.content }}
   </div>
   {% endif %}

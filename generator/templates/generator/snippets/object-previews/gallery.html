@@ -1,28 +1,26 @@
 {% load thumbnail %}
 
-{% for image in object.images %}
-
-{% if image.image.value.width > image.image.value.height %}
-    <div class="item item--gallery item--reference" data-item-object-type="image">
-{% else %}
-    <div class="item item--gallery item--reference" data-item-object-type="image" style="grid-column: span 1;">
-{% endif %}
-  <div class="item--gallery--image-wrapper">
-    <img
-      class="item--gallery--image"
-      src="{% thumbnail image.image.value 600x400 dither="#000000" %}"
-      data-src-thumbnail="{% thumbnail image.image.value 400x0 %}"
-      data-src-full="{% thumbnail image.image.value 1200x1200 %}"
-      data-author="{{ image.author }}"
-      alt="{{ image.alt }}"
-    />
-  </div>
-  {% if image.author %}
-  <div class="item--author">
-    <p>
-      Photo by {{ image.author|truncatechars_html:300 }}
-    </p>
-  </div>
-  {% endif %}
+<div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
+  <a href="{{ object.url }}">z
+    {% if object.images %}
+      {% with images=object.images.targets %}
+      <div class="item--image-collection">
+        {% for image in images %}
+        <div class="item--image-wrapper">
+          <img
+          class="item--image"
+          src="{% thumbnail image.image.value 400x0 dither="#000000" %}"
+          data-src-thumbnail="{% thumbnail image.image.value 400x0 %}"
+          data-src-full="{% thumbnail image.image.value 1200x1200 %}"
+          alt="{{ image.alt }}"
+          />
+        </div>
+        {% endfor %}
+      </div>
+      {% endwith %}
+    {% endif %}
+    <div class="item--description">
+      {{ object.title }}
+    </div>
+  </a>
 </div>
-{% endfor %}

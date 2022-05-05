@@ -1,5 +1,5 @@
 {% load thumbnail %}
-<div class="item item--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
+<div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
   <a href="{{ object.url }}">
     {% if object.images %}
       {% with image=object.images.targets|first %}
