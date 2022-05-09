@@ -41,7 +41,7 @@
   </div>
   {% endfor %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|shuffle_items  only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without_inline_links:"image, video, gallery"|targets only %}
   
   
 {% endblock %}

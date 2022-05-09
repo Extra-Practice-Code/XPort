@@ -15,12 +15,12 @@
     <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/fonts/Inter.css" />
     <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/styles.css" />
   </head>
-  <body data-content-type="{{ page_content.content_type}}" {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
+  <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
       <div id="nav--titles">
         {% get_object "page" "re-pulse" as page_re_pulse %}
-        <h1 id="nav--titles-repulse"><a href="{{ page_re_pulse.url }}">Re-Pulse</a></h1>
-        <h1 id="nav--titles-asfts"><a href="{{ SITE_URL }}/index.html">A Seat for the Sea</a></h1>
+        <h1 id="nav--titles-repulse" {% if page_content.model == page_re_pulse %}class="selected"{% endif %}><a href="{{ page_re_pulse.url }}">Re-Pulse</a></h1>
+        <h1 id="nav--titles-asfts" {% if page_content.model != page_re_pulse %}class="selected"{% endif %}><a href="{{ SITE_URL }}/index.html">A Seat for the Sea</a></h1>
         <a href="{{ SITE_URL }}/index.html"></a>
       </div>
       <nav>

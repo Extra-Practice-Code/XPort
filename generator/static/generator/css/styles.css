@@ -154,7 +154,7 @@ header {
   text-decoration: inherit;
 }
 
-#nav--titles-asfts {
+#nav--titles .selected {
   background-color: var(--color-dark);
   color: var(--color-light);
 }
@@ -524,6 +524,10 @@ aside {
 .item-type--video,
 .item-type--main {
   grid-column-end: span 3;
+}
+
+[data-content-type="tag"] .item-type--main {
+  grid-column: 1;
 }
 
 [data-reference] {

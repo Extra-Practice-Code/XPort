@@ -76,6 +76,19 @@ class Video (Model):
     
     return None
 
+  # @property
+  # def thumbnail (self):
+  #   if not somehowCached:
+  #     if self.vimeoId:
+      
+  #     elif self.youtubeId:
+
+  #     else:
+  #       # check cache otherwised generat
+  #   else:
+  #     image = retreiveFromCache
+  #   # Should return an Image()
+
   def _metadataFields (self):
     return {
       'video': fields.Single(fields.StringField()),
