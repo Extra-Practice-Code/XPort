@@ -1,17 +1,24 @@
 {% load thumbnail %}
 
 <div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
-  <a href="{{ object.url }}">z
+  {% comment %} <a href="{{ object.url }}"> {% endcomment %}
     {% if object.images %}
-      {% with images=object.images.targets|slice:":4" %}
+      {% with images=object.images.targets %}
       <div class="item--image-collection">
         {% for image in images %}
         <div class="item--image-wrapper">
           <img
           class="item--image"
+          {% if forloop.counter <= 4 %}
           src="{% thumbnail image.image.value 400x0 dither="#000000" %}"
+          {% else %}
+          src=""
+          {% endif %}
           data-src-thumbnail="{% thumbnail image.image.value 400x0 %}"
           data-src-full="{% thumbnail image.image.value 1200x1200 %}"
+          data-author="{{ image.author }}"
+          data-caption="{{ image.caption }}"
+          data-title="{{ image.title }}"
           alt="{{ image.alt }}"
           />
         </div>
@@ -22,5 +29,5 @@
     <div class="item--description">
       {{ object.title }}
     </div>
-  </a>
+  {% comment %} </a> {% endcomment %}
 </div>

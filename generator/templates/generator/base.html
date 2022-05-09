@@ -53,14 +53,22 @@
       {% endblock %}
     </div>
     <div id="modalbox" class="modal">
-      <!-- The Close Button -->
-      <span class="modalNav close">&times;</span>
-      <span class="modalNav arrow leftArrow">&ShortLeftArrow;</span>
-      <span class="modalNav arrow rightArrow">&ShortRightArrow;</span>
-      <!-- Modal Content (The Image) -->
-      <img class="modal-content" id="modalImage" />
-      <!-- Modal Caption (Image Text) -->
-      <div id="modalCaption"></div>
+      <span class="modal--counter"></span>
+      <h2 id="modal--gallery-title"></h2>
+      <span class="modal--nav close">&times;</span>
+
+      <span class="modal--nav arrow leftArrow">&ShortLeftArrow;</span>
+      <div class="modal--content">
+        <img id="modal--image" />
+      </div>
+      <span class="modal--nav arrow rightArrow">&ShortRightArrow;</span>
+      
+      
+      <p id="modal--image-author"></p>
+      <div class="modal--text">
+        <h3 id="modal--image-title"></h3>
+        <p id="modal--image-caption"></p>
+      </div>
     </div>
     <svg>
       <filter id="titleNoise">
