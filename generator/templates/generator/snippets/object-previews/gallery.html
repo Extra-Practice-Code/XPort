@@ -26,8 +26,13 @@
       </div>
       {% endwith %}
     {% endif %}
-    <div class="item--description">
-      {{ object.title }}
+    <div class="item--gallery-description">
+      <p>
+        {{ object.title }} 
+      </p>
+      <p class="item--gallery-counter">
+        {{ object.images.targets|length }} item{{ object.images.targets|pluralize }}
+      </p>
     </div>
   {% comment %} </a> {% endcomment %}
 </div>

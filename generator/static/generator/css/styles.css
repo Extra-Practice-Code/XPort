@@ -380,6 +380,14 @@ aside {
   margin-bottom: 0;
 }
 
+.item--gallery-description {
+  display: flex;
+  justify-content: space-between;
+}
+.item--gallery-description > p {
+  margin-bottom: 0;
+}
+
 .item-type--page-title {
   grid-column-end: span 2;
   filter: url(#titleNoise);

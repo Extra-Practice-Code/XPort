@@ -98,7 +98,7 @@ const closeModal = () => {
     if (modal.style.display != "none") {
         modal.style.display = "none";
         imgIndex = 0;
-        modalTitle.innerHTML = "";
+        galleryTitle = "";
         authorText.innerHTML = "";
         titleText.innerHTML = "";
         captionText.innerHTML = "";
@@ -115,7 +115,7 @@ const inlineImages = document.querySelectorAll(".inline-image");
 
 galleries.forEach((gallery) => {
     gallery.addEventListener("click", (element) => {
-        galleryTitle = gallery.querySelector('.item--description').textContent
+        galleryTitle = gallery.querySelector('.item--gallery-description').children[0].innerHTML;
         galleryImage = gallery.querySelectorAll(".item--image");
         galleryArray = [];
         galleryImage.forEach((img) => {
