@@ -4,8 +4,11 @@ const modal = document.getElementById("modalbox");
 const modalTitle = document.getElementById("modal--gallery-title");
 
 const modalCounter = document.getElementsByClassName("modal--counter")[0];
+const modalContent = document.getElementsByClassName("modal--content")[0];
 const modalImg = document.getElementById("modal--image");
-
+const modalVideo = document.getElementById("modal--video");
+let modalVideoImg;
+let modalVideoLink;
 const authorText = document.getElementById("modal--image-author");
 const titleText = document.getElementById("modal--image-title");
 const captionText = document.getElementById("modal--image-caption");
@@ -24,11 +27,23 @@ const setModalTitle = (input) => {
     modalTitle.innerHTML = input
 }
 const setImage = (input) => {
+    if(modalImg.style.display == "none"){
+        modalImg.style.display = "block"
+        modalVideo.style.display = "none"
+    }
     modalImg.src = input.srcFull;
 };
 
+const setVideo = (input) => {
+    console.log(input)
+    modalVideoLink.href = `https://www.youtube-nocookie.com/embed/${input.videoSrc}?autoplay=1`
+    modalVideoImg.src = `http://img.youtube.com/vi/${input.videoSrc}/maxresdefault.jpg`
+    modalVideo.style.display = "block";
+    modalImg.style.display = "none";
+}
+
 const setAuthor = (input) => {
-    if (input.author != "None") {
+    if (input.author != "None" && input.author != "") {
         authorText.innerHTML = `By ${input.author}`;
     }
 };
@@ -45,14 +60,20 @@ const setCaption = (input) => {
 };
 
 const displayModal = (array, startingIndex) => {
+    modalVideoImg = document.getElementById('modal--video').contentWindow.document.getElementById('modal--video-img')
+    modalVideoLink = document.getElementById('modal--video').contentWindow.document.getElementById('modal--video-link')
+
+    if (isGallery) {
+        imageArray = galleryArray;
+    } else {
+        imageArray = inlineArray;
+    }
+    
     modal.style.display = "grid";
     modalCounter.innerHTML = `${imgIndex + 1} / ${array.length}`;
 
     setModalTitle(galleryTitle);
-    setImage(array[startingIndex]);
-    setAuthor(array[startingIndex]);
-    setTitle(array[startingIndex]);
-    setCaption(array[startingIndex]);
+    updateModal(array[startingIndex], startingIndex);
 
     if (array.length > 1) {
         leftBtn.style.visibility = "visible";
@@ -60,38 +81,28 @@ const displayModal = (array, startingIndex) => {
     }
 };
 
+const updateModal = (input, idx) => {
+    modalCounter.innerHTML = `${idx + 1} / ${imageArray.length}`;
+    if (input.contentType != 'video') {
+        setImage(input)
+    } else {
+        setVideo(input)
+    }
+    setAuthor(input)
+    setTitle(input)
+    setCaption(input)
+}
+
 const wrappedModulus = (a, b) => ((a % b) + b) % b; //Helper function to wrap around the array
 
 const prevImg = () => {
-    if (isGallery) {
-        let imageArray = galleryArray;
-    } else {
-        let imageArray = inlineArray;
-    }
-
     imgIndex = wrappedModulus(imgIndex - 1, imageArray.length);
-    modalCounter.innerHTML = `${imgIndex + 1} / ${imageArray.length}`;
-
-    setImage(imageArray[imgIndex]);
-    setAuthor(imageArray[imgIndex]);
-    setTitle(imageArray[imgIndex]);
-    setCaption(imageArray[imgIndex]);
+    updateModal(imageArray[imgIndex], imgIndex)
 };
 
 const nextImg = () => {
-    if (isGallery) {
-        imageArray = galleryArray;
-    } else {
-        imageArray = inlineArray;
-    }
-
     imgIndex = (imgIndex + 1) % imageArray.length;
-    modalCounter.innerHTML = `${imgIndex + 1} / ${imageArray.length}`;
-
-    setImage(imageArray[imgIndex]);
-    setAuthor(imageArray[imgIndex]);
-    setTitle(imageArray[imgIndex]);
-    setCaption(imageArray[imgIndex]);
+    updateModal(imageArray[imgIndex], imgIndex)
 };
 
 const closeModal = () => {

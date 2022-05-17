@@ -68,10 +68,11 @@
 
 * {
   box-sizing: border-box;
-  font-size: var(--font-size);  
+  font-size: var(--font-size);
   line-height: var(--line-height);
 }
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
   color: var(--color-dark);
@@ -97,7 +98,8 @@ h2 {
 h3 {
   margin-top: 0;
 }
-p, li {
+p,
+li {
   margin-top: 0;
   margin-bottom: var(--line-height);
 }
@@ -226,7 +228,6 @@ header {
 
 /* --------------- */
 
-
 #container > * {
   align-self: flex-start;
 }
@@ -235,7 +236,10 @@ header {
   flex-grow: 1;
   max-width: 100%;
   display: grid;
-  grid-template-columns: [start] repeat(var(--columns), calc((100% - (var(--columns) - 1) * 30px) / var(--columns))) [end];
+  grid-template-columns: [start] repeat(
+      var(--columns),
+      calc((100% - (var(--columns) - 1) * 30px) / var(--columns))
+    ) [end];
   grid-auto-rows: 40px;
   grid-auto-flow: row dense;
   gap: 20px;
@@ -245,7 +249,9 @@ header {
   background-image: url("misc/Logo.svg");
   background-repeat: no-repeat;
   background-position: 100% 100%;
-  background-size: calc(((100% - (var(--columns) - 1) * 30px) / var(--columns) + 10px));
+  background-size: calc(
+    ((100% - (var(--columns) - 1) * 30px) / var(--columns) + 10px)
+  );
 }
 
 aside {
@@ -278,7 +284,7 @@ aside {
   font-weight: 500;
   padding-bottom: calc(2 * var(--line-height));
 }
-.item--image-collection{
+.item--image-collection {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 40px;
@@ -292,7 +298,7 @@ aside {
   z-index: 1;
 }
 
-.item--image-wrapper:nth-of-type(1n + 5){
+.item--image-wrapper:nth-of-type(1n + 5) {
   display: none;
 }
 
@@ -321,7 +327,8 @@ aside {
   transform: rotate(1deg);
 }
 
-.item-type--gallery, .item-type--image {
+.item-type--gallery,
+.item-type--image {
   grid-column: span 2;
 }
 
@@ -334,7 +341,7 @@ aside {
   position: relative;
 }
 
-.item-type--image .item--image-wrapper .item--image{
+.item-type--image .item--image-wrapper .item--image {
   mix-blend-mode: lighten;
 }
 
@@ -350,8 +357,7 @@ aside {
   z-index: 1;
 }
 
-
-.item--author > p{
+.item--author > p {
   padding: 0;
   margin: 5px -10px;
   font-size: var(--font-size--smaller);
@@ -374,7 +380,6 @@ aside {
   margin-top: calc(var(--line-height) + 10px);
   -webkit-line-clamp: 9;
 }
-
 
 .item--description p:only-child {
   margin-bottom: 0;
@@ -433,7 +438,7 @@ aside {
   mix-blend-mode: lighten;
 }
 
-.item-type--image:hover .item--image{
+.item-type--image:hover .item--image {
   /* mix-blend-mode: overlay; */
   mix-blend-mode: lighten;
   cursor: zoom-in;
@@ -461,32 +466,32 @@ aside {
   background-color: var(--color-dark);
 } */
 
-.item-type--voice::before{
+.item-type--voice::before {
   content: attr(data-item-object-type);
   background-color: var(--color-voice);
 }
 
-.item-type--contribution::before{
+.item-type--contribution::before {
   content: attr(data-item-object-type);
   background-color: var(--color-contribution);
 }
 
-.item-type--tag::before{
+.item-type--tag::before {
   content: attr(data-item-object-type);
   background-color: var(--color-tag);
 }
 
-.item-type--pad::before{
+.item-type--pad::before {
   content: attr(data-item-object-type);
   background-color: var(--color-pad);
 }
 
-.item-type--station::before{
+.item-type--station::before {
   content: attr(data-item-object-type);
   background-color: var(--color-station);
 }
 
-.item-type--gallery::before{
+.item-type--gallery::before {
   content: attr(data-item-object-type);
   background-color: var(--color-gallery);
 }
@@ -500,15 +505,15 @@ aside {
 }
 
 .item-type--tag {
-  color: var(--color-tag)
+  color: var(--color-tag);
 }
 
 .item-type--pad {
-  color: var(--color-pad)
+  color: var(--color-pad);
 }
 
 .item-type--station {
-  color: var(--color-station)
+  color: var(--color-station);
 }
 
 .item-type--image {
@@ -539,9 +544,9 @@ aside {
 }
 
 [data-reference] {
-	border: 0.1em solid currentColor;
-	text-decoration: none;
-	padding: 0 .2em;
+  border: 0.1em solid currentColor;
+  text-decoration: none;
+  padding: 0 0.2em;
 }
 
 [data-reference]:hover {
@@ -580,6 +585,11 @@ img {
   cursor: zoom-in;
 }
 
+.inline--video {
+  min-width: 360px;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
 /* ------ Modal CSS ----- */
 
 .modal {
@@ -597,7 +607,6 @@ img {
 
   grid-template-columns: 80px calc(100% - 160px) 80px;
   grid-template-rows: 80px calc(100% - 160px) 80px;
-
 }
 
 .modal > * {
@@ -622,6 +631,13 @@ img {
   max-height: 100%;
 }
 
+#modal--video {
+  display: none;
+  max-width: 840px;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
 #modal--image-author {
   width: fit-content;
   white-space: nowrap;
@@ -634,9 +650,6 @@ img {
 .modal--text > * {
   margin: 0;
 }
-
-
-
 
 .modal--nav:hover,
 .modal--nav:focus {
@@ -657,5 +670,83 @@ img {
 */
 
 body[data-content-type="gallery"] .item-type--main figure {
-  display: none
+  display: none;
+}
+
+
+
+.item-type--station {
+  grid-column: span 6;
+}
+.item-type--station a:only-child {
+  flex-direction: row;
+}
+
+.item-type--station .item--image-wrapper{
+  width: auto;
+  height: auto;
+  margin: -20px 0 -20px -20px;
+}
+
+.item-type--station .item--description {
+  display: block;
+  max-width: 65ch;
+
+}
+
+.item--description-title{
+  margin: 0 0 7px 0;
+  font-size: var(--font-size--header);
+  font-weight: 700;
+}
+.item--description-date{
+  font-weight: 500;
+  font-size: var(--font-size--bigger);
+  margin: 0 0 var(--line-height--bigger) 0;
+}
+.item--description-question {
+  margin: 0 0 var(--line-height--bigger) 0;
+  font-size: var(--font-size--bigger);
+  line-height: var(--line-height--bigger);
+  font-weight: 500;
+}
+.item--description-summary {
+  font-size: var(--font-size--bigger);
+  line-height: var(--line-height--bigger);
+  margin: 0 0 10px 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item--description-summary * {
+  font-size: var(--font-size--bigger);
+  line-height: var(--line-height--bigger);
+}
+
+.item--description-meta{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  border-top: 2px solid currentColor;
+}
+
+.item--description-meta-container {
+  width: 30%;
+}
+
+.item--description-meta-title{
+  font-weight: 700;
+  margin: 10px 0 0px 0;
+}
+
+.item--description-meta-items{
+  /* padding: 0 0 0 10px; */
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

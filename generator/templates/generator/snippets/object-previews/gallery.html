@@ -2,9 +2,9 @@
 
 <div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
   {% comment %} <a href="{{ object.url }}"> {% endcomment %}
+    <div class="item--image-collection">
     {% if object.images %}
       {% with images=object.images.targets %}
-      <div class="item--image-collection">
         {% for image in images %}
         <div class="item--image-wrapper">
           <img
@@ -23,12 +23,50 @@
           />
         </div>
         {% endfor %}
-      </div>
+        {% endwith %}
+    {% endif %}
+    {% if object.videos %}
+      {%  with videos=object.videos.targets %}
+        {% for video in videos %}
+          <div class="item--image-wrapper">
+            {% if video.vimeoId %}
+              <img 
+                class="item--image"
+                src="/media/{{ video.thumb }}"
+                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 dither="#000000" %}" {% endcomment %}
+                data-video-src="{{video.vimeoId}}"
+                data-content-type="video"
+                data-author="{{ video.author }}"
+                data-caption="{{ video.caption }}"
+                data-title="{{ video.title }}"
+                {% comment %} src="{% thumbnail thumbnailLink 400x0 dither="#000000" %}" {% endcomment %}
+              />
+            {% elif video.youtubeId %}
+            {% comment %} {% with thumbnailLink="http://img.youtube.com/vi/"|add:video.youtubeId|add:"/mqdefault.jpg" %} {% endcomment %}
+              <img 
+                class="item--image"
+                src="media/{{ video.thumb }}"
+                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 dither="#000000" %}" {% endcomment %}
+                data-video-src="{{video.youtubeId}}"
+                data-content-type="video"
+                data-author="{{ video.author }}"
+                data-caption="{{ video.caption }}"
+                data-title="{{ video.title }}"
+                {% comment %} src="{% thumbnail thumbnailLink 400x0 dither="#000000" %}" {% endcomment %}
+              />
+            {% else %}
+              <video controls>
+                <source src="{{ object.video }}" type="{{ object.type }}">
+              </video>
+            {% endif %}  
+          </div>
+        {% endfor %}
       {% endwith %}
     {% endif %}
+    </div>
     <div class="item--gallery-description">
       <p>
-        {{ object.title }} 
+        <strong>{{ object.title }}</strong> 
       </p>
       <p class="item--gallery-counter">
         {{ object.images.targets|length }} item{{ object.images.targets|pluralize }}

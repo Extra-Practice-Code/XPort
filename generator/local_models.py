@@ -4,7 +4,17 @@ from generator.models import Model, keyFilter
 from generator.links import linkMultiReverse, multiLinkMultiReverse
 from generator.collection import contentType, InstantiatingCollection
 import re
+import requests
 from django.urls import reverse
+from django.core.files.images import ImageFile
+from django.core.files.storage import FileSystemStorage
+from django.conf.global_settings import MEDIA_ROOT
+import os
+import os.path
+
+from urllib.request import urlopen
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
@@ -80,14 +90,56 @@ class Video (Model):
   # def thumbnail (self):
   #   if not somehowCached:
   #     if self.vimeoId:
+  #       thumbnail = 
       
   #     elif self.youtubeId:
+  #       thumbnail = 'http://img.youtube.com/vi/'+self.youtubeId+'/maxresdefault.jpg'
 
   #     else:
   #       # check cache otherwised generat
   #   else:
   #     image = retreiveFromCache
   #   # Should return an Image()
+  
+  @property
+  def thumbnailLink(self):
+    if self.youtubeId:
+        return f"http://img.youtube.com/vi/{self.youtubeId}/maxresdefault.jpg"
+
+    elif self.vimeoId:
+        requestLink = f"https://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/{self.vimeoId}"
+        r = requests.get(requestLink)
+        return r.json()['thumbnail_url']
+    else:
+      return None
+  
+  @property
+  def thumb(self):
+    if self.youtubeId:
+      file_name = self.youtubeId
+    elif self.vimeoId:
+      file_name = self.vimeoId
+    else:
+      return None
+
+    path = os.path.join(MEDIA_ROOT, "video_thumbnails")
+
+    if not os.path.exists(path):
+      os.makedirs(path)
+
+    # if not Path(f"{file_name}.jpg").is_file():
+    res = requests.get(self.thumbnailLink, stream = True)
+
+    if res.status_code == 200:
+        with open(os.path.join(path, "{}.jpg".format(file_name)),'wb') as f:
+          file = ImageFile(f)
+          file.write(res.content)
+          file.save()
+        print('Image sucessfully Downloaded: ',file_name)
+    else:
+        print('Image Couldn\'t be retrieved')
+    
+    return file
 
   def _metadataFields (self):
     return {
@@ -161,6 +213,8 @@ class Voice (Model):
 class Gallery (Model):
   plural = 'galleries'
   generateListPage = True
+  referenceTemplate = 'generator/snippets/references/gallery.html'
+
   
   def _metadataFields (self):
     return {
@@ -169,6 +223,7 @@ class Gallery (Model):
       'caption': fields.Single(fields.InlineMarkdownField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'images': multiLinkMultiReverse('image', 'galleries'),
+      'videos': multiLinkMultiReverse('video', 'galleries'),
       'station': linkMultiReverse('station', 'galleries'),
       'tags': multiLinkMultiReverse('tag', 'galleries'),
       'voices': multiLinkMultiReverse('voice', 'galleries')
