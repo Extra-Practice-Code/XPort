@@ -249,6 +249,7 @@ class Station (Model):
   singlePageTemplate = 'generator/station.html'
   sortKey = '-date'
   generateListPage = True
+  listPageTemplate = 'generator/list--stations.html'
 
   def _metadataFields (self):
     return {

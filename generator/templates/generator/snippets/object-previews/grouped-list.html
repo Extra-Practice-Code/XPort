@@ -6,7 +6,9 @@
     {% if object.contentType == "audio" %}    
       {% include "generator/snippets/object-previews/audio.html" %}
     {% elif object.contentType == "image" %}    
-        {% include "generator/snippets/object-previews/image.html" %}
+      {% include "generator/snippets/object-previews/image.html" %}
+    {% elif object.contentType == "voice" %}    
+      {% include "generator/snippets/object-previews/voice.html" %}
     {% else %}
       {% include "generator/snippets/object-previews/object.html" %}
     {% endif %}
