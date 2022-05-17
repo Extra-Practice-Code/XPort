@@ -8,7 +8,7 @@ import requests
 from django.urls import reverse
 from django.core.files.images import ImageFile
 from django.core.files.storage import FileSystemStorage
-from django.conf.global_settings import MEDIA_ROOT
+from django.conf import settings
 import os
 import os.path
 
@@ -122,7 +122,7 @@ class Video (Model):
     else:
       return None
 
-    path = os.path.join(MEDIA_ROOT, "video_thumbnails")
+    path = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
 
     if not os.path.exists(path):
       os.makedirs(path)
