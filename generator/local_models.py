@@ -8,7 +8,7 @@ import requests
 from django.urls import reverse
 from django.core.files.images import ImageFile
 from django.core.files.storage import FileSystemStorage
-from django.conf.global_settings import MEDIA_ROOT
+from django.conf.settings import MEDIA_ROOT
 import os
 import os.path
 
