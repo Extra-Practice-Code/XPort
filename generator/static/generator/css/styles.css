@@ -14,6 +14,8 @@
   --border-color: #09484d;
   --font-color: #09484d;
   --font-size--header: 36px;
+  --font-size--title: 26px;
+  --line-height--title: 36px;
   --font-size--bigger: 19px;
   --line-height--bigger: 26px;
   --font-size--normal: 14px;
@@ -727,7 +729,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 .item-type--station .item--image-wrapper{
   width: auto;
   height: auto;
-  margin: -20px 0 -20px -20px;
+  margin: -20px 5px -20px -20px;
 }
 
 .item-type--station .item--description {
@@ -737,14 +739,14 @@ body[data-content-type="gallery"] .item-type--main figure {
 }
 
 .item--description-title{
-  margin: 0 0 7px 0;
-  font-size: var(--font-size--header);
+  margin: 0 0 10px 0;
+  font-size: var(--font-size--title);
   font-weight: 700;
 }
 .item--description-date{
   font-weight: 500;
-  font-size: var(--font-size--bigger);
-  margin: 0 0 var(--line-height--bigger) 0;
+  font-size: var(--font-size--title);
+  margin: 0 0 var(--line-height--title) 0;
 }
 .item--description-question {
   margin: 0 0 var(--line-height--bigger) 0;
