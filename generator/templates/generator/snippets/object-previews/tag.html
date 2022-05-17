@@ -1,31 +1,13 @@
 {% load thumbnail %}
+{% load generator_utils %}
+
 <div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
   <a href="{{ object.url }}">
-    {% if object.images %}
-      {% with image=object.images.targets|first %}
-        <div class="item--image-wrapper">
-          <img
-            class="item--image"
-            src="{% thumbnail image.image.value 400x0 dither="#000000" %}"
-            data-src-thumbnail="{% thumbnail image.image.value 400x0 %}"
-            data-src-full="{% thumbnail image.image.value 1200x1200 %}"
-            alt="{{ image.alt }}"
-          />
-        </div>
-      {% endwith %}
-    {% endif %}
-    <div class="item--description">
-      <p>
-        <strong>{{ object.tag|capfirst }}</strong>
-        {{ linkedItemsNumber }} linked item{{ linkedItemsNumber|pluralize }}
-        {% comment %} {% if object.summary %}
-          {{ object.summary|truncatechars_html:300 }}
-        {% elif object.content %}
-          {{ object.content|truncatechars_html:300 }}
-        {% else %}
-          {{ object }}
-        {% endif %} {% endcomment %}
+      <p class="item-type--tag-counter">
+        {{ object|merged_targets|length }} item{{ object|merged_targets|length|pluralize }}
       </p>
-    </div>
+      <p class="item-type--tag-title">
+        <strong>{{ object.tag|capfirst }}</strong>
+      </p>
   </a>
 </div>

@@ -750,3 +750,12 @@ body[data-content-type="gallery"] .item-type--main figure {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.item-type--tag-counter{
+  width: 100%;
+  text-align: right;
+  margin: 0;
+}
+.item-type--tag-title{
+  margin: 0;
+}
