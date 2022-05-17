@@ -48,10 +48,13 @@
       </nav>
       <nav id="nav--sub">{% block subnav %}{% endblock %}</nav>
     </header>
-    <div id="container">
-      {% block content %}
-      {% endblock %}
-    </div>
+    <main>
+      {% block before_content %}{% endblock %}
+      <div id="container" class="{% block content_class %}{% endblock %}">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </main>
     <div id="modalbox" class="modal">
       <!-- The Close Button -->
       <span class="modalNav close">&times;</span>
@@ -113,11 +116,14 @@
         }
       });
 
+      var container = document.getElementById('container');
 
-      var blocks = document.querySelectorAll('#container > div');
-
-      for (let i = 0; i < blocks.length; i++) {
-        resizeObserver.observe(blocks[i]);
+      if (!container.classList.contains('prevent--resizing-blocks')) {
+        var blocks = container.children;
+  
+        for (let i = 0; i < blocks.length; i++) {
+          resizeObserver.observe(blocks[i]);
+        }
       }
     </script>
     {% block bodyscript %}{% endblock %}

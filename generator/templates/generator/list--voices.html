@@ -1,15 +1,31 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} | {{ title }}{% endblock %}
-{% block content %}
-
+{% block subnav %}
+  {% regroup objects by type.value as grouped_objects %}
+  <ul>
+    {% for entry in grouped_objects %}
+    <li >
+      <a href="#group--{{ entry.grouper|slugify }}">{{ entry.grouper }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+{% block before_content %}
   <div class="item item-type--page-title">
     <h1>{{ title }}</h1>
   </div>
-
+{% endblock %}
+{% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
+{% block content %}  
   {% regroup objects by type.value as grouped_objects %}
-
-  {% include "generator/snippets/object-previews/grouped-list.html" %}
-  
+  {% for entry in grouped_objects %}
+    <div class="item item-type--sub-title" id="group--{{ entry.grouper|slugify }}">
+      <h2>{{ entry.grouper }}</h2>
+    </div>
+    {% for object in entry.list %}
+      {% include "generator/snippets/object-previews/voice.html" %}
+    {% endfor %}
+  {% endfor %}
   
 {% endblock %}
