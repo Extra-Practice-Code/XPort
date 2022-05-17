@@ -7,6 +7,12 @@
       {% include "generator/snippets/object-previews/video.html" %}
   {% elif object.contentType == "gallery" %}
       {% include "generator/snippets/object-previews/gallery.html" %}
+  {% elif object.contentType == "contribution" %}
+      {% include "generator/snippets/object-previews/contribution.html" %}  
+  {% elif object.contentType == "tag" %}
+      {% include "generator/snippets/object-previews/tag.html" %}
+  {% elif object.contentType == "station" %}
+      {% include "generator/snippets/object-previews/station.html" %}
   {% else %}
     {% include "generator/snippets/object-previews/object.html" %}
   {% endif %}

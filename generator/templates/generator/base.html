@@ -56,14 +56,59 @@
       </div>
     </main>
     <div id="modalbox" class="modal">
-      <!-- The Close Button -->
-      <span class="modalNav close">&times;</span>
-      <span class="modalNav arrow leftArrow">&ShortLeftArrow;</span>
-      <span class="modalNav arrow rightArrow">&ShortRightArrow;</span>
-      <!-- Modal Content (The Image) -->
-      <img class="modal-content" id="modalImage" />
-      <!-- Modal Caption (Image Text) -->
-      <div id="modalCaption"></div>
+      <span class="modal--counter"></span>
+      <h2 id="modal--gallery-title"></h2>
+      <span class="modal--nav close">&times;</span>
+
+      <span class="modal--nav arrow leftArrow">&ShortLeftArrow;</span>
+      <div class="modal--content">
+        <img id="modal--image" />
+        {% comment %} <iframe id="modal--video-youtube"  style="min-height: 350px" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> {% endcomment %}
+        <iframe
+          id="modal--video"
+          srcdoc="
+              <style>
+                  body, .full {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0;
+                      position: absolute;
+                      display: flex;
+                      justify-content: center;
+                      object-fit: cover;
+                  }
+              </style>
+              <a  
+                  id='modal--video-link'
+                  href='''
+                  class='full'
+              >
+                  <img
+                      id='modal--video-img'
+                      src=''
+                      class='full'
+                  />
+                  <svg
+                      version='1.1'
+                      viewBox='0 0 68 48'
+                      width='200px'
+                      style='position: relative;'
+                  >
+                      <path d='M 45,24 27,14 27,34' fill='#fff'></path>
+                  </svg>
+              </a>
+          "
+          frameborder="0"
+        ></iframe>
+      </div>
+      <span class="modal--nav arrow rightArrow">&ShortRightArrow;</span>
+      
+      
+      <p id="modal--image-author"></p>
+      <div class="modal--text">
+        <h3 id="modal--image-title"></h3>
+        <p id="modal--image-caption"></p>
+      </div>
     </div>
     <svg>
       <filter id="titleNoise">

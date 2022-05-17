@@ -1,4 +1,4 @@
-<section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
+{% comment %} <section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
   {% if object.title %}
     <h3>{{  object.title }}</h3>
   {% endif %}
@@ -13,6 +13,64 @@
       <source src="{{ object.video }}" type="{{ object.type }}">
     </video>
   {% endif %}
+  {% if object.description %}
+    <p>
+      {{ object.description }}
+    </p>
+  {% endif %}
+</section> {% endcomment %}
+
+
+<section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
+  {% if object.title %}
+    <h3>{{  object.title }}</h3>
+  {% endif %}
+
+  {% if object.vimeoId %}
+    <iframe src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <!-- @FIXME find a way to include the player js only once -->
+    <script src="https://player.vimeo.com/api/player.js"></script>
+  {% elif object.youtubeId %}
+  <iframe
+          class="inline--video"
+          srcdoc="
+              <style>
+                  body, .full {
+                      width: 100%;
+                      height: 100%;
+                      margin: 0;
+                      position: absolute;
+                      display: flex;
+                      justify-content: center;
+                      object-fit: cover;
+                  }
+              </style>
+              <a  
+                  class='inline--video-link full'
+                  href='https://www.youtube-nocookie.com/embed/{{ object.youtubeId }}'
+              >
+                  <img
+                      class='inline--video-img full'
+                      src='http://img.youtube.com/vi/{{ object.youtubeId }}/maxresdefault.jpg'
+                  />
+                  <svg
+                      version='1.1'
+                      viewBox='0 0 68 48'
+                      width='200px'
+                      style='position: relative;'
+                  >
+                      <path d='M 45,24 27,14 27,34' fill='#fff'></path>
+                  </svg>
+              </a>
+          "
+          frameborder="0"
+        ></iframe>  
+  {% else %}
+    <video controls>
+      <source src="{{ object.video }}" type="{{ object.type }}">
+    </video>
+  {% endif %}
+  
   {% if object.description %}
     <p>
       {{ object.description }}
