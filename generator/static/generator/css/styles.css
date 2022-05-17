@@ -718,7 +718,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 
 
 .item-type--station {
-  grid-column: span 6;
+  grid-column: 1 / -1;
 }
 .item-type--station a:only-child {
   flex-direction: row;
