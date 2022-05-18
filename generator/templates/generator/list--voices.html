@@ -1,6 +1,6 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
-{% block page_title %}{{ block.super }} | {{ title }}{% endblock %}
+{% block page_title %}{{ block.super }} | Voices{% endblock %}
 {% block subnav %}
   {% regroup objects by type.value as grouped_objects %}
   <ul>
@@ -13,7 +13,7 @@
 {% endblock %}
 {% block before_content %}
   <div class="item item-type--page-title">
-    <h1>{{ title }}</h1>
+    <h1>Voices</h1>
   </div>
 {% endblock %}
 {% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
