@@ -718,13 +718,22 @@ body[data-content-type="gallery"] .item-type--main figure {
 }
 
 
-
 .item-type--station {
+  grid-column: span 3;
+}
+
+.item-type--station.full {
   grid-column: 1 / -1;
 }
 .item-type--station a:only-child {
   flex-direction: row;
 }
+
+/* .item-type--station.full .item--image-wrapper{
+  width: auto;
+  height: auto;
+  margin: -20px 5px -20px -20px;
+} */
 
 .item-type--station .item--image-wrapper{
   width: auto;
@@ -734,27 +743,45 @@ body[data-content-type="gallery"] .item-type--main figure {
 
 .item-type--station .item--description {
   display: block;
+  max-width: 30%;
+}
+.item-type--station.full .item--description {
   max-width: 65ch;
-
 }
 
 .item--description-title{
-  margin: 0 0 10px 0;
-  font-size: var(--font-size--title);
+  margin: 0 0 0 0;
+  font-size: var(--font-size--normal);
   font-weight: 700;
 }
+.full .item--description-title{
+  margin: 0 0 10px 0;
+  font-size: var(--font-size--title);
+}
+
 .item--description-date{
   font-weight: 500;
+  font-size: var(--font-size--normal);
+  margin: 0 0 var(--line-height--normal) 0;
+}
+.full .item--description-date{
   font-size: var(--font-size--title);
   margin: 0 0 var(--line-height--title) 0;
 }
+
 .item--description-question {
+  margin: 0 0 10px 0;
+  font-size: var(--font-size--normal);
+  line-height: var(--line-height--normal);
+  font-weight: 500;
+}
+.full .item--description-question {
   margin: 0 0 var(--line-height--bigger) 0;
   font-size: var(--font-size--bigger);
   line-height: var(--line-height--bigger);
-  font-weight: 500;
 }
-.item--description-summary {
+
+.full .item--description-summary {
   font-size: var(--font-size--bigger);
   line-height: var(--line-height--bigger);
   margin: 0 0 10px 0;
@@ -765,24 +792,36 @@ body[data-content-type="gallery"] .item-type--main figure {
   overflow: hidden;
 }
 
-.item--description-summary * {
+.full .item--description-summary * {
   font-size: var(--font-size--bigger);
   line-height: var(--line-height--bigger);
 }
 
-.item--description-meta{
+.item--description-meta {
   display: flex;
   flex-direction: row;
   gap: 10px;
-  border-top: 2px solid currentColor;
+  border-top: 1px solid currentColor;
 }
 
-.item--description-meta-container {
+
+.item--description-meta * {
+  font-size:  var(--font-size--smaller);
+}
+.full .item--description-meta * {
+  font-size:  var(--font-size--normal);
+}
+
+.full .item--description-meta-container {
   width: 30%;
 }
 
 .item--description-meta-title{
   font-weight: 700;
+  margin: 10px 0 0px 0;
+}
+
+.full .item--description-meta-title{
   margin: 10px 0 0px 0;
 }
 

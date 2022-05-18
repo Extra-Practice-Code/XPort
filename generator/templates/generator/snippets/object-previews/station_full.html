@@ -1,5 +1,5 @@
 {% load thumbnail %}
-<div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
+<div class="item item-type--{{ object.contentType }} full item--reference" data-item-object-type="{{ object.contentType }}">
     <a href="{{ object.url }}">
 
         {% if object.images %}
@@ -34,6 +34,20 @@
                 {{ object.question }}
               </h3>
             {% endif %}
+            
+            {% if object.summary %}
+              <p class="item--description-summary">
+                {{ object.summary|truncatechars_html:700 }}
+              </p>
+            {% elif object.content %}
+              <p class="item--description-summary">
+                {{ object.content|truncatechars_html:700 }}
+              </p>
+            {% else %}
+              <p class="item--description-summary">
+                {{ object }}
+              </p>  
+            {% endif %}
 
             <div class="item--description-meta">
               {% if object.voices %}
@@ -45,6 +59,19 @@
                     {% for voice in object.voices %}
                     {{voice.voice}}<br>
                     {% endfor %}
+                </p>
+              </div>
+              {% endif %}
+
+              {% if object.contributions %}
+              <div class="item--description-meta-container">
+                <p class="item--description-meta-title">
+                  Contributions
+                </p>
+                <p class="item--description-meta-items">
+                  {% for contribution in object.contributions %}
+                  {{contribution}}<br>
+                  {% endfor %}
                 </p>
               </div>
               {% endif %}
