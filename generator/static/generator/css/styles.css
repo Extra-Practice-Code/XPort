@@ -740,14 +740,14 @@ body[data-content-type="gallery"] .item-type--main figure {
   flex-direction: row;
 }
 
-.item-type--station.full .item--image-wrapper{
+.item-type--station.full > a:only-child .item--image-wrapper{
   width: auto;
   height: auto;
   max-height: 600px;
   margin: -20px 5px -20px -20px;
 }
 
-.item-type--station .item--image-wrapper{
+.item-type--station > a:only-child .item--image-wrapper{
   width: auto;
   height: auto;
   margin: -20px 5px -20px -20px;
