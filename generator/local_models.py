@@ -315,11 +315,11 @@ class Reflection (Model):
 
 @contentType()
 class PreviewReview (Model):
-  contentType = 'preview-review'
+  contentType = 'previewReview'
 
   def _metadataFields (self):
     return {
-      'preview-review': fields.Single(fields.StringField()),
+      'previewReview': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
