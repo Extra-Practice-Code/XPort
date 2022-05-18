@@ -184,7 +184,7 @@ class Tag (Model):
   generateListPage = True
   singlePageTemplate = 'generator/tag.html'
   listPageTemplate = 'generator/list--tags.html'
-  sortKey = ('tag')
+  sortKey = ('first_letter')
   # Use a metaclass to have better default values?
 
   def _metadataFields (self):
