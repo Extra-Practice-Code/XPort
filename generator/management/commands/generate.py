@@ -89,10 +89,17 @@ def generate ():
     'page_content': { 'content_type': 'reflection' }
   })
 
-  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
-    contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
-  })
+  index_ctx = { contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values() }
 
+  pinned_objects = []
+  
+  for models in index_ctx.values():
+    pinned_objects.extend(filter(lambda m: hasattr(m, 'pinned'), models))
+
+  index_ctx['pinned_objects'] = pinned_objects
+
+  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', index_ctx )
+ 
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
