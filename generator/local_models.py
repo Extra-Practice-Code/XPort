@@ -301,11 +301,25 @@ class Contribution (Model):
 
 @contentType()
 class Reflection (Model):
-  generateListPage = True
 
   def _metadataFields (self):
     return {
       'reflection': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
+      'station': linkMultiReverse('station', 'reflections'),
+      'tags': multiLinkMultiReverse('tag', 'reflections'),
+      'voices': multiLinkMultiReverse('voice', 'reflections'),
+      'summary': fields.Single(fields.SummaryField(model=self)),
+      'images': multiLinkMultiReverse('image', 'reflections')
+    }
+
+@contentType()
+class PreviewReview (Model):
+  contentType = 'preview-review'
+
+  def _metadataFields (self):
+    return {
+      'preview-review': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),

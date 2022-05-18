@@ -8,7 +8,7 @@ import re
 from generator.index import make_index
 
 from generator.parse import parse_pads
-from generator.collection import resetCollections, contentTypes
+from generator.collection import collectionFor, resetCollections, contentTypes
 from generator.utils import debug, info, render_template_to_string, keyFilter
 import generator.local_models
 
@@ -82,7 +82,14 @@ def generate ():
         'objects': collection.models
       })
 
-  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
+  output(os.path.join(outputdir, 'reflections.html'), 'generator/index.html', {
+    'contributions': collectionFor('contribution').models,
+    'reflections': collectionFor('reflection').models,
+    'previewReviews': collectionFor('preview-review').models,
+    'page_content': { 'content_type': 'reflection' }
+  })
+
+  output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
     contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
   })
 
