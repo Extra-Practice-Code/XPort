@@ -82,14 +82,14 @@ def generate ():
         'objects': collection.models
       })
 
-  output(os.path.join(outputdir, 'reflections.html'), 'generator/index.html', {
+  output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
     'contributions': collectionFor('contribution').models,
     'reflections': collectionFor('reflection').models,
     'previewReviews': collectionFor('previewReview').models,
     'page_content': { 'content_type': 'reflection' }
   })
 
-  output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
+  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', {
     contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values()
   })
 
