@@ -182,6 +182,9 @@ class Pad (Model):
 @contentType(InstantiatingCollection)
 class Tag (Model):
   generateListPage = True
+  singlePageTemplate = 'generator/tag.html'
+  listPageTemplate = 'generator/list--tags.html'
+  sortKey = ('first_letter')
   # Use a metaclass to have better default values?
 
   def _metadataFields (self):
@@ -189,6 +192,9 @@ class Tag (Model):
       'tag': fields.Single(fields.StringField()),
     }
 
+  @property
+  def first_letter (self):
+    return str(getattr(self, 'tag'))[:1].lower()
 
 @contentType(InstantiatingCollection)
 class Voice (Model):

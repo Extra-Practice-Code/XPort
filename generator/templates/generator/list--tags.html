@@ -1,8 +1,8 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
-{% block page_title %}{{ block.super }} | Voices{% endblock %}
+{% block page_title %}{{ block.super }} | {{ title }}{% endblock %}
 {% block subnav %}
-  {% regroup objects by type.value as grouped_objects %}
+  {% regroup objects by first_letter as grouped_objects %}
   <ul>
     {% for entry in grouped_objects %}
     <li >
@@ -13,18 +13,18 @@
 {% endblock %}
 {% block before_content %}
   <div class="item item-type--page-title">
-    <h1>Voices</h1>
+    <h1>{{ title }}</h1>
   </div>
 {% endblock %}
 {% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
 {% block content %}  
-  {% regroup objects by type.value as grouped_objects %}
+  {% regroup objects by first_letter as grouped_objects %}
   {% for entry in grouped_objects %}
     <div class="item item-type--sub-title" id="group--{{ entry.grouper|slugify }}">
       <h2>{{ entry.grouper }}</h2>
     </div>
     {% for object in entry.list %}
-      {% include "generator/snippets/object-previews/voice.html" %}
+      <a href="{{ object.url }}">{{ object }} ({{ object|merged_targets|length }} item{{ object|merged_targets|length|pluralize }})</a>
     {% endfor %}
   {% endfor %}
   
