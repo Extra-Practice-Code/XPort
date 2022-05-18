@@ -6,6 +6,7 @@ from collections import OrderedDict
 from generator.collection import UnknownContentTypeError, collectionFor, knownContentType
 import os.path
 from generator.settings import SITE_URL
+from generator.fields import Field, Single
 # from .internallinks import resolveInternalLinks
 # from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
@@ -347,15 +348,24 @@ class Model(object):
     )
 
   def getSortKey (self):
+
+    def getattrvalue (key):
+      attr = getattr(self, key)
+
+      if isinstance(attr, (Field, Single)):
+        return attr.value
+      else:
+        return attr
+
     if self.sortKey:
       if isinstance(self.sortKey, tuple):
-        sortKey = tuple(getattr(self, (key[1:] if key.startswith('-') else key)).value for key in self.sortKey)
+        sortKey = tuple(getattrvalue((key[1:] if key.startswith('-') else key)) for key in self.sortKey)
         return sortKey
       else:
         sortKeyField = self.sortKey[1:] if self.sortKey.startswith('-') else self.sortKey
-        return getattr(self, sortKeyField).value
+        return getattrvalue(sortKeyField)
     else:
-      return getattr(self, self.labelField).value
+      return getattrvalue(self.labelField)
 
   @classmethod
   def getSortDirection (cls):
