@@ -131,7 +131,9 @@ svg {
   width: 0;
   height: 0;
 }
-
+strong {
+  font-weight: 600;
+}
 /* --------------- */
 header {
   display: flex;
@@ -312,6 +314,11 @@ main > .item-type--page-title {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-top: calc(10px + var(--line-height));
+}
+
+.item.item-type--station > a:only-child {
+  padding-top: 0;
 }
 
 .item--meta {
@@ -330,6 +337,10 @@ main > .item-type--page-title {
   margin: -20px -20px 0 -20px;
   background-color: currentColor;
   z-index: 1;
+}
+
+.item > a .item--image-wrapper {
+  margin-top: calc(-20px - var(--line-height) - 10px);
 }
 
 .item--image-wrapper:nth-of-type(1n + 5) {
@@ -411,7 +422,6 @@ main > .item-type--page-title {
 }
 
 .item--description:only-child {
-  margin-top: calc(var(--line-height) + 10px);
   -webkit-line-clamp: 9;
 }
 
@@ -840,7 +850,29 @@ body[data-content-type="gallery"] .item-type--main figure {
   width: 100%;
   text-align: right;
   margin: 0;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 .item-type--tag-title{
   margin: 0;
+}
+
+.item.item--reference[data-with-context] {
+  grid-column: span 2;
+}
+
+.item.item--reference[data-with-context] a,
+.item.item--reference[data-with-context] a:only-child {
+  padding-top: calc(1.5 * var(--line-height));
+  flex-direction: column;
+}
+
+.item.item--reference[data-with-context] a * {
+  margin: 0;
+}
+
+.item.item--reference[data-with-context] [data-link-marked] {
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
