@@ -1,5 +1,12 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
+{% block subnav %}
+  <ul>
+  {% for station in objects %}
+    <li><a href="{{ station.url }}">{{ station }}</a></li>
+  {% endfor %}
+  </ul>
+{% endblock %}
 {% block page_title %}{{ block.super }} | {{ title }}{% endblock %}
 {% block before_content %}
   <div class="item item-type--page-title">

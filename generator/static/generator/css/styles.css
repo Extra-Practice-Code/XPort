@@ -876,3 +876,19 @@ body[data-content-type="gallery"] .item-type--main figure {
   text-decoration: underline;
   text-decoration-style: dotted;
 }
+
+.list--tags {
+  list-style: none;
+}
+
+.list--tags:before {
+  content: "Tags: ";
+}
+
+.list--tags li {
+  display: inline;
+}
+
+.list--tags li:not(:last-child):after {
+  content: ',';
+}

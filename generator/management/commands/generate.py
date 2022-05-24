@@ -96,11 +96,12 @@ def generate ():
   for models in index_ctx.values():
     pinned_objects.extend(filter(lambda m: hasattr(m, 'pinned'), models))
 
+  pinned_objects.sort(key=lambda m: int(getattr(m, 'pinned')[0]))
+
   index_ctx['pinned_objects'] = pinned_objects
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', index_ctx )
  
-
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 

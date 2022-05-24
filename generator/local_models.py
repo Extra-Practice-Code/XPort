@@ -201,23 +201,32 @@ class Voice (Model):
   # Use a metaclass to have better default values?
   generateListPage = True
   listPageTemplate = 'generator/list--voices.html'
-  sortKey = ('type', 'voice')
+  sortKey = ('typeSortKey', 'sortname')
 
   def _metadataFields (self):
     return {
       'voice': fields.Single(fields.StringField()),
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.voice.value], filter=str.lower)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'type': fields.Single(fields.StringField(default=['artist'])),
+      'type': fields.Single(fields.StringField(default=['voice'])),
       'tags': multiLinkMultiReverse('tag', 'voices'),
       'images': multiLinkMultiReverse('image', 'voices'),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
+  @property
+  def typeSortKey (self):
+    if self.type.value == 'voice':
+      return 0
+    elif self.type.value == 'team':
+      return 1
+    else:
+      return 2
 
 
 @contentType()
 class Gallery (Model):
-  plural = 'galleries'
+  plural = 'gallery'
   generateListPage = True
   referenceTemplate = 'generator/snippets/references/gallery.html'
 

@@ -7,10 +7,10 @@
       <a href="#group--contributions">Contributions</a>
     </li>
     <li>
-      <a href="#group--reflections">Reflections</a>
+      <a href="#group--preview-review">Preview Reviews</a>
     </li>
     <li>
-      <a href="#group--preview-review">Preview Reviews</a>
+      <a href="#group--shared-spaces">Shared Spaces</a>
     </li>
   </ul>
 {% endblock %}
@@ -27,16 +27,16 @@
   {% for object in contributions %}
     {% include "generator/snippets/object-previews/contribution.html" %}
   {% endfor %}
-  <div class="item item-type--sub-title" id="group--reflections">
-    <h2>Reflections</h2>
-  </div>
-  {% for object in reflections %}
-    {% include "generator/snippets/object-previews/contribution.html" %}
-  {% endfor %}
   <div class="item item-type--sub-title" id="group--preview-review">
     <h2>Preview Reviews</h2>
   </div>
   {% for object in previewReviews %}
     {% include "generator/snippets/object-previews/contribution.html" %}
+  {% endfor %}
+  <div class="item item-type--sub-title" id="group--shared-spaces">
+    <h2>Shared Spaces</h2>
+  </div>
+  {% for object in pads %}
+    {% include "generator/snippets/object-previews/object.html" %}
   {% endfor %}
 {% endblock %}

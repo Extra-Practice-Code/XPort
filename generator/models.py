@@ -221,11 +221,8 @@ class Model(object):
 
   def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None, source_pad=None):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
-    self.metadata = OrderedDict()
-
-    for fieldName, field in self._metadataFields().items():
-      self.metadata[fieldName] = field
-
+    self.metadata = OrderedDict(**self._metadataFields())
+    
     if key: 
       self.key = key
     else:

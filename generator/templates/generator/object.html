@@ -6,12 +6,21 @@
   <div class="item item-type--page-title">
     <h1>{{ object }}</h1>
   </div>
-  {% if object.content %}
+  {% if object.content or object.tags %}
   <div class="item item-type--main">
-    {{ object.content }}
+    {% if object.content or object.tags %}
+      {{ object.content }}
+    {% endif %}
+    {% if object.tags %}
+      <ul class="list--tags">
+        {% for tag in object.tags %}
+          <li><a href="{{ tag.url }}">{{ tag }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
   {% endif %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without_inline_links:"image, video, gallery"|targets only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"tag"|without_inline_links:"image, video, gallery, page"|targets only %}
 
 {% endblock %}
