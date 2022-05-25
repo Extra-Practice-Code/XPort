@@ -42,6 +42,7 @@
   --font-color: var(--color-dark);
 
   --font-size--header: 36px;
+  --line-height--header: 36px;
   --font-size--title: 26px;
   --line-height--title: 36px;
   --font-size--bigger: 19px;
@@ -193,6 +194,7 @@ header {
   color: var(--color-dark);
 
   --font-size: var(--font-size--bigger);
+  --line-height: 1;
   font-weight: 500;
 }
 
@@ -910,7 +912,7 @@ body[data-content-type="gallery"] .item-type--main figure {
   padding: 0;
   width: 100%;
   /* height: 200px; */
-  color: var(--color-dark-comp);
+  /* color: var(--color-dark-comp); */
 }
 
 .image:hover {
