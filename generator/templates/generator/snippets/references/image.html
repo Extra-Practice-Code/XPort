@@ -3,19 +3,21 @@
   {% if object.title %}
     <h3>{{  object.title }}</h3>
   {% endif %}
-  <img 
-    class="inline-image"
-    src="{% thumbnail object.image.value 400x0 dither="#000000" %}"
-    data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
-    data-src-full="{% thumbnail object.image.value 1200x1200 %}"
-    data-author="{{ object.author }}"
-    data-caption="{{ object.caption }}"
-    data-title="{{ object.title }}"
-    alt="{{ object.alt }}" 
-  />
-  {% if object.caption %}
+  <div class="inline-image-wrapper">
+    <img 
+      class="inline-image"
+      src="{% thumbnail object.image.value 800x0 dither="#000000" %}"
+      data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
+      data-src-full="{% thumbnail object.image.value 1200x1200 %}"
+      data-author="{{ object.author }}"
+      data-caption="{{ object.caption }}"
+      data-title="{{ object.title }}"
+      alt="{{ object.alt }}" 
+    />
+  </div>
+  {% if object.author %}
     <caption>
-      {{ object.caption }}
+      Photo by {{ object.author }}
     </caption>
   {% endif %}
   </figure>

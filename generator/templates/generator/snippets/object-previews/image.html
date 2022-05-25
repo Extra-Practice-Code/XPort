@@ -12,7 +12,9 @@
       data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
       data-src-full="{% thumbnail object.image.value 1200x1200 %}"
       data-author="{{ object.author }}"
-      alt="{{ object.alt }}"
+      data-caption="{{ object.caption }}"
+      data-title="{{ object.title }}"
+      alt="{{ object.alt }}" 
     />
   </div>
   {% if object.author %}

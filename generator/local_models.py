@@ -101,45 +101,45 @@ class Video (Model):
   #     image = retreiveFromCache
   #   # Should return an Image()
   
-  @property
-  def thumbnailLink(self):
-    if self.youtubeId:
-        return f"http://img.youtube.com/vi/{self.youtubeId}/maxresdefault.jpg"
+  # @property
+  # def thumbnailLink(self):
+  #   if self.youtubeId:
+  #       return f"http://img.youtube.com/vi/{self.youtubeId}/maxresdefault.jpg"
 
-    elif self.vimeoId:
-        requestLink = f"https://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/{self.vimeoId}"
-        r = requests.get(requestLink)
-        return r.json()['thumbnail_url']
-    else:
-      return None
+  #   elif self.vimeoId:
+  #       requestLink = f"https://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/{self.vimeoId}"
+  #       r = requests.get(requestLink)
+  #       return r.json()['thumbnail_url']
+  #   else:
+  #     return None
   
-  @property
-  def thumb(self):
-    if self.youtubeId:
-      file_name = self.youtubeId
-    elif self.vimeoId:
-      file_name = self.vimeoId
-    else:
-      return None
+  # @property
+  # def thumb(self):
+  #   if self.youtubeId:
+  #     file_name = self.youtubeId
+  #   elif self.vimeoId:
+  #     file_name = self.vimeoId
+  #   else:
+  #     return None
 
-    path = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
+  #   path = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
 
-    if not os.path.exists(path):
-      os.makedirs(path)
+  #   if not os.path.exists(path):
+  #     os.makedirs(path)
 
-    # if not Path(f"{file_name}.jpg").is_file():
-    res = requests.get(self.thumbnailLink, stream = True)
+  #   # if not Path(f"{file_name}.jpg").is_file():
+  #   res = requests.get(self.thumbnailLink, stream = True)
 
-    if res.status_code == 200:
-        with open(os.path.join(path, "{}.jpg".format(file_name)),'wb') as f:
-          file = ImageFile(f)
-          file.write(res.content)
-          file.save()
-        print('Image sucessfully Downloaded: ',file_name)
-    else:
-        print('Image Couldn\'t be retrieved')
+  #   if res.status_code == 200:
+  #       with open(os.path.join(path, "{}.jpg".format(file_name)),'wb') as f:
+  #         file = ImageFile(f)
+  #         file.write(res.content)
+  #         file.save()
+  #       print('Image sucessfully Downloaded: ',file_name)
+  #   else:
+  #       print('Image Couldn\'t be retrieved')
     
-    return file
+  #   return file
 
   def _metadataFields (self):
     return {

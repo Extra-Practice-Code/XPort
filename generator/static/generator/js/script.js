@@ -19,15 +19,16 @@ const rightBtn = document.getElementsByClassName("rightArrow")[0];
 
 let galleryTitle = '';
 let galleryArray = [];
+let itemImgArray = [];
 let inlineArray = [];
-let isGallery = false;
+let imageType = "none";
 let imgIndex = 0;
 
 const setModalTitle = (input) => {
     modalTitle.innerHTML = input
 }
 const setImage = (input) => {
-    if(modalImg.style.display == "none"){
+    if (modalImg.style.display == "none") {
         modalImg.style.display = "block"
         modalVideo.style.display = "none"
     }
@@ -63,12 +64,17 @@ const displayModal = (array, startingIndex) => {
     modalVideoImg = document.getElementById('modal--video').contentWindow.document.getElementById('modal--video-img')
     modalVideoLink = document.getElementById('modal--video').contentWindow.document.getElementById('modal--video-link')
 
-    if (isGallery) {
+    
+
+    if (imageType == 'gallery') {
         imageArray = galleryArray;
-    } else {
+    } else if(imageType == 'itemImage'){
+        imageArray = itemImgArray;
+    } else if (imageType == 'inlineImage') {
         imageArray = inlineArray;
     }
-    
+
+
     modal.style.display = "grid";
     modalCounter.innerHTML = `${imgIndex + 1} / ${array.length}`;
 
@@ -122,6 +128,10 @@ const closeModal = () => {
 const galleries = document.querySelectorAll(
     ".item--reference.item-type--gallery"
 );
+const itemImages = document.querySelectorAll(
+    ".item--reference.item-type--image"
+)
+
 const inlineImages = document.querySelectorAll(".inline-image");
 
 galleries.forEach((gallery) => {
@@ -132,20 +142,31 @@ galleries.forEach((gallery) => {
         galleryImage.forEach((img) => {
             galleryArray.push(img.dataset);
         });
-        isGallery = true;
+        imageType = "gallery";
         displayModal(galleryArray, 0);
     });
 });
+
+itemImages.forEach((itemImg) => {
+    itemImgData = itemImg.querySelectorAll(".item--image")[0].dataset
+    itemImgArray.push(itemImgData)
+    itemImg.addEventListener("click", (element) => {
+        imageType = "itemImage";
+        imgIndex = itemImgArray.findIndex((idx) => element.target.dataset == idx);
+        displayModal(itemImgArray, imgIndex)
+    })
+})
 
 inlineImages.forEach((inlineImage) => {
     inlineArray.push(inlineImage.dataset);
 
     inlineImage.addEventListener("click", (element) => {
-        isGallery = false;
+        imageType = "inlineImage";
         imgIndex = inlineArray.findIndex((idx) => element.target.dataset == idx);
         displayModal(inlineArray, imgIndex);
     });
 });
+
 
 window.onkeydown = (e) => {
     if (e.key == "Escape") {

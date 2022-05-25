@@ -1,5 +1,5 @@
 :root {
-  --color-dark: #09484d;
+  /* --color-dark: #09484d;
   --color-light: #f7fdfd;
   --color-contrast: #5ca6ca;
   --color-voice: #e1762f;
@@ -12,7 +12,33 @@
   --color-image: #108189;
   --color-gallery: #c18573;
   --border-color: #09484d;
-  --font-color: #09484d;
+  --font-color: #09484d; */
+
+  --color-dark: #09484d;
+  --color-light: #f7fdfd;
+  --color-contrast: #00cbd9;
+
+  /* --color-station: #906bffff;
+  --color-voice: #fb8358ff;
+  --color-reflection:  #a1c26cff  ;
+  --color-gallery:   #44bac2ff ;
+  --color-tag: var(--color-dark); */
+
+  --color-station: #B10DC9;
+  --color-voice: #FF851B;
+  --color-reflection:  #2ECC40  ;
+  --color-gallery:   #0074D9 ;
+  --color-tag: var(--color-dark);
+
+
+  --color-pad: var(--color-dark);
+  --color-image: var(--color-gallery);
+  --color-contribution: var(--color-reflection);
+
+  
+  --border-color: var(--color-dark);
+  --font-color: var(--color-dark);
+
   --font-size--header: 36px;
   --font-size--title: 26px;
   --line-height--title: 36px;
@@ -387,7 +413,7 @@ main > .item-type--page-title {
 }
 
 .item-type--image .item--image-wrapper .item--image {
-  mix-blend-mode: lighten;
+  mix-blend-mode: overlay;
 }
 
 .item-type--image .item--image-wrapper::after {
@@ -438,7 +464,7 @@ main > .item-type--page-title {
 }
 
 .item-type--page-title {
-  filter: url(#titleNoise);
+  /* filter: url(#titleNoise); */
   padding-bottom: calc(4 * var(--line-height));
 }
 
@@ -875,4 +901,33 @@ body[data-content-type="gallery"] .item-type--main figure {
 .item.item--reference[data-with-context] [data-link-marked] {
   text-decoration: underline;
   text-decoration-style: dotted;
+}
+
+.image {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* height: 200px; */
+  /* background-color: var(--color-dark); */
+}
+
+.inline-image-wrapper {
+  background-color: currentColor;
+  max-height: 600px;
+  width: auto;
+}
+
+.inline-image{
+  object-fit: none;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  mix-blend-mode: lighten;
+}
+
+figure {
+  font-size: var(--font-size--smaller);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
