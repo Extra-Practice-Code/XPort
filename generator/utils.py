@@ -85,3 +85,14 @@ def render_template_to_string(template, context):
 def make_id (length=15): 
   tokens = ascii_letters + digits
   return ''.join([random.choice(tokens) for _ in range(length)])
+
+
+from bs4 import BeautifulSoup
+def drop_tags (snippet, tags_to_drop=[]):
+  soup = BeautifulSoup(snippet, 'html.parser')
+
+  for tag in tags_to_drop:
+    for element in soup.select(tag):
+      element.decompose()
+
+  return str(soup)
