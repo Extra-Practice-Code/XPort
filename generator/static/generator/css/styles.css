@@ -930,4 +930,19 @@ figure {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+} 
+.list--tags {
+  list-style: none;
+}
+
+.list--tags:before {
+  content: "Tags: ";
+}
+
+.list--tags li {
+  display: inline;
+}
+
+.list--tags li:not(:last-child):after {
+  content: ',';
 }

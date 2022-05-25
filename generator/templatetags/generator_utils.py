@@ -91,6 +91,12 @@ def without_inline_links (links, forbidden):
   else:
     return list(filter(lambda l: l and not l.inline, links))
 
+@register.filter
+def without (links, forbidden):
+  forbiddenContentTypes = list(map(str.strip, forbidden.split(',')))
+  return list(filter(lambda l: l and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes, links))
+
+
 from random import shuffle
 @register.filter
 def shuffle_items (value):

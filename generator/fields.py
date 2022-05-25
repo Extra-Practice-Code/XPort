@@ -205,6 +205,7 @@ class Field (object):
     self.default = default
     self._value = None
     self.filter = filter
+    self.model = None
 
   # no-op
   def parse (self, value):
@@ -231,12 +232,16 @@ class Field (object):
   @property
   def value (self):
     if self._value:
-      if self.filter and callable(self.filter):
-        return list(map(self.filter, self._value))
-      
-      return self._value
+      v = self._value
+    elif callable(self.default):
+      v = self.default()
     else:
-      return self.default
+      v = self.default
+    
+    if self.filter and callable(self.filter):
+      return list(map(self.filter, v))
+      
+    return v
 
   # def __call__ (self, value):
   #   if value:
