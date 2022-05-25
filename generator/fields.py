@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from fileinput import isfirstline
-from generator.settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT, DATE_OUTPUT_FORMAT_DATE, DATE_OUTPUT_FORMAT_MONTH, DATE_OUTPUT_FORMAT_YEAR, SUMMARY_FIELD_ALLOWED_TAGS
+from generator.settings import TIME_OUTPUT_FORMAT, FIELD_DATE_FORMATS, FIELD_TIME_FORMAT, DATE_OUTPUT_FORMAT, DATE_OUTPUT_FORMAT_DATE, DATE_OUTPUT_FORMAT_MONTH, DATE_OUTPUT_FORMAT_YEAR, SUMMARY_FIELD_ALLOWED_TAGS, SUMMARY_FIELD_TAGS_TO_DROP
 import datetime
 import re
 import markdown
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ObjectDoesNotExist
+from generator.utils import drop_tags
 
 class TimeRange(object):
   def __init__ (self, start, end):
@@ -87,6 +87,7 @@ class Time (object):
   def __eq__ (self, other):
     return self.time == other.time
 
+
 class Date (object):
   def __init__ (self, date = None):
     self.date = date
@@ -158,6 +159,7 @@ class Date (object):
   def __eq__ (self, other):
     return self.date == other.date
 
+
 class DateRange (object):
   def __init__ (self, start, end):
     self.start = start
@@ -199,6 +201,7 @@ class DateRange (object):
       last = date
 
     return list(reversed(chunks))
+
 
 class Field (object):
   def __init__ (self, default = [], filter = None):
@@ -431,7 +434,9 @@ class SummaryField (Field):
     
   def parse (self, value):
     md = markdown.Markdown(extensions=['extra', 'attr_list'])
-    return mark_safe(bleach.clean(md.convert(value), tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
+    html = md.convert(value)
+    filtered_html = drop_tags(html, SUMMARY_FIELD_TAGS_TO_DROP)
+    return mark_safe(bleach.clean(filtered_html, tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
     
 # # Maybe simplify to a function
 # class InlineLink(Field):
