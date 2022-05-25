@@ -18,6 +18,8 @@
   --color-light: #f7fdfd;
   --color-contrast: #00cbd9;
 
+  --color-dark-comp: #4d0e09;
+
   /* --color-station: #906bffff;
   --color-voice: #fb8358ff;
   --color-reflection:  #a1c26cff  ;
@@ -908,7 +910,15 @@ body[data-content-type="gallery"] .item-type--main figure {
   padding: 0;
   width: 100%;
   /* height: 200px; */
-  /* background-color: var(--color-dark); */
+  color: var(--color-dark-comp);
+}
+
+.image:hover {
+  color: var(--color-dark);
+}
+
+.image:hover .inline-image{
+  mix-blend-mode: lighten;
 }
 
 .inline-image-wrapper {
@@ -922,7 +932,7 @@ body[data-content-type="gallery"] .item-type--main figure {
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
-  mix-blend-mode: lighten;
+  mix-blend-mode: overlay;
 }
 
 figure {
@@ -931,6 +941,7 @@ figure {
   flex-direction: column;
   align-items: flex-start;
 } 
+
 .list--tags {
   list-style: none;
 }
