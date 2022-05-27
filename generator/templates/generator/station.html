@@ -54,7 +54,7 @@
   {% include "generator/snippets/object-previews/list.html" with objects=object.reflections|targets only %}
   {% include "generator/snippets/object-previews/list.html" with objects=object.previewReviews|targets only %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"event, tag, contirbution, reflection, previewReview"|without_inline_links:"image, video, gallery"|targets only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"event, tag, contribution, reflection, previewReview"|without_inline_links:"image, video, gallery"|targets only %}
   
   
 {% endblock %}
