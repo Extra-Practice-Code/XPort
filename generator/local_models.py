@@ -336,9 +336,9 @@ class PreviewReview (Model):
     return {
       'previewReview': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'station': linkMultiReverse('station', 'reflections'),
-      'tags': multiLinkMultiReverse('tag', 'reflections'),
-      'voices': multiLinkMultiReverse('voice', 'reflections'),
+      'station': linkMultiReverse('station', 'previewReviews'),
+      'tags': multiLinkMultiReverse('tag', 'previewReviews'),
+      'voices': multiLinkMultiReverse('voice', 'previewReviews'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'reflections')
+      'images': multiLinkMultiReverse('image', 'previewReviews')
     }
