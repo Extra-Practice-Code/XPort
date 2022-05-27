@@ -8,7 +8,7 @@
   <div class="item--image-wrapper">
     <img
       class="item--image"
-      src="{% thumbnail object.image.value 600x400 dither="#000000" %}"
+      src="{% thumbnail object.image.value 600x400 crop upscale subject_location=image.image.value.subject_location  dither="#000000" %}"
       data-src-thumbnail="{% thumbnail object.image.value 400x0 %}"
       data-src-full="{% thumbnail object.image.value 1200x1200 %}"
       data-author="{{ object.author }}"

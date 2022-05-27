@@ -10,7 +10,7 @@
           <img
           class="item--image"
           {% if forloop.counter <= 4 %}
-          src="{% thumbnail image.image.value 400x0 dither="#000000" %}"
+          src="{% thumbnail image.image.value 400x0 crop upscale subject_location=image.image.value.subject_location dither="#000000" %}"
           {% else %}
           src=""
           {% endif %}
@@ -33,26 +33,24 @@
               <img 
                 class="item--image"
                 src="/media/{{ video.thumb }}"
-                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 dither="#000000" %}" {% endcomment %}
+                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 crop upscale subject_location=video.thumbnail.value.subject_location dither="#000000" %}" {% endcomment %}
                 data-video-src="{{video.vimeoId}}"
                 data-content-type="video"
                 data-author="{{ video.author }}"
                 data-caption="{{ video.caption }}"
                 data-title="{{ video.title }}"
-                {% comment %} src="{% thumbnail thumbnailLink 400x0 dither="#000000" %}" {% endcomment %}
               />
             {% elif video.youtubeId %}
             {% comment %} {% with thumbnailLink="http://img.youtube.com/vi/"|add:video.youtubeId|add:"/mqdefault.jpg" %} {% endcomment %}
               <img 
                 class="item--image"
                 src="media/{{ video.thumb }}"
-                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 dither="#000000" %}" {% endcomment %}
+                {% comment %} src="{%thumbnail video.thumbnail.value 400x0 crop upscale subject_location=video.thumbnail.value.subject_location dither="#000000" %}" {% endcomment %}
                 data-video-src="{{video.youtubeId}}"
                 data-content-type="video"
                 data-author="{{ video.author }}"
                 data-caption="{{ video.caption }}"
                 data-title="{{ video.title }}"
-                {% comment %} src="{% thumbnail thumbnailLink 400x0 dither="#000000" %}" {% endcomment %}
               />
             {% else %}
               <video controls>

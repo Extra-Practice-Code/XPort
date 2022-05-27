@@ -27,7 +27,53 @@ from django.utils.safestring import mark_safe
 """
 
 """
+  Parses the metadata set on a metadata entry
+"""
+def parseMetadataEntryWithMetadata (raw):
+  data = {}
+  
+  if '|' in raw:
+    # First extract the key
+    # @FIXME why not a simple split here?
+    m = re.match(r"""
+      ^(?:\|?([^:\|]+)) # Key at the start
+      (.+)$ # subsequent content
+    """, raw, re.VERBOSE)
+
+    if m:
+      model_key = m.group(1).strip()
+      raw_meta = m.group(2).strip()
+
+      m = re.match(r"""
+            ^(.+)$ # Metadata chunk
+            (?:\|?([^:\|]+))# Label at the end
+          """, raw_meta, re.VERBOSE)
+
+      if m:
+        raw_meta = m.group(1).strip()
+        label = m.group(2).strip()
+      else:
+        label = model_key
+
+      # Find data in raw metadata path
+      for m in re.finditer(r'([\w\._-]+):\s*([^\|]+)\s*', raw_meta):
+        key = m.group(1).strip()
+        value = m.group(2).strip()
+
+        if key not in data:
+          data[key] = []
+        
+        data[key].append(value)
+  else:
+    model_key = raw
+    label = raw
+
+  return (model_key, data, label)
+
+"""
   Parses meta data in inline references?
+
+  contentType: id | key: value | key: value | display_label
 """
 def parseReferenceMetadata (raw):
   data = {}
@@ -83,11 +129,11 @@ def parseReference(match, collector=None, source=None):
       # debug('Rendered reference ', renderReference(target))
 
       if target:
-        if metadata and target.stub:
-          # Insert the metadata on the object ?
-          # If the target has been instantiated by the collection
-          # fill it with the metadata that was inserted on the reference
-          target.fill(metadata)
+        # if metadata and target.stub:
+        #   # Insert the metadata on the object ?
+        #   # If the target has been instantiated by the collection
+        #   # fill it with the metadata that was inserted on the reference
+        #   target.fill(metadata)
 
         debug("Found target '{}' of type '{}'".format(target, contentType))
 
@@ -95,10 +141,10 @@ def parseReference(match, collector=None, source=None):
         # not encoded as a link currently. Introduce an extra collector.
         if referenceName in source.metadata and links.is_link(source.metadata[referenceName]):
           ## FIXME what if it's an existing reverse
-          link = source.metadata[referenceName].makeLink(source, target, inline=True, label=display_label)
+          link = source.metadata[referenceName].makeLink(source, target, inline=True, data=metadata, label=display_label)
         elif referenceName + 's' in source.metadata and links.is_multi_link(source.metadata[referenceName + 's']):
           ## FIXME what if it's an existing reverse?
-          link = source.metadata[referenceName + 's'].makeLink(source, target, inline=True, label=display_label)
+          link = source.metadata[referenceName + 's'].makeLink(source, target, inline=True, data=metadata, label=display_label)
         else:
           link = None
 
@@ -245,10 +291,21 @@ class Model(object):
     self._id = make_id(15)
 
   def __setattr__ (self, name, value):
+    # Trying to set the metadat attribute itself
     if name == 'metadata':
       super().__setattr__(name, value)
     elif name in self.metadata:
-      self.metadata[name].set(value)
+      # If the field being set is a link it might contain metadata itself.
+      if isinstance(self.metadata[name], (links.LinkField, links.MultiLinkField)):
+        if isinstance(value, list):
+          for v in value:
+            key, data, label = parseMetadataEntryWithMetadata(v)
+            self.metadata[name].set(key, label=label, data=data)
+        else:
+          key, data, label = parseMetadataEntryWithMetadata(value)
+          self.metadata[name].set(key, label=label, data=data)
+      else:
+        self.metadata[name].set(value)
     else:
       super().__setattr__(name, value)
 

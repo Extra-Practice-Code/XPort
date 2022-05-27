@@ -164,10 +164,23 @@ TREE_PAD_OPEN_MODE = 'w'
 
 THUMBNAIL_HIGH_RESOLUTION = True
 
-from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
-
-THUMBNAIL_PROCESSORS = easy_thumbnails_defaults.THUMBNAIL_PROCESSORS + (
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    #'easy_thumbnails.processors.scale_and_crop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
     'a_seat_for_the_sea.thumbnail_processors.dither_processor',
 )
 
-THUMBNAIL_EXTENSION = 'png'
+THUMBNAIL_EXTENSION = 'jpg'
+
+"""
+    Filer overwrites naming setting in:
+    /home/gijs/venvs/seatforthesea/lib/python3.6/site-packages/filer/utils/filer_easy_thumbnails.py
+
+    and:
+    /home/gijs/venvs/seatforthesea/lib/python3.6/site-packages/filer/models/abstract.py
+
+    Seems not really possible to work on this from the outside
+"""

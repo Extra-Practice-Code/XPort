@@ -16,7 +16,7 @@ class LinkDifferentContentTypeError(Exception):
   The link object, the link field will in the end be filled with these
 """
 class Link (object):
-  def __init__ (self, target, contentType, inline=False, direct=False, source=None, label=None):
+  def __init__ (self, target, contentType, inline=False, direct=False, source=None, label=None, data = None):
     self.target = target # Target [Model|key]
     self.contentType = contentType # ContentType of the target
     self.inline = inline # True when instantiated from wihtin in a body text
@@ -24,11 +24,17 @@ class Link (object):
     self.label = label # Display label
     self.reverse_link = None # Reference to the revers link
     self.context = None
+    self.data = data
     
     if direct and source:
       self.resolved = True
       self.source = source
       self.broken = False
+
+      # Set data on target object if it's a stub
+      if self.data and self.target.stub:
+        self.target.fill(data)
+
     else:
       self.resolved = False
       self.source = None
@@ -62,6 +68,11 @@ class Link (object):
       target = collectionFor(self.contentType).get(self.target, label=self.label)
       if target:
         self.target = target
+
+        # Set data on target object if it's a stub
+        if self.data and self.target.stub:
+          self.target.fill(self.data)
+
       else:
         self.broken = True
         debug('Broken link', source, target)
@@ -142,19 +153,23 @@ class LinkField(object):
 
   # Takes a string for target
   # boolean whether this an inline link
-  def set (self, target, inline=False):
+  def set (self, target, label=None, data=None, inline=False):
     if type(target) is list:
-      self.set(target[0], inline)
+      self.set(target[0], label, data, inline)
     else:
       key = keyFilter(target)
+
+      if not label:
+        label = target
+
       if key:
-        self.value = Link(key, self.contentType, inline, label=target)
+        self.value = Link(key, self.contentType, inline=inline, label=target, data=data)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
-  def makeLink(self, source, target, inline=False, label=None):
+  def makeLink(self, source, target, inline=False, label=None, data=None):
     if not self.resolved:
-      link = Link(target, self.contentType, inline, True, source, label=label)
+      link = Link(target, self.contentType, inline, True, source, label=label, data=None)
       self.value = link
       # if we have a reverse link, set it
       if self.reverse:
@@ -194,10 +209,10 @@ class MultiLinkField(object):
   def __bool__ (self):
     return (len(self.value) > 0)
 
-  def set (self, target, inline=False):
+  def set (self, target, label=None, data=None, inline=False):
     if type(target) is list:
       for t in target:
-        self.set(t, inline)
+        self.set(t, label, data, inline)
     else:
       key = keyFilter(target)
       if key:
@@ -206,15 +221,15 @@ class MultiLinkField(object):
             if existingLink.target == key or existingLink.target == target:
               return existingLink
 
-        self.value.append(Link(key, self.contentType, inline, label=target))
+        self.value.append(Link(key, self.contentType, inline=inline, label=target, data=data))
 
-  def makeLink(self, source, target, inline=False, label=None):
+  def makeLink(self, source, target, inline=False, label=None, data=None):
     if self.unique:
       for existingLink in self.value:
         if existingLink.target == target:
           return existingLink
 
-    link = Link(target, self.contentType, inline, direct=True, source=source, label=label)
+    link = Link(target, self.contentType, inline, direct=True, source=source, label=label, data=data)
     self.value.append(link)
 
     if self.reverse is not None:
