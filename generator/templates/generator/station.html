@@ -50,9 +50,9 @@
   </div>
   {% endfor %}
 
-  {% include "generator/snippets/object-previews/list.html" with objects=object.contributions only %}
-  {% include "generator/snippets/object-previews/list.html" with objects=object.reflections only %}
-  {% include "generator/snippets/object-previews/list.html" with objects=object.previewReviews only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object.contributions|targets only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object.reflections|targets only %}
+  {% include "generator/snippets/object-previews/list.html" with objects=object.previewReviews|targets only %}
 
   {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"event, tag, contirbution, reflection, previewReview"|without_inline_links:"image, video, gallery"|targets only %}
   
