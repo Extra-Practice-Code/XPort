@@ -468,7 +468,7 @@ main > .item-type--page-title {
 }
 
 .item-type--page-title {
-  /* filter: url(#titleNoise); */
+  filter: url(#titleNoise);
   padding-bottom: calc(4 * var(--line-height));
 }
 
