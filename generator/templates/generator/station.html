@@ -31,7 +31,7 @@
   </div>
   {% endif %}
 
-  {% for event in station.events %}
+  {% for event in object.events %}
   <div class="item item--event">
     <p>
       <strong>{{ event }}</strong><br>
@@ -50,10 +50,18 @@
   </div>
   {% endfor %}
 
+  {% if object.contributions %}
   {% include "generator/snippets/object-previews/list.html" with objects=object.contributions|targets only %}
+  {% endif%}
+  
+  {% if object.reflections %}
   {% include "generator/snippets/object-previews/list.html" with objects=object.reflections|targets only %}
+  {% endif%}
+  
+  {% if object.previewReviews %}
   {% include "generator/snippets/object-previews/list.html" with objects=object.previewReviews|targets only %}
-
+  {% endif%}
+  
   {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"event, tag, contribution, reflection, previewReview"|without_inline_links:"image, video, gallery"|targets only %}
   
   
