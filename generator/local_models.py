@@ -1,7 +1,7 @@
 from pydoc import pager
 from generator import fields, links
 from generator.models import Model, keyFilter
-from generator.links import linkMultiReverse, multiLinkMultiReverse
+from generator.links import linkMultiReverse, multiLinkMultiReverse, multiLinkReverse
 from generator.collection import contentType, InstantiatingCollection
 import re
 import requests
@@ -280,10 +280,11 @@ class Station (Model):
       'pads': multiLinkMultiReverse('pad', 'stations'),
       'images': multiLinkMultiReverse('image', 'stations'),
       'videos': multiLinkMultiReverse('video', 'stations'),
-      'galleries': multiLinkMultiReverse('gallery', 'stations')
+      'galleries': multiLinkMultiReverse('gallery', 'stations'),
+      'events': multiLinkReverse('event', 'station')
     }
 
-@contentType()
+@contentType(InstantiatingCollection)
 class Event (Model):
   sortKey = '-dates'
   generateSinglePages = False

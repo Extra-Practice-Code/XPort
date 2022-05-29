@@ -1,4 +1,5 @@
 import random
+from select import EPOLLEXCLUSIVE
 from .utils import debug, keyFilter
 from .collection import collectionFor
 
@@ -293,9 +294,20 @@ class ReverseMultiLinkField(ReverseLinkField):
   def __iter__ (self):
     return iter(self.value)
 
+  
   def resolve (self, link):
     # If there is not yet a field on the source create it,
     # otherwise append the link to the existing field
+    """
+      @FIXME checks whether the field exists in metadatat.
+      While attributions set when the pad is parsed are set
+      directly on the class.
+
+      When the propery is being read, it's not looked up on the
+      metadata dictionary, but the class itself.
+
+      Allowing for two attributes to co-exist.
+    """
     if self.name not in link.source.metadata:
       ## Every time make sure a new container is created
       link.source.registerMetadataField(self.name, ReverseMultiLinkField(self.name))
@@ -305,9 +317,10 @@ class ReverseMultiLinkField(ReverseLinkField):
       # on source, for now don't set it if this is the case.
       if self.unique:
         for exisitingLink in link.source.metadata[self.name].value:
-          if exisitingLink.target == link.target:
-            # This link already exists, for now we ignore it.
-            return False
+          if is_link(exisitingLink) or is_reverse_link(exisitingLink):
+            if exisitingLink.target == link.target:
+              # This link already exists, for now we ignore it.
+              return False
 
     link.source.metadata[self.name].value.append(link)
 
@@ -348,6 +361,9 @@ def linkMultiReverse(contentType, reverseName):
 
 def multiLinkMultiReverse(contentType, reverseName, unique=True):
   return MultiLinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName, unique=unique), unique=unique)
+
+def multiLinkReverse (contentType, reverseName, unique=True):
+  return MultiLinkField(contentType=contentType, reverse=ReverseLinkField(reverseName), unique=unique)
 
 def linkReference(target, display_label):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)

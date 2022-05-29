@@ -81,20 +81,20 @@ def unwrap_galleries (models):
 
 @register.filter
 def targets (links):
-  return [link.target for link in links if link]
+  return [link.target for link in links if link and link.resolved]
 
 @register.filter
 def without_inline_links (links, forbidden):
   if forbidden: 
     forbiddenContentTypes = list(map(str.strip, forbidden.split(',')))
-    return list(filter(lambda l: l and not l.inline or (l and l.inline and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes), links))
+    return list(filter(lambda l: l and l.resolved and not l.broken and not l.inline or (l and l.inline and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes), links))
   else:
-    return list(filter(lambda l: l and not l.inline, links))
+    return list(filter(lambda l: l and l.resolved and not l.broken and not l.inline, links))
 
 @register.filter
 def without (links, forbidden):
   forbiddenContentTypes = list(map(str.strip, forbidden.split(',')))
-  return list(filter(lambda l: l and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes, links))
+  return list(filter(lambda l: l and l.resolved and not l.broken and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes, links))
 
 
 from random import shuffle

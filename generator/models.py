@@ -290,6 +290,10 @@ class Model(object):
 
     self._id = make_id(15)
 
+
+  """
+    @FIXME 
+  """
   def __setattr__ (self, name, value):
     # Trying to set the metadat attribute itself
     if name == 'metadata':
