@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'generator',
     'easy_thumbnails',
     'filer',
-    'mptt'
+    'mptt',
+    'a_seat_for_the_sea',
     #'south'
 ]
 

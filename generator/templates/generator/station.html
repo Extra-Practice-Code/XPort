@@ -1,10 +1,10 @@
 {% extends "generator/base.html" %}
-{% load generator_utils %}
+{% load generator_utils aseatforthesea %}
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
 {% block subnav %}
   <ul>
   {% for station in page_content.collection %}
-    <li {% if page_content.model == station %}class="selected"{% endif %}><a href="{{ station.url }}">{{ station }}</a></li>
+    <li {% if page_content.model == station %}class="selected"{% endif %}><a href="{{ station.url }}"><span class="subnavtrim">{{ station.label.value|extract_number_from_station_name }}</span><span class="subnavfull">{{ station }}</span></a></li>
   {% endfor %}
   </ul>
 {% endblock %}

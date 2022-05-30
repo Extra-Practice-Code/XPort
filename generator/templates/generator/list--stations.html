@@ -1,9 +1,9 @@
 {% extends "generator/base.html" %}
-{% load generator_utils %}
+{% load generator_utils aseatforthesea %}
 {% block subnav %}
   <ul>
   {% for station in objects %}
-    <li><a href="{{ station.url }}">{{ station }}</a></li>
+    <li><a href="{{ station.url }}"><span class="subnavtrim">{{ station.label.value|extract_number_from_station_name }}</span><span class="subnavfull">{{ station }}</span></a></li>
   {% endfor %}
   </ul>
 {% endblock %}
