@@ -2,13 +2,16 @@
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} | Voices{% endblock %}
 {% block subnav %}
-  {% regroup objects by type.value as grouped_objects %}
   <ul>
-    {% for entry in grouped_objects %}
-    <li >
-      <a href="#group--{{ entry.grouper|slugify }}">{{ entry.grouper }}</a>
+    <li>
+      <a href="#group--voices">Voices</a>
     </li>
-    {% endfor %}
+    <li>
+      <a href="#group--team">Team</a>
+    </li>
+    <li>
+      <a href="#group--partners">Partners</a>
+    </li>
   </ul>
 {% endblock %}
 {% block before_content %}
@@ -19,13 +22,26 @@
 {% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
 {% block content %}  
   {% regroup objects by type.value as grouped_objects %}
-  {% for entry in grouped_objects %}
-    <div class="item item-type--sub-title" id="group--{{ entry.grouper|slugify }}">
-      <h2>{{ entry.grouper }}</h2>
-    </div>
-    {% for object in entry.list %}
-      {% include "generator/snippets/object-previews/voice.html" %}
-    {% endfor %}
-  {% endfor %}
   
+  <div class="item item-type--sub-title" id="group--voices">
+    <h2>Voices</h2>
+  </div>
+  {% for object in collection.grouped.voice %}
+    {% include "generator/snippets/object-previews/voice.html" %}
+  {% endfor %}
+
+  <div class="item item-type--sub-title" id="group--team">
+    <h2>Team</h2>
+  </div>
+  {% for object in collection.grouped.team %}
+    {% include "generator/snippets/object-previews/voice.html" %}
+  {% endfor %}
+
+  <div class="item item-type--sub-title" id="group--partners">
+    <h2>Partners</h2>
+  </div>
+  {% for object in collection.grouped.partner %}
+    {% include "generator/snippets/object-previews/voice.html" %}
+  {% endfor %}
+
 {% endblock %}

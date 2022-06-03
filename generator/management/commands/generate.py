@@ -79,7 +79,8 @@ def generate ():
       output(os.path.join(outputdir, '{}.html'.format(model.plural)), model.listPageTemplate, {
         'page_content': { 'collection': collection, 'content_type': model.contentType },
         'title': model.plural.title(),
-        'objects': collection.models
+        'objects': collection.models,
+        'collection': collection
       })
 
   output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
@@ -89,16 +90,10 @@ def generate ():
     'page_content': { 'content_type': 'reflection' }
   })
 
-  index_ctx = { contentType.collection.model.plural: contentType.collection.models for contentType in contentTypes.values() }
-
-  pinned_objects = []
-  
-  for models in index_ctx.values():
-    pinned_objects.extend(filter(lambda m: hasattr(m, 'pinned'), models))
-
-  pinned_objects.sort(key=lambda m: int(getattr(m, 'pinned')[0]))
-
-  index_ctx['pinned_objects'] = pinned_objects
+  index_ctx = { 
+    'home': collectionFor('page').get('home'),
+    'homeItems': collectionFor('page').get('home-items')
+   }
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', index_ctx )
  

@@ -28,7 +28,7 @@
     {% if object.stations %}
     <div class="item--extra">
       {% for station in object.stations %}
-        {{ station }}{% if not forloop.last %}, {% endif %}
+        {{ station.shortname }}{% if not forloop.last %}, {% endif %}
       {% endfor %}
     </div>
     {% endif %}
