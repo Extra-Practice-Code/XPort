@@ -226,7 +226,7 @@ class Voice (Model):
 
 @contentType()
 class Gallery (Model):
-  plural = 'gallery'
+  plural = 'galleries'
   generateListPage = True
   referenceTemplate = 'generator/snippets/references/gallery.html'
 
@@ -304,6 +304,7 @@ class Event (Model):
 
 @contentType()
 class Contribution (Model):
+
   def _metadataFields (self):
     return {
       'contribution': fields.Single(fields.StringField()),
@@ -312,7 +313,8 @@ class Contribution (Model):
       'tags': multiLinkMultiReverse('tag', 'contributions'),
       'voices': multiLinkMultiReverse('voice', 'contributions'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'contributions')
+      'images': multiLinkMultiReverse('image', 'contributions'),
+      'galleries': multiLinkMultiReverse('gallery', 'contributions')
     }
 
 @contentType()
@@ -326,7 +328,8 @@ class Reflection (Model):
       'tags': multiLinkMultiReverse('tag', 'reflections'),
       'voices': multiLinkMultiReverse('voice', 'reflections'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'reflections')
+      'images': multiLinkMultiReverse('image', 'reflections'),
+      'galleries': multiLinkMultiReverse('gallery', 'reflections')
     }
 
 @contentType()
@@ -341,5 +344,6 @@ class PreviewReview (Model):
       'tags': multiLinkMultiReverse('tag', 'previewReviews'),
       'voices': multiLinkMultiReverse('voice', 'previewReviews'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'previewReviews')
+      'images': multiLinkMultiReverse('image', 'previewReviews'),
+      'galleries': multiLinkMultiReverse('gallery', 'previewReviews')
     }

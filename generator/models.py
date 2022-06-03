@@ -142,9 +142,9 @@ def parseReference(match, collector=None, source=None):
         if referenceName in source.metadata and links.is_link(source.metadata[referenceName]):
           ## FIXME what if it's an existing reverse
           link = source.metadata[referenceName].makeLink(source, target, inline=True, data=metadata, label=display_label)
-        elif referenceName + 's' in source.metadata and links.is_multi_link(source.metadata[referenceName + 's']):
+        elif target.plural in source.metadata and links.is_multi_link(source.metadata[target.plural]):
           ## FIXME what if it's an existing reverse?
-          link = source.metadata[referenceName + 's'].makeLink(source, target, inline=True, data=metadata, label=display_label)
+          link = source.metadata[target.plural].makeLink(source, target, inline=True, data=metadata, label=display_label)
         else:
           link = None
 

@@ -28,7 +28,8 @@
 
   --color-station: #b10dc9;
   --color-voice: #ff851b;
-  --color-reflection: #2ecc40;
+  /* --color-reflection: 2ecc40ff; */
+  --color-reflection: #1b7926;
   --color-gallery: #0074d9;
   --color-tag: var(--color-dark);
 
@@ -385,12 +386,12 @@ main > .item-type--page-title {
   grid-auto-flow: row dense;
   gap: 20px;
   column-gap: 30px;
-  background-image: url("misc/Logo.svg");
+  /* background-image: url("misc/Logo.svg");
   background-repeat: no-repeat;
   background-position: 100% 100%;
   background-size: calc(
     ((100% - (var(--columns) - 1) * 30px) / var(--columns) + 10px)
-  );
+  ); */
 }
 
 #container.simple-grid {
@@ -804,7 +805,6 @@ img {
 
 .modal--content {
   grid-area: modalcontent;
-
 }
 
 .rightArrow {
@@ -1145,8 +1145,12 @@ body[data-content-type="gallery"] .item-type--main figure {
 }
 
 .item.item--reference[data-with-context] [data-link-marked] {
-  text-decoration: underline;
-  text-decoration-style: dotted;
+  /* text-decoration: underline; */
+  /* text-decoration-style: dotted; */
+  color: var(--color-dark);
+  border: 0.1em solid currentColor;
+  text-decoration: none;
+  padding: 0 0.2em 0.1em 0.2em;
 }
 
 .image {

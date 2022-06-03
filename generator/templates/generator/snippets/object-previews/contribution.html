@@ -13,13 +13,27 @@
           />
         </div>
       {% endwith %}
+    {%  elif object.galleries %}
+        {% with gallery=object.galleries.targets|first  %}
+          {% with image=gallery.images.targets|first %}
+            <div class="item--image-wrapper">
+              <img
+                class="item--image"
+                src="{% thumbnail image.image.value 300x200 crop upscale subject_location=image.image.value.subject_location dither="#000000" %}"
+                data-src-thumbnail="{% thumbnail image.image.value 400x0 %}"
+                data-src-full="{% thumbnail image.image.value 1200x1200 %}"
+                alt="{{ image.alt }}"
+              />
+            </div>
+          {% endwith %}
+        {% endwith %}
     {% endif %}
     <div class="item--description">
       <p>
         {% comment %} {% for voice in object.voices %}
             <strong>{{ voice }}</strong><br>
         {% endfor %} {% endcomment %}
-        <strong>{{ object.contribution }}</strong><br>
+        <strong>{{ object.contribution }}</strong><br />
         {% if object.summary %}
           {{ object.summary|truncatechars_html:300 }}
         {% elif object.content %}
