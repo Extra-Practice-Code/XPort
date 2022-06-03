@@ -200,8 +200,10 @@ class Tag (Model):
 class Voice (Model):
   # Use a metaclass to have better default values?
   generateListPage = True
+  singlePageTemplate = 'generator/voice.html'
   listPageTemplate = 'generator/list--voices.html'
-  sortKey = ('typeSortKey', 'sortname')
+  sortKey = 'sortname'
+  groupKey = 'type'
 
   def _metadataFields (self):
     return {
@@ -214,21 +216,12 @@ class Voice (Model):
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
-  @property
-  def typeSortKey (self):
-    if self.type.value == 'voice':
-      return 0
-    elif self.type.value == 'team':
-      return 1
-    else:
-      return 2
-
-
 @contentType()
 class Gallery (Model):
   plural = 'galleries'
   generateListPage = True
   referenceTemplate = 'generator/snippets/references/gallery.html'
+  listPageTemplate = 'generator/list--galleries.html'
 
   
   def _metadataFields (self):
@@ -269,6 +262,7 @@ class Station (Model):
   def _metadataFields (self):
     return {
       'station': fields.Single(fields.StringField()),
+      'shortname': fields.Single(fields.StringField(default=lambda: [self.station.value])),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'summary': fields.Single(fields.SummaryField(model=self)),
       'question': fields.Single(fields.InlineMarkdownField()),
@@ -304,6 +298,7 @@ class Event (Model):
 
 @contentType()
 class Contribution (Model):
+  singlePageTemplate = 'generator/reflection.html'
 
   def _metadataFields (self):
     return {
@@ -319,6 +314,7 @@ class Contribution (Model):
 
 @contentType()
 class Reflection (Model):
+  singlePageTemplate = 'generator/reflection.html'
 
   def _metadataFields (self):
     return {
@@ -334,6 +330,7 @@ class Reflection (Model):
 
 @contentType()
 class PreviewReview (Model):
+  singlePageTemplate = 'generator/reflection.html'
   contentType = 'previewReview'
 
   def _metadataFields (self):

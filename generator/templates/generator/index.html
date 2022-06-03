@@ -19,13 +19,10 @@
 {% block extrabodyclass %}home{% endblock %}
 {% block before_content %}
   <div class="item item-type--page-title">
-    <h1>A Seat for the Sea</h1>
-    <h2>A Seat for the Sea is an artistic-research project coordinated by Greet&nbsp;Brauwers, in duo with Raf&nbsp;Custers.</h2>
-    <p>In 2022 we travel via 7 stations towards enhanced comprehension of the sea, its existence and threats. Actors of all kinds but with particular sea experience are invited to take part in this journey. ASftS arose from previous work, new social developments and our concerns, particularly in relation to deep-sea mining.</p>
-    <p><a href="mailto:info@aseatforthesea.com">info@aseatforthesea.com</a></p>
+    {{ home.content }}
   </div>
 {% endblock %}
 {% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
 {% block content %}  
-    {% include "generator/snippets/object-previews/list.html" with objects=pinned_objects %}
+    {% include "generator/snippets/object-previews/list.html" with objects=homeItems|merged_links|targets %}
 {% endblock %}
