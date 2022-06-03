@@ -175,6 +175,7 @@ THUMBNAIL_PROCESSORS = (
 
 THUMBNAIL_EXTENSION = 'jpg'
 
+
 """
     Filer overwrites naming setting in:
     /home/gijs/venvs/seatforthesea/lib/python3.6/site-packages/filer/utils/filer_easy_thumbnails.py
@@ -182,5 +183,13 @@ THUMBNAIL_EXTENSION = 'jpg'
     and:
     /home/gijs/venvs/seatforthesea/lib/python3.6/site-packages/filer/models/abstract.py
 
+    and:
+    /home/gijs/venvs/seatforthesea/lib/python3.6/site-packages/filer/fields/multistorage_file.py
+    MultiStorageFieldFile
+
+    Only real way to somehow unwrap and rewrap?
+
     Seems not really possible to work on this from the outside
 """
+
+THUMBNAIL_NAMER = 'a_seat_for_the_sea.namers.hashed_force_gif_on_dither'
