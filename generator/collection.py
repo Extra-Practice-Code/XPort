@@ -74,7 +74,7 @@ class Collection(object):
 
   @property
   def grouped (self):
-    return {k: v for k, v in groupby(self.models, key=lambda m: getattr(m, m.groupKey).value)}
+    return {k: list(v) for k, v in groupby(self.models, key=lambda m: getattr(m, m.groupKey).value)}
 
 """ 
   Instantiates a model if it isn't part of the collection.
