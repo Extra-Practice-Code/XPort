@@ -202,13 +202,13 @@ class Voice (Model):
   generateListPage = True
   singlePageTemplate = 'generator/voice.html'
   listPageTemplate = 'generator/list--voices.html'
-  sortKey = 'sortname'
+  sortKey = ('type', 'sortname')
   groupKey = 'type'
 
   def _metadataFields (self):
     return {
       'voice': fields.Single(fields.StringField()),
-      'sortname': fields.Single(fields.StringField(default=lambda: [self.voice.value], filter=str.lower)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.voice.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'type': fields.Single(fields.StringField(default=['voice'])),
       'tags': multiLinkMultiReverse('tag', 'voices'),
@@ -248,6 +248,10 @@ class Page (Model):
       'station': linkMultiReverse('station', 'pages'),
       'tags': multiLinkMultiReverse('tag', 'pages'),
       'voices': multiLinkMultiReverse('voice', 'pages'),
+      'contributions': multiLinkMultiReverse('contribution', 'pages'),
+      'reflections': multiLinkMultiReverse('reflection', 'pages'),
+      'previewReviews': multiLinkMultiReverse('previewReview', 'pages'),
+      'galleries': multiLinkMultiReverse('gallery', 'pages'),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
@@ -299,10 +303,12 @@ class Event (Model):
 @contentType()
 class Contribution (Model):
   singlePageTemplate = 'generator/reflection.html'
+  sortKey = 'sortname'
 
   def _metadataFields (self):
     return {
       'contribution': fields.Single(fields.StringField()),
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.contribution.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'contributions'),
       'tags': multiLinkMultiReverse('tag', 'contributions'),
@@ -315,10 +321,12 @@ class Contribution (Model):
 @contentType()
 class Reflection (Model):
   singlePageTemplate = 'generator/reflection.html'
+  sortKey = 'sortname'
 
   def _metadataFields (self):
     return {
       'reflection': fields.Single(fields.StringField()),
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.reflection.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'reflections'),
       'tags': multiLinkMultiReverse('tag', 'reflections'),
@@ -330,12 +338,14 @@ class Reflection (Model):
 
 @contentType()
 class PreviewReview (Model):
-  singlePageTemplate = 'generator/reflection.html'
   contentType = 'previewReview'
+  sortKey = 'sortname'
+  singlePageTemplate = 'generator/reflection.html'
 
   def _metadataFields (self):
     return {
       'previewReview': fields.Single(fields.StringField()),
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.previewReview.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'previewReviews'),
       'tags': multiLinkMultiReverse('tag', 'previewReviews'),
