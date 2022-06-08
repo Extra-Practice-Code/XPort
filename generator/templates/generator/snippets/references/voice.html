@@ -11,4 +11,11 @@
   <p class="item--description">
     {{ object.content }}
   </p>
+  {% if object.stations %}
+  <p class="item--extra">
+    {% for station in object.stations %}
+      {{ station.shortname }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+  {% endif %}
 </div>
