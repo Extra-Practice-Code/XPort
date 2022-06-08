@@ -19,7 +19,11 @@
         </div>
         {% if object.author %}
             <div class="item--author">
-                <p>Photo by {{ object.author|truncatechars_html:300 }}</p>
+                <p>Photo by {{ object.author|truncatechars_html:300 }} - Click for high res</p>
             </div>
+        {% else %}
+        <div class="item--author">
+            <p>Click for high res</p>
+        </div>
         {% endif %}
     </div>

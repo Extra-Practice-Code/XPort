@@ -157,6 +157,7 @@ class Pad (Model):
   def _metadataFields (self):
     return {
       'pad': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['draft'])),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
