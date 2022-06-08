@@ -292,7 +292,7 @@ class ReverseMultiLinkField(ReverseLinkField):
     self.unique = unique
 
   def __iter__ (self):
-    return iter(self.value)
+    return iter(self.targets)
 
   
   def resolve (self, link):
