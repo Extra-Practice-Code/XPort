@@ -13,6 +13,8 @@
       {% include "generator/snippets/object-previews/tag.html" %}
   {% elif object.contentType == "station" %}
       {% include "generator/snippets/object-previews/station.html" %}
+  {% elif object.contentType == "voice" %}
+      {% include "generator/snippets/object-previews/voice.html" %}
   {% else %}
     {% include "generator/snippets/object-previews/object.html" %}
   {% endif %}
