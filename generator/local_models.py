@@ -346,7 +346,7 @@ class PreviewReview (Model):
   def _metadataFields (self):
     return {
       'previewreview': fields.Single(fields.StringField()),
-      'sortname': fields.Single(fields.StringField(default=lambda: [self.previewReview.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
+      'sortname': fields.Single(fields.StringField(default=lambda: [self.previewreview.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'station': linkMultiReverse('station', 'previewreviews'),
       'tags': multiLinkMultiReverse('tag', 'previewreviews'),
