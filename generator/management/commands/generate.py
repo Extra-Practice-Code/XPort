@@ -86,7 +86,7 @@ def generate ():
   output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
     'contributions': collectionFor('contribution').models,
     'reflections': collectionFor('reflection').models,
-    'previewReviews': collectionFor('previewReview').models,
+    'previewreviews': collectionFor('previewreview').models,
     'page_content': { 'content_type': 'reflection' }
   })
 
