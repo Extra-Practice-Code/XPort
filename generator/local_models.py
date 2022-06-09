@@ -339,7 +339,7 @@ class Reflection (Model):
 
 @contentType()
 class PreviewReview (Model):
-  contentType = 'previewReview'
+  contentType = 'previewreview'
   sortKey = 'sortname'
   singlePageTemplate = 'generator/reflection.html'
 
@@ -348,10 +348,10 @@ class PreviewReview (Model):
       'previewreview': fields.Single(fields.StringField()),
       'sortname': fields.Single(fields.StringField(default=lambda: [self.previewReview.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'station': linkMultiReverse('station', 'previewReviews'),
-      'tags': multiLinkMultiReverse('tag', 'previewReviews'),
-      'voices': multiLinkMultiReverse('voice', 'previewReviews'),
+      'station': linkMultiReverse('station', 'previewreviews'),
+      'tags': multiLinkMultiReverse('tag', 'previewreviews'),
+      'voices': multiLinkMultiReverse('voice', 'previewreviews'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'previewReviews'),
-      'galleries': multiLinkMultiReverse('gallery', 'previewReviews')
+      'images': multiLinkMultiReverse('image', 'previewreviews'),
+      'galleries': multiLinkMultiReverse('gallery', 'previewreviews')
     }
