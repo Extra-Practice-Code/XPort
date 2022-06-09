@@ -137,7 +137,6 @@ def modelFor (contentType):
 
 def contentType (collection=Collection):
   def decorator (model):
-    # debug("Registering content type {}".format(model.__name__.lower()))
     # Check whether the model has certain initial properties
     # if not, set default values
     if not hasattr(model, 'contentType') or not model.contentType:
@@ -155,6 +154,7 @@ def contentType (collection=Collection):
     if not hasattr(model, 'prefix') or not model.prefix:
       model.prefix = model.plural
 
+    debug("Registering content type {}".format(model.contentType))
     contentTypes[model.contentType] = ContentType(model, collection=collection)
     return model
   
