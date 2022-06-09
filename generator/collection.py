@@ -144,13 +144,13 @@ def contentType (collection=Collection):
       model.contentType = model.__name__.lower()
 
     if not hasattr(model, 'keyField') or not model.keyField:
-      model.keyField = model.__name__.lower()
+      model.keyField = model.contentType
 
     if not hasattr(model, 'labelField') or not model.labelField:
-      model.labelField = model.__name__.lower()
+      model.labelField = model.contentType
 
     if not hasattr(model, 'plural') or not model.plural:
-      model.plural = '{}s'.format(model.__name__.lower())
+      model.plural = '{}s'.format(model.contentType)
 
     if not hasattr(model, 'prefix') or not model.prefix:
       model.prefix = model.plural
