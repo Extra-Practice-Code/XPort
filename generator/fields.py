@@ -436,7 +436,7 @@ class SummaryField (Field):
 
   @property
   def value (self):
-    if not self._value and [None] != self.value and self.model:
+    if not self._value and [None] != self._value and self.model:
       value = getattr(self.model, self.field)
 
       if isinstance(value, str):
@@ -456,7 +456,7 @@ class SummaryField (Field):
       return mark_safe(bleach.clean(filtered_html, tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
     else:
       return None
-      
+
 # # Maybe simplify to a function
 # class InlineLink(Field):
 #   def __init__ (self, target, label):
