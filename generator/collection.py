@@ -1,4 +1,4 @@
-from generator.utils import debug, keyFilter
+from generator.utils import debug, keyFilter, info, error
 from itertools import groupby
 
 class UnknownContentTypeError(Exception):
@@ -69,8 +69,15 @@ class Collection(object):
 
   @property
   def models (self):
-    # Check whether sorted' copying bevahiour causes 
-    return sorted(self._models, key = lambda m: m.getSortKey(), reverse=True if self.model.getSortDirection() < 0 else False)
+    # Check whether sorted' copying bevahiour causes
+    try:
+      return sorted(self._models, key = lambda m: m.getSortKey(), reverse=True if self.model.getSortDirection() < 0 else False)
+    except TypeError as e:
+      error("Could not sort collection")
+      error(e)
+      for model in self._models:
+        info('Model {} has sort key {}'.format(model, model.getSortKey()))
+      return self._models
 
   @property
   def grouped (self):
