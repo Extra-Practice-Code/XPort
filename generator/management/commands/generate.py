@@ -68,6 +68,8 @@ def generate ():
     collection = contentType.collection
     model = collection.model
 
+    info('Treating: {}'.format(contentType))
+
     if model.generateSinglePages and collection.models:
       singlepagedir = os.path.join(outputdir, model.prefix)
       if not os.path.exists(singlepagedir):
