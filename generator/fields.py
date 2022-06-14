@@ -449,7 +449,7 @@ class SummaryField (Field):
     return self._value
     
   def parse (self, value):
-    if value != '':
+    if value:
       md = markdown.Markdown(extensions=['extra', 'attr_list'])
       html = md.convert(value)
       filtered_html = drop_tags(html, SUMMARY_FIELD_TAGS_TO_DROP)
