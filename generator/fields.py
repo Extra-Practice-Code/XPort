@@ -436,7 +436,7 @@ class SummaryField (Field):
 
   @property
   def value (self):
-    if not self._value and [None] != self._value and self.model:
+    if (not self._value or [None] == self._value) and self.model:
       value = getattr(self.model, self.field)
 
       if isinstance(value, str):
