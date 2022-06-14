@@ -82,10 +82,16 @@ class Time (object):
       return self.time > other.time
 
   def __ne__ (self, other):
-    return self.time != other.time
+    if isinstance(other, Time):
+      return self.time != other.time
+
+    return True
 
   def __eq__ (self, other):
-    return self.time == other.time
+    if isinstance(other, Time):
+      return self.time == other.time
+    
+    return False
 
 
 class Date (object):
@@ -154,10 +160,16 @@ class Date (object):
       return self.date > other.date
 
   def __ne__ (self, other):
-    return self.date != other.date
+    if isinstance(other, Date):
+      return self.date != other.date
+    
+    return True
 
   def __eq__ (self, other):
-    return self.date == other.date
+    if isinstance(other, Date):
+      return self.date == other.date
+    
+    return False
 
 
 class DateRange (object):
