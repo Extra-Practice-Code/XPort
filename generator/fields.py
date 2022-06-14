@@ -234,7 +234,7 @@ class Field (object):
 
   @property
   def value (self):
-    if self._value:
+    if self._value and self._value != [None]:
       v = self._value
     elif callable(self.default):
       v = self.default()
