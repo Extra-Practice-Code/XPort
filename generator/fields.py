@@ -246,6 +246,10 @@ class Field (object):
 
   @property
   def value (self):
+    # @FIXME better test for being 'empty'
+    # or more smart parsing?
+    #
+    # What does it mean for a field to be in the pad, but not have a value
     if self._value and [None] != self._value:
       v = self._value
     elif callable(self.default):
@@ -432,7 +436,7 @@ class SummaryField (Field):
 
   @property
   def value (self):
-    if not self._value and self.model:
+    if not self._value and [None] != self.value and self.model:
       value = getattr(self.model, self.field)
 
       if isinstance(value, str):
@@ -445,11 +449,14 @@ class SummaryField (Field):
     return self._value
     
   def parse (self, value):
-    md = markdown.Markdown(extensions=['extra', 'attr_list'])
-    html = md.convert(value)
-    filtered_html = drop_tags(html, SUMMARY_FIELD_TAGS_TO_DROP)
-    return mark_safe(bleach.clean(filtered_html, tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
-    
+    if value != '':
+      md = markdown.Markdown(extensions=['extra', 'attr_list'])
+      html = md.convert(value)
+      filtered_html = drop_tags(html, SUMMARY_FIELD_TAGS_TO_DROP)
+      return mark_safe(bleach.clean(filtered_html, tags=SUMMARY_FIELD_ALLOWED_TAGS, strip=True))
+    else:
+      return None
+      
 # # Maybe simplify to a function
 # class InlineLink(Field):
 #   def __init__ (self, target, label):
