@@ -68,7 +68,7 @@ def generate ():
     collection = contentType.collection
     model = collection.model
 
-    info('Treating: {}'.format(contentType))
+    info('Treating: {}'.format(model.contentType))
 
     if model.generateSinglePages and collection.models:
       singlepagedir = os.path.join(outputdir, model.prefix)
