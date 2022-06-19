@@ -300,7 +300,7 @@ class Station (Model):
 @contentType(InstantiatingCollection)
 class Event (Model):
   sortKey = '-dates'
-  generateSinglePages = False
+  # generateSinglePages = False
 
   def _metadataFields (self):
     return {
