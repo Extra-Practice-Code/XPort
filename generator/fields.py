@@ -30,7 +30,9 @@ class Time (object):
     return True if self.time else False
 
   def __lt__ (self, other):
-    if self.time == other.time:
+    if not isinstance(other, Time):
+      return False
+    elif self.time == other.time:
       # equal, or both None
       return False
     elif not self.time:
@@ -43,7 +45,9 @@ class Time (object):
       return self.time < other.time
 
   def __le__ (self, other):
-    if self.time == other.time:
+    if not isinstance(other, Time):
+      return False
+    elif self.time == other.time:
       # equal, or both None
       return True
     elif not self.time:
@@ -56,7 +60,9 @@ class Time (object):
       return self.time <= other.time
 
   def __gt__ (self, other):
-    if self.time == other.time:
+    if not isinstance(other, Time):
+      return True
+    elif self.time == other.time:
       # equal, or both None
       return False
     elif not self.time:
@@ -69,7 +75,9 @@ class Time (object):
       return self.time > other.time
 
   def __ge__ (self, other):
-    if self.time == other.time:
+    if not isinstance(other, Time):
+      return True
+    elif self.time == other.time:
       # equal, or both None
       return True
     elif not self.time:
@@ -108,7 +116,9 @@ class Date (object):
     return True if self.date else False
 
   def __lt__ (self, other):
-    if self.date == other.date:
+    if not isinstance(other, Date):
+      return False
+    elif self.date == other.date:
       # equal, or both None
       return False
     elif not self.date:
@@ -121,7 +131,9 @@ class Date (object):
       return self.date < other.date
 
   def __le__ (self, other):
-    if self.date == other.date:
+    if not isinstance(other, Date):
+      return False
+    elif self.date == other.date:
       # equal, or both None
       return True
     elif not self.date:
@@ -134,7 +146,9 @@ class Date (object):
       return self.date <= other.date
 
   def __gt__ (self, other):
-    if self.date == other.date:
+    if not isinstance(other, Date):
+      return True
+    elif self.date == other.date:
       # equal, or both None
       return False
     elif not self.date:
@@ -147,7 +161,9 @@ class Date (object):
       return self.date > other.date
 
   def __ge__ (self, other):
-    if self.date == other.date:
+    if not isinstance(other, Date):
+      return True
+    elif self.date == other.date:
       # equal, or both None
       return True
     elif not self.date:
