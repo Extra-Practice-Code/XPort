@@ -225,7 +225,7 @@ class MultiLinkField(object):
       targetKey = keyFilter(target)
       if targetKey:
         if not self.unique \
-          and all([existingLink.target != targetKey and existingLink.target != target for existingLink in self.value]):
+          or all([existingLink.target != targetKey and existingLink.target != target for existingLink in self.value]):
           link = Link(self.source, targetKey, self.contentType, inline=inline, label=target, data=data)
           self.value.append(link)
           # Add link to model

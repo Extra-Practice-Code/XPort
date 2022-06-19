@@ -162,7 +162,7 @@ class Video (Model):
 @contentType()
 class SharedSpace (Model):
   sortKey = '-date'
-  
+
   def _metadataFields (self):
     return {
       'sharedspace': fields.Single(fields.StringField()),
@@ -291,7 +291,6 @@ class Station (Model):
       'location': fields.StringField(),
       'tags': multiLinkMultiReverse(self, 'tag', 'stations'),
       'voices': multiLinkMultiReverse(self, 'voice', 'stations'),
-      'pads': multiLinkMultiReverse(self, 'pad', 'stations'),
       'images': multiLinkMultiReverse(self, 'image', 'stations'),
       'videos': multiLinkMultiReverse(self, 'video', 'stations'),
       'galleries': multiLinkMultiReverse(self, 'gallery', 'stations'),
