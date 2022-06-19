@@ -30,10 +30,7 @@
     {% endif %}
     <div class="item--description">
       <p>
-        {% comment %} {% for voice in object.voices %}
-            <strong>{{ voice }}</strong><br>
-        {% endfor %} {% endcomment %}
-        <strong>{{ object.contribution }}</strong><br />
+        <strong>{{ object }}</strong><br />
         {% if object.summary %}
           {{ object.summary|truncatechars_html:300 }}
         {% elif object.content %}
@@ -43,5 +40,10 @@
         {% endif %}
       </p>
     </div>
+    {% if object.station %}
+    <div class="item--extra">
+      {{ station.shortname }}
+    </div>
+    {% endif %}
   </a>
 </div>

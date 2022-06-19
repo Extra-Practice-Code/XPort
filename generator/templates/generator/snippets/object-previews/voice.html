@@ -25,7 +25,7 @@
         {% endif %}
       </p>
     </div>
-    {% if object.stations %}
+    {% if object.stations and object.type != 'team' %}
     <div class="item--extra">
       {% for station in object.stations %}
         {{ station.shortname }}{% if not forloop.last %}, {% endif %}

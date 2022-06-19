@@ -85,20 +85,31 @@ def generate ():
         'collection': collection
       })
 
+  galleryImagesPage = collectionFor('page').get('gallery-images')
+
+  output(os.path.join(outputdir, 'gallery.html'), 'generator/list--galleries.html', {
+    'galleries': collectionFor('gallery').models,
+    'videos': collectionFor('video').models,
+    'images': galleryImagesPage.images if galleryImagesPage else [],
+    'page_content': { 'content_type': 'gallery' }
+  })
+
+
   output(os.path.join(outputdir, 'reflections.html'), 'generator/reflections.html', {
     'contributions': collectionFor('contribution').models,
     'reflections': collectionFor('reflection').models,
     'previewreviews': collectionFor('previewreview').models,
+    'sharedspaces': collectionFor('sharedspace').models,
     'page_content': { 'content_type': 'reflection' }
   })
 
-  index_ctx = { 
+
+  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', { 
     'home': collectionFor('page').get('home'),
     'homeItems': collectionFor('page').get('home-items')
-   }
+  })
 
-  output(os.path.join(outputdir, 'index.html'), 'generator/index.html', index_ctx )
- 
+
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
 

@@ -25,14 +25,17 @@ YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/wat
 class Image (Model):
   generateSinglePages = False
   referenceTemplate = 'generator/snippets/references/image.html'
+  sortKey = '-date'
 
   def _metadataFields (self):
     return {
       'image': fields.SingleImageField(),
+      'date': fields.Single(fields.DateField()),
+      'tags': multiLinkMultiReverse(self, 'tag', 'images'),
       'title': fields.Single(fields.InlineMarkdownField()),
       'author': fields.Single(fields.InlineMarkdownField()),
-      'caption': fields.Single(fields.InlineMarkdownField()),
       'alt': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField())
     }
 
 
@@ -45,9 +48,14 @@ class Audio (Model):
     return {
       'audio': fields.Single(fields.StringField()),
       'type': fields.Single(fields.StringField(['audio/mp3'])),
+      'date': fields.Single(fields.DateField()),
+      'tags': multiLinkMultiReverse(self, 'tag', 'images'),
       'title': fields.Single(fields.InlineMarkdownField()),
+      'author': fields.Single(fields.InlineMarkdownField()),
+      'alt': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField())
     }
+
 
 @contentType(InstantiatingCollection)
 class Video (Model):
@@ -145,19 +153,24 @@ class Video (Model):
     return {
       'video': fields.Single(fields.StringField()),
       'type': fields.Single(fields.StringField(['video/mp4'])),
+      'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField())
     }
 
 
 @contentType()
-class Pad (Model):
-  generateSinglePages = False
+class SharedSpace (Model):
+  sortKey = '-date'
   
   def _metadataFields (self):
     return {
-      'pad': fields.Single(fields.StringField()),
+      'sharedspace': fields.Single(fields.StringField()),
+      'date': fields.Single(fields.DateField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
+      'station': linkMultiReverse(self, 'station', 'sharedspaces'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'sharedspaces'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'sharedspaces'),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
@@ -176,7 +189,7 @@ class Pad (Model):
     return self.source_pad.display_slug
 
   @property
-  def url (self):
+  def padurl (self):
     return reverse('pad', kwargs={'mode': 'w', 'slug': self.source_pad.display_slug})
 
 
@@ -212,8 +225,8 @@ class Voice (Model):
       'sortname': fields.Single(fields.StringField(default=lambda: [self.voice.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
       'status': fields.Single(fields.StringField(default=['draft'])),
       'type': fields.Single(fields.StringField(default=['voice'])),
-      'tags': multiLinkMultiReverse('tag', 'voices'),
-      'images': multiLinkMultiReverse('image', 'voices'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'voices'),
+      'images': multiLinkMultiReverse(self, 'image', 'voices'),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
@@ -224,18 +237,20 @@ class Gallery (Model):
   referenceTemplate = 'generator/snippets/references/gallery.html'
   listPageTemplate = 'generator/list--galleries.html'
 
+  sortKey = '-date'
   
   def _metadataFields (self):
     return {
       'gallery': fields.Single(fields.StringField()),
+      'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'images': multiLinkMultiReverse('image', 'galleries'),
-      'videos': multiLinkMultiReverse('video', 'galleries'),
-      'station': linkMultiReverse('station', 'galleries'),
-      'tags': multiLinkMultiReverse('tag', 'galleries'),
-      'voices': multiLinkMultiReverse('voice', 'galleries')
+      'images': multiLinkMultiReverse(self, 'image', 'galleries'),
+      'videos': multiLinkMultiReverse(self, 'video', 'galleries'),
+      'station': linkMultiReverse(self, 'station', 'galleries'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'galleries'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'galleries')
     }
 
 
@@ -245,14 +260,14 @@ class Page (Model):
     return {
       'page': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'images': multiLinkMultiReverse('image', 'pages'),
-      'station': linkMultiReverse('station', 'pages'),
-      'tags': multiLinkMultiReverse('tag', 'pages'),
-      'voices': multiLinkMultiReverse('voice', 'pages'),
-      'contributions': multiLinkMultiReverse('contribution', 'pages'),
-      'reflections': multiLinkMultiReverse('reflection', 'pages'),
-      'previewReviews': multiLinkMultiReverse('previewReview', 'pages'),
-      'galleries': multiLinkMultiReverse('gallery', 'pages'),
+      'images': multiLinkMultiReverse(self, 'image', 'pages'),
+      'station': linkMultiReverse(self, 'station', 'pages'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'pages'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'pages'),
+      'contributions': multiLinkMultiReverse(self, 'contribution', 'pages'),
+      'reflections': multiLinkMultiReverse(self, 'reflection', 'pages'),
+      'previewReviews': multiLinkMultiReverse(self, 'previewReview', 'pages'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'pages'),
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
@@ -274,13 +289,13 @@ class Station (Model):
       'date': fields.Single(fields.DateField()),
       'time': fields.TimeField(),
       'location': fields.StringField(),
-      'tags': multiLinkMultiReverse('tag', 'stations'),
-      'voices': multiLinkMultiReverse('voice', 'stations'),
-      'pads': multiLinkMultiReverse('pad', 'stations'),
-      'images': multiLinkMultiReverse('image', 'stations'),
-      'videos': multiLinkMultiReverse('video', 'stations'),
-      'galleries': multiLinkMultiReverse('gallery', 'stations'),
-      'events': multiLinkReverse('event', 'station')
+      'tags': multiLinkMultiReverse(self, 'tag', 'stations'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'stations'),
+      'pads': multiLinkMultiReverse(self, 'pad', 'stations'),
+      'images': multiLinkMultiReverse(self, 'image', 'stations'),
+      'videos': multiLinkMultiReverse(self, 'video', 'stations'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'stations'),
+      'events': multiLinkReverse(self, 'event', 'station')
     }
 
 @contentType(InstantiatingCollection)
@@ -295,63 +310,62 @@ class Event (Model):
       'dates': fields.DateTimeField(),
       'location': fields.Single(fields.InlineMarkdownField()),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'station': linkMultiReverse('station', 'events'),
-      'voices': multiLinkMultiReverse('voice', 'events'),
-      'images': multiLinkMultiReverse('image', 'events'),
-      'galleries': multiLinkMultiReverse('gallery', 'events')
+      'station': linkMultiReverse(self, 'station', 'events'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'events'),
+      'images': multiLinkMultiReverse(self, 'image', 'events'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'events')
     }
 
 @contentType()
 class Contribution (Model):
   singlePageTemplate = 'generator/reflection.html'
-  sortKey = 'sortname'
+  sortKey = '-date'
 
   def _metadataFields (self):
     return {
       'contribution': fields.Single(fields.StringField()),
-      'sortname': fields.Single(fields.StringField(default=lambda: [self.contribution.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
+      'date': fields.Single(fields.DateField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'station': linkMultiReverse('station', 'contributions'),
-      'tags': multiLinkMultiReverse('tag', 'contributions'),
-      'voices': multiLinkMultiReverse('voice', 'contributions'),
+      'station': linkMultiReverse(self, 'station', 'contributions'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'contributions'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'contributions'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'contributions'),
-      'galleries': multiLinkMultiReverse('gallery', 'contributions')
+      'images': multiLinkMultiReverse(self, 'image', 'contributions'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'contributions')
     }
 
 @contentType()
 class Reflection (Model):
   singlePageTemplate = 'generator/reflection.html'
-  sortKey = 'sortname'
+  sortKey = '-date'
 
   def _metadataFields (self):
     return {
       'reflection': fields.Single(fields.StringField()),
-      'sortname': fields.Single(fields.StringField(default=lambda: [self.reflection.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
+      'date': fields.Single(fields.DateField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'station': linkMultiReverse('station', 'reflections'),
-      'tags': multiLinkMultiReverse('tag', 'reflections'),
-      'voices': multiLinkMultiReverse('voice', 'reflections'),
+      'station': linkMultiReverse(self, 'station', 'reflections'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'reflections'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'reflections'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'reflections'),
-      'galleries': multiLinkMultiReverse('gallery', 'reflections')
+      'images': multiLinkMultiReverse(self, 'image', 'reflections'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'reflections')
     }
 
 @contentType()
 class PreviewReview (Model):
-  contentType = 'previewreview'
-  sortKey = 'sortname'
   singlePageTemplate = 'generator/reflection.html'
+  sortKey = '-date'
 
   def _metadataFields (self):
     return {
       'previewreview': fields.Single(fields.StringField()),
-      'sortname': fields.Single(fields.StringField(default=lambda: [self.previewreview.value], filter=lambda v: v.lower() if v else v)), # bit hacky but self refers to the model. When the field is called it'll lookup the value of voice.
+      'date': fields.Single(fields.DateField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
-      'station': linkMultiReverse('station', 'previewreviews'),
-      'tags': multiLinkMultiReverse('tag', 'previewreviews'),
-      'voices': multiLinkMultiReverse('voice', 'previewreviews'),
+      'station': linkMultiReverse(self, 'station', 'previewreviews'),
+      'tags': multiLinkMultiReverse(self, 'tag', 'previewreviews'),
+      'voices': multiLinkMultiReverse(self, 'voice', 'previewreviews'),
       'summary': fields.Single(fields.SummaryField(model=self)),
-      'images': multiLinkMultiReverse('image', 'previewreviews'),
-      'galleries': multiLinkMultiReverse('gallery', 'previewreviews')
+      'images': multiLinkMultiReverse(self, 'image', 'previewreviews'),
+      'galleries': multiLinkMultiReverse(self, 'gallery', 'previewreviews')
     }

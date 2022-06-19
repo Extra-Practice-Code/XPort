@@ -141,10 +141,10 @@ def parseReference(match, collector=None, source=None):
         # not encoded as a link currently. Introduce an extra collector.
         if referenceName in source.metadata and links.is_link(source.metadata[referenceName]):
           ## FIXME what if it's an existing reverse
-          link = source.metadata[referenceName].makeLink(source, target, inline=True, data=metadata, label=display_label)
+          link = source.metadata[referenceName].makeLink(target, inline=True, data=metadata, label=display_label)
         elif target.plural in source.metadata and links.is_multi_link(source.metadata[target.plural]):
           ## FIXME what if it's an existing reverse?
-          link = source.metadata[target.plural].makeLink(source, target, inline=True, data=metadata, label=display_label)
+          link = source.metadata[target.plural].makeLink(target, inline=True, data=metadata, label=display_label)
         else:
           link = None
 
@@ -245,6 +245,10 @@ def resolveReferences (model):
     referencePattern = r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]'
     contentParsed = re.sub(referencePattern, referenceParser, content)
 
+    # Add recognized references to the link collector of the model
+    for link in collector:
+      model.registerLink(link)
+
     return (mark_safe(contentParsed), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
   else:
@@ -283,13 +287,14 @@ class Model(object):
 
     self.stub = True
 
-    if metadata or content:
-      self.fill(metadata=metadata, content=content)
-
     self.source_pad = source_pad
 
     self._id = make_id(15)
 
+    self._links = []
+
+    if metadata or content:
+      self.fill(metadata=metadata, content=content)
 
   """
     @FIXME 
@@ -334,7 +339,10 @@ class Model(object):
       return super().__str__()
 
   def __dir__ (self):
-    return list(self.metadata.keys()) + ['content', 'url', 'source_path']
+    return list(self.metadata.keys()) + ['content', 'url', 'source_path', 'links']
+
+  def _metadataFields (self):
+    pass
 
   # @FIXME add a propery to loop through all linkfields
   # have a unified linklist? To loop through different contenttypes
@@ -348,6 +356,19 @@ class Model(object):
       return keyFilter(data['pk'])
     else:
       raise ValueError("Object doesn't have any key")
+
+  # Should collect all links
+  @property
+  def links (self):
+    return self._links
+
+  @property
+  def inlineLinks (self):
+    return list(filter(self.links, lambda l: l.inline))
+
+  def registerLink (self, link):
+    if link not in self._links:
+      self._links.append(link)
 
   @property
   def link (self):
@@ -384,7 +405,7 @@ class Model(object):
     fields = list(self.metadata.keys())
     for fieldname in fields:
       if links.is_link(self.metadata[fieldname]):
-        self.metadata[fieldname].resolve(self)
+        self.metadata[fieldname].resolve()
 
   @property
   def label (self):

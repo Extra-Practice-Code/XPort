@@ -17,7 +17,7 @@ class LinkDifferentContentTypeError(Exception):
   The link object, the link field will in the end be filled with these
 """
 class Link (object):
-  def __init__ (self, target, contentType, inline=False, direct=False, source=None, label=None, data = None):
+  def __init__ (self, source, target, contentType, inline=False, direct=False, label=None, data = None):
     self.target = target # Target [Model|key]
     self.contentType = contentType # ContentType of the target
     self.inline = inline # True when instantiated from wihtin in a body text
@@ -26,10 +26,10 @@ class Link (object):
     self.reverse_link = None # Reference to the revers link
     self.context = None
     self.data = data
+    self.source = source
     
     if direct and source:
       self.resolved = True
-      self.source = source
       self.broken = False
 
       # Set data on target object if it's a stub
@@ -38,7 +38,6 @@ class Link (object):
 
     else:
       self.resolved = False
-      self.source = None
       self.broken = False
     
     self.reverse = False
@@ -62,10 +61,10 @@ class Link (object):
       debug('BROKEN LINK')
       debug(self.source, self.target, self.id)
 
-  def resolve (self, source):
+  # @FIXME, the link might also register itself here?
+  def resolve (self):
     if self.target and not self.resolved:
       debug(self.target, self.contentType)
-      self.source = source
       target = collectionFor(self.contentType).get(self.target, label=self.label)
       if target:
         self.target = target
@@ -76,7 +75,7 @@ class Link (object):
 
       else:
         self.broken = True
-        debug('Broken link', source, target)
+        debug('Broken link', self.source, target)
       
       self.resolved = True
     elif not self.target:
@@ -91,6 +90,7 @@ class ReverseLink (object):
     self._id = link._id
     self.source = link.target
     self.target = link.source
+    self.contentType = self.target.contentType
     self.inline = link.inline
     self.reverse = True
     self.resolved = link.resolved
@@ -118,10 +118,12 @@ class ReverseLink (object):
   it has, and the type of reverse link.
 """
 class LinkField(object):
-  def __init__ (self, contentType, reverse=None):
+  def __init__ (self, source, contentType, reverse=None):
     self.contentType = contentType
     self.resolved = False
     self.value = None
+    # Reference to the model the field is registered on
+    self.source = source
     # Will hold the label / key of the target.
     # Once resolved the link is stored in value
     self.reverse = reverse
@@ -132,9 +134,9 @@ class LinkField(object):
   def __bool__ (self):
     return True if self.value else False
 
-  def resolve (self, source):
+  def resolve (self):
     if self.value:
-      self.value.resolve(source)
+      self.value.resolve()
       self.resolved = True
       # Should we also resolve the reverse link?
       if not self.value.broken and self.reverse is not None:
@@ -158,20 +160,25 @@ class LinkField(object):
     if type(target) is list:
       self.set(target[0], label, data, inline)
     else:
-      key = keyFilter(target)
+      targetKey = keyFilter(target)
 
       if not label:
-        label = target
+        label = targetKey
 
-      if key:
-        self.value = Link(key, self.contentType, inline=inline, label=target, data=data)
+      if targetKey:
+        link = Link(self.source, targetKey, self.contentType, inline=inline, label=target, data=data)
+        self.value = link
+        # Add link to model
+        self.source.registerLink(link)
 
   # Directly construct a link
   # Circumvents the resolving through a collection
-  def makeLink(self, source, target, inline=False, label=None, data=None):
+  def makeLink(self, target, inline=False, label=None, data=None):
     if not self.resolved:
-      link = Link(target, self.contentType, inline, True, source, label=label, data=None)
+      link = Link(self.source, target, self.contentType, inline=inline, direct=True, label=label, data=None)
       self.value = link
+      # Add link to model
+      self.source.registerLink(link)
       # if we have a reverse link, set it
       if self.reverse:
         self.reverse.resolve(ReverseLink(link))
@@ -195,10 +202,10 @@ class LinkField(object):
   Field for multiple links, every link will be a single linkfield.
 """
 class MultiLinkField(object):
-  def __init__ (self, contentType = None, reverse = None, unique = True):
+  def __init__ (self, source, contentType = None, reverse = None, unique = True):
     self.contentType = contentType
     self.value = []
-    self.target = None
+    self.source = source
     self.reverse = reverse
     self.unique = unique
 
@@ -215,24 +222,26 @@ class MultiLinkField(object):
       for t in target:
         self.set(t, label, data, inline)
     else:
-      key = keyFilter(target)
-      if key:
-        if self.unique:
-          for existingLink in self.value:
-            if existingLink.target == key or existingLink.target == target:
-              return existingLink
+      targetKey = keyFilter(target)
+      if targetKey:
+        if not self.unique \
+          and all([existingLink.target != targetKey and existingLink.target != target for existingLink in self.value]):
+          link = Link(self.source, targetKey, self.contentType, inline=inline, label=target, data=data)
+          self.value.append(link)
+          # Add link to model
+          self.source.registerLink(link)
 
-        self.value.append(Link(key, self.contentType, inline=inline, label=target, data=data))
-
-  def makeLink(self, source, target, inline=False, label=None, data=None):
+  def makeLink(self, target, inline=False, label=None, data=None):
     if self.unique:
       for existingLink in self.value:
         if existingLink.target == target:
           return existingLink
 
-    link = Link(target, self.contentType, inline, direct=True, source=source, label=label, data=data)
+    link = Link(self.source, target, self.contentType, inline, direct=True, label=label, data=data)
     self.value.append(link)
-
+    # Add link to model
+    self.source.registerLink(link)
+    
     if self.reverse is not None:
       self.reverse.resolve(ReverseLink(link))
 
@@ -240,9 +249,9 @@ class MultiLinkField(object):
   
   # def resolveLink
 
-  def resolve (self, source):
+  def resolve (self):
     for link in self.value:
-      link.resolve(source)
+      link.resolve()
       if not link.broken and self.reverse is not None:
         self.reverse.resolve(ReverseLink(link))
 
@@ -273,6 +282,8 @@ class ReverseLinkField(object):
     # linkfields in the iterator, rather than links.
     # Simplify?
     link.source.registerMetadataField(self.name, self)
+    # Add link to model
+    link.source.registerLink(link)
   
   @property
   def target (self):
@@ -323,7 +334,9 @@ class ReverseMultiLinkField(ReverseLinkField):
               return False
 
     link.source.metadata[self.name].value.append(link)
-
+    # Add link to model
+    link.source.registerLink(link)
+    
   @property
   def targets (self):
     return [link.target for link in self.value]
@@ -353,17 +366,17 @@ def is_reverse_single_link (obj):
 def is_reverse_multi_link (obj):
   return isinstance(obj, (ReverseMultiLinkField,))
 
-def linkReverse(contentType, reverseName):
-  return LinkField(contentType=contentType, reverse=ReverseLinkField(reverseName))
+def linkReverse(source, contentType, reverseName):
+  return LinkField(source=source, contentType=contentType, reverse=ReverseLinkField(reverseName))
 
-def linkMultiReverse(contentType, reverseName):
-  return LinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
+def linkMultiReverse(source, contentType, reverseName):
+  return LinkField(source=source, contentType=contentType, reverse=ReverseMultiLinkField(reverseName))
 
-def multiLinkMultiReverse(contentType, reverseName, unique=True):
-  return MultiLinkField(contentType=contentType, reverse=ReverseMultiLinkField(reverseName, unique=unique), unique=unique)
+def multiLinkMultiReverse(source, contentType, reverseName, unique=True):
+  return MultiLinkField(source=source, contentType=contentType, reverse=ReverseMultiLinkField(reverseName, unique=unique), unique=unique)
 
-def multiLinkReverse (contentType, reverseName, unique=True):
-  return MultiLinkField(contentType=contentType, reverse=ReverseLinkField(reverseName), unique=unique)
+def multiLinkReverse (source, contentType, reverseName, unique=True):
+  return MultiLinkField(source=source, contentType=contentType, reverse=ReverseLinkField(reverseName), unique=unique)
 
 def linkReference(target, display_label):
   return '<a href="{target}" class="{className}">{label}</a>'.format(label=display_label if display_label else str(target), target=target.link, className=target.contentType)

@@ -774,7 +774,8 @@ def all(request):
         return all_public(request)
 
 def all_public(request):
-    publicpads = Pad.objects.filter(is_public=True)
+    # On this install do not show public pads
+    publicpads = [] # Pad.objects.filter(is_public=True)
     return render(request, "all-public.html", { 'publicpads': publicpads })
 
 @login_required(login_url='/accounts/login')

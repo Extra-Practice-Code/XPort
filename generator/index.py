@@ -1,4 +1,4 @@
-from generator.collection import collectionFor, knownContentTypes
+from generator.collection import collectionFor, contentType, knownContentTypes
 from generator.links import is_link, is_multi_link, is_reverse_link, is_reverse_multi_link
 from generator.settings import PAD_BASE_URL
 import os.path
@@ -33,23 +33,26 @@ def display_link (link):
   # Mark whether it is an inline link
 
   if link.broken:
-    return '<dd class="link link-broken">{direction} {arrow} {label} [broken, unable to resolve]</dd>'.format(
+    return '<dd class="link link-broken">{direction} {arrow} {label} ({contentType}) [broken, unable to resolve]</dd>'.format(
       direction=direction,
       arrow=arrow,
-      label=link.target
+      label=link.target,
+      contentType=link.contentType
     )
   elif not link.resolved:
-    return '<dd class="link link-unresolved">{direction} {arrow} {label} [unresolved]</dd>'.format(
+    return '<dd class="link link-unresolved">{direction} {arrow} {label} ({contentType}) [unresolved]</dd>'.format(
       direction=direction,
       arrow=arrow,
-      label=link.target
+      label=link.target,
+      contentType=link.contentType
     )
   else:
-    return '<dd>{direction} {arrow} <a href="#{id}">{label}</a></dd>'.format(
+    return '<dd>{direction} {arrow} <a href="#{id}">{label}</a> ({contentType})</dd>'.format(
         direction=direction,
         arrow=arrow,
         label=str(link.target),
-        id=link.target._id
+        id=link.target._id,
+        contentType=link.contentType
       )
 
 def make_index (models):
@@ -79,7 +82,10 @@ def make_index (models):
           # Attributes noted in the metafields list, plus content,
           # the link property and the sourcepath
           buff += '<dt>{attr}</dt>'.format(attr=attr)
-          if hasattr(obj, attr):
+          if attr == 'links':
+            for link in getattr(obj, attr):
+              buff += display_link(link)
+          elif hasattr(obj, attr):
             field = getattr(obj, attr)
             if is_multi_link(field) or is_reverse_multi_link(field):
               for link in field.value:

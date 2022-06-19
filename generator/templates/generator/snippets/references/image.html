@@ -15,13 +15,16 @@
       alt="{{ object.alt }}" 
     />
   </div>
-  {% if object.author %}
-    <caption>
-      Photo by {{ object.author }} - Click for high res
-    </caption>
-  {% else %}
-    <caption>
-      Click for high res
-    </caption>
-  {% endif %}
-  </figure>
+  <caption>
+    {% if object.title %}
+      <strong>{{ object.title }}</strong> - 
+    {% endif %}  
+    {% if object.caption %}
+      {{ object.caption }} -
+    {% endif %}
+    {% if object.author %}
+      Photo by {{ object.author }} - 
+    {% endif %}
+    Click for high res
+  </caption>
+</figure>

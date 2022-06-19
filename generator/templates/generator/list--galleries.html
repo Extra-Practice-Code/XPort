@@ -1,13 +1,56 @@
 {% extends "generator/base.html" %}
-{% load generator_utils %}
-{% block page_title %}{{ block.super }} | Gallery{% endblock %}
-{% block content %}
 
+{% load generator_utils %}
+
+{% block page_title %}{{ block.super }} | Gallery{% endblock %}
+
+{% block subnav %}
+  <ul>
+    {% if videos %}
+      <li>
+        <a href="#group--videos">Videos</a>
+      </li>
+    {% endif %}
+    {% if images %}
+      <li>
+        <a href="#group--images">Images</a>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock %}
+
+{% block before_content %}
   <div class="item item-type--page-title">
     <h1>Gallery</h1>
   </div>
-
-  {% include "generator/snippets/object-previews/list.html" %}
-  
-  
 {% endblock %}
+
+{% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
+
+{% block content %}
+
+  {% for object in galleries %}
+    {% include "generator/snippets/object-previews/gallery.html" %}
+  {% endfor %}
+
+  {% if videos %}
+    <div class="item item-type--sub-title" id="group--videos">
+      <h2>Videos</h2>
+    </div>
+
+    {% for object in videos %}
+      {% include "generator/snippets/object-previews/video.html" %}
+    {% endfor %}
+  {% endif %}
+
+  {% if images %}
+    <div class="item item-type--sub-title" id="group--images">
+      <h2>Images</h2>
+    </div>
+    
+    {% for object in images %}
+      {% include "generator/snippets/object-previews/image.html" %}
+    {% endfor %}
+  {% endif %}
+  
+{% endblock %} 
