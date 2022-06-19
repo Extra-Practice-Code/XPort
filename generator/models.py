@@ -146,7 +146,7 @@ def parseReference(match, collector=None, source=None):
           ## FIXME what if it's an existing reverse?
           link = source.metadata[target.plural].makeLink(target, inline=True, data=metadata, label=display_label)
         else:
-          link = None
+          link = links.Link(source=source, target=target, contentType=contentType, inline=True, direct=True, data=metadata, label=display_label)
 
         # link = Link(source, target)
         collector.append(link)
