@@ -261,7 +261,7 @@ class Page (Model):
       'page': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['draft'])),
       'images': multiLinkMultiReverse(self, 'image', 'pages'),
-      'station': linkMultiReverse(self, 'station', 'pages'),
+      'stations': multiLinkMultiReverse(self, 'station', 'pages'),
       'tags': multiLinkMultiReverse(self, 'tag', 'pages'),
       'voices': multiLinkMultiReverse(self, 'voice', 'pages'),
       'contributions': multiLinkMultiReverse(self, 'contribution', 'pages'),
