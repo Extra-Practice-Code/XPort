@@ -134,33 +134,61 @@
     <script>
       const rowHeight = 40,
             gapHeight = 20;
-      const resizeObserver = new ResizeObserver(entries => {
-        
-        for (let entry of entries) {
-          let height;
-          if(entry.borderBoxSize && entry.borderBoxSize.length > 0) {
-            height = entry.borderBoxSize[0].blockSize;
-          } else {
-            height = entry.contentRect.height;
-          }
 
-          let span = Math.ceil(height / (rowHeight + gapHeight));
-
-          if (span * (rowHeight + gapHeight) - gapHeight < height) {
-            span += 1
-          }
-
-          entry.target.style.gridRowEnd = 'span ' + span;
-        }
-      });
-
-      var container = document.getElementById('container');
-
-      if (!container.classList.contains('prevent--resizing-blocks')) {
-        var blocks = container.children;
+      if (window.ResizeObserver) {
+        const resizeObserver = new ResizeObserver(entries => {
+          
+          for (let entry of entries) {
+            let height;
+            if(entry.borderBoxSize && entry.borderBoxSize.length > 0) {
+              height = entry.borderBoxSize[0].blockSize;
+            } else {
+              height = entry.contentRect.height;
+            }
   
-        for (let i = 0; i < blocks.length; i++) {
-          resizeObserver.observe(blocks[i]);
+            let span = Math.ceil(height / (rowHeight + gapHeight));
+  
+            if (span * (rowHeight + gapHeight) - gapHeight < height) {
+              span += 1
+            }
+  
+            entry.target.style.gridRowEnd = 'span ' + span;
+          }
+        });
+  
+        var container = document.getElementById('container');
+  
+        if (!container.classList.contains('prevent--resizing-blocks')) {
+          var blocks = container.children;
+    
+          for (let i = 0; i < blocks.length; i++) {
+            resizeObserver.observe(blocks[i]);
+          }
+        }
+      }
+      else {
+        var container = document.getElementById('container'),
+            determineSize = function (el) {
+              let rect = el.getBoundingClientRect(),
+                  height = rect.height
+                  span = Math.ceil(height / (rowHeight + gapHeight));
+    
+              if (span * (rowHeight + gapHeight) - gapHeight < height) {
+                span += 1
+              }
+    
+              el.style.gridRowEnd = 'span ' + span;
+            };
+  
+        
+
+        if (!container.classList.contains('prevent--resizing-blocks')) {
+          var blocks = container.children;
+    
+          for (let i = 0; i < blocks.length; i++) {
+            // resizeObserver.observe(blocks[i]);
+            determineSize(blocks[i]);
+          }
         }
       }
     </script>
