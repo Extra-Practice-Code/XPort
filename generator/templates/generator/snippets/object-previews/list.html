@@ -7,7 +7,11 @@
       {% include "generator/snippets/object-previews/video.html" %}
   {% elif object.contentType == "gallery" %}
       {% include "generator/snippets/object-previews/gallery.html" %}
-  {% elif object.contentType == "contribution" %}
+  {% elif object.contentType == "contribution" 
+        or object.contentType == "reflection" 
+        or object.contentType == "previewreview" 
+        or object.contentType == "sharedspace"
+  %}
       {% include "generator/snippets/object-previews/contribution.html" %}  
   {% elif object.contentType == "tag" %}
       {% include "generator/snippets/object-previews/tag.html" %}

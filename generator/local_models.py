@@ -161,6 +161,7 @@ class Video (Model):
 
 @contentType()
 class SharedSpace (Model):
+  singlePageTemplate = 'generator/reflection.html'
   sortKey = '-date'
 
   def _metadataFields (self):

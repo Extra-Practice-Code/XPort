@@ -1,15 +1,43 @@
 {% extends "generator/object.html" %}
+{% load generator_utils %}
 
 {% block subnav %}
   <ul>
-    <li>
-      <a href="{{ SITEURL }}/voices.html#group--voices">Voices</a>
+    <li{% if object.type.value|lower == 'voice' %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/voices.html#group--voices">Voices</a>
     </li>
-    <li>
-      <a href="{{ SITEURL }}/voices.html#group--team">Team</a>
+    <li{% if object.type.value|lower == 'team' %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/voices.html#group--team">Team</a>
     </li>
-    <li>
-      <a href="{{ SITEURL }}/voices.html#group--partners">Partners</a>
+    <li{% if object.type.value|lower == 'partner' %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/voices.html#group--partners">Partners</a>
     </li>
   </ul>
+{% endblock %}
+
+{% block content %}
+
+  <div class="item item-type--page-title">
+    <h1>{{ object }}</h1>
+  </div>
+  {% if object.content or object.tags %}
+  <div class="item item-type--main">
+    {% if object.content or object.tags %}
+      {{ object.content }}
+    {% endif %}
+    {% if object.tags %}
+      <ul class="list--tags">
+        {% for tag in object.tags %}
+          <li><a href="{{ tag.url }}">{{ tag }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if object.type.value|lower == 'team' %}
+    {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"tag, station"|without_inline_links:"image, video, gallery, page"|targets only %}
+  {% else %}
+    {% include "generator/snippets/object-previews/list.html" with objects=object|merged_links|without:"tag"|without_inline_links:"image, video, gallery, page"|targets only %}
+  {% endif %}
 {% endblock %}

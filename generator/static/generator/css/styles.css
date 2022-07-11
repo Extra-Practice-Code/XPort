@@ -633,6 +633,23 @@ main > .item-type--page-title {
   background-color: var(--color-contribution);
 }
 
+.item-type--reflection::before {
+  content: attr(data-item-object-type);
+  background-color: var(--color-contribution);
+}
+
+.item-type--sharedspace::before {
+  content: "shared space";
+  background-color: var(--color-contribution);
+}
+
+
+.item-type--previewreview::before {
+  content: "preview review";
+  background-color: var(--color-contribution);
+}
+
+
 .item-type--tag::before {
   content: attr(data-item-object-type);
   background-color: var(--color-tag);
@@ -648,6 +665,11 @@ main > .item-type--page-title {
   background-color: var(--color-station);
 }
 
+.item-type--event::before {
+  content: attr(data-item-object-type);
+  background-color: var(--color-station);
+}
+
 .item-type--gallery::before {
   content: attr(data-item-object-type);
   background-color: var(--color-gallery);
@@ -657,7 +679,10 @@ main > .item-type--page-title {
   color: var(--color-voice);
 }
 
-.item-type--contribution {
+.item-type--contribution,
+.item-type--reflection,
+.item-type--sharedspace,
+.item-type--previewreview {
   color: var(--color-contribution);
 }
 
@@ -669,7 +694,8 @@ main > .item-type--page-title {
   color: var(--color-pad);
 }
 
-.item-type--station {
+.item-type--station,
+.item-type--event {
   color: var(--color-station);
 }
 

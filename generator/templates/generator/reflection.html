@@ -2,14 +2,14 @@
 
 {% block subnav %}
   <ul>
-    <li>
-      <a href="{{ SITEURL }}/reflections.html#group--contributions">Contributions</a>
+    <li{% if object.contentType == "contribution" or object.contentType == "reflection" %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/reflections.html#group--contributions">Contributions</a>
     </li>
-    <li>
-      <a href="{{ SITEURL }}/reflections.html#group--preview-review">Preview Review</a>
+    <li{% if object.contentType == "previewreview" %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/reflections.html#group--preview-review">Preview Review</a>
     </li>
-    <li>
-      <a href="{{ SITEURL }}/reflections.html#group--shared-space">Shared Space</a>
+    <li{% if object.contentType == "sharedspace" %} class="selected"{% endif %}>
+      <a href="{{ SITE_URL }}/reflections.html#group--shared-space">Shared Space</a>
     </li>
   </ul>
 {% endblock %}
