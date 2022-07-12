@@ -149,6 +149,9 @@ def parseReference(match, collector=None, source=None):
           link = links.Link(source=source, target=target, contentType=contentType, inline=True, direct=True, data=metadata, label=display_label)
 
         # link = Link(source, target)
+        if source:
+          source.registerLink(link)
+
         collector.append(link)
 
         return target.asReference(display_label=display_label, source=source, link=link)
@@ -246,8 +249,10 @@ def resolveReferences (model):
     contentParsed = re.sub(referencePattern, referenceParser, content)
 
     # Add recognized references to the link collector of the model
-    for link in collector:
-      model.registerLink(link)
+    # Doing it here creates an unexpectedly ordered lists, as links to contentTypes
+    # that are defined as a field are registered immediately.
+    # for link in collector:
+    #   model.registerLink(link)
 
     return (mark_safe(contentParsed), collector)
     # return mark_safe(re.sub(r"\[\[(\w+):(.[^\]]+)\]\]", insertReference, content))
