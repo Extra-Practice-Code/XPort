@@ -1199,6 +1199,7 @@ body[data-content-type="gallery"] .item-type--main figure {
   background-color: currentColor;
   max-height: 600px;
   width: auto;
+  overflow: hidden;
 }
 
 .inline-image {
