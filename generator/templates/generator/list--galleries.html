@@ -6,6 +6,11 @@
 
 {% block subnav %}
   <ul>
+    {% if galleries %}
+      <li>
+        <a href="#group--galleries">Galleries</a>
+      </li>
+    {% endif %}
     {% if videos %}
       <li>
         <a href="#group--videos">Videos</a>
@@ -21,7 +26,7 @@
 
 {% block before_content %}
   <div class="item item-type--page-title">
-    <h1>Gallery</h1>
+    <h1 id="group--galleries">Gallery</h1>
   </div>
 {% endblock %}
 
