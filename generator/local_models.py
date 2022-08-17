@@ -235,6 +235,7 @@ class Voice (Model):
 class Gallery (Model):
   plural = 'galleries'
   generateListPage = True
+  generateSinglePages = False
   referenceTemplate = 'generator/snippets/references/gallery.html'
   listPageTemplate = 'generator/list--galleries.html'
 
