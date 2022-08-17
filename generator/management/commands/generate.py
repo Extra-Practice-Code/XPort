@@ -34,8 +34,6 @@ FIELD_TIME_FORMAT = '%H:%M'
 from filer.utils.filer_easy_thumbnails import ThumbnailerNameMixin
 
 def patched_get_thumbnail_name(self, thumbnail_options, transparent=False):
-    print('Patched thumbnailer')
-    print(thumbnail_options)
     """
     A version of ``Thumbnailer.get_thumbnail_name`` that produces a
     reproducible thumbnail name that can be converted back to the original

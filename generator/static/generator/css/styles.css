@@ -129,6 +129,12 @@ body {
   background-color: var(--color-light);
 }
 
+@supports (font-variation-settings: normal) {
+  html {
+    font-family: "Inter var", sans-serif;
+  }
+}
+
 body {
   display: flex;
   flex-direction: column;
