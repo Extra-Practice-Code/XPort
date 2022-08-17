@@ -130,7 +130,7 @@ body {
 }
 
 @supports (font-variation-settings: normal) {
-  html {
+  html, body {
     font-family: "Inter var", sans-serif;
   }
 }
