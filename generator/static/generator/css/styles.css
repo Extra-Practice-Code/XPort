@@ -960,7 +960,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 }
 
 .item-type--station {
-  grid-column: span 3;
+  grid-column: span 2;
 }
 
 .item-type--station.full {
@@ -987,7 +987,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 
 .item-type--station .item--description {
   display: block;
-  max-width: 30%;
+  max-width: 50%;
 }
 
 .item-type--station.full .item--description {
