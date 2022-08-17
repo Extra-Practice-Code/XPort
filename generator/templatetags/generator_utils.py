@@ -96,6 +96,10 @@ def without (links, forbidden):
   forbiddenContentTypes = list(map(str.strip, forbidden.split(',')))
   return list(filter(lambda l: l and l.resolved and not l.broken and l.target.contentType not in forbiddenContentTypes and l.source.contentType not in forbiddenContentTypes, links))
 
+@register.filter
+def only (links, allowed):
+  allowedContentTypes = list(map(str.strip, allowed.split(',')))
+  return list(filter(lambda l: l and l.resolved and not l.broken and (l.target.contentType in allowedContentTypes or l.source.contentType in allowedContentTypes), links))
 
 from random import shuffle
 @register.filter
