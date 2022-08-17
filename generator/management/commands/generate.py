@@ -85,7 +85,7 @@ def generate ():
         'collection': collection
       })
 
-  galleryImagesPage = collectionFor('page').get('gallery-images')
+  galleryImagesPage = collectionFor('snippet').get('gallery-images')
 
   output(os.path.join(outputdir, 'gallery.html'), 'generator/list--galleries.html', {
     'galleries': collectionFor('gallery').models,
@@ -105,8 +105,8 @@ def generate ():
 
 
   output(os.path.join(outputdir, 'index.html'), 'generator/index.html', { 
-    'home': collectionFor('page').get('home'),
-    'homeItems': collectionFor('page').get('home-items')
+    'home': collectionFor('snippet').get('home'),
+    'homeItems': collectionFor('snippet').get('home-items')
   })
 
 

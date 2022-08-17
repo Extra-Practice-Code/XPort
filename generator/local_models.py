@@ -272,6 +272,14 @@ class Page (Model):
       'summary': fields.Single(fields.SummaryField(model=self))
     }
 
+@contentType()
+class Snippet (Model):
+  generateSinglePages = False
+
+  def _metadataFields (self):
+    return {
+      'snippet': fields.Single(fields.StringField())
+    }
 
 @contentType()
 class Station (Model):
