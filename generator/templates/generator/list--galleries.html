@@ -48,14 +48,18 @@
     {% endfor %}
   {% endif %}
 
-  {% if images %}
-    <div class="item item-type--sub-title" id="group--images">
-      <h2>Images</h2>
-    </div>
-    
-    {% for object in images %}
-      {% include "generator/snippets/object-previews/image.html" %}
-    {% endfor %}
+  {% if galleryImagesPage %}
+    {% with images=galleryImagesPage.links|only:"image"}
+      {% if images %}
+        <div class="item item-type--sub-title" id="group--images">
+          <h2>Images</h2>
+        </div>
+        
+        {% for object in images %}
+          {% include "generator/snippets/object-previews/image.html" %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
   {% endif %}
   
 {% endblock %} 

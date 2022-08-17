@@ -90,7 +90,7 @@ def generate ():
   output(os.path.join(outputdir, 'gallery.html'), 'generator/list--galleries.html', {
     'galleries': collectionFor('gallery').models,
     'videos': collectionFor('video').models,
-    'images': galleryImagesPage.images if galleryImagesPage else [],
+    'galleryImagesPage': galleryImagesPage,
     'page_content': { 'content_type': 'gallery' }
   })
 
