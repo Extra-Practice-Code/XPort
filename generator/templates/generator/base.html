@@ -72,14 +72,14 @@
         <p id="modal--image-caption"></p>
       </div>
     </div>
-    <svg>
-      <defs>
+     <svg>
         <filter id="titleNoise">
           <feTurbulence
             numOctaves="5"
             baseFrequency="0.0050"
-            id="feTurbulence2360"
+            result="NOISE"
             type="fractalNoise"
+            id="feTurbulence2360"
           />
   
           <feDisplacementMap
@@ -87,21 +87,20 @@
             xChannelSelector="A"
             scale="40"
             in="SourceGraphic"
-            in2="feTurbulence2360"
-            id="feDisplacementMap2364"
+            in2="NOISE"
             numOctaves="5"
           />
         </filter>
-        <animate
-          xlink:href="#feTurbulence2360"
-          attributeName="baseFrequency"
-          dur="120s"
-          keyTimes="0;0.5;1"
-          values="0.003 0.005;0.008 0.008;0.003 0.005"
-          repeatCount="indefinite"
-        />
-      </defs>
-    </svg>
+        <animate 
+          xlink:href="#feTurbulence2360" 
+          attributeName="baseFrequency" 
+          dur="120s" 
+          keyTimes="0;0.5;1" 
+          values="0.003 0.005;0.008 0.008;0.003 0.005" 
+          repeatCount="indefinite">
+        </animate>
+
+      </svg> 
     <script>
       const rowHeight = 40,
             gapHeight = 20;

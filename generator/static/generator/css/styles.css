@@ -172,6 +172,9 @@ ul {
 svg {
   width: 0;
   height: 0;
+  max-width: 0;
+  max-height: 0;
+  visibility: hidden;
 }
 
 strong {
@@ -1093,6 +1096,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 
   .item-type--station.full > a:only-child .item--image-wrapper {
     margin: -20px -20px -5px -20px;
+    max-height: 70vw;
   }
 
   .item-type--station > a:only-child .item--image-wrapper {
