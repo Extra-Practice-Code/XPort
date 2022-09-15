@@ -134,17 +134,18 @@ class Video (Model):
     else:
       return None
 
-    thumbnail_dir = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
+
+    thumbnail_dir = "video_thumbnails"
     thumbnail_path = os.path.join(thumbnail_dir, filename)
 
-    if not os.path.exists(thumbnail_dir):
-      os.makedirs(thumbnail_dir)
+    if not os.path.exists(os.path.join(settings.MEDIA_ROOT, thumbnail_dir)):
+      os.makedirs(os.path.join(settings.MEDIA_ROOT, thumbnail_dir))
 
-    if not os.path.exists(thumbnail_path):
+    if not os.path.exists(os.path.join(settings.MEDIA_ROOT, thumbnail_path)):
       url = self._thumbnailRemoteURL
       res = requests.get(url, stream = True)
       if res.status_code == 200:
-        with open(thumbnail_path,'wb') as f:
+        with open(os.path.join(settings.MEDIA_ROOT, thumbnail_path),'wb') as f:
           f.write(res.content)
           f.close()
           
