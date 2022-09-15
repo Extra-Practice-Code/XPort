@@ -4,10 +4,8 @@
   class="item item-type--{{ object.contentType }} item--reference"
   data-item-object-type="{{ object.contentType }}"
 >
-  {% if object.vimeoId %} 
-  {% comment %} 
-  <img src="{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}" /> 
-  {% endcomment %}
+  {% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" as thumb %}
+  {% if object.vimeoId %}
   <iframe
     class="item--video"
     srcdoc="
@@ -28,8 +26,7 @@
         >
             <img
                 class='inline--video-img full'
-                src=
-    '{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'/>
+                src='{{ thumb.url }}'/>
             <svg
                 version='1.1'
                 viewBox='0 0 68 48'
@@ -64,7 +61,7 @@
         >
             <img
                 class='inline--video-img full'
-                src='{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'
+                src='{{ thumb.url }}'
             />
             <svg
                 version='1.1'
