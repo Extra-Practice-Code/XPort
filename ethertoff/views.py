@@ -404,6 +404,9 @@ def pad_write_public(request, pad): # pad_write
     padLink = pad.server.url + 'p/' + pad.publicpadid
     server = urlparse(pad.server.url)
     
+    path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
+    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+
     if request.user.is_authenticated:
         author = PadAuthor.objects.get(user=request.user)
         uname = str(author.user)
@@ -420,7 +423,8 @@ def pad_write_public(request, pad): # pad_write
             'server': server,
             'error': False,
             'mode' : 'write-public',
-            'uname': None
+            'uname': uname,
+            'crumbs': crumbs
         },
     )
 

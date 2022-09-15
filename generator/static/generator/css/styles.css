@@ -175,7 +175,7 @@ ul {
   margin: 0;
 }
 
-svg {
+svg#filter {
   width: 0;
   height: 0;
 }
@@ -1238,4 +1238,107 @@ figure {
 
 .list--tags li:not(:last-child):after {
   content: ",";
+}
+
+
+.player.player--inline {
+  display: flex;
+  padding-left: 45px;
+  min-height: 45px;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  margin-top: var(--line-height);
+  margin-bottom: var(--line-height);
+}
+
+
+.player--inline audio {
+  display: none;
+}
+
+
+.player--inline .button.button--play-pause {
+  border: none;
+  height: 45px;
+  width: 45px;
+  padding: 5px;
+  margin-left: -5px;
+  background-color: transparent;
+  color: inherit;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+.player--inline .button.button--play-pause:hover {
+  padding: 2px;
+}
+
+
+.player--inline .button--skip-backward,
+.player--inline .button--skip-forward {
+  display: none;
+}
+
+
+.player--inline[data-state="initial"] .button--label-pause,
+.player--inline[data-state="paused"] .button--label-pause,
+.player--inline[data-state="playing"] .button--label-play,
+.player--inline[data-state="loading"] .button--label-play {
+  display: none;
+}
+
+
+.button--label {
+  fill: currentColor;
+}
+
+.button--skip-forward,
+.button--skip-backward {
+  margin-right: .5em;
+}
+
+.player.player--inline .track {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  position: relative;
+  margin: 0 1em 0 0.5em;
+  background-color: white;
+}
+
+.player.player--inline .track--progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: currentColor;
+  width: 0;
+  bottom: 0;
+}
+
+.player.player--inline .track--scrubber {
+  position: absolute;
+  right: -.2em;
+  width: .4em;
+  height: .4em;
+  background: currentColor;
+  border-radius: .2em;
+  top: calc(2px - .2em);
+  cursor: pointer;
+}
+
+.player.player--inline[data-scrubbing] .track--scrubber,
+.player.player--inline .track--scrubber:hover {
+  right: -.3em;
+  width: .6em;
+  height: .6em;
+  border-radius: .3em;
+  top: calc(2px - .3em);
+}
+
+.player.player--inline .label--currentTime {
+	font-size: 75%;
+  letter-spacing: 0.1px;
 }

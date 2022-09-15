@@ -46,7 +46,7 @@ class Audio (Model):
 
   def _metadataFields (self):
     return {
-      'audio': fields.Single(fields.StringField()),
+      'audio': fields.SingleFileField(),
       'type': fields.Single(fields.StringField(['audio/mp3'])),
       'date': fields.Single(fields.DateField()),
       'tags': multiLinkMultiReverse(self, 'tag', 'images'),

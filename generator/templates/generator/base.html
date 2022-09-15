@@ -72,7 +72,7 @@
         <p id="modal--image-caption"></p>
       </div>
     </div>
-    <svg>
+    <svg id="filter">
       <defs>
         <filter id="titleNoise">
           <feTurbulence
@@ -164,6 +164,15 @@
       }
     </script>
     {% block bodyscript %}{% endblock %}
+    <script src="{{ STATIC_URL }}/js/inlineplayer.js"></script>
+    <script>
+      var els = document.querySelectorAll('.player.player--inline'),
+          players = [];
+  
+      for (var i=0; i < els.length; i++) {
+        players[i] = new InlinePlayer(els[i]);
+      }
+    </script>
     <script src="{{ STATIC_URL }}/js/script.js"></script>
   </body>
 </html>
