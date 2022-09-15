@@ -1,36 +1,62 @@
-{% comment %} <section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
+{% comment %}
+<section
+  class="video"
+  id="{{ link.id }}"
+  data-link-target-type="{{ object.contentType }}"
+  data-link-id="{{ link.id }}"
+>
   {% if object.title %}
-    <h3>{{  object.title }}</h3>
-  {% endif %}
+  <h3>{{ object.title }}</h3>
+  {% endif %} 
   {% if object.vimeoId %}
-    <iframe src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-    <!-- @FIXME find a way to include the player js only once -->
-    <script src="https://player.vimeo.com/api/player.js"></script>
+  <iframe
+    src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
+    frameborder="0"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+  ></iframe>
+  <!-- @FIXME find a way to include the player js only once -->
+  <script src="https://player.vimeo.com/api/player.js"></script>
   {% elif object.youtubeId %}
-    <iframe src="https://www.youtube-nocookie.com/embed/{{ object.youtubeId }}" style="min-height: 350px" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/{{ object.youtubeId }}"
+    style="min-height: 350px"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
   {% else %}
-    <video controls>
-      <source src="{{ object.video }}" type="{{ object.type }}">
-    </video>
+  <video controls>
+    <source src="{{ object.video }}" type="{{ object.type }}" />
+  </video>
+  {% endif %} {% if object.description %}
+  <p>{{ object.description }}</p>
   {% endif %}
-  {% if object.description %}
-    <p>
-      {{ object.description }}
-    </p>
-  {% endif %}
-</section> {% endcomment %}
+</section>
+{% endcomment %}
 
-
-<section class="video" id="{{ link.id }}" data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">
+<section
+  class="video"
+  id="{{ link.id }}"
+  data-link-target-type="{{ object.contentType }}"
+  data-link-id="{{ link.id }}"
+>
   {% if object.title %}
-    <h3>{{  object.title }}</h3>
-  {% endif %}
-
+  <h3>{{ object.title }}</h3>
+  {% endif %} 
   {% if object.vimeoId %}
-    <iframe src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-    <!-- @FIXME find a way to include the player js only once -->
-    <script src="https://player.vimeo.com/api/player.js"></script>
-    {% comment %} <iframe
+  <iframe
+    src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
+    frameborder="0"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    class="inline--video"
+  ></iframe>
+  <!-- @FIXME find a way to include the player js only once -->
+  <script src="https://player.vimeo.com/api/player.js"></script>
+  {% comment %}
+  <iframe
     srcdoc="
         <style>
             body, .full {
@@ -61,14 +87,15 @@
             </svg>
         </a>
     "
-    style="max-width: 640px; width: 100%; aspect-ratio: 16/9;"
+    style="max-width: 640px; width: 100%; aspect-ratio: 16/9"
     frameborder="0"
-    >
-    </iframe> {% endcomment %}
+  >
+  </iframe>
+  {% endcomment %} 
   {% elif object.youtubeId %}
   <iframe
-          class="inline--video"
-          srcdoc="
+    class="inline--video"
+    srcdoc="
               <style>
                   body, .full {
                       width: 100%;
@@ -98,17 +125,14 @@
                   </svg>
               </a>
           "
-          frameborder="0"
-        ></iframe>  
+    frameborder="0"
+  ></iframe>
   {% else %}
-    <video controls>
-      <source src="{{ object.video }}" type="{{ object.type }}">
-    </video>
-  {% endif %}
-  
+  <video controls>
+    <source src="{{ object.video }}" type="{{ object.type }}" />
+  </video>
+  {% endif %} 
   {% if object.description %}
-    <p>
-      {{ object.description }}
-    </p>
+  <p>{{ object.description }}</p>
   {% endif %}
 </section>
