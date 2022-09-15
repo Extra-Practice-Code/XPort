@@ -72,35 +72,35 @@
         <p id="modal--image-caption"></p>
       </div>
     </div>
-     <svg>
-        <filter id="titleNoise">
-          <feTurbulence
-            numOctaves="5"
-            baseFrequency="0.0050"
-            result="NOISE"
-            type="fractalNoise"
-            id="feTurbulence2360"
-          />
-  
-          <feDisplacementMap
-            yChannelSelector="A"
-            xChannelSelector="A"
-            scale="40"
-            in="SourceGraphic"
-            in2="NOISE"
-            numOctaves="5"
-          />
-        </filter>
-        <animate 
-          xlink:href="#feTurbulence2360" 
-          attributeName="baseFrequency" 
-          dur="120s" 
-          keyTimes="0;0.5;1" 
-          values="0.003 0.005;0.008 0.008;0.003 0.005" 
-          repeatCount="indefinite">
-        </animate>
+    <svg id="filter">
+      <filter id="titleNoise">
+        <feTurbulence
+          numOctaves="5"
+          baseFrequency="0.0050"
+          result="NOISE"
+          type="fractalNoise"
+          id="feTurbulence2360"
+        />
 
-      </svg> 
+        <feDisplacementMap
+          yChannelSelector="A"
+          xChannelSelector="A"
+          scale="40"
+          in="SourceGraphic"
+          in2="NOISE"
+          numOctaves="5"
+        />
+      </filter>
+      <animate 
+        xlink:href="#feTurbulence2360" 
+        attributeName="baseFrequency" 
+        dur="120s" 
+        keyTimes="0;0.5;1" 
+        values="0.003 0.005;0.008 0.008;0.003 0.005" 
+        repeatCount="indefinite">
+      </animate>
+
+    </svg> 
     <script>
       const rowHeight = 40,
             gapHeight = 20;
@@ -163,6 +163,15 @@
       }
     </script>
     {% block bodyscript %}{% endblock %}
+    <script src="{{ STATIC_URL }}/js/inlineplayer.js"></script>
+    <script>
+      var els = document.querySelectorAll('.player.player--inline'),
+          players = [];
+  
+      for (var i=0; i < els.length; i++) {
+        players[i] = new InlinePlayer(els[i]);
+      }
+    </script>
     <script src="{{ STATIC_URL }}/js/script.js"></script>
   </body>
 </html>

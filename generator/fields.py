@@ -324,6 +324,17 @@ class SingleImageField (Single):
     return self.value.url if self.value else ''
 
 
+class SingleFileField (Single):
+  def __init__ (self):
+    self.field = FileField()
+
+  def __repr__(self):
+    return self.value.canonical_url if self.value else ''
+
+  def __str__ (self):
+    return self.value.canonical_url if self.value else ''
+    # return self.value.url if self.value else ''
+
 
 class DateField (Field):
   def isRange (self, value):
@@ -407,7 +418,8 @@ class StringField(Field):
     else:
       return None
 
-from filer.models import Image
+from filer.models import Image, File
+
 
 class ImageField(Field):
   # re_file_id_from_url = re.compile(r'canonical/(?P<uploaded_at>[0-9]+)/(?P<file_id>[0-9]+)/$')
@@ -428,6 +440,28 @@ class ImageField(Field):
       # Fixme, better solution for unfound image.
       return Image()
       return None
+
+
+class FileField(Field):
+  # re_file_id_from_url = re.compile(r'canonical/(?P<uploaded_at>[0-9]+)/(?P<file_id>[0-9]+)/$')
+
+  # def parse (self, value):
+  #   print(value)
+  #   m = self.re_file_id_from_url.search(value)
+  #   print(m, type(Image.objects.get(pk=m.group('file_id'), is_public=True)))
+  #   if m:
+  #     return Image.objects.get(pk=m.group('file_id'), is_public=True)
+  #   else:
+  #     return None
+
+  def parse (self, value):
+    try:
+      return File.objects.get(pk=value, is_public=True)
+    except ObjectDoesNotExist:
+      # Fixme, better solution for unfound image.
+      return File()
+      return None
+
 
 class MarkdownField(Field):
   def parse (self, value):
