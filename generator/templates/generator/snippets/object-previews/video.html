@@ -1,7 +1,11 @@
+{% load thumbnail %}
+
 <div
   class="item item-type--{{ object.contentType }} item--reference"
   data-item-object-type="{{ object.contentType }}"
 >
+
+  <img src="{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}" />
   {% if object.vimeoId %}
   {% comment %}
   <div style="padding: 56.25% 0 0 0; position: relative">

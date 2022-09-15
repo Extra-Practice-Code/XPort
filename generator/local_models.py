@@ -1,5 +1,5 @@
-from pydoc import pager
-from generator import fields, links
+from generator.utils import debug
+from generator import fields
 from generator.models import Model, keyFilter
 from generator.links import linkMultiReverse, multiLinkMultiReverse, multiLinkReverse
 from generator.collection import contentType, InstantiatingCollection
@@ -7,14 +7,11 @@ import re
 import requests
 from django.urls import reverse
 from django.core.files.images import ImageFile
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 import os.path
+from time import sleep
 
-from urllib.request import urlopen
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
@@ -109,45 +106,59 @@ class Video (Model):
   #     image = retreiveFromCache
   #   # Should return an Image()
   
-  # @property
-  # def thumbnailLink(self):
-  #   if self.youtubeId:
-  #       return f"http://img.youtube.com/vi/{self.youtubeId}/maxresdefault.jpg"
+  @property
+  def _thumbnailRemoteURL(self):
+    if self.youtubeId:
+      return "http://img.youtube.com/vi/{}/maxresdefault.jpg".format(self.youtubeId)
 
-  #   elif self.vimeoId:
-  #       requestLink = f"https://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/{self.vimeoId}"
-  #       r = requests.get(requestLink)
-  #       return r.json()['thumbnail_url']
-  #   else:
-  #     return None
+    elif self.vimeoId:
+      requestURL = "https://vimeo.com/api/oembed.json?url=http%3A//vimeo.com/{}".format(self.vimeoId)
+
+      for _ in range(5):
+        try:
+          r = requests.get(requestURL)
+          return r.json()['thumbnail_url']
+        finally:
+          debug("Could not retreive Vimeo thumbnail with {}".format(requestURL))
+          sleep(.25)
+          pass
+    else:
+      return None
   
-  # @property
-  # def thumb(self):
-  #   if self.youtubeId:
-  #     file_name = self.youtubeId
-  #   elif self.vimeoId:
-  #     file_name = self.vimeoId
-  #   else:
-  #     return None
+  @property
+  def thumbnailPath (self):
+    if self.youtubeId:
+      filename = '{}.jpg'.format(self.youtubeId)
+    elif self.vimeoId:
+      filename = '{}.jpg'.format(self.vimeoId)
+    else:
+      return None
 
-  #   path = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
+    thumbnail_dir = os.path.join(settings.MEDIA_ROOT, "video_thumbnails")
+    thumbnail_path = os.path.join(thumbnail_dir, filename)
 
-  #   if not os.path.exists(path):
-  #     os.makedirs(path)
+    if not os.path.exists(thumbnail_dir):
+      os.makedirs(thumbnail_dir)
 
-  #   # if not Path(f"{file_name}.jpg").is_file():
-  #   res = requests.get(self.thumbnailLink, stream = True)
-
-  #   if res.status_code == 200:
-  #       with open(os.path.join(path, "{}.jpg".format(file_name)),'wb') as f:
-  #         file = ImageFile(f)
-  #         file.write(res.content)
-  #         file.save()
-  #       print('Image sucessfully Downloaded: ',file_name)
-  #   else:
-  #       print('Image Couldn\'t be retrieved')
+    if not os.path.exists(thumbnail_path):
+      url = self._thumbnailRemoteURL
+      res = requests.get(url, stream = True)
+      if res.status_code == 200:
+        with open(thumbnail_path,'wb') as f:
+          f.write(res.content)
+          f.close()
+          
+      else:
+          print('Image Couldn\'t be retrieved')
     
-  #   return file
+    # with open(os.path.join(thumbnail_path, 'rb')) as f:
+    # file = ImageFile(f)
+
+    return thumbnail_path
+
+  @property
+  def thumbnailURL (self):
+    return settings.MEDIA_URL + self.thumbnailPath()
 
   def _metadataFields (self):
     return {
