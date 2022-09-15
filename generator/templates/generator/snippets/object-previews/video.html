@@ -1,11 +1,26 @@
-<div class="item item-type--{{ object.contentType }} item--reference" data-item-object-type="{{ object.contentType }}">
+<div
+  class="item item-type--{{ object.contentType }} item--reference"
+  data-item-object-type="{{ object.contentType }}"
+>
   {% if object.vimeoId %}
-    <div style="padding: 56.25% 0 0 0; position: relative; ">
-      <iframe src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-      <!-- @FIXME find a way to include the player js only once -->
-      <script src="https://player.vimeo.com/api/player.js"></script>
-    </div> 
-    {% comment %} <iframe
+  {% comment %}
+  <div style="padding: 56.25% 0 0 0; position: relative">
+  {% endcomment %}
+    <iframe
+      src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
+      frameborder="0"
+      allow="autoplay; fullscreen"
+      allowfullscreen
+      class="item--video"
+    ></iframe>
+    <!-- @FIXME find a way to include the player js only once -->
+    <script src="https://player.vimeo.com/api/player.js"></script>
+  {% comment %}
+  </div>
+  {% endcomment %}
+  {% comment %}
+  <iframe
+    class="item--video"
     srcdoc="
         <style>
             body, .full {
@@ -19,12 +34,12 @@
             }
         </style>
         <a
-            href='https://player.vimeo.com/video/{{ object.vimeoId }}?autoplay=1&autopause=0'
             class='inline--video-link full'
+            href='https://player.vimeo.com/video/{{ object.vimeoId }}?autoplay=1&autopause=0'
         >
             <img
-                src='https://vumbnail.com/{{ object.vimeoId}}.jpg'
                 class='inline--video-img full'
+                src='https://vumbnail.com/{{ object.vimeoId}}.jpg'
             />
             <svg
                 version='1.1'
@@ -36,13 +51,12 @@
             </svg>
         </a>
     "
-    style="max-width: 640px; width: 100%; aspect-ratio: 16/9;"
     frameborder="0"
-    >
-    </iframe> {% endcomment %}
-  {% elif object.youtubeId %}
-    <iframe
-    class="inline--video"
+  >
+  </iframe>
+  {% endcomment %} {% elif object.youtubeId %}
+  <iframe
+    class="item--video"
     srcdoc="
         <style>
             body, .full {
@@ -75,15 +89,12 @@
     "
     frameborder="0"
   >
-    </iframe>  
+  </iframe>
   {% else %}
-    <video controls>
-      <source src="{{ object.video }}" type="{{ object.type }}">
-    </video>
-  {% endif %}
-  {% if object.description %}
-    <p>
-      {{ object.description }}
-    </p>
+  <video controls>
+    <source src="{{ object.video }}" type="{{ object.type }}" />
+  </video>
+  {% endif %} {% if object.description %}
+  <p>{{ object.description }}</p>
   {% endif %}
 </div>
