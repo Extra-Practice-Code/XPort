@@ -23,11 +23,13 @@
               </h2>
             {% endif %}
 
+            {% comment %} 
             {% if object.date %}
               <p class="item--description-date">
                   {{ object.date }}
               </p>
-            {% endif %}
+            {% endif %} 
+            {% endcomment %}
             
             {% if object.question %}
               <h3 class="item--description-question">
