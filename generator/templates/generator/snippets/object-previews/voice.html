@@ -1,5 +1,5 @@
 {% load thumbnail %}
-<div class="item item-type--voice item--reference" data-item-object-type="voice">
+<div class="item item-type--voice item--reference" data-item-object-type="{{ object.type }}">
   <a href="{{ object.url }}">
     
     {% if object.images %}
