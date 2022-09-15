@@ -4,25 +4,10 @@
   class="item item-type--{{ object.contentType }} item--reference"
   data-item-object-type="{{ object.contentType }}"
 >
-
-  <img src="{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}" />
-  {% if object.vimeoId %}
-  {% comment %}
-  <div style="padding: 56.25% 0 0 0; position: relative">
+  {% if object.vimeoId %} 
+  {% comment %} 
+  <img src="{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}" /> 
   {% endcomment %}
-    <iframe
-      src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
-      frameborder="0"
-      allow="autoplay; fullscreen"
-      allowfullscreen
-      class="item--video"
-    ></iframe>
-    <!-- @FIXME find a way to include the player js only once -->
-    <script src="https://player.vimeo.com/api/player.js"></script>
-  {% comment %}
-  </div>
-  {% endcomment %}
-  {% comment %}
   <iframe
     class="item--video"
     srcdoc="
@@ -43,8 +28,8 @@
         >
             <img
                 class='inline--video-img full'
-                src='https://vumbnail.com/{{ object.vimeoId}}.jpg'
-            />
+                src=
+    '{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'/>
             <svg
                 version='1.1'
                 viewBox='0 0 68 48'
@@ -53,12 +38,12 @@
             >
                 <path d='M 45,24 27,14 27,34' fill='#fff'></path>
             </svg>
-        </a>
-    "
+        </a>"
     frameborder="0"
   >
   </iframe>
-  {% endcomment %} {% elif object.youtubeId %}
+
+  {% elif object.youtubeId %}
   <iframe
     class="item--video"
     srcdoc="
@@ -79,7 +64,7 @@
         >
             <img
                 class='inline--video-img full'
-                src='http://img.youtube.com/vi/{{ object.youtubeId }}/maxresdefault.jpg'
+                src='{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'
             />
             <svg
                 version='1.1'

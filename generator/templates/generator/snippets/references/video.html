@@ -1,4 +1,4 @@
-{% comment %}
+{% load thumbnail %}
 <section
   class="video"
   id="{{ link.id }}"
@@ -9,53 +9,6 @@
   <h3>{{ object.title }}</h3>
   {% endif %} 
   {% if object.vimeoId %}
-  <iframe
-    src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
-    frameborder="0"
-    allow="autoplay; fullscreen"
-    allowfullscreen
-  ></iframe>
-  <!-- @FIXME find a way to include the player js only once -->
-  <script src="https://player.vimeo.com/api/player.js"></script>
-  {% elif object.youtubeId %}
-  <iframe
-    src="https://www.youtube-nocookie.com/embed/{{ object.youtubeId }}"
-    style="min-height: 350px"
-    title="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe>
-  {% else %}
-  <video controls>
-    <source src="{{ object.video }}" type="{{ object.type }}" />
-  </video>
-  {% endif %} {% if object.description %}
-  <p>{{ object.description }}</p>
-  {% endif %}
-</section>
-{% endcomment %}
-
-<section
-  class="video"
-  id="{{ link.id }}"
-  data-link-target-type="{{ object.contentType }}"
-  data-link-id="{{ link.id }}"
->
-  {% if object.title %}
-  <h3>{{ object.title }}</h3>
-  {% endif %} 
-  {% if object.vimeoId %}
-  <iframe
-    src="https://player.vimeo.com/video/{{ object.vimeoId }}?color=ffffff&title=0&byline=0&portrait=0"
-    frameborder="0"
-    allow="autoplay; fullscreen"
-    allowfullscreen
-    class="inline--video"
-  ></iframe>
-  <!-- @FIXME find a way to include the player js only once -->
-  <script src="https://player.vimeo.com/api/player.js"></script>
-  {% comment %}
   <iframe
     srcdoc="
         <style>
@@ -74,7 +27,7 @@
             class='inline--video-link full'
         >
             <img
-                src='https://vumbnail.com/{{ object.vimeoId}}.jpg'
+                src='{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'
                 class='inline--video-img full'
             />
             <svg
@@ -91,7 +44,7 @@
     frameborder="0"
   >
   </iframe>
-  {% endcomment %} 
+
   {% elif object.youtubeId %}
   <iframe
     class="inline--video"
@@ -113,7 +66,7 @@
               >
                   <img
                       class='inline--video-img full'
-                      src='http://img.youtube.com/vi/{{ object.youtubeId }}/maxresdefault.jpg'
+                      src='{% thumbnail object.thumbnailPath 600x400 upscale dither="#000000" %}'
                   />
                   <svg
                       version='1.1'
@@ -131,7 +84,8 @@
   <video controls>
     <source src="{{ object.video }}" type="{{ object.type }}" />
   </video>
-  {% endif %} 
+  {% endif %}
+
   {% if object.description %}
   <p>{{ object.description }}</p>
   {% endif %}
