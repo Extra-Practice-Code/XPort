@@ -724,15 +724,9 @@ main > .item-type--page-title {
 }
 
 .item-type--video,
+.item-type--audio,
 .item-type--main {
   grid-column: span 2;
-}
-
-@media screen and (max-width: 900px) {
-  .item-type--video,
-  .item-type--main {
-    grid-column-end: span 2;
-  }
 }
 
 [data-content-type="tag"] .item-type--main {
@@ -1345,25 +1339,31 @@ figure {
 
 .player.player--inline .track--scrubber {
   position: absolute;
-  right: -.2em;
-  width: .4em;
-  height: .4em;
+  right: -.3em;
+  width: .6em;
+  height: .6em;
   background: currentColor;
-  border-radius: .2em;
-  top: calc(2px - .2em);
+  border-radius: .3em;
+  top: calc(2px - .3em);
   cursor: pointer;
 }
 
 .player.player--inline[data-scrubbing] .track--scrubber,
 .player.player--inline .track--scrubber:hover {
-  right: -.3em;
-  width: .6em;
-  height: .6em;
-  border-radius: .3em;
-  top: calc(2px - .3em);
+  right: -.4em;
+  width: .8em;
+  height: .8em;
+  border-radius: .8em;
+  top: calc(2px - .4em);
 }
 
 .player.player--inline .label--currentTime {
-	font-size: 75%;
+	font-size: var(--font-size--smaller);
   letter-spacing: 0.1px;
+}
+
+.item-type--audio .player.player--inline {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-right: 15px;
 }

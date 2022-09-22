@@ -150,6 +150,7 @@ def generate ():
   output(os.path.join(outputdir, 'gallery.html'), 'generator/list--galleries.html', {
     'galleries': collectionFor('gallery').models,
     'videos': collectionFor('video').models,
+    'audio': collectionFor('audio').models,
     'galleryImagesPage': galleryImagesPage,
     'page_content': { 'content_type': 'gallery' }
   })
