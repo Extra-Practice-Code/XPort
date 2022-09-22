@@ -1367,3 +1367,8 @@ figure {
   margin-bottom: 0;
   padding-right: 15px;
 }
+
+[data-link-target-type="audio"] .player.player--inline {
+  border: 2px solid;
+  padding-right: 15px;
+}
