@@ -1301,11 +1301,9 @@ figure {
   display: none;
 }
 
-
-.player--inline[data-state="initial"] .button--label-pause,
-.player--inline[data-state="paused"] .button--label-pause,
-.player--inline[data-state="playing"] .button--label-play,
-.player--inline[data-state="loading"] .button--label-play {
+/* .player--inline[data-state="loading"] .button--label-play, */
+.player--inline[data-playing="false"] .button--label-pause,
+.player--inline[data-playing="true"] .button--label-play {
   display: none;
 }
 
@@ -1368,7 +1366,15 @@ figure {
   padding-right: 15px;
 }
 
-[data-link-target-type="audio"] .player.player--inline {
+[data-link-target-type="audio"] {
+  --font-size: var(--font-size--normal);
+  --line-height: var(--line-height--normal);
   border: 2px solid;
+  padding: 10px;
+}
+
+[data-link-target-type="audio"] .player.player--inline {
   padding-right: 15px;
+  margin-top: 0;
+  margin-bottom: 0;
 }

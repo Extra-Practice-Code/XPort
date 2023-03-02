@@ -47,6 +47,7 @@
     this.state = {
       player:  {
         state: STATE_INITIAL,
+        playing: false,
         currentTime: 0,
         scrubbing: false,
         scrubbingStart: 0,
@@ -69,10 +70,12 @@
   InlinePlayer.prototype = {
     addEventListeners: function () {
       this.els.media.addEventListener('play', function () {
+        this.state.player.playing = !this.els.media.paused;
         this.setPlayerState(STATE_PLAYING);
       }.bind(this));
 
       this.els.media.addEventListener('pause', function () {
+        this.state.player.playing = !this.els.media.paused;
         this.setPlayerState(STATE_PAUSED);
       }.bind(this));
 
@@ -133,8 +136,10 @@
     initPlayer: function () {
       this.state.player.currentTime = this.els.media.currentTime;
       this.state.media.duration = this.els.media.duration;
+      this.state.player.playing = !this.els.media.paused;
       this.els.media.volume = 1;
       this.el.dataset.state = this.state.player.state;
+      this.el.dataset.playing = this.state.player.playing;
 
       if (this.els.track) {
         var trackSizeObserver = new ResizeObserver(this.updateTrackSize.bind(this));
@@ -148,6 +153,7 @@
     setPlayerState: function (nextState) {
       this.state.player.state = nextState;
       this.el.dataset.state = this.state.player.state;
+      this.el.dataset.playing = this.state.player.playing;
     },
 
     play: function () {
