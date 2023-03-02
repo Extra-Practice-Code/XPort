@@ -8,6 +8,9 @@
   {% if object.vimeoId or object.youtubeId %}
   <iframe
     class="item--video"
+    webkitallowfullscreen 
+    mozallowfullscreen 
+    allowfullscreen
     srcdoc="
         <style>
               body, .full {
