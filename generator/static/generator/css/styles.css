@@ -1002,6 +1002,7 @@ body[data-content-type="gallery"] .item-type--main figure {
   /* max-height: 400px; */
   aspect-ratio: 2/1;
   margin: -20px 5px -20px -20px;
+  max-width: 60%;
 }
 
 .item-type--station > a:only-child .item--image-wrapper {
@@ -1013,6 +1014,7 @@ body[data-content-type="gallery"] .item-type--main figure {
 .item-type--station .item--description {
   display: block;
   max-width: 50%;
+  min-width: 40%;
 }
 
 .item-type--station.full .item--description {
