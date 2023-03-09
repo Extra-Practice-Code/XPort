@@ -24,7 +24,6 @@ let inlineArray = [];
 let imageType = "none";
 let imgIndex = 0;
 
-console.log(modalVideo.srcdoc);
 
 const setModalTitle = (input) => {
   modalTitle.innerHTML = input;
@@ -39,7 +38,6 @@ const setImage = (input) => {
 
 //TODO add support for VIMEO videos.
 const setVideo = (input) => {
-  console.log(input);
   modalVideo.srcdoc = `
     <style>
     body, .full {
@@ -121,7 +119,7 @@ const updateModal = (input, idx) => {
   if (input.contentType != "video") {
     setImage(input);
   } else {
-      setVideo(input)
+    setVideo(input)
   }
   setAuthor(input);
   setTitle(input);
@@ -213,3 +211,20 @@ window.onkeydown = (e) => {
 closeBtn.onclick = closeModal;
 leftBtn.onclick = prevImg;
 rightBtn.onclick = nextImg;
+
+
+
+const animatedTitle = document.querySelectorAll('.item-type--page-title > *')
+const observer = new IntersectionObserver((entries, _observer) => {
+  entries.forEach((entry) => {
+    entry.isIntersecting ?
+      entry.target.parentElement.style.filter = "url(#titleNoise)" :
+      entry.target.parentElement.style.filter = "none"
+  })
+}, {});
+animatedTitle.forEach((title) => {
+  observer.observe(title);
+});
+
+
+
