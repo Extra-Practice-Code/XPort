@@ -60,7 +60,7 @@ def addContextForReferences (html, links):
         # for the marked link
         if context:
           for a in context.select('a'):
-            if a['data-link-id'] == link_id:
+            if 'data-link-id' in a and a['data-link-id'] == link_id:
               span = soup.new_tag('span')
               span['data-link-marked'] = 'true'
               span['class'] = 'inline-reference'
