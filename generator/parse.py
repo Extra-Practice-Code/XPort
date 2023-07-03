@@ -2,6 +2,8 @@ import markdown
 import os.path
 import urllib
 
+from ethertoff.utils import getPadMarkdown
+
 from generator.models import resolveReferences
 from generator.collection import collectionFor, UnknownContentTypeError, knownContentType
 from generator.utils import error, info, debug, warn, keyFilter
@@ -107,7 +109,9 @@ def parse_pads ():
     info('Reading {}'.format(pad.display_slug))
 
     try:
-      source = epclient.getText(padID)['text']
+      source = getPadMarkdown(pad).strip()
+      print(source)
+      # source = epclient.getText(padID)['text']
     except ValueError:
       warn('Could not find pad {}'.format(pad.display_slug))
       continue
@@ -186,7 +190,7 @@ def parse_pads ():
       content, links = resolveReferences(model) # Second return are the collected references
       # render markdown
       debug('Parsing markdown')
-      md = markdown.Markdown(extensions=['extra', TocExtension(baselevel=2), 'attr_list'])
+      md = markdown.Markdown(**settings.MARKDOWN_SETTINGS)
       model.content = mark_safe(md.convert(content))
       # Load context into references?
       if model.content:

@@ -5,173 +5,66 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block page_title %}A Seat for the Sea{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/fonts/Inter.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/styles.css" />
+    <title>{% block page_title %}Going Hybrid!{% endblock %}</title>
+    <style>
+      :root {
+        --font-size: 10pt;
+        --line-height: 14pt;
+        --font-family: "sans-serif";
+      }
+
+      body, html {
+        font-size: var(--font-size);
+        line-height: var(--font-size);
+        font-family: var(--font-family);
+      }
+
+      body {
+        max-width: 80ch;
+        margin: 1em 2em;
+        display: grid;
+        grid-template-rows: min-content 1fr;
+      }
+
+      header {
+        display: flex;
+        vertical-align: baseline;
+        margin: 2em 0;
+      }
+
+      nav ul {
+        list-style-type: none;
+        display: flex;
+        align-items: baseline;
+        margin: 0;
+        padding: 0;
+      }
+
+      nav ul li {
+        margin: 0 2ch 0 0;
+      }
+    </style>
   </head>
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
-      <div id="nav--titles">
-        {% get_object "page" "re-pulse" as page_re_pulse %}
-        <h1 id="nav--titles-repulse" {% if page_content.model == page_re_pulse %}class="selected"{% endif %}><a href="{{ page_re_pulse.url }}">Re-Pulse</a></h1>
-        <h1 id="nav--titles-asfts" {% if page_content.model != page_re_pulse %}class="selected"{% endif %}><a href="{{ SITE_URL }}/index.html">A Seat for the Sea</a></h1>
-      </div>
-      <nav id="nav--main">
+      <nav id="nav">
         <ul>
-          <li {% if page_content.content_type == "station" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/stations.html">Stations</a>
+          <li>
+            <a href="{{ SITE_URL }}">Going Hybrid!</a>
           </li>
-          <li {% if page_content.content_type == "voice" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/voices.html">Voices</a>
-          </li>
-          <li {% if page_content.content_type == "reflection" or page_content.content_type == "contribution" or page_content.content_type == "preview-review" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/reflections.html">Reflections</a>
-          </li>
-          <li {% if page_content.content_type == "gallery" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/gallery.html">Gallery</a>
+          <li {% if page_content.content_type == "report" %}class="selected"{% endif %}>
+            <a href="{{ SITE_URL }}/reports.html">Reports</a>
           </li>
           <li {% if page_content.content_type == "tag" %}class="selected"{% endif %}>
             <a href="{{ SITE_URL }}/tags.html">Tags</a>
-          </li>
-          {% get_object "page" "about" as page_about %}
-          <li {% if page_about and page_content.model == page_about %}class="selected"{% endif %}>
-            <a href="{{ page_about.url }}">About</a>
           </li>
         </ul>
       </nav>
       <nav id="nav--sub">{% block subnav %}{% endblock %}</nav>
     </header>
     <main>
-      {% block before_content %}{% endblock %}
-      <div id="container" class="{% block content_class %}{% endblock %}">
-        {% block content %}
-        {% endblock %}
-      </div>
+      {% block content %}
+      {% endblock %}
     </main>
-    <div id="modalbox" class="modal">
-      <span class="modal--counter"></span>
-      <h2 id="modal--gallery-title"></h2>
-      <span class="modal--nav close">&times;</span>
-
-      <span class="modal--nav arrow leftArrow">&ShortLeftArrow;</span>
-      <div class="modal--content">
-        <img id="modal--image" />
-        {% comment %} <iframe id="modal--video-youtube"  style="min-height: 350px" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> {% endcomment %}
-        <iframe
-          id="modal--video"
-          srcdoc=""
-          frameborder="0"
-        ></iframe>
-      </div>
-      <span class="modal--nav arrow rightArrow">&ShortRightArrow;</span>
-      
-      
-      <p id="modal--image-author"></p>
-      <div class="modal--text">
-        <h3 id="modal--image-title"></h3>
-        <p id="modal--image-caption"></p>
-      </div>
-    </div>
-    <svg id="filter">
-      <filter id="titleNoise">
-        <feTurbulence
-          numOctaves="5"
-          baseFrequency="0.0050"
-          result="NOISE"
-          type="fractalNoise"
-          id="feTurbulence2360"
-        />
-
-        <feDisplacementMap
-          yChannelSelector="A"
-          xChannelSelector="A"
-          scale="40"
-          in="SourceGraphic"
-          in2="NOISE"
-          numOctaves="5"
-        />
-      </filter>
-      <animate 
-        xlink:href="#feTurbulence2360" 
-        attributeName="baseFrequency" 
-        dur="120s" 
-        keyTimes="0;0.5;1" 
-        values="0.003 0.005;0.008 0.008;0.003 0.005" 
-        repeatCount="indefinite">
-      </animate>
-
-    </svg> 
-    <script>
-      const rowHeight = 40,
-            gapHeight = 20;
-
-      if (window.ResizeObserver) {
-        const resizeObserver = new ResizeObserver(entries => {
-          
-          for (let entry of entries) {
-            let height;
-            if(entry.borderBoxSize && entry.borderBoxSize.length > 0) {
-              height = entry.borderBoxSize[0].blockSize;
-            } else {
-              height = entry.contentRect.height;
-            }
-  
-            let span = Math.ceil(height / (rowHeight + gapHeight));
-  
-            if (span * (rowHeight + gapHeight) - gapHeight < height) {
-              span += 1
-            }
-  
-            entry.target.style.gridRowEnd = 'span ' + span;
-          }
-        });
-  
-        var container = document.getElementById('container');
-  
-        if (!container.classList.contains('prevent--resizing-blocks')) {
-          var blocks = container.children;
-    
-          for (let i = 0; i < blocks.length; i++) {
-            resizeObserver.observe(blocks[i]);
-          }
-        }
-      }
-      else {
-        var container = document.getElementById('container'),
-            determineSize = function (el) {
-              let rect = el.getBoundingClientRect(),
-                  height = rect.height
-                  span = Math.ceil(height / (rowHeight + gapHeight));
-    
-              if (span * (rowHeight + gapHeight) - gapHeight < height) {
-                span += 1
-              }
-    
-              el.style.gridRowEnd = 'span ' + span;
-            };
-  
-        
-
-        if (!container.classList.contains('prevent--resizing-blocks')) {
-          var blocks = container.children;
-    
-          for (let i = 0; i < blocks.length; i++) {
-            // resizeObserver.observe(blocks[i]);
-            determineSize(blocks[i]);
-          }
-        }
-      }
-    </script>
-    {% block bodyscript %}{% endblock %}
-    <script src="{{ STATIC_URL }}/js/inlineplayer.js"></script>
-    <script>
-      var els = document.querySelectorAll('.player.player--inline'),
-          players = [];
-  
-      for (var i=0; i < els.length; i++) {
-        players[i] = new InlinePlayer(els[i]);
-      }
-    </script>
-    <script src="{{ STATIC_URL }}/js/script.js"></script>
   </body>
 </html>

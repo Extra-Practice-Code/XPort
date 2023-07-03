@@ -42,5 +42,16 @@
 {% endblock %}
 
 {% block rightside %}
+  <details open class="syntax-help">
+    <summary>Tags</summary>
+    <ul>
+      {% for tag in tags %}
+        <li>
+          {{ tag }}
+        </li>
+      {% endfor %}
+    </ul>
+  </details>
+  <br >
   {% include "partials/markdown-guide.html" %}
 {% endblock %}

@@ -2,12 +2,6 @@
 {% load generator_utils %}
 
 {% block extrabodyclass %}home{% endblock %}
-{% block before_content %}
-  <div class="item item-type--page-title">
-    {{ home.content }}
-  </div>
-{% endblock %}
-{% block content_class %}simple-grid prevent--resizing-blocks{% endblock %}
 {% block content %}  
-    {% include "generator/snippets/object-previews/list.html" with objects=homeItems.links|targets %}
+  <h1>Going Hybrid</h1>    
 {% endblock %}

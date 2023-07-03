@@ -45,6 +45,7 @@ from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
 # Generator commands
 from generator.management.commands.generate import generate as generateStatic
+from tags.utils import index_tags as indexTags
 from generator.collection import modelFor
 
 from . import forms as ethertoffForms
@@ -55,6 +56,9 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
+from tags.utils import load_tags
+
+from ethertoff.utils import getApiURL, getPadId, getEtherpadLiteClient, getPadText, getPadMarkdown
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
@@ -72,15 +76,20 @@ Etherpad’s HTML entities.
 cf http://fredericiana.com/2010/10/08/decoding-html-entities-to-text-in-python/
 """
 
-# Removed in Python 3.9
-# @Fixme, replace....
-# h = HTMLParser()
-# unescape = h.unescape
+try:
+    h = HTMLParser()
+    unescape = h.unescape
+except AttributeError:
+    import html
+    unescape = html.unescape
 
 """
 Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
+
+
+
 
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
@@ -502,7 +511,8 @@ def pad_write(request, pad):
             'uname': "{}".format(author.user),
             'error': False,
             'mode' : 'write',
-            'crumbs': crumbs
+            'crumbs': crumbs,
+            'tags': load_tags()
         },
     )
 
@@ -592,13 +602,14 @@ def pad_read(request, mode="r", slug=None):
         # Though is not alwasy dependable
         text = epclient.getHtml(padID)['html']
         # Quick and dirty hack to allow HTML in pads
-        # text = unescape(text)
+        text = unescape(text)
     else:
         # If a pad is named something.css, something.html, something.md etcetera,
         # we don’t want Etherpads automatically generated HTML, we want plain text.
-        text = epclient.getText(padID)['text']
+        # text = epclient.getText(padID)['text']
+        text = getPadMarkdown(pad)
         if extension in ['.md', '.markdown']:
-            md = markdown.Markdown(extensions=['extra', 'meta', TocExtension(baselevel=2), 'attr_list', InlineReferenceExtension()])
+            md = markdown.Markdown(**settings.MARKDOWN_SETTINGS)
             text = md.convert(text)
             try:
                 meta = md.Meta
@@ -732,6 +743,18 @@ def generate(request):
         tpl_params['generate'] = False
         tpl_params['message'] = ""
     return render(request, "generate.html", tpl_params)
+
+
+@login_required(login_url='/accounts/login')
+def index_tags (request):
+    tpl_params = {}
+    if request.method == 'POST':
+        tpl_params['indexed'] = True
+        tpl_params['tags'] = indexTags()
+    else:
+        tpl_params['indexed'] = False
+        tpl_params['tags'] = []
+    return render(request, "index_tags.html", tpl_params)
 
 
 @login_required(login_url='/accounts/login')

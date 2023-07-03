@@ -40,7 +40,8 @@
             <a class="button--nav screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
             <a class="button--nav screen" href="{% url 'password_change' %}">Change password</a>
             <a class="button--nav screen-only" href="{% url 'pad-create' %}">Create Pad</a>
-            <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}" target="_blank">File manager</a>
+            <!-- <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}" target="_blank">File manager</a> -->
+            <a class="button--nav screen-only" href="{% url 'index-tags' %}">Update tag list</a>
             <a class="button--nav screen-only" href="{% url 'generate' %}">Generate static version</a>
             <a class="button--nav screen-only" href="{% generated_site_url %}">View static version</a>
             <a class="button--nav screen-only" href="{% generated_site_debug_url %}">View debug information</a>

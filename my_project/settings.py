@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'etherpadlite',
     'generator',
+    'tags',
     'easy_thumbnails',
     'filer',
     'mptt',
-    'a_seat_for_the_sea',
+    'my_project',
     #'south'
 ]
 
@@ -59,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'a_seat_for_the_sea.urls'
+ROOT_URLCONF = 'my_project.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'a_seat_for_the_sea.wsgi.application'
+WSGI_APPLICATION = 'my_project.wsgi.application'
 
 
 # Database
@@ -151,6 +152,43 @@ PAD_NAMESPACE_SEPARATOR = '::'
 PAD_NAMESPACE_SEPARATOR_DISPLAY = ' → '
 MAX_PAD_SAVE_TRIES = 25
 
+from markdown.extensions.toc import TocExtension
+from markdown.extensions.footnotes import FootnoteExtension
+# from my_project.markdown_inline_reference import InlineReferenceExtension
+# from my_project.voice_extension import VoiceExtension
+# from mdx_figcaption import FigcaptionExtension
+from my_project.markdown_del_extension import DelExtension
+from my_project.markdown_underline_extension import UnderlineExtension
+# from my_project.markdown_raise_blockquote_classes import RaiseBlockquoteClassesExtension
+# from my_project.markdown_raise_figure_classes import RaiseFigureClassesExtension
+# from my_project.markdown_footnote_insertion_marker import FootnoteInsertionPointExtension
+
+MARKDOWN_SETTINGS = {
+    'extensions': [
+        'fenced_code',
+        FootnoteExtension(UNIQUE_IDS=True),
+        'attr_list',
+        'def_list',
+        'tables',
+        'abbr',
+        'md_in_html',
+        'meta', 
+        'smarty', 
+        TocExtension(baselevel=2), 
+        'attr_list',
+        DelExtension(), 
+        UnderlineExtension(),
+    ],
+    'extension_configs': {
+        'extra': {
+            'UNIQUE_IDS': True
+        },
+        'footnotes': {
+            'UNIQUE_IDS': True
+        }
+    }
+}
+
 try:
     LOCAL_SETTINGS
 except NameError:
@@ -171,7 +209,7 @@ THUMBNAIL_PROCESSORS = (
     #'easy_thumbnails.processors.scale_and_crop',
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters',
-    'a_seat_for_the_sea.thumbnail_processors.dither_processor',
+    'my_project.thumbnail_processors.dither_processor',
 )
 
 THUMBNAIL_EXTENSION = 'jpg'
@@ -193,4 +231,4 @@ THUMBNAIL_EXTENSION = 'jpg'
     Seems not really possible to work on this from the outside
 """
 
-THUMBNAIL_NAMER = 'a_seat_for_the_sea.namers.hashed_force_gif_on_dither'
+THUMBNAIL_NAMER = 'my_project.namers.hashed_force_gif_on_dither'

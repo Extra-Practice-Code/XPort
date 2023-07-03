@@ -10,7 +10,7 @@ py-mysql>=1.0
 #pyetherpadlite>=0.1
 -e git+https://github.com/devjones/PyEtherpadLite.git#egg=PyEtherpadLite
 #-e git+git://github.com/devjones/PyEtherpadLite.git#egg=PyEtherpadLite
-https://github.com/aleray/markdown-figures/archive/master.zip
+https://github.com/gijsdeheij/markdown-figures/archive/master.zip
 pyparsing>=2.2.0
 python-dateutil>=2.7.3
 pytz>=2018.4

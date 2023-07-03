@@ -2,18 +2,22 @@
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
 {% block content %}
-  <div class="item item-type--page-title">
-    <h1>{{ object }}</h1>
-  </div>
-  <div class="item item-type--main">
-    {% with object|merged_links|length as num_objects%}
-      <p>Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
-      {% if object.content %}
-        {{ object.content }}
-      {% endif %}
-    {% endwith %}
-  </div>
-
-  {% include "generator/snippets/object-previews/link-list-with-context.html" with links=object|merged_links only %}
+  <h6>{{ object.contentType }}</h6>
+  <h1>Tag: {{ object }}</h1>
+  {% with object|merged_links|length as num_objects%}
+    <p>Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
+    {% if object.content %}
+      {{ object.content }}
+    {% endif %}
+  {% endwith %}
+  <ul>
+    {% for object in object|merged_links %}
+      <li>
+        <a href="{{ object.target.url }}">
+          {{ object.target.contentType }}: {{ object }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
 
 {% endblock %}
