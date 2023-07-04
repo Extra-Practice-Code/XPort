@@ -13,8 +13,6 @@ import os
 # PyPi imports
 
 import markdown
-from markdown.extensions.toc import TocExtension
-from generator.markdown_inline_reference import InlineReferenceExtension
 # from mdx_semanticdata import SemanticDataExtension
 from py_etherpad import EtherpadLiteClient
 import dateutil.parser
@@ -37,7 +35,6 @@ from django.contrib.staticfiles import finders
 # Django Apps import
 
 from etherpadlite.models import Pad, PadAuthor
-from etherpadlite import forms
 from etherpadlite import config
 
 from ethertoff.management.commands.index import snif
@@ -46,7 +43,6 @@ from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 # Generator commands
 from generator.management.commands.generate import generate as generateStatic
 from tags.utils import index_tags as indexTags
-from generator.collection import modelFor
 
 from . import forms as ethertoffForms
 
@@ -58,7 +54,9 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from tags.utils import load_tags
 
-from ethertoff.utils import getApiURL, getPadId, getEtherpadLiteClient, getPadText, getPadMarkdown
+from ethertoff.utils import getPadMarkdown, getPadHtml
+
+from my_project.forms import PadCreateWithTemplate
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
@@ -197,28 +195,26 @@ def padCreate(request, prefix=''):
     group = author.group.all()[0]
     
     if request.method == 'POST':  # Process the form
-        form = forms.PadCreate(request.POST)
+        form = PadCreateWithTemplate(request.POST)
         if form.is_valid():
             slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
             slug = slug.strip(":")  # avoids leading and trailing "::"
             pad = createPad(slug=slug, server=group.server, group=group)
 
             if pad:
-                template = None
-
-                # Make a template for the seleced datatype
                 if form.cleaned_data['template'] != 'none':
-                    model = modelFor(form.cleaned_data['template'])(1)
-                    template = '\n'.join(['{}: {}'.format(fieldName, field.value if field.value else '') for fieldName, field in model.fields.items()])
-
-                    epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-                    epclient.setText(pad.padid, template)
-
+                    try:
+                        templatePad = Pad.objects.get(name=form.cleaned_data['template'])                    
+                        template = getPadHtml(templatePad)
+                        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
+                        epclient.setHtml(pad.padid, template)
+                    except Pad.DoesNotExist:
+                        pass
                 return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else: 
         # No form to process so create a fresh one
         # prefix should contain the name of the folder
-        form = forms.PadCreate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix) if prefix else '')})
+        form = PadCreateWithTemplate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix) if prefix else '')})
 
     con = {
         'form': form,

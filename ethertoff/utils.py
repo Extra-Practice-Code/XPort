@@ -2,6 +2,15 @@ from django.conf import settings
 from py_etherpad import EtherpadLiteClient
 import urllib
 import os.path
+import re
+from etherpadlite.models import Pad
+
+# Natural sort a list of pads
+# https://stackoverflow.com/a/11150413
+def natural_sort(pads): 
+    convert = lambda text: int(text) if text.isdigit() else text.lower() 
+    alphanum_key = lambda pad: [convert(c) for c in re.split('([0-9]+)', pad.display_slug)] 
+    return sorted(pads, key=alphanum_key)
 
 
 def getApiURL (server):
@@ -35,3 +44,22 @@ def getPadMarkdown (pad):
     except urllib.error.HTTPError:
         raise
     return markdown
+
+
+def getPadHtml (pad):
+    epclient = getEtherpadLiteClient(pad.server)
+    padId = getPadId(pad)
+    return epclient.getHtml(padId)['html']
+
+
+def pathToSlugPrefix (path):
+    return settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
+
+
+def selectPadsByPath (path):
+    if len(path) > 0:
+        pads = natural_sort(list(Pad.objects.filter(display_slug__startswith=pathToSlugPrefix(path)).order_by('display_slug')))
+    else:
+        pads = natural_sort(list(Pad.objects.all().order_by('display_slug')))
+
+    return pads
