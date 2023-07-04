@@ -21,11 +21,7 @@
     <ul id="pads_list" class="manage_list">
         {% for key, type, object in dir_list %}
             {% if type == 'pad' %}
-              <li class="pad">
-                <a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">
-                  {{ object.display_slug|stripPath:currentPath|dewikify }}
-                  {% if object.is_public %}(public){% endif %}
-                </a>
+              <li class="pad"><a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">{{ object.display_slug|stripPath:currentPath|dewikify }}{% if object.is_public %} (public){% endif %}</a>
                 <section class="actions">
                   {% if object.is_public %}
                       <a href="{% url 'pad-private' object.pk %}" class="button button--private">make private</a>

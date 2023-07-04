@@ -494,14 +494,18 @@ div#next a {
     padding: 0.5em 0 0.5em 0;
 }
 #content .manage_list li.pad::before {
+    display: inline-block;
+    width: 1ch;
     margin-left: calc(0.5 * var(--line-height));
     margin-right: calc(0.5 * var(--line-height));
-    content: '🗎';
+    content: ' ';
 }
 #content .manage_list li.folder::before {
+    display: inline-block;
+    width: 1ch;
     margin-left: calc(0.5 * var(--line-height));
     margin-right: calc(0.5 * var(--line-height));
-    content: '🗀';
+    content: '▸';
 }
 .manage_list li:hover {
     background-color: var(--highlight-color);
