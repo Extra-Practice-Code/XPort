@@ -179,5 +179,5 @@ class Report (Model):
     return {
       'report': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['published'])),
-      'tags': multiLinkMultiReverse(self, 'tag', 'pages')
+      'tags': multiLinkMultiReverse(self, 'tag', 'pages', unique=False)
     }

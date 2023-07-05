@@ -5,7 +5,7 @@ import urllib
 from ethertoff.utils import getPadMarkdown
 
 from generator.models import resolveReferences
-from generator.collection import collectionFor, UnknownContentTypeError, knownContentType
+from generator.collection import collectionFor, UnknownContentTypeError, knownContentType, knownContentTypes
 from generator.utils import error, info, debug, warn, keyFilter
 
 from markdown.extensions.toc import TocExtension
@@ -110,7 +110,6 @@ def parse_pads ():
 
     try:
       source = getPadMarkdown(pad).strip()
-      print(source)
       # source = epclient.getText(padID)['text']
     except ValueError:
       warn('Could not find pad {}'.format(pad.display_slug))

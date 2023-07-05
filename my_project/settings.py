@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'filer',
     'mptt',
     'my_project',
+    'going_hybrid'
     #'south'
 ]
 

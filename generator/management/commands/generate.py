@@ -5,12 +5,16 @@ import os.path
 import shutil
 import re
 
+# Do not remove, registers the local models!
+import generator.local_models
+
 from generator.index import make_index
 
 from generator.parse import parse_pads
 from generator.collection import collectionFor, resetCollections, contentTypes
 from generator.utils import debug, info, render_template_to_string, keyFilter
-import generator.local_models
+
+from tags.utils import load_tags
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command

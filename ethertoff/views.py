@@ -210,6 +210,7 @@ def padCreate(request, prefix=''):
                         epclient.setHtml(pad.padid, template)
                     except Pad.DoesNotExist:
                         pass
+                    
                 return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else: 
         # No form to process so create a fresh one

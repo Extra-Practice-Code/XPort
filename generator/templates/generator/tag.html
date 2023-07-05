@@ -11,11 +11,16 @@
     {% endif %}
   {% endwith %}
   <ul>
-    {% for object in object|merged_links %}
+    {% for link in object|merged_links %}
       <li>
-        <a href="{{ object.target.url }}">
-          {{ object.target.contentType }}: {{ object }}
-        </a>
+        {% if link.context %}
+          {{ link.context }}
+        {% endif %}
+        <p>
+          <a href="{{ link.target.url }}">
+            {{ link.target.contentType }}: {{ link.target }}
+          </a>
+        </p>
       </li>
     {% endfor %}
   </ul>

@@ -1,4 +1,4 @@
-{% load generator_utils %}
+{% load generator_utils going_hybrid %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -48,17 +48,7 @@
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
       <nav id="nav">
-        <ul>
-          <li>
-            <a href="{{ SITE_URL }}">Going Hybrid!</a>
-          </li>
-          <li {% if page_content.content_type == "report" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/reports.html">Reports</a>
-          </li>
-          <li {% if page_content.content_type == "tag" %}class="selected"{% endif %}>
-            <a href="{{ SITE_URL }}/tags.html">Tags</a>
-          </li>
-        </ul>
+        {% going_hybrid_navbar %}
       </nav>
       <nav id="nav--sub">{% block subnav %}{% endblock %}</nav>
     </header>
