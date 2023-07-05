@@ -65,20 +65,6 @@ def merged_links (model):
 
   return links
 
-
-@register.filter
-def unwrap_galleries (models):
-  unwrapped = []
-
-  for model in models:
-    if model:
-      if model.contentType == 'gallery':
-        unwrapped.extend(model.images.targets)
-      else:
-        unwrapped.append(model)
-
-  return unwrapped
-
 @register.filter
 def targets (links):
   return [link.target for link in links if link and link.resolved]

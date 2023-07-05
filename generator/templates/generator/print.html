@@ -1,0 +1,40 @@
+{% load generator_utils %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" />
+  <link rel="stylesheet" src="{{ ETHERTOFF_URL }}/css-print/">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    
+    .index-entry::after {
+        content: target-counter(attr(data-link-id), page);
+    }
+  </style>
+  <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+</head>
+<body>
+  {% for report in reports %}
+    <section class="report">
+      {{ report.content }}
+    </section>
+  {% endfor %}
+  <ul>
+    {% for tag in tags %}
+      <li>
+        {{ tag }}
+        {% for link in tag|merged_links %}
+          <span class="index-entry" data-link-id="#{{ link.id }}"></span>
+        {% endfor %}
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

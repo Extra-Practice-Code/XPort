@@ -93,6 +93,10 @@ def generate ():
     'reports': collectionFor('report')
   })
 
+  output(os.path.join(outputdir, 'print.html'), 'generator/print.html', {
+    'tags': collectionFor('tag'),
+    'reports': collectionFor('report')
+  })
 
   with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:
     w.write(make_index(models))
