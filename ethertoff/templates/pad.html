@@ -17,6 +17,12 @@
     </header>
 {% endblock %}
 
+{% block title_right %}
+  <section class="syntax-help--wrapper">
+    {% include "partials/tag-list.html" %}
+    {% include "partials/markdown-guide.html" %}
+  </section>
+{% endblock %}
 {% block content %}
   {% if error %}
   <div id="main">
@@ -42,16 +48,4 @@
 {% endblock %}
 
 {% block rightside %}
-  <details open class="syntax-help">
-    <summary>Tags</summary>
-    <ul>
-      {% for tag in tags %}
-        <li>
-          {{ tag }}
-        </li>
-      {% endfor %}
-    </ul>
-  </details>
-  <br >
-  {% include "partials/markdown-guide.html" %}
 {% endblock %}

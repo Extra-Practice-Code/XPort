@@ -396,10 +396,10 @@ body {
     flex-direction: column;
 }
 iframe#ether {
-    outline: 1px solid #333;
+    /* outline: 1px solid #333; */
     flex: 1 0;
-    max-width: 50em;
-    margin: auto;
+    /* max-width: 50em; */
+    /* margin: auto; */
     width: 100%;
 }
 /* NAV ------------------------------------------ */
@@ -568,7 +568,35 @@ div#next a {
 }
 .syntax-help {
     font-size: 75%;
-    margin-left: 1em;
     max-height: calc(100vh - 75px);
     overflow: auto;
 }
+
+.syntax-help--wrapper {
+    display: flex;
+    position: relative;
+    column-gap: 2ch;
+    padding: 0 2ch;
+}
+
+.syntax-help--content {
+    position: absolute;
+    background-color: white;
+    z-index: 9;
+    left: 0;
+    right: 0;
+    padding: 2ch;
+}
+
+.write-mode #content,
+.write-public-mode #content {
+    grid-column: left / span 3;
+}
+
+.write-mode #content-left,
+.write-public-mode #content-left,
+.write-mode #content-right,
+.write-public-mode #content-right {
+    display: none;
+}
+
