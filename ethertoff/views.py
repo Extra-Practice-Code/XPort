@@ -842,4 +842,4 @@ def css_slide(request):
     return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
 
 def cssgenerator(request):
-    return padOrEmtpy(request, 'generated.css' 'text/css')
+    return padOrEmtpy(request, 'generated.css', 'text/css')
