@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block page_title %}Going Hybrid!{% endblock %}</title>
+    <link rel="stylesheet" href="https://going-hybrid.gutenberg.club/css-generator/" type="text/css" media="all">
     <style>
       :root {
         --font-size: 10pt;
@@ -82,5 +83,15 @@
       {% block content %}
       {% endblock %}
     </main>
+    <script>
+      var labels = document.querySelectorAll('[data-tag][data-direct-link]');
+      
+      for (let i = 0; i < labels.length; i++) {
+        const label = labels[i];
+        parent = label.parentElement;
+        tag = label.dataset.tag;
+        parent.classList.add('tag--' + tag.replace(/\s+/g, '-'));
+      }
+    </script>
   </body>
 </html>

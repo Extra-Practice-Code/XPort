@@ -820,6 +820,15 @@ def padOrFallbackPath(request, slug, fallbackPath, mimeType):
         f.close()
         return HttpResponse(contents, content_type=mimeType)
 
+def padOrEmtpy(request, slug, mimeType):
+    try:
+        pad = Pad.objects.get(display_slug=slug)
+        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
+        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
+        return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
+    except:
+        return HttpResponse("", content_type=mimeType)
+
 def css(request):
     return padOrFallbackPath(request, 'screen.css', 'css/screen.css', 'text/css')
 
@@ -831,3 +840,6 @@ def offsetprint(request):
 
 def css_slide(request):
     return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
+
+def cssgenerator(request):
+    return padOrEmtpy(request, 'generated.css' 'text/css')

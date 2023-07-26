@@ -16,6 +16,7 @@ urlpatterns = [
     path('css-print/', views.cssprint, name='css-print'),
     path('css-offset/', views.offsetprint, name='css-offset'),
     path('css-slide/', views.css_slide, name='css-slide'),
+    path('css-generator/', views.cssgenerator, name='css-generator'),
     path('create/', views.padCreate, name='pad-create'),
     path('create/<path:prefix>/', views.padCreate, name='pad-create'),
     path('rename-folder/', views.RenameFolderView.as_view(), name='folder-rename'),
