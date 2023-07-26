@@ -43,6 +43,32 @@
       nav ul li {
         margin: 0 2ch 0 0;
       }
+
+      main {
+        position: relative;
+      }
+
+      [data-reference][data-tag]:not([data-direct-link])::after {
+        content: attr(data-tag);
+        position: absolute;
+        left: calc(100% + 3ch);
+        text-decoration: none;
+        color: initial;
+        background: #efefef;
+        padding: .5ch;
+        margin-top: -.5ch;
+        white-space: nowrap;
+      }
+      
+      [data-link-target-type="tag"][data-direct-link] {
+        position: absolute;
+        left: calc(100% + 3ch);
+        text-decoration: none;
+        color: initial;
+        background: #efefef;
+        padding: .5ch;
+        margin-top: -.5ch;
+      }
     </style>
   </head>
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>

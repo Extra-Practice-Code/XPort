@@ -1,1 +1,1 @@
-<a href="{{ object.url }}" id="{{ link.id }}" data-reference data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}">{{ label }}</a>
+<a href="{{ object.url }}" id="{{ link.id }}" data-reference data-link-target-type="{{ object.contentType }}" data-link-id="{{ link.id }}" {% if object.contentType == 'tag' %}data-tag="{{ object }}"{% endif %} {% if not link.label %}data-direct-link="true"{% endif %}>{{ label }}</a>
