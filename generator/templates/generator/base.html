@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block page_title %}Going Hybrid!{% endblock %}</title>
-    <link rel="stylesheet" href="https://going-hybrid.gutenberg.club/css-generator/" type="text/css" media="all">
     <style>
       :root {
         --font-size: 10pt;
@@ -71,6 +70,7 @@
         margin-top: -.5ch;
       }
     </style>
+    <link rel="stylesheet" href="https://going-hybrid.gutenberg.club/css-generator/" type="text/css" media="all">
   </head>
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
