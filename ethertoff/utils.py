@@ -21,8 +21,33 @@ def getPadId (pad):
     return pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
 
 
+def getPadBySlug (slug):
+    try:
+        return Pad.objects.get(display_slug=slug)
+    except Pad.DoesNotExist:
+        return None
+
+
 def getEtherpadLiteClient(server):
     return EtherpadLiteClient(server.apikey, getApiURL(server))
+
+# @FIXME better naming, tries to find a given padname within a path
+# makes path less specific with each iteration
+def discover_pad(padname, path=[]):
+  pad = getPadBySlug(pathToSlugPrefix(path) + padname)
+
+  if pad:
+    return pad
+  elif len(path) > 0:
+    path.pop()
+    return discover_pad(padname, path=path)
+  else:
+    return None
+
+
+def copyPadToPath (pad, path):
+  with open(path, 'w', encoding='utf-8') as w:
+    w.write(getPadText(pad))
 
 
 """
@@ -52,8 +77,16 @@ def getPadHtml (pad):
     return epclient.getHtml(padId)['html']
 
 
+def slugToPath (slug):
+    return slug.split(settings.PAD_NAMESPACE_SEPARATOR)
+
+
+def pathToSlug (path):
+    return settings.PAD_NAMESPACE_SEPARATOR.join(path)
+
+
 def pathToSlugPrefix (path):
-    return settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
+    return pathToSlug(path) + settings.PAD_NAMESPACE_SEPARATOR
 
 
 def selectPadsByPath (path):
@@ -63,3 +96,16 @@ def selectPadsByPath (path):
         pads = natural_sort(list(Pad.objects.all().order_by('display_slug')))
 
     return pads
+
+# Returns all root folders
+# @FIXME faster implementation
+def discover_root_folders ():
+    root_folders = []
+
+    for pad in Pad.objects.all():
+        path = slugToPath(pad.display_slug)
+
+        if len(path) > 1 and path[0] not in root_folders:
+            root_folders.append(path[0])
+
+    return root_folders

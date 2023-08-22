@@ -21,7 +21,7 @@ import pytz
 # Framework imports
 from django.shortcuts import render, get_object_or_404, redirect
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.urls import reverse
@@ -42,7 +42,7 @@ from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
 # Generator commands
 from generator.management.commands.generate import generate as generateStatic
-from tags.utils import index_tags as indexTags
+from labels.utils import index_labels as indexLabels, load_labels
 
 from . import forms as ethertoffForms
 
@@ -52,11 +52,11 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from tags.utils import load_tags
-
-from ethertoff.utils import getPadMarkdown, getPadHtml
+from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug
 
 from my_project.forms import PadCreateWithTemplate
+
+from filer.models import File
 
 # By default, the homepage is the pad called ‘start’ (props to DokuWiki!)
 try:
@@ -508,8 +508,8 @@ def pad_write(request, pad):
             'uname': "{}".format(author.user),
             'error': False,
             'mode' : 'write',
-            'crumbs': crumbs,
-            'tags': load_tags()
+            'folderSlug': pathToSlug(path[:-1]),
+            'crumbs': crumbs
         },
     )
 
@@ -743,15 +743,15 @@ def generate(request):
 
 
 @login_required(login_url='/accounts/login')
-def index_tags (request):
+def index_labels (request):
     tpl_params = {}
     if request.method == 'POST':
         tpl_params['indexed'] = True
-        tpl_params['tags'] = indexTags()
+        tpl_params['labels'] = indexLabels()
     else:
         tpl_params['indexed'] = False
-        tpl_params['tags'] = []
-    return render(request, "index_tags.html", tpl_params)
+        tpl_params['labels'] = []
+    return render(request, "index_labels.html", tpl_params)
 
 
 @login_required(login_url='/accounts/login')
@@ -843,3 +843,34 @@ def css_slide(request):
 
 def cssgenerator(request):
     return padOrEmtpy(request, 'generated.css', 'text/css')
+
+
+def labels (request, slug=None):
+    labels = load_labels()
+
+    return JsonResponse({
+        'labels': labels[slug] if slug in labels else labels['root']
+    })
+
+
+
+def get_canoninical (request, pk):
+    if request.user.is_authenticated:
+        filerFile = get_object_or_404(File, pk=pk)
+
+        return JsonResponse({
+            'canonical_url': filerFile.canonical_url
+        })
+
+    else:
+        return HttpResponse('Unauthorized', status=401)
+
+def get_mimetype (request, pk):
+    if request.user.is_authenticated:
+        filerFile = get_object_or_404(File, pk=pk)
+
+        return JsonResponse({
+            'canonical_url': filerFile.mime_type
+        })
+    else:
+        return HttpResponse('Unauthorized', status=401)

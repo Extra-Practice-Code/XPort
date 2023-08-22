@@ -1,15 +1,11 @@
 import markdown
 import os.path
-import urllib
 
 from ethertoff.utils import getPadMarkdown
 
 from generator.models import resolveReferences
 from generator.collection import collectionFor, UnknownContentTypeError, knownContentType, knownContentTypes
 from generator.utils import error, info, debug, warn, keyFilter
-
-from markdown.extensions.toc import TocExtension
-from py_etherpad import EtherpadLiteClient
 
 from django.core.management.base import BaseCommand
 from django.utils.safestring import mark_safe
@@ -72,8 +68,6 @@ def addContextForReferences (html, links):
               a.unwrap()
               
           link.context = mark_safe(str(context))
-  # except ET.ParseError:
-  #   print('Could not parse {}'.format(html))
 
 """
   
@@ -94,23 +88,22 @@ def addContextForReferences (html, links):
   key. Especially when the label / title is later changed.
 
 """
-
-def parse_pads ():
-  epclient = None
+def parse_pads (prefix=None):
   models = []
 
-  for pad in Pad.objects.all():
-    if not epclient:
-      epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+  if prefix:
+    pads = Pad.objects.filter(display_slug__startswith=prefix)
+  else:
+    pads = Pad.objects.all()
+
+  for pad in pads:
 
     name, extension = os.path.splitext(pad.display_slug)
-    padID = pad.publicpadid if pad.is_public else pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
     
     info('Reading {}'.format(pad.display_slug))
 
     try:
       source = getPadMarkdown(pad).strip()
-      # source = epclient.getText(padID)['text']
     except ValueError:
       warn('Could not find pad {}'.format(pad.display_slug))
       continue

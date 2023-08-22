@@ -5,7 +5,7 @@
   <li {% if page_content.content_type == "report" %}class="selected"{% endif %}>
     <a href="{{ SITE_URL }}/reports.html">All reports</a>
   </li>
-  {% for tag in tags %}
-    <li><a href="{{ tag.url }}">{{ tag }}</a></li>
+  {% for label in labels %}
+    <li><a href="{{ label.url }}">{{ label }}</a></li>
   {% endfor %}
 </ul>

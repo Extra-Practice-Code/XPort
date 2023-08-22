@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'etherpadlite',
     'generator',
-    'tags',
+    'labels',
     'easy_thumbnails',
     'filer',
     'mptt',
+    'corsheaders',
     'my_project',
     'going_hybrid'
     #'south'
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

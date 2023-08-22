@@ -273,8 +273,9 @@ class Model(object):
   generateSinglePages = True
   listPageTemplate = 'generator/list.html'
   generateListPage = False
+  context = {}
 
-  def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None, source_pad=None):
+  def __init__ (self, key=None, label=None, metadata={}, content=None, source_path=None, source_pad=None, context={}):
     debug('Instantiating model of type {}, key: {}, label: {}'.format(self.contentType, key, label))
     self.metadata = OrderedDict(**self._metadataFields())
     
@@ -300,6 +301,8 @@ class Model(object):
 
     if metadata or content:
       self.fill(metadata=metadata, content=content)
+
+    self.context = context
 
   """
     @FIXME 
@@ -382,7 +385,7 @@ class Model(object):
 
   @property
   def url (self):
-    return os.path.join(SITE_URL, self.prefix, '{}.html'.format(self.key))
+    return os.path.join(self.context['SITE_URL'], self.prefix, '{}.html'.format(self.key))
 
   def setMetadata(self, metadata=None):
     if metadata:

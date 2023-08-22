@@ -13,6 +13,7 @@ class Collection(object):
     self.model = model
     self._models = []
     self.index = {}
+    self.context = {}
 
   def __iter__ (self):
     return iter(self.models)
@@ -63,7 +64,7 @@ class Collection(object):
     and register it on the collection.
   """
   def instantiate (self, key, label=None, metadata={}, content=None, source_path='', source_pad=None):
-    model = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path, source_pad=source_pad)
+    model = self.model(key=key, label=label, metadata=metadata, content=content, source_path=source_path, source_pad=source_pad, context=self.context)
     self.register(model)
     return model
 
@@ -112,26 +113,36 @@ class ContentType (object):
   def resetCollection(self):
     self.collection = self._collection(self.model)
 
+  def setContext(self, context):
+    self.collection.context = context
 
 contentTypes = {}
 
 def knownContentTypes():
   return contentTypes.keys()
 
+
 def knownContentType(contentType):
   return contentType in knownContentTypes()
 
-def resetCollections (contentTypes):
+
+def resetCollections ():
   for c in contentTypes:
     contentTypes[c].resetCollection()
   
   return contentTypes
+
+
+def setCollectionsContext (context):
+  for c in contentTypes:
+    contentTypes[c].setContext(context)
 
 def collectionFor (contentType):
   if contentType in contentTypes.keys():
     return contentTypes[contentType].collection
   else:
     raise UnknownContentTypeError(contentType)
+
 
 def modelFor (contentType):
   if contentType in contentTypes.keys():
@@ -141,6 +152,7 @@ def modelFor (contentType):
 
 # def registerContentType (model, collection):
 #   contentTypes[model.contentType] = ContentType(model, collection)
+
 
 def contentType (collection=Collection):
   def decorator (model):
@@ -166,6 +178,7 @@ def contentType (collection=Collection):
     return model
   
   return decorator
+
 
 """
   Returns an object with given contentType and key

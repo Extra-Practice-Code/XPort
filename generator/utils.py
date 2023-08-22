@@ -2,7 +2,6 @@
 
 from generator.settings import SHOW_LOG_MESSAGES
 from generator.settings import SHOW_DEBUG_MESSAGES
-from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL
 
 from django.template import loader
 
@@ -75,10 +74,6 @@ def keyFilter (value):
 
 
 def render_template_to_string(template, context):
-  context['SITE_URL'] = SITE_URL
-  context['STATIC_URL'] = STATIC_URL
-  context['MENU_ITEMS'] = MENU_ITEMS
-
   return loader.render_to_string(template, context)
 
 
@@ -88,6 +83,8 @@ def make_id (length=15):
 
 
 from bs4 import BeautifulSoup
+# @FIXME rename to 'strip_tags' or 'remove_tags' feels more fiting
+# for what it does?
 def drop_tags (snippet, tags_to_drop=[]):
   soup = BeautifulSoup(snippet, 'html.parser')
 
