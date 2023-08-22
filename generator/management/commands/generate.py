@@ -149,13 +149,15 @@ def generate ():
       # Put new version of the site in place
       shutil.move(outputdir, finaldir)
 
-    if not settings.DEBUG:
-      print('Collecting static')
-      call_command('collectstatic', interactive=False)
-
-    print('Done')
-
   output(os.path.join(basedir, "generated", "index.html"), "generator/main_index.html", { 'folders': root_folders })
+
+
+  if not settings.DEBUG:
+    print('Collecting static')
+    call_command('collectstatic', interactive=False)
+
+  print('Done')
+
 
 class Command(BaseCommand):
   args = ''
