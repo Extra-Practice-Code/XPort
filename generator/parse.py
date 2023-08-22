@@ -1,7 +1,7 @@
 import markdown
 import os.path
 
-from ethertoff.utils import getPadMarkdown
+from ethertoff.utils import getPadMarkdown, basenameFromSlug
 
 from generator.models import resolveReferences
 from generator.collection import collectionFor, UnknownContentTypeError, knownContentType, knownContentTypes
@@ -11,7 +11,7 @@ from django.core.management.base import BaseCommand
 from django.utils.safestring import mark_safe
 from etherpadlite.models import Pad
 
-from .settings import DEFAULT_CONTENT_TYPE
+from generator.settings import DEFAULT_CONTENT_TYPE, SYSTEM_PADS
 
 from django.conf import settings
 
@@ -98,6 +98,12 @@ def parse_pads (prefix=None):
 
   for pad in pads:
 
+    basename = basenameFromSlug(pad.display_slug)
+
+    if basename in SYSTEM_PADS:
+      info('Ignoring {} (system pad)'.format(pad.display_slug))
+      continue
+
     name, extension = os.path.splitext(pad.display_slug)
     
     info('Reading {}'.format(pad.display_slug))
@@ -143,6 +149,9 @@ def parse_pads (prefix=None):
             contentType = DEFAULT_CONTENT_TYPE
 
           key = collectionFor(contentType).model.extractKey(meta)
+
+        if not label:
+            label = [ os.path.splitext(basename)[0] ]
 
         
         if key != '':

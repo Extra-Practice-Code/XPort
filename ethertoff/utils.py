@@ -89,6 +89,10 @@ def pathToSlugPrefix (path):
     return pathToSlug(path) + settings.PAD_NAMESPACE_SEPARATOR
 
 
+def basenameFromSlug (slug):
+    return slugToPath(slug)[-1]
+
+
 def selectPadsByPath (path):
     if len(path) > 0:
         pads = natural_sort(list(Pad.objects.filter(display_slug__startswith=pathToSlugPrefix(path)).order_by('display_slug')))

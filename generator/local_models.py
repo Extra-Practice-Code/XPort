@@ -181,3 +181,17 @@ class Report (Model):
       'status': fields.Single(fields.StringField(default=['published'])),
       'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
     }
+
+
+
+@contentType()
+class Pad (Model):
+  generateListPage = True
+  generateSinglePages = True
+
+  def _metadataFields (self):
+    return {
+      'pad': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['published'])),
+      'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
+    }

@@ -4,7 +4,7 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.conf import settings
 
-from generator.settings import SITE_URL as GENERATED_SITE_URL
+from generator.settings import SITE_URL as GENERATED_SITE_URL, GENERATED_SITE_INDEX
 from generator.links import is_link, is_multi_link, is_reverse_multi_link, is_reverse_single_link, is_single_link
 from generator.collection import getObject
 
@@ -110,7 +110,7 @@ def combine_linkfields (*fields):
 
 @register.simple_tag
 def generated_site_url ():
-  return os.path.join(GENERATED_SITE_URL, 'index.html')
+  return os.path.join(GENERATED_SITE_INDEX, 'index.html')
 
 @register.simple_tag
 def generated_site_debug_url ():
