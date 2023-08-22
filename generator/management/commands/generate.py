@@ -19,6 +19,7 @@ from django.conf import settings
 
 from ethertoff.utils import discover_root_folders, pathToSlugPrefix, discover_pad, copyPadToPath
 from django.conf import settings
+from labels.utils import load_labels
 
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
@@ -53,6 +54,7 @@ def extend_context (context, new_properties):
 def generate ():
 
   root_folders = discover_root_folders()
+  labels = load_labels()
 
   info('Discovered {} root folders: {}'.format(len(root_folders), ', '.join(root_folders)))
 
@@ -60,7 +62,8 @@ def generate ():
     context = {
       'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder),
       'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder),
-      'MENU_ITEMS': MENU_ITEMS
+      'MENU_ITEMS': MENU_ITEMS,
+      'LABELS': labels[folder] if folder in labels else labels['root']
     }  
 
     print(context)
@@ -109,12 +112,12 @@ def generate ():
         }))
 
     output(os.path.join(outputdir, 'index.html'), 'generator/index.html', extend_context(context, {
-      'tags': collectionFor('tag'),
+      'labelss': collectionFor('label'),
       'reports': collectionFor('report')
     }))
 
     output(os.path.join(outputdir, 'print.html'), 'generator/print.html', extend_context(context, {
-      'tags': collectionFor('tag'),
+      'labels': collectionFor('label'),
       'reports': collectionFor('report')
     }))
 

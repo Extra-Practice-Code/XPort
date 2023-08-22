@@ -27,7 +27,7 @@ class Image (Model):
     return {
       'image': fields.SingleImageField(),
       'date': fields.Single(fields.DateField()),
-      'tags': multiLinkMultiReverse(self, 'tag', 'images'),
+      'labels': multiLinkMultiReverse(self, 'label', 'images'),
       'title': fields.Single(fields.InlineMarkdownField()),
       'author': fields.Single(fields.InlineMarkdownField()),
       'alt': fields.Single(fields.InlineMarkdownField()),
@@ -44,7 +44,7 @@ class Audio (Model):
       'audio': fields.SingleFileField(),
       'type': fields.Single(fields.StringField(['audio/mp3'])),
       'date': fields.Single(fields.DateField()),
-      'tags': multiLinkMultiReverse(self, 'tag', 'images'),
+      'labels': multiLinkMultiReverse(self, 'label', 'images'),
       'title': fields.Single(fields.InlineMarkdownField()),
       'author': fields.Single(fields.InlineMarkdownField()),
       'alt': fields.Single(fields.InlineMarkdownField()),
@@ -154,21 +154,21 @@ class Video (Model):
 
 
 @contentType(InstantiatingCollection)
-class Tag (Model):
+class Label (Model):
   generateListPage = True
   generateSinglePages = True
-  singlePageTemplate = 'generator/tag.html'
+  singlePageTemplate = 'generator/label.html'
   sortKey = ('first_letter')
   # Use a metaclass to have better default values?
 
   def _metadataFields (self):
     return {
-      'tag': fields.Single(fields.StringField()),
+      'label': fields.Single(fields.StringField()),
     }
 
   @property
   def first_letter (self):
-    return str(getattr(self, 'tag'))[:1].lower()
+    return str(getattr(self, 'label'))[:1].lower()
 
 @contentType()
 class Report (Model):
@@ -179,5 +179,5 @@ class Report (Model):
     return {
       'report': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['published'])),
-      'tags': multiLinkMultiReverse(self, 'tag', 'pages', unique=False)
+      'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
     }

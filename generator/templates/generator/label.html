@@ -3,7 +3,7 @@
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
 {% block content %}
   <h6>{{ object.contentType }}</h6>
-  <h1>Tag: {{ object }}</h1>
+  <h1>Label: {{ object }}</h1>
   {% with object|merged_links|length as num_objects%}
     <p>Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
     {% if object.content %}

@@ -17,10 +17,10 @@
     </section>
   {% endfor %}
   <ul>
-    {% for tag in tags %}
+    {% for label in labels %}
       <li>
-        {{ tag }}
-        {% for link in tag|merged_links %}
+        {{ label }}
+        {% for link in label|merged_links %}
           <span class="index-entry" data-link-id="#{{ link.id }}"></span>
         {% endfor %}
       </li>

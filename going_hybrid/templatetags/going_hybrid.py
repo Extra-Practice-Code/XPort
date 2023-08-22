@@ -9,18 +9,9 @@ register = template.Library()
 
 @register.inclusion_tag('going-hybrid/snippets/navbar.html', takes_context=True)
 def going_hybrid_navbar (context):
-  allowed_labels = load_labels()
-
-  def allowed_label (label):
-    try:
-      if allowed_labels.index(str(label).lower()) > -1:
-        return True
-    except ValueError:
-      return False
-
   return {
     'SITE_URL': context['SITE_URL'],
     'labels': [
-      label for label in filter(allowed_label, collectionFor('label'))
+      label for label in filter(lambda label: label in context['LABELS'], collectionFor('label'))
     ]
   }

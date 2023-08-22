@@ -4,15 +4,15 @@
 {% block content %}
   <h6>{{ object.contentType }}</h6>
   <h1>{{ object }}</h1>
-  {% if object.content or object.tags %}
-    {% if object.content or object.tags %}
+  {% if object.content or object.labels %}
+    {% if object.content or object.labels %}
       {{ object.content }}
     {% endif %}
-    {% if object.tags %}
-      <h2>Tags</h2>
-      <ul class="list--tags">
-        {% for tag in object.tags %}
-          <li><a href="{{ tag.url }}">{{ tag }}</a></li>
+    {% if object.labels %}
+      <h2>Labels</h2>
+      <ul class="list--labels">
+        {% for label in object.labels %}
+          <li><a href="{{ label.url }}">{{ label }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}

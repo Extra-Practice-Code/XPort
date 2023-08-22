@@ -48,8 +48,8 @@
         position: relative;
       }
 
-      [data-reference][data-tag]:not([data-direct-link])::before {
-        content: attr(data-tag);
+      [data-reference][data-label]:not([data-direct-link])::before {
+        content: attr(data-label);
         position: absolute;
         left: calc(100% + 3ch);
         text-decoration: none;
@@ -60,7 +60,7 @@
         white-space: nowrap;
       }
       
-      [data-link-target-type="tag"][data-direct-link] {
+      [data-link-target-type="label"][data-direct-link] {
         position: absolute;
         left: calc(100% + 3ch);
         text-decoration: none;
@@ -84,13 +84,13 @@
       {% endblock %}
     </main>
     <script>
-      var labels = document.querySelectorAll('[data-tag][data-direct-link]');
+      var labels = document.querySelectorAll('[data-label][data-direct-link]');
       
       for (let i = 0; i < labels.length; i++) {
         const label = labels[i];
         parent = label.parentElement;
-        tag = label.dataset.tag;
-        parent.classList.add('tag--' + tag.replace(/\s+/g, '-'));
+        label = label.dataset.label;
+        parent.classList.add('label--' + label.replace(/\s+/g, '-'));
       }
     </script>
   </body>
