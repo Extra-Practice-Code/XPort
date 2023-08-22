@@ -870,7 +870,7 @@ def get_mimetype (request, pk):
         filerFile = get_object_or_404(File, pk=pk)
 
         return JsonResponse({
-            'canonical_url': filerFile.mime_type
+            'mime': filerFile.mime_type
         })
     else:
         return HttpResponse('Unauthorized', status=401)
