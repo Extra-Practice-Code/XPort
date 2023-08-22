@@ -18,7 +18,6 @@ from django.core.management import call_command
 from django.conf import settings
 
 from ethertoff.utils import discover_root_folders, pathToSlugPrefix, discover_pad, copyPadToPath
-from django.conf import settings
 from labels.utils import load_labels
 
 FIELD_SINGLE = 'FIELD_SINGLE'
@@ -53,10 +52,12 @@ def extend_context (context, new_properties):
 
 def generate ():
 
-  root_folders = discover_root_folders()
+  root_folders = list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discover_root_folders()))
   labels = load_labels()
 
   info('Discovered {} root folders: {}'.format(len(root_folders), ', '.join(root_folders)))
+
+  basedir = os.path.join(settings.BASE_DIR, 'generator', 'static', 'generator')
 
   for folder in root_folders:
     context = {
@@ -74,7 +75,7 @@ def generate ():
     resetCollections()
     setCollectionsContext(context)
 
-    basedir = os.path.join(settings.BASE_DIR, 'generator', 'static', 'generator')
+    
     backupdir = os.path.join(basedir, 'generated.old', folder)
     finaldir = os.path.join(basedir, 'generated', folder)
     outputdir = os.path.join(basedir, 'generated.new', folder)
@@ -153,6 +154,8 @@ def generate ():
       call_command('collectstatic', interactive=False)
 
     print('Done')
+
+  output(os.path.join(basedir, "generated", "index.html"), "generator/main_index.html", { 'folders': root_folders })
 
 class Command(BaseCommand):
   args = ''
