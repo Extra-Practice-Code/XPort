@@ -11,6 +11,7 @@ register = template.Library()
 def going_hybrid_navbar (context):
   return {
     'SITE_URL': context['SITE_URL'],
+    'chapters': collectionFor('chapter'),
     'labels': [
       label for label in filter(lambda label: label in context['LABELS'], collectionFor('label'))
     ]

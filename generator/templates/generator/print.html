@@ -13,7 +13,7 @@
 <body>
   <section class="chapters">
     {% for chapter in chapters %}
-      {% if chapter.position.value == 'before_content' and chapter.on_web.value != 'false' %}
+      {% if chapter.position.value == 'before_content' and chapter.on_print.value != 'false' %}
         <div class="chapter" data-chapter="{{ chapter }}">
           {{ chapter.content }}
         </div>

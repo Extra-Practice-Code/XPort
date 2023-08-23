@@ -200,8 +200,10 @@ class Pad (Model):
 # @FIXME chapter | page | section | part
 @contentType()
 class Chapter (Model):
-  sortKey = 'order'
+  generateSinglePages = True
   
+  sortKey = 'order'
+
   def _metadataFields(self):
     return {
       'chapter': fields.Single(fields.StringField()),
