@@ -113,13 +113,17 @@ def generate ():
         }))
 
     output(os.path.join(outputdir, 'index.html'), 'generator/index.html', extend_context(context, {
-      'labelss': collectionFor('label'),
+      'labels': collectionFor('label'),
       'reports': collectionFor('report')
     }))
 
+    print(collectionFor('chapter'))
+
     output(os.path.join(outputdir, 'print.html'), 'generator/print.html', extend_context(context, {
       'labels': collectionFor('label'),
-      'reports': collectionFor('report')
+      'reports': collectionFor('report'),
+      'pads': collectionFor('pad'),
+      'chapters': collectionFor('chapter')
     }))
 
     with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:

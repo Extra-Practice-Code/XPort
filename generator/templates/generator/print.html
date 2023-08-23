@@ -11,10 +11,35 @@
   <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
 </head>
 <body>
-  {% for report in reports %}
-    <section class="report">
-      {{ report.content }}
-    </section>
+  <section class="chapters">
+    {% for chapter in chapters %}
+      {% if chapter.position.value == 'before_content' and chapter.on_web.value != 'false' %}
+        <div class="chapter" data-chapter="{{ chapter }}">
+          {{ chapter.content }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </section>
+  <section class="reports">
+    {% for report in reports %}
+      <section class="report">
+        {{ report.content }}
+      </section>
+    {% endfor %}
+  </section>
+  <section class="pads">
+    {% for pad in pads %}
+      <section class="pad">
+        {{ pad.content }}
+      </section>
+    {% endfor %}
+  </section>
+  {% for chapter in chapters %}
+    {% if chapter.position == 'after_content' and chapter.on_print != 'false' %}
+      <div class="chapter" data-chapter="{{ chapter }}">
+        {{ chapter.content }}
+      </div>
+    {% endif %}
   {% endfor %}
   <ul>
     {% for label in labels %}

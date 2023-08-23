@@ -195,3 +195,21 @@ class Pad (Model):
       'status': fields.Single(fields.StringField(default=['published'])),
       'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
     }
+  
+
+# @FIXME chapter | page | section | part
+@contentType()
+class Chapter (Model):
+  sortKey = 'order'
+  
+  def _metadataFields(self):
+    return {
+      'chapter': fields.Single(fields.StringField()),
+      'status': fields.Single(fields.StringField(default=['published'])),
+      'order': fields.Single(fields.IntField()),
+      'position': fields.Single(fields.StringField(default=['before_content'])),
+      'on_print': fields.Single(fields.StringField(default=['true'])),
+      'on_web': fields.Single(fields.StringField(default=['true'])),
+      'labels': multiLinkMultiReverse(self, 'label', 'chapters', unique=False)
+    }
+  
