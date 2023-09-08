@@ -8,6 +8,7 @@ import shutil
 import generator.local_models
 
 from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL
+from generator.fields import Single
 from generator.index import make_index
 from generator.parse import parse_pads
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
@@ -50,6 +51,25 @@ def extend_context (context, new_properties):
   context.update(new_properties)
   return context
 
+def find_where (collection, attrs):
+  for obj in collection.models:
+    for attr, value in attrs.items():
+      if not hasattr(obj, attr):
+        continue
+
+      field = getattr(obj, attr)
+
+      if isinstance(field, Single):
+        if field.value != value:
+          continue
+      else:
+        if value not in field.value:
+          continue
+
+      return obj
+
+  return None
+
 def generate ():
 
   root_folders = list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discover_root_folders()))
@@ -91,6 +111,8 @@ def generate ():
     info('Read pads')
     info('Generating output')
 
+    index_pad = find_where(collectionFor('pad'), {'index': 'true'})
+
     for contentType in contentTypes.values():
       collection = contentType.collection
       model = collection.model
@@ -114,7 +136,8 @@ def generate ():
 
     output(os.path.join(outputdir, 'index.html'), 'generator/index.html', extend_context(context, {
       'labels': collectionFor('label'),
-      'reports': collectionFor('report')
+      'reports': collectionFor('report'),
+      'index_pad': index_pad
     }))
 
     print(collectionFor('chapter'))
