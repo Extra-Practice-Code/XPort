@@ -18,7 +18,7 @@ def filter_empty_lines_markdown_export (lines):
   i = 0
   lines_to_delete = []
 
-  while i < len(lines):
+  while i < (len(lines) - 1):
     lines[i] = ESCAPED_UNDERSCORES.subn('_', lines[i])[0]
     line = lines[i]
     next_line = lines[i+1]

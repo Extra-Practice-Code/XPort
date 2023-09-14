@@ -88,7 +88,7 @@ def addContextForReferences (html, links):
   key. Especially when the label / title is later changed.
 
 """
-def parse_pads (prefix=None):
+def read_pads (prefix=None):
   models = []
 
   if prefix:
@@ -97,7 +97,6 @@ def parse_pads (prefix=None):
     pads = Pad.objects.all()
 
   for pad in pads:
-
     basename = basenameFromSlug(pad.display_slug)
 
     if basename in SYSTEM_PADS:
@@ -177,7 +176,10 @@ def parse_pads (prefix=None):
         pass
 
     info('Read {}'.format(pad.display_slug))
+    
+  return models
 
+def resolve_links (models):
   # Excecuting links
   for model in models:
     info('Parsing {} ({})'.format(model.label, model.source_path))
@@ -207,4 +209,5 @@ class Command(BaseCommand):
 
 
   def handle(self, *args, **options):
-    parse_pads()
+    models = resolve_links(read_pads())
+

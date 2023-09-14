@@ -10,7 +10,7 @@ import generator.local_models
 from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL
 from generator.fields import Single
 from generator.index import make_index
-from generator.parse import parse_pads
+from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
 from generator.utils import debug, info, render_template_to_string, keyFilter
 
@@ -80,22 +80,13 @@ def generate ():
   basedir = os.path.join(settings.BASE_DIR, 'generator', 'static', 'generator')
 
   for folder in root_folders:
-    context = {
-      'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder),
-      'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder),
-      'MENU_ITEMS': MENU_ITEMS,
-      'LABELS': labels[folder] if folder in labels else labels['root']
-    }  
 
-    print(context)
 
     info('Generating {}'.format(folder))
 
     # Clear existing collections
     resetCollections()
-    setCollectionsContext(context)
 
-    
     backupdir = os.path.join(basedir, 'generated.old', folder)
     finaldir = os.path.join(basedir, 'generated', folder)
     outputdir = os.path.join(basedir, 'generated.new', folder)
@@ -106,12 +97,30 @@ def generate ():
     os.makedirs(outputdir)
       
     info('Parsing pads')
-    models = parse_pads(prefix=pathToSlugPrefix([ folder ]))
+    models = read_pads(prefix=pathToSlugPrefix([ folder ]))
 
     info('Read pads')
+    index_pad = find_where(collectionFor('pad'), {'index': 'true'})
+
+    context = {
+      'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder),
+      'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder),
+      'MENU_ITEMS': MENU_ITEMS,
+      'LABELS': labels[folder] if folder in labels else labels['root']
+    }  
+
+    if index_pad:
+      info('Found {} as index'.format(index_pad))
+      context['PUBLICATION_TITLE'] = str(index_pad.title)
+    else:
+      info('Did not find and index.')
+      context['PUBLICATION_TITLE'] = folder
+
     info('Generating output')
 
-    index_pad = find_where(collectionFor('pad'), {'index': 'true'})
+    setCollectionsContext(context)
+
+    models = resolve_links(models)
 
     for contentType in contentTypes.values():
       collection = contentType.collection

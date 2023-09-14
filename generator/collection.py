@@ -83,6 +83,11 @@ class Collection(object):
   @property
   def grouped (self):
     return {k: list(v) for k, v in groupby(self.models, key=lambda m: getattr(m, m.groupKey).value)}
+  
+  def setContext (self, context):
+    self.context = context
+    for m in self._models:
+      m.setContext(self.context)
 
 """ 
   Instantiates a model if it isn't part of the collection.
@@ -114,7 +119,7 @@ class ContentType (object):
     self.collection = self._collection(self.model)
 
   def setContext(self, context):
-    self.collection.context = context
+    self.collection.setContext(context)
 
 contentTypes = {}
 

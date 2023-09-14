@@ -352,6 +352,9 @@ class Model(object):
   def _metadataFields (self):
     pass
 
+  def setContext (self, context):
+    self.context = context
+
   # @FIXME add a propery to loop through all linkfields
   # have a unified linklist? To loop through different contenttypes
   # in a single list
