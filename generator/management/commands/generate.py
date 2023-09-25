@@ -171,10 +171,10 @@ def generate ():
     
     css_print = discover_pad('print.css', path=[ folder ])
     if css_print:
-      debug("Copying pad '{}' to '{}'".format(css_generated, os.path.join(outputdir, 'generated.css')))
+      debug("Copying pad '{}' to '{}'".format(css_generated, os.path.join(outputdir, 'print.css')))
       copyPadToPath(css_print, os.path.join(outputdir, 'print.css'))
     else:
-      warn("Could not find a generated.css")
+      warn("Could not find a print.css")
 
     info('Making backup of previous version, putting new version in place')
 
