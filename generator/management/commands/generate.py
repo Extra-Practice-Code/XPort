@@ -164,12 +164,14 @@ def generate ():
 
     css_generated = discover_pad('generated.css', path=[ folder ])
     if css_generated:
+      debug("Copying pad '{}' to '{}'".format(css_generated, os.path.join(outputdir, 'generated.css')))
       copyPadToPath(css_generated, os.path.join(outputdir, 'generated.css'))
     else:
       warn("Could not find a generated.css")
     
     css_print = discover_pad('print.css', path=[ folder ])
     if css_print:
+      debug("Copying pad '{}' to '{}'".format(css_generated, os.path.join(outputdir, 'generated.css')))
       copyPadToPath(css_print, os.path.join(outputdir, 'print.css'))
     else:
       warn("Could not find a generated.css")
