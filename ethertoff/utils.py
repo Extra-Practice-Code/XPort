@@ -86,7 +86,10 @@ def pathToSlug (path):
 
 
 def pathToSlugPrefix (path):
-    return pathToSlug(path) + settings.PAD_NAMESPACE_SEPARATOR
+    if path:
+        return pathToSlug(path) + settings.PAD_NAMESPACE_SEPARATOR
+    else:
+        return ''
 
 
 def basenameFromSlug (slug):
