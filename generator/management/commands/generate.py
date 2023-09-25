@@ -12,7 +12,7 @@ from generator.fields import Single
 from generator.index import make_index
 from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
-from generator.utils import debug, info, render_template_to_string, keyFilter
+from generator.utils import debug, info, render_template_to_string, keyFilter, warn
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -165,10 +165,14 @@ def generate ():
     css_generated = discover_pad('generated.css', path=[ folder ])
     if css_generated:
       copyPadToPath(css_generated, os.path.join(outputdir, 'generated.css'))
+    else:
+      warn("Could not find a generated.css")
     
     css_print = discover_pad('print.css', path=[ folder ])
     if css_print:
       copyPadToPath(css_print, os.path.join(outputdir, 'print.css'))
+    else:
+      warn("Could not find a generated.css")
 
     info('Making backup of previous version, putting new version in place')
 
