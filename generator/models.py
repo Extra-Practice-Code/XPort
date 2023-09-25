@@ -233,7 +233,7 @@ def parseShortTimecodes (content):
   return re.sub(r'(?:(?<=\s)|(?<=^))\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?:(?=\s)|(?=$))', insertTimecode, content)
 
 def expandTags (content):
-  return re.sub(r'\[\[\s*([^:\]]+)\s*\]\]', '[[label: \\1]]', content)
+  return re.sub(r'\[\[\s*([^:\]]+(?:\s*|\s*[^\]]+)?)\s*\]\]', '[[label: \\1]]', content)
 
 def resolveReferences (model):
   # return content
