@@ -78,9 +78,9 @@ def parseMetadataEntryWithMetadata (raw):
 def parseReferenceMetadata (raw):
   data = {}
 
-  # Split into metadata and display label
-  # print('Raw metadata ', raw)
-  if ':' in raw:
+  # Test whether the string starts with metadata
+  # @FIXME Stripping of metadata should be smoother
+  if re.match(r'^\s*([\w\._-]+)\s*:\s*([^\|]+)\s*', raw):
     m = re.match(r'(.+)(?:\|?([^:\|]+))?$', raw)
     if m:
       raw_meta = m.group(1)

@@ -149,8 +149,6 @@ def generate ():
       'index_pad': index_pad
     }))
 
-    print(collectionFor('chapter'))
-
     output(os.path.join(outputdir, 'print.html'), 'generator/print.html', extend_context(context, {
       'labels': collectionFor('label'),
       'reports': collectionFor('report'),
