@@ -109,6 +109,8 @@ def generate ():
       'LABELS': labels[folder] if folder in labels else labels['root']
     }  
 
+    print('\n\n*****************\n\n', context['LABELS'])
+
     if index_pad:
       info('Found {} as index'.format(index_pad))
       context['PUBLICATION_TITLE'] = str(index_pad.title)

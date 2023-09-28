@@ -12,7 +12,6 @@ import os
 import os.path
 from time import sleep
 
-
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
 YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
 
@@ -174,11 +173,14 @@ class Label (Model):
 class Report (Model):
   generateListPage = True
   generateSinglePages = True
+  
+  sortKey = 'order'
 
   def _metadataFields (self):
     return {
       'report': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['published'])),
+      'order': fields.Single(fields.IntField()), 
       'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
     }
 

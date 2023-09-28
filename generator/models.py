@@ -232,8 +232,15 @@ def parseShortTimecodes (content):
   # return re.sub(r'(?<=[\s|^])\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\]', insertTimecode, content)
   return re.sub(r'(?:(?<=\s)|(?<=^))\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?:(?=\s)|(?=$))', insertTimecode, content)
 
+def expandIfShort(match):
+  if re.match(r'\[\[\s[\w\.\_\-]+:', match.group(0)):
+    # Not a short tag
+    return match.group(0)
+  
+  return re.sub(r'\[\[\s*([^:\]]+(?:\s*|\s*[^\]]+)?)\s*\]\]', '[[label: \\1]]', match.group(0))
+
 def expandTags (content):
-  return re.sub(r'\[\[\s*([^:\]]+(?:\s*|\s*[^\]]+)?)\s*\]\]', '[[label: \\1]]', content)
+  return re.sub(r'\[\[\s*([^:\]]+(?:\s*|\s*[^\]]+)?)\s*\]\]', expandIfShort, content)
 
 def resolveReferences (model):
   # return content
