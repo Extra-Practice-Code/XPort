@@ -1,0 +1,20 @@
+{% if object.youtubeId %}
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/{{ object.youtubeId }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+{% elif object.vimeoId %}
+{% else %}
+  <section
+    class="video"
+    id="{{ link.id }}"
+    data-link-target-type="{{ object.contentType }}"
+    data-link-id="{{ link.id }}"
+  >
+    <video controls>
+      <source src="{{ object.video }}" type="{{ object.type }}" />
+    </video>
+
+
+    {% if object.description %}
+    <p>{{ object.description }}</p>
+    {% endif %}
+  </section>
+{% endif %}

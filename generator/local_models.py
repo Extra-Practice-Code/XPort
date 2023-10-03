@@ -13,7 +13,7 @@ import os.path
 from time import sleep
 
 VIMEO_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:player\.|www\.)?vimeo\.com\/(?:video\/)?(\d+)', re.I)
-YOUTUBE_VIDEO_URL_PATTERN = re.compile('https:\/\/(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
+YOUTUBE_VIDEO_URL_PATTERN = re.compile('(?:https?:\/\/)?(?:(?:www\.)?youtube\.com\/watch\?v=|youtu\.be\/)([\w\d]+)', re.I)
 
 # FIXME: 
 
@@ -54,6 +54,7 @@ class Audio (Model):
 @contentType(InstantiatingCollection)
 class Video (Model):
   generateSinglePages = False
+  referenceTemplate = 'generator/snippets/references/video.html'
 
   """
     If the video is recognized as a vimeo video,
@@ -146,6 +147,34 @@ class Video (Model):
     return {
       'video': fields.Single(fields.StringField()),
       'type': fields.Single(fields.StringField(['video/mp4'])),
+      'date': fields.Single(fields.DateField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField())
+    }
+
+
+@contentType(InstantiatingCollection)
+class Youtube (Model):
+  generateSinglePages = False
+  referenceTemplate = 'generator/snippets/references/video--youtube.html'
+
+  def _metadataFields (self):
+    return {
+      'youtube': fields.Single(fields.StringField()),
+      'date': fields.Single(fields.DateField()),
+      'title': fields.Single(fields.InlineMarkdownField()),
+      'caption': fields.Single(fields.InlineMarkdownField())
+    }
+
+
+@contentType(InstantiatingCollection)
+class Vimeo (Model):
+  generateSinglePages = False
+  referenceTemplate = 'generator/snippets/references/video--vimeo.html'
+
+  def _metadataFields (self):
+    return {
+      'vimeo': fields.Single(fields.StringField()),
       'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField())
