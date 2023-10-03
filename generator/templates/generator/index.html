@@ -1,8 +1,11 @@
 {% extends "generator/base.html" %}
-{% load generator_utils %}
+{% load generator_utils going_hybrid%}
 
 {% block extrabodyclass %}home{% endblock %}
 {% block content %}  
   <h1>{{ index_pad.title }}</h1>    
   {{ index_pad.content }}
+{% endblock %}
+{% block aside %}
+  {% going_hybrid_labels %}
 {% endblock %}

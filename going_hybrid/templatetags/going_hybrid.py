@@ -17,3 +17,14 @@ def going_hybrid_navbar (context):
       label for label in filter(lambda label: str(label) in context['LABELS'], collectionFor('label'))
     ]
   }
+
+
+
+@register.inclusion_tag('going-hybrid/snippets/going-hybrid--labels.html', takes_context=True)
+def going_hybrid_labels (context):
+  return {
+    'SITE_URL': context['SITE_URL'],
+    'labels': [
+      label for label in filter(lambda label: str(label) in context['LABELS'], collectionFor('label'))
+    ]
+  }
