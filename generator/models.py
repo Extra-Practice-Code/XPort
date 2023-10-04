@@ -442,7 +442,7 @@ class Model(object):
         'source': source, # source (model), pad where the link is created
         'link': link  # link itself
       }
-    )
+    ).replace('\n', ' ')
 
   def getSortKey (self):
 

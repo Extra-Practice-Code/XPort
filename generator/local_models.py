@@ -186,6 +186,7 @@ class Label (Model):
   generateListPage = True
   generateSinglePages = True
   singlePageTemplate = 'generator/label.html'
+  referenceTemplate = 'generator/snippets/references/label.html'
   sortKey = ('first_letter')
   # Use a metaclass to have better default values?
 
