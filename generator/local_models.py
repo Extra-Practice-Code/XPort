@@ -209,7 +209,7 @@ class Report (Model):
     return {
       'report': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['published'])),
-      'order': fields.Single(fields.IntField()), 
+      'order': fields.Single(fields.IntField(default=99999)), 
       'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False)
     }
 
