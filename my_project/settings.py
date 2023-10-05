@@ -165,6 +165,8 @@ from my_project.markdown_underline_extension import UnderlineExtension
 # from my_project.markdown_raise_blockquote_classes import RaiseBlockquoteClassesExtension
 # from my_project.markdown_raise_figure_classes import RaiseFigureClassesExtension
 # from my_project.markdown_footnote_insertion_marker import FootnoteInsertionPointExtension
+from generator__filer_thumbnails.markdown_make_filer_image_thumbnails import MakeFilerImageThumbnailsExtension
+
 
 MARKDOWN_SETTINGS = {
     'extensions': [
@@ -190,7 +192,10 @@ MARKDOWN_SETTINGS = {
             'UNIQUE_IDS': True
         }
     }
-}
+}   
+
+MARKDOWN_SETTINGS_GENERATOR = MARKDOWN_SETTINGS
+MARKDOWN_SETTINGS_GENERATOR['extensions'].append(MakeFilerImageThumbnailsExtension())
 
 try:
     LOCAL_SETTINGS

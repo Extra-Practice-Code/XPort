@@ -193,7 +193,7 @@ def resolve_links (models):
       content, links = resolveReferences(model) # Second return are the collected references
       # render markdown
       debug('Parsing markdown')
-      md = markdown.Markdown(**settings.MARKDOWN_SETTINGS)
+      md = markdown.Markdown(**settings.MARKDOWN_SETTINGS_GENERATOR)
       model.content = mark_safe(md.convert(content))
       # Load context into references?
       if model.content:

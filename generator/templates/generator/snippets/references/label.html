@@ -5,8 +5,8 @@
     data-link-target-type="{{ object.contentType }}"
     data-label="{{ object }}"
     {% if not link.label %}data-direct-link="true" {% endif %}>
+  <span class="reference--target">{{ object }}</span>
   {% if link.label %}
     <span class="reference--label--inline">{{ link.label }}</span>
   {% endif %}
-  <span class="reference--target">{{ object }}</span>
 </a>
