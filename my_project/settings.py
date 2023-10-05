@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'filer',
     'mptt',
-    'corsheaders',
     'my_project',
     'going_hybrid'
     #'south'
@@ -55,7 +54,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -216,8 +214,7 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.autocrop',
     #'easy_thumbnails.processors.scale_and_crop',
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
-    'easy_thumbnails.processors.filters',
-    'my_project.thumbnail_processors.dither_processor',
+    'easy_thumbnails.processors.filters'
 )
 
 THUMBNAIL_EXTENSION = 'jpg'
@@ -238,5 +235,3 @@ THUMBNAIL_EXTENSION = 'jpg'
 
     Seems not really possible to work on this from the outside
 """
-
-THUMBNAIL_NAMER = 'my_project.namers.hashed_force_gif_on_dither'
