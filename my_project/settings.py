@@ -157,7 +157,7 @@ from markdown.extensions.toc import TocExtension
 from markdown.extensions.footnotes import FootnoteExtension
 # from my_project.markdown_inline_reference import InlineReferenceExtension
 # from my_project.voice_extension import VoiceExtension
-# from mdx_figcaption import FigcaptionExtension
+from mdx_figcaption import FigcaptionExtension
 from my_project.markdown_del_extension import DelExtension
 from my_project.markdown_underline_extension import UnderlineExtension
 # from my_project.markdown_raise_blockquote_classes import RaiseBlockquoteClassesExtension
@@ -177,6 +177,7 @@ MARKDOWN_SETTINGS = {
         'md_in_html',
         'meta', 
         'smarty', 
+        FigcaptionExtension(),
         TocExtension(baselevel=2), 
         'attr_list',
         DelExtension(), 
