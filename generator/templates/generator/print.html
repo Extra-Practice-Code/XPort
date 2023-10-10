@@ -5,51 +5,92 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>{{ index_pad.title }}</title>
   <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" />
-  <link rel="stylesheet" href="{{ SITE_URL }}/print.css" type="text/css" media="all">
+  <link rel="stylesheet" type="text/css" media="print" href="{{ SITE_URL }}/print.css">
   <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
 </head>
 <body>
-  <section class="chapters">
+  {% if index_pad %}
+  <div class="front-matter">
+    <div class="front-matter--title">
+      <h1>{{ index_pad.title }}</h1>
+    </div>
+    <div class="front-matter--introduction">
+      <h1>{{ index_pad.title }}</h1>
+      {{ index_pad.content }}
+    </div>
+    <div class="toc">
+      <ul>
+        {% for chapter in chapters %}
+          {% if chapter.position.value == 'before_content' and chapter.on_print.value != 'false' %}
+            <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% for report in reports %}
+          <li><a href="#{{report.key}}">{{ report.report }}</a></li>  
+        {% endfor %}
+        <!-- {% for pad in pads %}
+          <li><a href="#{{pad.key}}">{{ pad.title }}</a></li>  
+        {% endfor %} -->
+        {% for chapter in chapters %}
+          {% if chapter.position.value == 'after_content' and chapter.on_print.value != 'false' %}
+            <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+  <div class="chapters">
     {% for chapter in chapters %}
       {% if chapter.position.value == 'before_content' and chapter.on_print.value != 'false' %}
         <div class="chapter" data-chapter="{{ chapter }}">
+          <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
           {{ chapter.content }}
         </div>
       {% endif %}
     {% endfor %}
-  </section>
-  <section class="reports">
+  </div>
+  <div class="reports">
     {% for report in reports %}
-      <section class="report">
+      <div class="report">
+        <h1 id="{{ report.key }}">{{ report.report }}</h1>
         {{ report.content }}
-      </section>
+      </div>
     {% endfor %}
-  </section>
-  <section class="pads">
+  </div>
+  <!-- <div class="pads">
     {% for pad in pads %}
-      <section class="pad">
+      <div class="pad">
+        <h1 id="{{ pad.key }}" >{{ pad.title }}</h1>
         {{ pad.content }}
-      </section>
+      </div>
     {% endfor %}
-  </section>
+  </div> -->
   {% for chapter in chapters %}
+  <div class="chapters">
     {% if chapter.position == 'after_content' and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
+        <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
         {{ chapter.content }}
       </div>
     {% endif %}
+  </div>
   {% endfor %}
-  <ul>
-    {% for label in labels %}
-      <li>
-        {{ label }}
-        {% for link in label|merged_links %}
-          <span class="index-entry" data-link-id="#{{ link.id }}"></span>
+  <div class="indexes">
+    <div class="index" data-index="label">
+      <ul>
+        {% for label in labels %}
+          <li>
+            {{ label }}
+            {% for link in label|merged_links %}
+              <span class="index-entry" data-link-id="#{{ link.id }}"></span>
+            {% endfor %}
+          </li>
         {% endfor %}
-      </li>
-    {% endfor %}
-  </ul>
+      </ul>
+    </div>
+  </div>
 </body>
 </html>

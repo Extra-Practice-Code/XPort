@@ -157,6 +157,7 @@ def generate ():
     }))
 
     output(os.path.join(outputdir, 'print.html'), 'generator/print.html', extend_context(context, {
+      'index_pad': index_pad,
       'labels': collectionFor('label'),
       'reports': collectionFor('report'),
       'pads': collectionFor('pad'),
