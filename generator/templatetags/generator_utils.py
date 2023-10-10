@@ -53,6 +53,10 @@ def merged_targets (model):
 
   return sorted(targets, key=lambda m: str(m).lower() if m else '')
 
+
+"""
+  Merges links into a single list
+"""
 @register.filter
 def merged_links (model):
   links = []
@@ -64,6 +68,28 @@ def merged_links (model):
       links.append(field.link)
 
   return links
+
+
+@register.filter
+def unique (items):
+  return set(items)
+
+"""
+  Takes a list of links and removes links which context is already seen.
+  This removes links.
+"""
+@register.filter
+def unique_contexts (links):
+  seen_contexts = []
+  filtered_links = []
+
+  for link in links:
+    if link.context not in seen_contexts:
+      seen_contexts.append(link.context)
+      filtered_links.append(link)
+
+  return filtered_links
+
 
 @register.filter
 def targets (links):

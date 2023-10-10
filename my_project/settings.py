@@ -77,6 +77,7 @@ TEMPLATES = [
                 'ethertoff.context_processors.site_name',
                 'ethertoff.context_processors.pads',
                 'ethertoff.context_processors.local',
+                'generator.context_processors.publications',
             ],
         },
     },

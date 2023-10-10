@@ -566,6 +566,7 @@ div#next a {
 .button--nav:hover {
     background-color: var(--button-color--hover);
 }
+
 .syntax-help {
     font-size: 75%;
     max-height: calc(100vh - 75px);
@@ -600,3 +601,21 @@ div#next a {
     display: none;
 }
 
+#staff-menu .publication-list {
+    display: inline-block;
+	position: relative;
+}
+
+.publication-list a {
+	display: block;
+}
+
+.publication-list--content {
+	position: absolute;
+	background-color: white;
+	z-index: 9;
+	left: 0;
+    right: 0;
+	padding: 1ch 2ch 2ch 2ch;
+	position: absolute;
+}

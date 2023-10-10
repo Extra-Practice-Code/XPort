@@ -1,8 +1,19 @@
-<h1>
-  Publications
-</h1>
-<ul>
-  {% for folder in folders %}
-  <li><a href="{{ folder }}/">{{ folder }}</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etherport publications</title>
+  <link rel="stylesheet" href="{{ SITE_URL }}/publication-list.css" type="text/css" media="all">
+</head>
+<body>
+  <h1>
+    Publications
+  </h1>
+  <ul>
+    {% for publication in publications %}
+    <li><a href="{{ publication.url }}">{{ publication.title }}</a></li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

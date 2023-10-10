@@ -16,7 +16,6 @@ def site_name(request):
     # project_name? wiki_name?
     return { 'site_name' : current_site.name }
 
-
 def pads(request):
     hash = {}
     if 'admin' in request.path:

@@ -6,14 +6,16 @@ import json
 
 def load_labels ():
   try:
-    labels = json.load(open(os.path.join(settings.BACKUP_DIR, 'index.json'), 'r'))
+    labels = json.load(open(os.path.join(settings.BACKUP_DIR, 'index-labels.json'), 'r'))
   except IOError:
-    labels = []
+    labels = {}
 
   return labels
 
+
 def store_labels (labels):
-  json.dump(labels, open(os.path.join(settings.BACKUP_DIR, 'index.json'), 'w'), ensure_ascii=False)
+  json.dump(labels, open(os.path.join(settings.BACKUP_DIR, 'index-labels.json'), 'w'), ensure_ascii=False)
+
 
 def index_labels():
   root_folders = discover_root_folders()

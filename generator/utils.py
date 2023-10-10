@@ -9,6 +9,12 @@ import re
 import random
 from string import ascii_letters, digits
 
+from django.conf import settings
+import os.path
+import json
+
+PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
+
 CRED = '\033[91m'
 CGREEN = '\033[92m'
 CYELLOW = '\033[93m'
@@ -93,3 +99,18 @@ def drop_tags (snippet, tags_to_drop=[]):
       element.decompose()
 
   return str(soup)
+
+
+# [{ title: str, path: str, url: str }, ...]
+def store_publications (publications):
+  json.dump(publications, open(PUBLICATION_INDEX_PATH, 'w'), ensure_ascii=False)
+
+
+# [{ title: str, path: str, url: str }, ...]
+def load_publications ():
+  try:
+    publications = json.load(open(PUBLICATION_INDEX_PATH, 'r'))
+  except IOError:
+    publications = []
+
+  return publications

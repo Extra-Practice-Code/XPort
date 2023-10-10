@@ -11,7 +11,7 @@
     {% if object.labels %}
       <h2>Labels</h2>
       <ul class="list--labels">
-        {% for label in object.labels %}
+        {% for label in object.labels|unique %}
           <li><a href="{{ label.url }}">{{ label }}</a></li>
         {% endfor %}
       </ul>

@@ -7,12 +7,12 @@ import shutil
 # Do not remove, registers the local models!
 import generator.local_models
 
-from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL
+from generator.settings import SITE_URL, MENU_ITEMS, STATIC_URL, GENERATED_SITE_INDEX
 from generator.fields import Single
 from generator.index import make_index
 from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
-from generator.utils import debug, info, render_template_to_string, keyFilter, warn
+from generator.utils import debug, info, render_template_to_string, keyFilter, warn, store_publications
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -75,13 +75,14 @@ def generate ():
   root_folders = list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discover_root_folders()))
   labels = load_labels()
 
+  # List of publications: [{ title: str, path: str, url: str }, ...]
+  publications = []
+
   info('Discovered {} root folders: {}'.format(len(root_folders), ', '.join(root_folders)))
 
   basedir = os.path.join(settings.BASE_DIR, 'generator', 'static', 'generator')
 
   for folder in root_folders:
-
-
     info('Generating {}'.format(folder))
 
     # Clear existing collections
@@ -109,14 +110,18 @@ def generate ():
       'LABELS': labels[folder] if folder in labels else labels['root']
     }  
 
-    print('\n\n*****************\n\n', context['LABELS'])
-
     if index_pad:
       info('Found {} as index'.format(index_pad))
       context['PUBLICATION_TITLE'] = str(index_pad.title)
     else:
       info('Did not find and index.')
       context['PUBLICATION_TITLE'] = folder
+
+    publications.append({
+      'title': context['PUBLICATION_TITLE'],
+      'path': folder,
+      'url': context['SITE_URL']
+    })
 
     info('Generating output')
 
@@ -191,8 +196,14 @@ def generate ():
       # Put new version of the site in place
       shutil.move(outputdir, finaldir)
 
-  output(os.path.join(basedir, "generated", "index.html"), "generator/main_index.html", { 'folders': root_folders })
+  css_publication_list = discover_pad('publication-list.css', path=[])
+  if css_publication_list:
+    debug("Copying pad '{}' to '{}'".format(css_publication_list, os.path.join(basedir, 'generated', 'publication-list.css')))
+    copyPadToPath(css_publication_list, os.path.join(basedir, 'generated', 'publication-list.css'))
 
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/main_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'publications': publications })
+
+  store_publications(publications)
 
   if not settings.DEBUG:
     print('Collecting static')

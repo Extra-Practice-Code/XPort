@@ -3,24 +3,24 @@
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
 {% block content %}
   <h6>{{ object.contentType }}</h6>
-  <h1>Label: {{ object }}</h1>
+  <h1>{{ object }}</h1>
   {% with object|merged_links|length as num_objects%}
     <p>Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
     {% if object.content %}
       {{ object.content }}
     {% endif %}
   {% endwith %}
-  <ul>
-    {% for link in object|merged_links %}
+  <ul class="label--context-list">
+    {% for link in object|merged_links|unique_contexts %}
       <li>
+        <p class="link-source">
+          from: <a href="{{ link.target.url }}#{{ link.id }}">
+            {{ link.target }}</a>
+          ({{ link.target.contentType }})
+        </p>
         {% if link.context %}
           {{ link.context }}
         {% endif %}
-        <p>
-          <a href="{{ link.target.url }}#{{ link.id }}">
-            {{ link.target.contentType }}: {{ link.target }}
-          </a>
-        </p>
       </li>
     {% endfor %}
   </ul>
