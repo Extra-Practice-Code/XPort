@@ -8,6 +8,9 @@
   <title>{{ index_pad.title }}</title>
   <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" />
   <link rel="stylesheet" type="text/css" media="print" href="{{ SITE_URL }}/print.css">
+  <script>
+    window.PagedConfig = { auto: false };
+  </script>
   <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
 </head>
 <body>
@@ -21,6 +24,7 @@
       {{ index_pad.content }}
     </div>
     <div class="toc">
+      <h1>Table of Contents</h1>
       <ul>
         {% for chapter in chapters %}
           {% if chapter.position.value == 'before_content' and chapter.on_print.value != 'false' %}
@@ -80,6 +84,7 @@
   {% endfor %}
   <div class="indexes">
     <div class="index" data-index="label">
+      <h1>Index: labels</h1>
       <ul>
         {% for label in labels %}
           <li>
@@ -92,5 +97,52 @@
       </ul>
     </div>
   </div>
+  <script>
+    function sorterByDomPostion (a, b) {
+      if (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        // A comes before B
+        return -1;
+      }
+      else {
+        if (a == b) {
+          return 0;
+        }
+
+        return 1;
+      }
+    }
+
+    function sorterByReferencedNodePosition (a, b) {
+      let targetA = document.querySelector(a.dataset.linkId),
+          targetB = document.querySelector(b.dataset.linkId);
+      
+      console.log(targetA, targetB)
+
+      return sorterByDomPostion(targetA, targetB)
+    }
+
+    function reorderIndexEntries () {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+      let indexes = document.querySelectorAll('[data-index] ul');
+
+      indexes.forEach(index => {
+        console.log(index)
+        let items = index.querySelectorAll('li');
+
+        items.forEach(li => {
+          let newEntries = [],
+              entries = li.querySelectorAll('.index-entry');
+          entries.forEach(entry => {
+            newEntries.push(li.removeChild(entry));
+          });
+          newEntries.sort(sorterByReferencedNodePosition);
+          newEntries.forEach(entry => li.appendChild(entry)); // Add them to indexs
+        })
+      });
+    }
+
+    reorderIndexEntries();
+    window.PagedPolyfill.preview();
+  </script>
 </body>
 </html>
