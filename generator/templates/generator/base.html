@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block page_title %}{{ PUBLICATION_TITLE }}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ SITE_URL }}/generated.css" type="text/css" media="all">
+    <link rel="stylesheet" href="{{ CSS_GENERATED }}" type="text/css" media="all">
   </head>
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>

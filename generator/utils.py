@@ -13,6 +13,8 @@ from django.conf import settings
 import os.path
 import json
 
+from ethertoff.utils import discoverRootFolders
+
 PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
 
 CRED = '\033[91m'
@@ -102,15 +104,18 @@ def drop_tags (snippet, tags_to_drop=[]):
 
 
 # [{ title: str, path: str, url: str }, ...]
-def store_publications (publications):
+def storePublications (publications):
   json.dump(publications, open(PUBLICATION_INDEX_PATH, 'w'), ensure_ascii=False)
 
 
 # [{ title: str, path: str, url: str }, ...]
-def load_publications ():
+def loadPublications ():
   try:
     publications = json.load(open(PUBLICATION_INDEX_PATH, 'r'))
   except IOError:
     publications = []
 
   return publications
+
+def discoverPublicationFolders ():
+  return list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discoverRootFolders()))

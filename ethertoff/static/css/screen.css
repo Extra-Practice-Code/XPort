@@ -293,6 +293,9 @@ form label {
     display: inline-block;
     width: 15ch;
 }
+form label.label--inline {
+    width: auto;
+}
 /* Style de l'élément activé */
 form input:focus, form textarea:focus {
     background-color: white;
@@ -304,6 +307,13 @@ form select {
     width: 30ch;
     display: inline-block;
 }
+
+form input[type=text].input--inline,
+form input[type=password].input--inline,
+form select.select--inline {
+    width: auto;
+}
+
 .form-row {
     padding-bottom: calc(.5 * var(--line-height));
     margin-bottom: calc(.5 * var(--line-height));
@@ -311,6 +321,11 @@ form select {
 .form-row--button {
     padding-left: 15ch;
 }
+
+label input[type="checkbox"] {
+    margin-right: 1ch;
+}
+
 /* GENERIC CLASSES -------------------------------- */
 /* Style des boutons */
 .button,

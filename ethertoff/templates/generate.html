@@ -7,27 +7,64 @@
     <link rel="stylesheet" href="{% static 'css/progress.css' %}" type="text/css" media="all">
 {% endblock %}
 
+{% block title %}
+<h1>Generate publications</h1>
+{% endblock %}
+
 {% block content %}
-  {% if generated %}
-  <p style="background-color: white">Site regenerated</p>
-  <p>View <a href="{% generated_site_url %}">home page</a></p>
-  {% else %}
-  <div id="loading">
-      <div class="meter red">
-          <span style="width: 25%"></span>
-      </div>
-      <p>Generating, please don’t stop or refresh this page:</p>
-      <p>This might take a while.</p>
-  </div>
-  <form action="" method="post">
-      {% csrf_token %}
-      <input style="" type="submit" class="submit" value="Generate"/>
-  </form>
-  <script>
-      $("input[type=submit]").click(function() {
-          $(this).hide();
-          $("#loading").show();
-      });
-  </script>
-  {% endif %}
+    {% if generated %}
+        <p style="background-color: white">Site regenerated</p>
+        <p>View <a href="{% generated_site_url %}">home page</a></p>
+    {% else %}
+        <div id="loading">
+            <div class="meter red">
+                <span style="width: 25%"></span>
+            </div>
+            <p>Generating, please don’t stop or refresh this page:</p>
+            <p>This might take a while.</p>
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            {# simplified version of the multiselect template #}
+            <div class="form-row">
+                <a class="button toggle--select-all">select all</a>
+                <a class="button toggle--deselect-all">deselect all</a>
+            </div>
+            <ul>
+                {% for field in form %}
+                <li class="form-row">
+                    <label class="label--inline">
+                        <input type="checkbox"{% if field.value %} checked="checked"{% endif %}>
+                        {{ field.label }},
+                    </label>
+                    <label class="label--inline">
+                        mode:
+                        <select name="{{ field.name }}" id="publication_mode_{{ forloop.counter0 }}" class="select--inline" {% if not field.value %} disabled{% endif %}>
+                            <option value="normal" {% if field.value == "normal" %}selected{% endif %}>normal</option>
+                            <option value="development" {% if field.value == "development" %}selected{% endif %}>development</option>
+                        </select>
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+            <input type="submit" class="submit" value="Generate"/>
+        </form>
+        <script>
+            $('input[type="checkbox"]').on('change', function () {
+                console.log('Detected change.')
+                let $this = $(this);
+                $this.parent().parent().find('select').prop('disabled', !$this.prop('checked'));
+            });
+            $('.toggle--deselect-all').click(function () {
+                $(this).parent().parent().find('input[type="checkbox"]').prop('checked', false).trigger('change')
+            });
+            $('.toggle--select-all').click(function () {
+                $(this).parent().parent().find('input[type="checkbox"]').prop('checked', true).trigger('change')
+            });
+            $("input[type=submit]").click(function() {
+                $(this).hide();
+                $("#loading").show();
+            });
+        </script>
+    {% endif %}
 {% endblock %}

@@ -7,7 +7,7 @@ from etherpadlite.models import Pad
 
 # Natural sort a list of pads
 # https://stackoverflow.com/a/11150413
-def natural_sort(pads): 
+def naturalSort(pads): 
     convert = lambda text: int(text) if text.isdigit() else text.lower() 
     alphanum_key = lambda pad: [convert(c) for c in re.split('([0-9]+)', pad.display_slug)] 
     return sorted(pads, key=alphanum_key)
@@ -33,21 +33,24 @@ def getEtherpadLiteClient(server):
 
 # @FIXME better naming, tries to find a given padname within a path
 # makes path less specific with each iteration
-def discover_pad(padname, path=[]):
+def discoverPad(padname, path=[]):
   pad = getPadBySlug(pathToSlugPrefix(path) + padname)
 
   if pad:
     return pad
   elif len(path) > 0:
     path.pop()
-    return discover_pad(padname, path=path)
+    return discoverPad(padname, path=path)
   else:
     return None
 
 
-def copyPadToPath (pad, path):
+def copyPadToPath (pad, path, f=None):
   with open(path, 'w', encoding='utf-8') as w:
-    w.write(getPadText(pad))
+    pad_text = getPadText(pad)
+    if f:
+        pad_text = f(pad_text)
+    w.write(pad_text)
 
 
 """
@@ -98,15 +101,15 @@ def basenameFromSlug (slug):
 
 def selectPadsByPath (path):
     if len(path) > 0:
-        pads = natural_sort(list(Pad.objects.filter(display_slug__startswith=pathToSlugPrefix(path)).order_by('display_slug')))
+        pads = naturalSort(list(Pad.objects.filter(display_slug__startswith=pathToSlugPrefix(path)).order_by('display_slug')))
     else:
-        pads = natural_sort(list(Pad.objects.all().order_by('display_slug')))
+        pads = naturalSort(list(Pad.objects.all().order_by('display_slug')))
 
     return pads
 
 # Returns all root folders
 # @FIXME faster implementation
-def discover_root_folders ():
+def discoverRootFolders ():
     root_folders = []
 
     for pad in Pad.objects.all():
@@ -116,3 +119,16 @@ def discover_root_folders ():
             root_folders.append(path[0])
 
     return root_folders
+
+
+"""
+    When pad lines have styles they are returned with a leading asterisk on text export.
+    This functions strips leading asterisks if all lines start with one.
+"""
+def stripLeadingAsterisks (padText):
+    lines = padText.split('\n')
+
+    if all([True if line.startswith('*') or line == '' else False for line in lines]):
+        return '\n'.join([line[1:] for line in lines])
+    else:
+        return padText

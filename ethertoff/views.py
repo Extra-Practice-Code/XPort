@@ -42,6 +42,8 @@ from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
 # Generator commands
 from generator.management.commands.generate import generate as generateStatic
+from generator.utils import discoverPublicationFolders
+from generator.forms import makeGenerationForm
 from labels.utils import index_labels as indexLabels, load_labels
 
 from . import forms as ethertoffForms
@@ -52,7 +54,7 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug
+from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug, discoverPad, stripLeadingAsterisks
 
 from my_project.forms import PadCreateWithTemplate
 
@@ -732,14 +734,26 @@ def publish(request):
 
 @login_required(login_url='/accounts/login')
 def generate(request):
-    tpl_params = {}
+    context = {}
+    publication_folders = discoverPublicationFolders()
+
     if request.method == 'POST':
-        tpl_params['generated'] = True
-        tpl_params['message'] = generateStatic()
+        print('Received post')
+        form = makeGenerationForm(publication_folders, request.POST)
+        if form.is_valid():
+            generateStatic({
+                field.name: field.value() for field in form if field.value() is not None
+            })
+            context['generated'] = True
+        else:
+            print('Form not valid?')
+            print(form.errors)
     else:
-        tpl_params['generate'] = False
-        tpl_params['message'] = ""
-    return render(request, "generate.html", tpl_params)
+        form = makeGenerationForm(publication_folders, initial={ publication: 'normal' for publication in publication_folders})
+
+    context['form'] = form
+        
+    return render(request, "generate.html", context)
 
 
 @login_required(login_url='/accounts/login')
@@ -820,12 +834,15 @@ def padOrFallbackPath(request, slug, fallbackPath, mimeType):
         f.close()
         return HttpResponse(contents, content_type=mimeType)
 
-def padOrEmtpy(request, slug, mimeType):
+def padOrEmtpy(request, slug, mimeType, filter=None):
     try:
         pad = Pad.objects.get(display_slug=slug)
         padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
         epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-        return HttpResponse(epclient.getText(padID)['text'], content_type=mimeType)
+        text = epclient.getText(padID)['text']
+        if filter:
+            text = filter(text)
+        return HttpResponse(text, content_type=mimeType)
     except:
         return HttpResponse("", content_type=mimeType)
 
@@ -841,9 +858,12 @@ def offsetprint(request):
 def css_slide(request):
     return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
 
-def cssgenerator(request):
-    return padOrEmtpy(request, 'generated.css', 'text/css')
+def css_generator_screen (request, folder=''):
+    return padOrEmtpy(request, discoverPad('generated.css', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
 
+def css_generator_print (request, folder=''):
+    return padOrEmtpy(request, discoverPad('print.css', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
+    
 
 def labels (request, slug=None):
     labels = load_labels()

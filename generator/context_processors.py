@@ -1,4 +1,4 @@
-from generator.utils import load_publications
+from generator.utils import loadPublications
 
 def publications (_):
-    return { 'publications': load_publications() }
+    return { 'publications': loadPublications() }

@@ -1,6 +1,6 @@
 from django.conf import settings
 from etherpadlite.models import Pad
-from ethertoff.utils import getPadMarkdown, discover_root_folders, getPadBySlug, pathToSlugPrefix
+from ethertoff.utils import getPadMarkdown, discoverRootFolders, getPadBySlug, pathToSlugPrefix
 import os.path
 import json
 
@@ -18,7 +18,7 @@ def store_labels (labels):
 
 
 def index_labels():
-  root_folders = discover_root_folders()
+  root_folders = discoverRootFolders()
   # Todo, make indexing recursive and link it to a folder
   labels = {}
 
