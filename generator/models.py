@@ -247,9 +247,9 @@ def resolveReferences (model):
   collector = [] # Collects all the links
   content = model.content
   if content:
-    content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     content = parseShortTimecodes(content)
     content = parseTimecodes(content)
+    content = expandTags(content) # Rewrite short form tags into longform [[tagname]] → [[tag: tagname]]
     # 
     referenceParser = partial(parseReference, collector=collector, source=model)
     referencePattern = r'\[\[\s*([\w\._\-]+)\s*:\s*([^\|\]]+)\s*(?:\|\s*(.[^\]+]+))?\s*\]\]'

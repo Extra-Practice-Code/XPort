@@ -29,7 +29,7 @@ FIELD_DATE_FORMAT = '%d.%m.%Y'
 FIELD_DATETIME_FORMAT = '%d-%m-%Y %H:%M'
 FIELD_TIME_FORMAT = '%H:%M'
 
-
+# Fix urls of css stylesheets make them relative for archiving purposes
 
 from generator.settings import DATE_OUTPUT_FORMAT
 
@@ -133,13 +133,8 @@ def generate (folders=None):
     info('Generating output')
 
     if mode == 'development':
-      css_generated = reverse('css-generator-screen', kwargs={ 'folder': folder })
-      css_print = reverse('css-generator-print', kwargs={ 'folder': folder })
-  
-      print('ethertoff url:', ETHERTOFF_URL)
-
-      context['CSS_GENERATED'] = ETHERTOFF_URL + css_generated
-      context['CSS_PRINT'] = ETHERTOFF_URL + css_print
+      context['CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'folder': folder })
+      context['CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'folder': folder })
     else:
       css_generated = discoverPad('generated.css', path=[ folder ])
       if css_generated:
@@ -155,8 +150,8 @@ def generate (folders=None):
       else:
         warn("Could not find a print.css")
 
-      context['CSS_GENERATED'] = 'generated.css'
-      context['CSS_PRINT'] = 'print.css'
+      context['CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
+      context['CSS_PRINT'] = context['SITE_URL'] + '/print.css'
 
     setCollectionsContext(context)
 
