@@ -233,7 +233,7 @@ def parseShortTimecodes (content):
   return re.sub(r'(?:(?<=\s)|(?<=^))\[((?:\d+(?:h|:))?(?:\d+:)?\d+)\](?:(?=\s)|(?=$))', insertTimecode, content)
 
 def expandIfShort(match):
-  if re.match(r'\[\[\s[\w\.\_\-]+:', match.group(0)):
+  if re.match(r'\[\[\s*[\w\.\_\-]+:', match.group(0)):
     # Not a short tag
     return match.group(0)
   
