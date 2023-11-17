@@ -214,7 +214,25 @@ class Annotation (Model):
 
   @property
   def first_letter (self):
-    return str(getattr(self, 'label'))[:1].lower()
+    return str(getattr(self, 'annotation'))[:1].lower()
+
+
+@contentType(InstantiatingCollection)
+class Author (Model):
+  generateListPage = False
+  generateSinglePages = False
+  referenceTemplate = 'generator/snippets/references/author.html'
+  sortKey = ('first_letter')
+  # Use a metaclass to have better default values?
+
+  def _metadataFields (self):
+    return {
+      'author': fields.Single(fields.InlineMarkdownField()),
+    }
+
+  @property
+  def first_letter (self):
+    return str(getattr(self, 'author'))[:1].lower()
 
 
 @contentType()
