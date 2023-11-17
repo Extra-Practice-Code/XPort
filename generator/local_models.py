@@ -199,6 +199,24 @@ class Label (Model):
   def first_letter (self):
     return str(getattr(self, 'label'))[:1].lower()
 
+@contentType(InstantiatingCollection)
+class Annotation (Model):
+  generateListPage = False
+  generateSinglePages = False
+  referenceTemplate = 'generator/snippets/references/annotation.html'
+  sortKey = ('first_letter')
+  # Use a metaclass to have better default values?
+
+  def _metadataFields (self):
+    return {
+      'annotation': fields.Single(fields.InlineMarkdownField()),
+    }
+
+  @property
+  def first_letter (self):
+    return str(getattr(self, 'label'))[:1].lower()
+
+
 @contentType()
 class Report (Model):
   generateListPage = True
