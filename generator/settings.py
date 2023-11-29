@@ -28,6 +28,8 @@ DATE_OUTPUT_FORMAT_DATE = '%-d'
 DATE_OUTPUT_FORMAT_MONTH = '%b'
 DATE_OUTPUT_FORMAT_YEAR = '%Y'
 
+KEY_MAX_LENGTH = 100
+
 # These tags are kept in summary fields
 SUMMARY_FIELD_ALLOWED_TAGS = ['em', 'i', 'strong', 'b']
 

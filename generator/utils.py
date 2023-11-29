@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from generator.settings import SHOW_LOG_MESSAGES
-from generator.settings import SHOW_DEBUG_MESSAGES
+from generator.settings import SHOW_DEBUG_MESSAGES, SHOW_LOG_MESSAGES, KEY_MAX_LENGTH
 
 from django.template import loader
 
@@ -72,13 +71,16 @@ def try_attributes (obj, attributes):
   return None
 
 
+"""
+ Limit length of keys on models
+"""
 def keyFilter (value):
   if type(value) is list:
-    return '--'.join([keyFilter(str(v).lower().strip()) for v in filter(None, value)])
+    return '--'.join([keyFilter(str(v).lower().strip()) for v in filter(None, value)])[:KEY_MAX_LENGTH]
   elif type(value) is int:
     return str(value)
   else: 
-    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower().strip()))
+    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower().strip()))[:KEY_MAX_LENGTH]
 
 
 def render_template_to_string(template, context):
