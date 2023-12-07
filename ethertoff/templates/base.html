@@ -61,7 +61,7 @@
             <summary class="button--nav">Publications</summary>
             <div class="publication-list--content">
                 {% for publication in publications %}
-                    <a class="button--nav screen-only" href="{{ publication.url }}">{{ publication.title }}</a>
+                    <a class="button--nav screen-only" href="{{ publication.url }}">{{ publication.title|striptags }}</a>
                 {% endfor %}
             </div>
         </details>
