@@ -144,7 +144,7 @@ PADS_PER_PAGE = 25
 
 PAD_FORCE_EXTENSION = True
 
-PAD_ALLOWED_EXTENSIONS = ['.md', '.css', '.html']
+PAD_ALLOWED_EXTENSIONS = ['.md', '.css', '.html', '.js']
 
 PAD_DEFAULT_EXTENSION = '.md'
 

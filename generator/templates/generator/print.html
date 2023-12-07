@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ index_pad.title }}</title>
   <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" />
-  <link rel="stylesheet" type="text/css" media="print" href="{{ CSS_PRINT }}">
+  <link rel="stylesheet" type="text/css" media="print" href="{{ PATH_CSS_PRINT }}">
   <script>
     window.PagedConfig = { auto: false };
   </script>
@@ -97,6 +97,9 @@
       </ul>
     </div>
   </div>
+  {% if PATH_JAVASCRIPT %}
+    <script src="{{ PATH_JAVASCRIPT }}"></script>
+  {% endif %}
   <script>
     function sorterByDomPostion (a, b) {
       if (a === b) {

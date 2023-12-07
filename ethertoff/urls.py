@@ -18,6 +18,7 @@ urlpatterns = [
     path('css-slide/', views.css_slide, name='css-slide'),
     path('css-generator-screen/<path:folder>', views.css_generator_screen, name='css-generator-screen'),
     path('css-generator-print/<path:folder>', views.css_generator_print, name='css-generator-print'),
+    path('javascript-generator/<path:folder>', views.javascript_generator, name='javascript-generator'),
     path('create/', views.padCreate, name='pad-create'),
     path('create/<path:prefix>/', views.padCreate, name='pad-create'),
     path('rename-folder/', views.RenameFolderView.as_view(), name='folder-rename'),

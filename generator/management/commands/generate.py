@@ -133,25 +133,40 @@ def generate (folders=None):
     info('Generating output')
 
     if mode == 'development':
-      context['CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'folder': folder })
-      context['CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'folder': folder })
+      context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'folder': folder })
+      context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'folder': folder })
+                                                          
+      file_js = discoverPad('scripts.js', path=[ folder ])
+      if file_js:                                     
+        context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'folder': folder })
+      else:
+        context['PATH_JAVASCRIPT'] = None
     else:
-      css_generated = discoverPad('generated.css', path=[ folder ])
-      if css_generated:
-        debug("Copying pad '{}' to '{}'".format(css_generated, os.path.join(outputdir, 'generated.css')))
-        copyPadToPath(css_generated, os.path.join(outputdir, 'generated.css'), stripLeadingAsterisks)
+      file_css_generated = discoverPad('generated.css', path=[ folder ])
+      if file_css_generated:
+        debug("Copying pad '{}' to '{}'".format(file_css_generated, os.path.join(outputdir, 'generated.css')))
+        copyPadToPath(file_css_generated, os.path.join(outputdir, 'generated.css'), stripLeadingAsterisks)
       else:
         warn("Could not find a generated.css")
       
-      css_print = discoverPad('print.css', path=[ folder ])
-      if css_print:
-        debug("Copying pad '{}' to '{}'".format(css_print, os.path.join(outputdir, 'print.css')))
-        copyPadToPath(css_print, os.path.join(outputdir, 'print.css'), stripLeadingAsterisks)
+      file_css_print = discoverPad('print.css', path=[ folder ])
+      if file_css_print:
+        debug("Copying pad '{}' to '{}'".format(file_css_print, os.path.join(outputdir, 'print.css')))
+        copyPadToPath(file_css_print, os.path.join(outputdir, 'print.css'), stripLeadingAsterisks)
       else:
         warn("Could not find a print.css")
 
-      context['CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
-      context['CSS_PRINT'] = context['SITE_URL'] + '/print.css'
+      file_js = discoverPad('scripts.js', path=[ folder ])
+      if file_js:
+        debug("Copying pad '{}' to '{}'".format(file_js, os.path.join(outputdir, 'scripts.js')))
+        copyPadToPath(file_js, os.path.join(outputdir, 'scripts.js'), stripLeadingAsterisks)
+        context['PATH_JAVASCRIPT'] = context['SITE_URL'] + '/scripts.js'
+      else:
+        context['PATH_JAVASCRIPT'] = None
+        debug("Could not find a scripts.js")
+
+      context['PATH_CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
+      context['PATH_CSS_PRINT'] = context['SITE_URL'] + '/print.css'
 
     setCollectionsContext(context)
 

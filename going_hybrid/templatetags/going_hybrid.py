@@ -15,7 +15,9 @@ def going_hybrid_navbar (context):
     'chapters': collectionFor('chapter'),
     'labels': [
       label for label in filter(lambda label: str(label) in context['LABELS'], collectionFor('label'))
-    ]
+    ],
+    'reports': collectionFor('report'),
+    'pads': collectionFor('pad')
   }
 
 

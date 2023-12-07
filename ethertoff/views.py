@@ -864,6 +864,8 @@ def css_generator_screen (request, folder=''):
 def css_generator_print (request, folder=''):
     return padOrEmtpy(request, discoverPad('print.css', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
     
+def javascript_generator (request, folder=''):
+    return padOrEmtpy(request, discoverPad('scripts.js', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
 
 def labels (request, slug=None):
     labels = load_labels()
