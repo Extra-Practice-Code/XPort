@@ -14,6 +14,8 @@ import json
 
 from ethertoff.utils import discoverRootFolders
 
+import unicodedata
+
 PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
 
 CRED = '\033[91m'
@@ -71,8 +73,22 @@ def try_attributes (obj, attributes):
   return None
 
 
+def replaceEmojiiWithTheirName (value):
+  # https://stackoverflow.com/a/32988437
+  # Replace chars within a range for their name as found in the Unicode Character Database
+  # Extended range to also include "Miscellaneous Symbols and Pictographs" and "Symbols and Pictographs Extended-A"
+  # \U00000021 "Exclamation mark"
+  # \U0000002B "Plus sign"
+  # \U0000003F "Question mark"
+  # \U00002700-\U000027BF "Dingbats"
+  # \U0001F300-\U0001F5FF "Miscellaneous Symbols and Pictographs"
+  # \U0001F600-\U0001F64F "Emoticons (Emoji)"
+  # \U0001FA70-\U0001FAFF "Symbols and Pictographs Extended-A"
+  # \U0001F900-\U0001F9FF "Supplemental Symbols and Pictographs"
+  return re.sub('[\U00000021\U0000002B\U0000003F\U00002700-\U000027BF\U0001F300-\U0001F5FF\U0001F600-\U0001F64F\U0001FA70-\U0001FAFF\U0001F900-\U0001F9FF]', lambda m: unicodedata.name(m.group(0)), value)
+
 """
- Limit length of keys on models
+ Limit length of keys on models and replace characters
 """
 def keyFilter (value):
   if type(value) is list:
@@ -80,7 +96,7 @@ def keyFilter (value):
   elif type(value) is int:
     return str(value)
   else: 
-    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', str(value).lower().strip()))[:KEY_MAX_LENGTH]
+    return re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', replaceEmojiiWithTheirName(str(value)).lower().strip()))[:KEY_MAX_LENGTH]
 
 
 def render_template_to_string(template, context):

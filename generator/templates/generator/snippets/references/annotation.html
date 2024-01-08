@@ -1,1 +1,14 @@
-<span class="annotation">{{ object }}</span>
+{% if object.annotation_type == 'annotation' %}
+  <span class="annotation" data-type="annotation">
+    <span class="annotation--content">
+      <span class="annotation--author">{{ object.author }}</span>
+      <span class="annotation--text">{{ object.annotation }}</span>
+    </span>
+  </span>
+{% else %}
+<span class="annotation" data-type="reference">
+  <span class="annotation--content">
+    <span class="annotation--text">{{ object }}</span>
+  </span>
+</span>
+{% endif %}

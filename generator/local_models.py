@@ -210,7 +210,15 @@ class Annotation (Model):
   def _metadataFields (self):
     return {
       'annotation': fields.Single(fields.InlineMarkdownField()),
+      'author': fields.Single(fields.InlineMarkdownField(default=[None]))
     }
+  
+  @property
+  def annotation_type (self):
+    if getattr(self, 'author').value is not None:
+      return 'annotation'
+    else:
+      return 'reference'
 
   @property
   def first_letter (self):
