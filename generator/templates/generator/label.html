@@ -5,7 +5,7 @@
   <h6>{{ object.contentType }}</h6>
   <h1>{{ object }}</h1>
   {% with object|merged_links|length as num_objects%}
-    <p>Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
+    <p class="label--link-count">Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
     {% if object.content %}
       {{ object.content }}
     {% endif %}
