@@ -64,8 +64,8 @@ def addContextForReferences (html, links):
               span['class'] = 'inline-reference'
               span.string = a.string
               a.replace_with(span)
-            else:
-              a.unwrap()
+            # else:
+            #   a.unwrap()
               
           link.context = mark_safe(str(context))
 
