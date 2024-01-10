@@ -32,7 +32,8 @@ def getEtherpadLiteClient(server):
     return EtherpadLiteClient(server.apikey, getApiURL(server))
 
 # @FIXME better naming, tries to find a given padname within a path
-# makes path less specific with each iteration
+# makes path less specific with each iteration untill a pad is found.
+# a/b/c/padname → a/b/padname → a/padname → padname
 def discoverPad(padname, path=[]):
   pad = getPadBySlug(pathToSlugPrefix(path) + padname)
 

@@ -19,7 +19,7 @@ from django.core.management import call_command
 from django.conf import settings
 from django.urls import reverse
 
-from ethertoff.utils import pathToSlugPrefix, discoverPad, copyPadToPath, stripLeadingAsterisks
+from ethertoff.utils import pathToSlugPrefix, discoverPad, copyPadToPath, stripLeadingAsterisks, getPadBySlug, pathToSlug, getPadText
 from labels.utils import load_labels
 
 FIELD_SINGLE = 'FIELD_SINGLE'
@@ -109,12 +109,17 @@ def generate (folders=None):
 
     info('Read pads')
     index_pad = find_where(collectionFor('pad'), {'index': 'true'})
+    
+    footer_pad = getPadBySlug(pathToSlug([folder, 'template-snippets', 'footer.html']))
 
     context = {
       'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder),
       'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder),
       'MENU_ITEMS': MENU_ITEMS,
-      'LABELS': labels[folder] if folder in labels else labels['root']
+      'LABELS': labels[folder] if folder in labels else labels['root'],
+      'SNIPPETS': {
+        'FOOTER': getPadText(footer_pad) if footer_pad else None
+      }
     }  
 
     if index_pad:

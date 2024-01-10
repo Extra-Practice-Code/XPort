@@ -20,6 +20,11 @@
       {% endblock %}
     </main>
     <aside>{% block aside %}{% endblock %}</aside>
+    <footer>
+      {% if SNIPPETS.FOOTER %}
+      {{ SNIPPETS.FOOTER }}
+      {% endif %}
+    </footer>
     {% if PATH_JAVASCRIPT %}
       <script src="{{ PATH_JAVASCRIPT }}"></script>
     {% endif %}
