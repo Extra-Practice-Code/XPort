@@ -22,7 +22,7 @@
     <aside>{% block aside %}{% endblock %}</aside>
     <footer>
       {% if SNIPPETS.FOOTER %}
-      {{ SNIPPETS.FOOTER }}
+      {{ SNIPPETS.FOOTER|safe }}
       {% endif %}
     </footer>
     {% if PATH_JAVASCRIPT %}
