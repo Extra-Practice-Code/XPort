@@ -271,7 +271,9 @@ class Pad (Model):
       'status': fields.Single(fields.StringField(default=['published'])),
       'labels': multiLinkMultiReverse(self, 'label', 'reports', unique=False),
       'title': fields.Single(fields.InlineMarkdownField()),
-      'index': fields.Single(fields.StringField(default=['false']))
+      'index': fields.Single(fields.StringField(default=['false'])),
+      'site-url': fields.Single(fields.StringField(default=[None])),
+      'static-url': fields.Single(fields.StringField(default=[None]))
     }
   
 

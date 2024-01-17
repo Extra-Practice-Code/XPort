@@ -113,8 +113,8 @@ def generate (folders=None):
     footer_pad = getPadBySlug(pathToSlug([folder, 'template-snippets', 'footer.html']))
 
     context = {
-      'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder),
-      'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder),
+      'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
+      'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
       'MENU_ITEMS': MENU_ITEMS,
       'LABELS': labels[folder] if folder in labels else labels['root'],
       'SNIPPETS': {
