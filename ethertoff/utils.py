@@ -81,6 +81,12 @@ def getPadHtml (pad):
     return epclient.getHtml(padId)['html']
 
 
+def getPadLastEdited (pad):
+    epclient = getEtherpadLiteClient(pad.server)
+    padId = getPadId(pad)
+    return epclient.getLastEdited(padId)
+
+
 def slugToPath (slug):
     return slug.split(settings.PAD_NAMESPACE_SEPARATOR)
 

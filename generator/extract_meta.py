@@ -52,7 +52,7 @@ def extract_meta (content):
     meta = OrderedDict()
     key = None
     lines = filter_empty_lines_markdown_export(content.split('\n'))
-    print(lines)
+    
     if lines and BEGIN_RE.match(lines[0]):
         lines.pop(0)
     while lines:

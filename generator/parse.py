@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from etherpadlite.models import Pad
 
 from generator.settings import DEFAULT_CONTENT_TYPE, SYSTEM_PADS
+from generator.batchDownload import batchDownload
 
 from django.conf import settings
 
@@ -96,6 +97,14 @@ def read_pads (prefix=None):
   else:
     pads = Pad.objects.all()
 
+  etherpad_instance_url = pads[0].server.url
+  etherpad_instance_apikey = pads[0].server.apikey
+  padIds = [pad.padid for pad in pads]
+  info('Starting batch download')
+  pad_sources = batchDownload(etherpad_instance_url, etherpad_instance_apikey, padIds)
+  print(pad_sources)
+  info('Download finished')
+
   for pad in pads:
     basename = basenameFromSlug(pad.display_slug)
 
@@ -108,8 +117,9 @@ def read_pads (prefix=None):
     info('Reading {}'.format(pad.display_slug))
 
     try:
-      source = getPadMarkdown(pad).strip()
-    except ValueError:
+      # source = getPadMarkdown(pad).strip()
+      source = pad_sources[pad.padid]
+    except KeyError:
       warn('Could not find pad {}'.format(pad.display_slug))
       continue
 
