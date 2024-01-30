@@ -22,6 +22,8 @@ from django.urls import reverse
 from ethertoff.utils import pathToSlugPrefix, discoverPad, copyPadToPath, stripLeadingAsterisks, getPadBySlug, pathToSlug, getPadText
 from labels.utils import load_labels
 
+from ethertoff.models import EtherportOrganisation
+
 FIELD_SINGLE = 'FIELD_SINGLE'
 FIELD_ITERABLE = 'FIELD_ITERABLE'
 
@@ -76,14 +78,14 @@ def find_where (collection, attrs):
   folders: None,list<foldername>,dict<foldername: mode>
   
 """
-def generate (folders=None):
+def generate (organisation_slug, folders=None):
   labels = load_labels()
 
   # List of publications: [{ title: str, path: str, url: str }, ...]
   publications = []
 
   if not folders:
-      folders = { folder: 'normal' for folder in discoverPublicationFolders() }
+      folders = { folder: 'normal' for folder in discoverPublicationFolders(organisation_slug) }
   elif type(folders) is list:
       folders = { folder: 'normal' for folder in folders }
 
@@ -95,9 +97,9 @@ def generate (folders=None):
     # Clear existing collections
     resetCollections()
 
-    backupdir = os.path.join(basedir, 'generated.old', folder)
-    finaldir = os.path.join(basedir, 'generated', folder)
-    outputdir = os.path.join(basedir, 'generated.new', folder)
+    backupdir = os.path.join(basedir, 'generated.old', organisation_slug, folder)
+    finaldir = os.path.join(basedir, 'generated', organisation_slug, folder)
+    outputdir = os.path.join(basedir, 'generated.new', organisation_slug, folder)
 
     if os.path.exists(outputdir):
       shutil.rmtree(outputdir)
@@ -105,16 +107,16 @@ def generate (folders=None):
     os.makedirs(outputdir)
       
     info('Parsing pads')
-    models = read_pads(prefix=pathToSlugPrefix([ folder ]))
+    models = read_pads(prefix=pathToSlugPrefix([ organisation_slug, folder ]))
 
     info('Read pads')
     index_pad = find_where(collectionFor('pad'), {'index': 'true'})
     
-    footer_pad = getPadBySlug(pathToSlug([folder, 'template-snippets', 'footer.html']))
+    footer_pad = getPadBySlug(pathToSlug([organisation_slug, folder, 'template-snippets', 'footer.html']))
 
     context = {
-      'SITE_URL': SITE_URL.format(PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
-      'STATIC_URL': STATIC_URL.format(PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
+      'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
+      'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
       'MENU_ITEMS': MENU_ITEMS,
       'LABELS': labels[folder] if folder in labels else labels['root'],
       'SNIPPETS': {
@@ -138,30 +140,34 @@ def generate (folders=None):
     info('Generating output')
 
     if mode == 'development':
-      context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'folder': folder })
-      context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'folder': folder })
+      context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
+      context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
                                                           
       file_js = discoverPad('scripts.js', path=[ folder ])
       if file_js:                                     
-        context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'folder': folder })
+        context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       else:
         context['PATH_JAVASCRIPT'] = None
     else:
-      file_css_generated = discoverPad('generated.css', path=[ folder ])
+      file_css_generated = discoverPad('generated.css', path=[ organisation_slug, folder ])
       if file_css_generated:
         debug("Copying pad '{}' to '{}'".format(file_css_generated, os.path.join(outputdir, 'generated.css')))
         copyPadToPath(file_css_generated, os.path.join(outputdir, 'generated.css'), stripLeadingAsterisks)
+        context['PATH_CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
       else:
+        context['PATH_CSS_GENERATED'] = None
         warn("Could not find a generated.css")
       
-      file_css_print = discoverPad('print.css', path=[ folder ])
+      file_css_print = discoverPad('print.css', path=[ organisation_slug, folder ])
       if file_css_print:
         debug("Copying pad '{}' to '{}'".format(file_css_print, os.path.join(outputdir, 'print.css')))
         copyPadToPath(file_css_print, os.path.join(outputdir, 'print.css'), stripLeadingAsterisks)
+        context['PATH_CSS_PRINT'] = context['SITE_URL'] + '/print.css'
       else:
+        context['PATH_JAVASCRIPT'] = None
         warn("Could not find a print.css")
 
-      file_js = discoverPad('scripts.js', path=[ folder ])
+      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
       if file_js:
         debug("Copying pad '{}' to '{}'".format(file_js, os.path.join(outputdir, 'scripts.js')))
         copyPadToPath(file_js, os.path.join(outputdir, 'scripts.js'), stripLeadingAsterisks)
@@ -170,8 +176,6 @@ def generate (folders=None):
         context['PATH_JAVASCRIPT'] = None
         debug("Could not find a scripts.js")
 
-      context['PATH_CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
-      context['PATH_CSS_PRINT'] = context['SITE_URL'] + '/print.css'
 
     setCollectionsContext(context)
 
@@ -230,20 +234,30 @@ def generate (folders=None):
       # Put new version of the site in place
       shutil.move(outputdir, finaldir)
 
-  css_publication_list = discoverPad('publication-list.css', path=[])
+
+  if not os.path.exists(os.path.join(basedir, 'generated', organisation_slug)):
+    os.makedirs(os.path.join(basedir, 'generated', organisation_slug))
+
+  css_publication_list = discoverPad('publication-list.css', path=[ organisation_slug ])
   if css_publication_list:
     debug("Copying pad '{}' to '{}'".format(css_publication_list, os.path.join(basedir, 'generated', 'publication-list.css')))
-    copyPadToPath(css_publication_list, os.path.join(basedir, 'generated', 'publication-list.css'), stripLeadingAsterisks)
+    copyPadToPath(css_publication_list, os.path.join(basedir, 'generated', organisation_slug, 'publication-list.css'), stripLeadingAsterisks)
 
-  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/main_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'publications': publications })
+  organisation = EtherportOrganisation.objects.get(slug=organisation_slug)
 
-  storePublications(publications)
+  output(os.path.join(basedir, 'generated', organisation_slug, 'index.html'), 'generator/main_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'organisation': organisation, 'publications': publications, 'ETHERTOFF_URL': ETHERTOFF_URL })
+
+  storePublications(organisation_slug, publications)
+
+  organisations = EtherportOrganisation.objects.all()
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'organisations': organisations })
+
 
   if not settings.DEBUG:
-    print('Collecting static')
+    info('Collecting static')
     call_command('collectstatic', interactive=False)
 
-  print('Done')
+  info('Done')
 
 
 class Command(BaseCommand):
@@ -251,4 +265,8 @@ class Command(BaseCommand):
   help = 'Generate a static interpretation of the pads'
 
   def handle(self, *args, **options):
-    generate(discoverPublicationFolders())
+    organisations = EtherportOrganisation.objects.all()
+
+    for organisation in organisations:
+      info(organisation.name)
+      generate(organisation.slug)

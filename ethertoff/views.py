@@ -32,11 +32,16 @@ from django.db import IntegrityError
 from django.conf import settings
 from django.contrib.staticfiles import finders
 
+# Account creation through front-end
+from ethertoff.adminUtils import get_default_user_group
+from django.contrib.auth.forms import UserCreationForm
+
 # Django Apps import
 
 from etherpadlite.models import Pad, PadAuthor
 from etherpadlite import config
 
+from ethertoff.models import EtherportOrganisation
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
@@ -87,9 +92,6 @@ except AttributeError:
 Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
-
-
-
 
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
@@ -274,6 +276,7 @@ def renamePad(pad, slug, n=0):
 
     raise IntegrityError
 
+
 @login_required(login_url='/etherpad')
 def padRename(request, pk):
     pad = get_object_or_404(Pad, pk=pk)
@@ -413,7 +416,7 @@ def pad_write_public(request, pad): # pad_write
     server = urlparse(pad.server.url)
     
     path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
-    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
 
     if request.user.is_authenticated:
         author = PadAuthor.objects.get(user=request.user)
@@ -449,7 +452,7 @@ def pad_write(request, pad):
     author = PadAuthor.objects.get(user=request.user)
 
     path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
-    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
 
     if author not in pad.group.authors.all():
         response = render(
@@ -733,15 +736,26 @@ def publish(request):
     return render(request, "publish.html", tpl_params)
 
 @login_required(login_url='/accounts/login')
-def generate(request):
+def generate(request, organisation_slug=None):
     context = {}
-    publication_folders = discoverPublicationFolders()
+
+    if not organisation_slug:
+        try:
+            organisation = get_object_or_404(EtherportOrganisation, members__id=request.user.id)
+        except EtherportOrganisation.MultipleObjectsReturned:
+            return render(request, "generate--pick-organisation.html", {
+                'organisations': EtherportOrganisation.objects.filter(members__id=request.user.id)
+            })
+    else:
+        organisation = get_object_or_404(EtherportOrganisation, slug=organisation_slug, members__id=request.user.id)
+    
+    publication_folders = discoverPublicationFolders(organisation_slug=organisation.slug)
 
     if request.method == 'POST':
         print('Received post')
         form = makeGenerationForm(publication_folders, request.POST)
         if form.is_valid():
-            generateStatic({
+            generateStatic(organisation.slug, {
                 field.name: field.value() for field in form if field.value() is not None
             })
             context['generated'] = True
@@ -752,7 +766,8 @@ def generate(request):
         form = makeGenerationForm(publication_folders, initial={ publication: 'normal' for publication in publication_folders})
 
     context['form'] = form
-        
+    context['organisation'] = organisation
+
     return render(request, "generate.html", context)
 
 
@@ -769,16 +784,29 @@ def index_labels (request):
 
 
 @login_required(login_url='/accounts/login')
-def manage(request, path=[]):
-    prefix = ''
+def manage(request, path_string=None):
+    if not path_string:
+        # get default organisation
 
-    if len(path) > 0:
-        path = path.split('/')
-        prefix = settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
-        pads = Pad.objects.filter(display_slug__startswith=prefix).order_by('name')
+        try:
+            organisation = get_object_or_404(EtherportOrganisation, members__id=request.user.id)
+        except EtherportOrganisation.MultipleObjectsReturned:
+            return render(request, "manage--pick-organisation.html", {
+                'organisations': EtherportOrganisation.objects.filter(members__id=request.user.id)
+            })
+        
+        organisation = get_object_or_404(EtherportOrganisation, members__id=request.user.id)
+        path = [ organisation.slug ]
     else:
-        pads = Pad.objects.all().order_by('name')
-
+        parts = path_string.split(settings.PAD_NAMESPACE_SEPARATOR)
+        organisation_slug = parts[0]
+        path = parts
+        organisation = get_object_or_404(EtherportOrganisation, slug=organisation_slug, members__id=request.user.id)
+    
+    prefix = settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
+    
+    pads = Pad.objects.filter(display_slug__startswith=prefix).order_by('name')
+    
     dir_list = []
     seen_dirs = []
 
@@ -787,20 +815,24 @@ def manage(request, path=[]):
         relativePath = pad.display_slug[len(prefix):]
 
         if settings.PAD_NAMESPACE_SEPARATOR in relativePath:
+            # Pad has a namespace separator in its display slug. Therefor is a pad
+            # in a subfolder. Add a directory entry and do not add the pad.
             key = relativePath.split(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
             if key not in seen_dirs:
-                dir_list.append((key, 'directory', None))
+                dirPath = pad.display_slug.rsplit(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
+                dir_list.append((key, 'directory', None, dirPath))
                 seen_dirs.append(key)
         else:
             key = relativePath
-            dir_list.append((key, 'pad', pad))
+            dir_list.append((key, 'pad', pad, pad.display_slug))
             
 
-    crumbs = [(path[i], path[:i+1]) for i in range(len(path))]
+    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
 
     return render(request, "manage-tree.html", {
+        'organisation': organisation,
         'dir_list': dir_list,
-        'currentPath': path,
+        'currentPath': prefix,
         'crumbs': crumbs,
         'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
     })
@@ -896,3 +928,20 @@ def get_mimetype (request, pk):
         })
     else:
         return HttpResponse('Unauthorized', status=401)
+
+
+def register(request, organisation_slug):
+    organisation = get_object_or_404(EtherportOrganisation, slug=organisation_slug)
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.groups.add(get_default_user_group())
+            organisation.members.add(user)
+            organisation.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+        
+    return render(request, "register.html", { 'form': form, 'organisation_slug': organisation.slug })

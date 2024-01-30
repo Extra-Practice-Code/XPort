@@ -13,7 +13,6 @@ def batchDownload(etherpadUrl, apiKey, padIds):
       'apikey': apiKey,
       'padIds': padIds
   }
-  print(parse.urlencode(data, doseq=True).encode('ascii'))
   r = request.Request(
       '{}batchExport/markdown'.format(etherpadUrl),
       parse.urlencode(data, doseq=True).encode('ascii'),

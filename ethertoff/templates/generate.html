@@ -14,7 +14,7 @@
 {% block content %}
     {% if generated %}
         <p style="background-color: white">Site regenerated</p>
-        <p>View <a href="{% generated_site_url %}">home page</a></p>
+        <p>View <a href="{% generated_site_url organisation.slug %}">home page</a></p>
     {% else %}
         <div id="loading">
             <div class="meter red">

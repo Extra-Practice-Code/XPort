@@ -5,23 +5,24 @@
 {% endblock %}
 {% block content %}
     <section class="pad-list--path">
-        <a href="{% url 'manage' %}">root</a>
         {% for name, path in crumbs %}
             {% if path %}
+              {% if not forloop.first %}
               <span class="pad-list--path--separator"></span>
-              <a href="{% url 'manage' path|pathString  %}">{{ name }}</a>
+              {% endif %}
+              <a href="{% url 'manage' path  %}">{{ name }}</a>
             {% endif %}
         {% endfor %}
         {% if currentPath %}
-          <a href="{% url 'pad-create' currentPath|pathString %}" class="button push">+ create pad</a>
+          <a href="{% url 'pad-create' currentPath %}" class="button push">+ create pad</a>
         {% else %}
           <a href="{% url 'pad-create' %}" class="button push">+ create pad</a>
         {% endif %}
     </section>
     <ul id="pads_list" class="manage_list">
-        {% for key, type, object in dir_list %}
+        {% for key, type, object, path in dir_list %}
             {% if type == 'pad' %}
-              <li class="pad"><a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">{{ object.display_slug|stripPath:currentPath|dewikify }}{% if object.is_public %} (public){% endif %}</a>
+              <li class="pad"><a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">{{ key|dewikify }}{% if object.is_public %} (public){% endif %}</a>
                 <section class="actions">
                   {% if object.is_public %}
                       <a href="{% url 'pad-private' object.pk %}" class="button button--private">make private</a>
@@ -33,9 +34,9 @@
                 </section>
               </li>
             {% else %}
-              <li class="folder"><a href="{% url 'manage' key|addPath:currentPath %}">{{ key }}</a>
+              <li class="folder"><a href="{% url 'manage' path %}">{{ key }}</a>
                 <section class="actions">
-                  <a href="{% url 'folder-rename' key|addPath:currentPath %}" class="button button--rename">rename</a>
+                  <a href="{% url 'folder-rename' path %}" class="button button--rename">rename</a>
                 </section>
               </li>
             {% endif %}

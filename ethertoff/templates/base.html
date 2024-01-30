@@ -60,8 +60,12 @@
         <details class="publications publication-list">
             <summary class="button--nav">Publications</summary>
             <div class="publication-list--content">
-                {% for publication in publications %}
+
+                {% for organisation, publications in etherport_organisation_publication.items %}
+                    <p>{{ organisation }}</p>
+                    {% for publication in publications %}
                     <a class="button--nav screen-only" href="{{ publication.url }}">{{ publication.title|striptags }}</a>
+                    {% endfor %}
                 {% endfor %}
             </div>
         </details>

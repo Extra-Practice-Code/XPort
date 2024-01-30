@@ -93,7 +93,7 @@ def groupDel(sender, **kwargs):
     grp = kwargs['instance']
     # Make shure auth groups without a pad group can be deleted, too.
     try:
-        padGrp = PadGroup.objects.get(group=grp)
+        padGrp = PadGroup.objects.filter(group=grp)[0]
         padGrp.Destroy()
     except Exception:
         pass
@@ -143,7 +143,7 @@ class PadAuthor(models.Model):
     def GroupSynch(self, *args, **kwargs):
         for ag in self.user.groups.all():
             try:
-                gr = PadGroup.objects.get(group=ag)
+                gr = PadGroup.objects.filter(group=ag)[0]
             except PadGroup.DoesNotExist:
                 gr = False
             if (isinstance(gr, PadGroup)):
