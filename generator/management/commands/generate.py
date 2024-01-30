@@ -245,12 +245,12 @@ def generate (organisation_slug, folders=None):
 
   organisation = EtherportOrganisation.objects.get(slug=organisation_slug)
 
-  output(os.path.join(basedir, 'generated', organisation_slug, 'index.html'), 'generator/main_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'organisation': organisation, 'publications': publications, 'ETHERTOFF_URL': ETHERTOFF_URL })
+  output(os.path.join(basedir, 'generated', organisation_slug, 'index.html'), 'generator/main_index.html', { 'SITE_URL': GENERATED_SITE_INDEX, 'organisation': organisation, 'publications': publications, 'ETHERTOFF_URL': ETHERTOFF_URL })
 
   storePublications(organisation_slug, publications)
 
   organisations = EtherportOrganisation.objects.all()
-  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { SITE_URL: GENERATED_SITE_INDEX, 'organisations': organisations })
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations })
 
 
   if not settings.DEBUG:

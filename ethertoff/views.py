@@ -890,14 +890,14 @@ def offsetprint(request):
 def css_slide(request):
     return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
 
-def css_generator_screen (request, folder=''):
-    return padOrEmtpy(request, discoverPad('generated.css', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
+def css_generator_screen (request, organisation_slug, folder=''):
+    return padOrEmtpy(request, discoverPad('generated.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
 
-def css_generator_print (request, folder=''):
-    return padOrEmtpy(request, discoverPad('print.css', folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
+def css_generator_print (request, organisation_slug, folder=''):
+    return padOrEmtpy(request, discoverPad('print.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
     
-def javascript_generator (request, folder=''):
-    return padOrEmtpy(request, discoverPad('scripts.js', folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
+def javascript_generator (request, organisation_slug, folder=''):
+    return padOrEmtpy(request, discoverPad('scripts.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
 
 def labels (request, slug=None):
     labels = load_labels()
