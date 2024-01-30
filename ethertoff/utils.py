@@ -116,17 +116,27 @@ def selectPadsByPath (path):
 
 # Returns all root folders
 # @FIXME faster implementation
+def discoverFolders (path=None):
+    folders = set()
+
+    if not path:
+        prefix = ''    
+        pads = Pad.objects.all() 
+    else:
+        prefix = pathToSlugPrefix(path)
+        pads = Pad.objects.filter(display_slug__startswith=prefix)
+
+    for pad in pads:
+        path = slugToPath(pad.display_slug[len(prefix):])
+
+        if len(path) > 1:
+            folders.add(path[0])
+
+    return list(folders)
+
+
 def discoverRootFolders ():
-    root_folders = []
-
-    for pad in Pad.objects.all():
-        path = slugToPath(pad.display_slug)
-
-        if len(path) > 1 and path[0] not in root_folders:
-            root_folders.append(path[0])
-
-    return root_folders
-
+    return discoverFolders()
 
 """
     When pad lines have styles they are returned with a leading asterisk on text export.

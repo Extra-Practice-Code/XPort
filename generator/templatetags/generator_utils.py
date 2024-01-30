@@ -135,8 +135,11 @@ def combine_linkfields (*fields):
   return combined
 
 @register.simple_tag
-def generated_site_url ():
-  return os.path.join(GENERATED_SITE_INDEX, 'index.html')
+def generated_site_url (organisation_slug=None):
+  if organisation_slug:
+    return os.path.join(GENERATED_SITE_INDEX, organisation_slug, 'index.html')
+  else:
+    return os.path.join(GENERATED_SITE_INDEX, 'index.html')
 
 @register.simple_tag
 def generated_site_debug_url ():

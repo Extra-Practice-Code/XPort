@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    <h1>{% trans "Register" %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% if not user.is_authenticated %}
+      <form method="post" action="{% url 'register' organisation_slug %}">
+        {% csrf_token %}
+            
+        <div class="form-row">
+          {{ form.username.label_tag }}{{ form.username }}
+        </div>
+        {% if form.username.errors %}
+        <div class="form-row">
+          {% for error in form.username.errors %}
+              <p>{{ error|escape }}</strong></p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            {{ form.password1.label_tag }}{{ form.password1 }}
+        </div>
+        {% if form.password1.errors %}
+        <div class="form-row">
+          {% for error in form.password1.errors %}
+              <p>{{ error|escape }}</strong></p>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="form-row">
+            {{ form.password2.label_tag }}{{ form.password2 }}
+        </div>
+        {% if form.password2.errors %}
+        <div class="form-row">
+          {% for error in form.password2.errors %}
+              <p>{{ error|escape }}</strong></p>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="form-row--button">
+          <input class="submit" type="submit" value="{% trans "Register" %}" />
+        </div>
+      </form>
+    {% else %}
+      <p>You are already logged in—welcome!</p>
+    {% endif %}
+{% endblock %}

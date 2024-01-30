@@ -12,7 +12,7 @@ from django.conf import settings
 import os.path
 import json
 
-from ethertoff.utils import discoverRootFolders
+from ethertoff.utils import discoverFolders
 
 import unicodedata
 
@@ -122,7 +122,10 @@ def drop_tags (snippet, tags_to_drop=[]):
 
 
 # [{ title: str, path: str, url: str }, ...]
-def storePublications (publications):
+def storePublications (organisation_slug, organisation_publications):
+  publications = loadPublications()
+  publications[organisation_slug] = organisation_publications
+
   json.dump(publications, open(PUBLICATION_INDEX_PATH, 'w'), ensure_ascii=False)
 
 
@@ -131,9 +134,9 @@ def loadPublications ():
   try:
     publications = json.load(open(PUBLICATION_INDEX_PATH, 'r'))
   except IOError:
-    publications = []
+    publications = {}
 
   return publications
 
-def discoverPublicationFolders ():
-  return list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discoverRootFolders()))
+def discoverPublicationFolders (organisation_slug):
+  return list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discoverFolders([ organisation_slug ])))
