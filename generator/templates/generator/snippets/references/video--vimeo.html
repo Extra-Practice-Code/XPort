@@ -1,1 +1,8 @@
-<iframe src="https://player.vimeo.com/video/{{ object.vimeo }}" width="640" height="512" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<div class="video--wrapper video--vimeo--wrapper">
+  {% if object.thumbnail.value %}
+  <div class="video--thumbnail video--vimeo--thumbnail">
+    <img src="{{ object.thumbnail.value }}" />
+  </div>
+  {% endif %}
+  <iframe class="video video--vimeo" src="https://player.vimeo.com/video/{{ object.vimeo }}" width="640" height="512" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+</div>

@@ -146,6 +146,7 @@ class Video (Model):
   def _metadataFields (self):
     return {
       'video': fields.Single(fields.StringField()),
+      'thumbnail': fields.SingleImageField(),
       'type': fields.Single(fields.StringField(['video/mp4'])),
       'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
@@ -175,6 +176,7 @@ class Vimeo (Model):
   def _metadataFields (self):
     return {
       'vimeo': fields.Single(fields.StringField()),
+      'thumbnail': fields.SingleImageField(),
       'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
       'caption': fields.Single(fields.InlineMarkdownField())

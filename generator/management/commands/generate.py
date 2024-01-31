@@ -154,7 +154,7 @@ def generate (organisation_slug, folders=None):
       context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
                                                           
-      file_js = discoverPad('scripts.js', path=[ folder ])
+      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
       if file_js:                                     
         context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       else:
