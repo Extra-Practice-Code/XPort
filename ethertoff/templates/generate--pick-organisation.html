@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
+    <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
+{% endblock %}
+
+{% block title %}
+<h1>Generate publications</h1>
+<h2>Select organisation</h2>
+{% endblock %}
+
+{% block content %}
+    {% for organisation in organisations %}
+      <p><a href="{% url 'generate' organisation.slug %}">{{ organisation.name }}</a></p>
+    {% endfor %}
+{% endblock %}

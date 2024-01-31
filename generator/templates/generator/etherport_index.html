@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etherport</title>
+  <style>
+    html, body {
+      font-family: sans-serif;
+    }
+
+    body {
+      max-width: 60ch;
+      margin: 4ch auto;
+    }
+
+    a, a:active, a:visited {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    Etherport
+  </h1>
+  <p>
+    Etherport is a collaborative, open-source publishing tool using etherpad.
+  </p>
+  <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/885196752?h=9fdda1707e&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+  <h2>
+    Organisations on Etherport:
+  </h2>
+  {% for organisation in organisations %}
+  <p>
+    <a href="/publications/{{ organisation.slug }}/">{{ organisation }}</a>
+  </p>
+  {% endfor %}
+  <p>
+    Read the <a href="/publications/inc/Manual">etherport manual</a>.
+  </p>
+</body>
+</html>

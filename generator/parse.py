@@ -102,7 +102,6 @@ def read_pads (prefix=None):
   padIds = [pad.padid for pad in pads]
   info('Starting batch download')
   pad_sources = batchDownload(etherpad_instance_url, etherpad_instance_apikey, padIds)
-  print(pad_sources)
   info('Download finished')
 
   for pad in pads:

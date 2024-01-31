@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Etherport publications</title>
-  <link rel="stylesheet" href="{{ SITE_URL }}/publication-list.css" type="text/css" media="all">
+  <title>Etherport: {{ organisation.name }}</title>
+  <link rel="stylesheet" href="{{ SITE_URL }}/{{ organisation.slug }}/publication-list.css" type="text/css" media="all">
 </head>
 <body>
   <h1>
-    Publications
+    {{ organisation.name }}
   </h1>
+  <h2>Publications</h2>
   <ul>
     {% for publication in publications %}
     <li><a href="{{ publication.url }}">{{ publication.title }}</a></li>
     {% endfor %}
   </ul>
+  <p>
+    <a href="{{ ETHERTOFF_URL }}/register/{{ organisation.slug }}">Make an account</a>
+  </p>
+  <p>Generated with: <a href="..">Etherport</a>.</p>
 </body>
 </html>

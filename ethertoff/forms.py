@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
 class ContactForm(forms.Form):
     name         = forms.CharField(max_length=50, label=_("First Name"))
@@ -16,3 +17,4 @@ class RenamePadForm(forms.Form):
     pk = forms.HiddenInput()
     old_name = forms.CharField(label=_("Old name"), required=False)
     new_name = forms.CharField(label=_("New name"))
+
