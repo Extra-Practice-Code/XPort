@@ -15,7 +15,7 @@ except ImportError:
 
 class EtherpadLiteClient:
     """Client to talk to EtherpadLite API."""
-    API_VERSION = "1.2.13"  # TODO probably 1.1 sometime soon
+    API_VERSION = "1.2.15"  # TODO probably 1.1 sometime soon
 
     CODE_OK = 0
     CODE_INVALID_PARAMETERS = 1
@@ -266,11 +266,20 @@ class EtherpadLiteClient:
             "padID": padID
         })
 
-
     def copyPad(self, sourceID, destinationID, force=False):
-        """copies a pad with full history and chat. If force is true 
-           and the destination pad exists, it will be overwritten."""
+        """copies a pad without copying the history and chat.
+        If force is true and the destination pad exists, it will be overwritten.
+        Note that all the revisions will be lost!
+        In most of the cases one should use copyPad API instead.."""
         return self.call("copyPad", {
+            "sourceID": sourceID,
+            "destinationID": destinationID,
+            "force": force
+        })
+    
+    def copyPadWithoutHistory (self, sourceID, destinationID, force=False):
+        """returns ?"""
+        return self.call("copyPadWithoutHistory", {
             "sourceID": sourceID,
             "destinationID": destinationID,
             "force": force
