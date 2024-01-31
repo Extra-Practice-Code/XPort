@@ -242,6 +242,7 @@ def padCreate(request, prefix=''):
     con = {
         'form': form,
         'pk': group.pk,
+        'slug': organisation.slug,
         'title': _('Create pad in %(grp)s') % {'grp': group}
     }
     con.update(csrf(request))
