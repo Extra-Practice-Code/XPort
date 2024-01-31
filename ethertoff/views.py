@@ -225,10 +225,15 @@ def padCreate(request, prefix=''):
             if pad:
                 if form.cleaned_data['template'] != 'none':
                     try:
-                        templatePad = Pad.objects.get(name=form.cleaned_data['template'])                    
-                        template = getPadHtml(templatePad)
+                        templatePad = Pad.objects.get(name=form.cleaned_data['template'])
                         epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-                        epclient.setHtml(pad.padid, template)
+                        # epclient.copyPadWithoutHistory(templatePad.padid, pad.padid, True)
+                        epclient.call("copyPadWithoutHistory", {
+                            "sourceID": templatePad.padid,
+                            "destinationID": pad.padid,
+                            "force": True
+                        })
+                        
                     except Pad.DoesNotExist:
                         pass
                     
