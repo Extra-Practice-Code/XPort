@@ -920,11 +920,19 @@ def javascript_generator (request, organisation_slug, folder=''):
 
 def labels (request, slug=None):
     labels = load_labels()
+    path = slugToPath(slug) if slug else []
+    return_labels = []
+    
+    if len(path) > 0:
+        organisation = path[0]
 
-    return JsonResponse({
-        'labels': labels[slug] if slug in labels else labels['root']
-    })
-
+        if organisation in labels:
+            slug = path[1] if len(path) > 1 else 'root'
+            
+            if slug in labels[organisation]:    
+                return_labels = labels[organisation][slug]
+            
+    return JsonResponse({ 'labels': return_labels })
 
 
 def get_canoninical (request, pk):

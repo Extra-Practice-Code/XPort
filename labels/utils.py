@@ -1,6 +1,7 @@
 from django.conf import settings
 from etherpadlite.models import Pad
-from ethertoff.utils import getPadMarkdown, discoverRootFolders, getPadBySlug, pathToSlugPrefix
+from ethertoff.models import EtherportOrganisation
+from ethertoff.utils import getPadMarkdown, discoverFolders, getPadBySlug, pathToSlugPrefix
 import os.path
 import json
 
@@ -18,24 +19,28 @@ def store_labels (labels):
 
 
 def index_labels():
-  root_folders = discoverRootFolders()
   # Todo, make indexing recursive and link it to a folder
   labels = {}
 
-  for folder in root_folders:
-    folder_labels_pad = getPadBySlug(pathToSlugPrefix([ folder ]) + settings.LABEL_PAD)
+  for organisation in EtherportOrganisation.objects.all():
+    organisation_labels = {}
 
-    if folder_labels_pad:
-      text = getPadMarkdown(folder_labels_pad)
-      labels[folder] = list(filter(lambda label: True if label else False, map(str.strip, text.split('\n'))))
-  
-  root_labels_pad = getPadBySlug(settings.LABEL_PAD)
+    for folder in discoverFolders([ organisation.slug ]):
+      folder_labels_pad = getPadBySlug(pathToSlugPrefix([ organisation.slug, folder ]) + settings.LABEL_PAD)
 
-  if root_labels_pad:
-    text = getPadMarkdown(root_labels_pad)
-    labels['root'] = list(filter(lambda label: True if label else False, map(str.strip, text.split('\n'))))
-  else:
-    labels['root'] = []
+      if folder_labels_pad:
+        text = getPadMarkdown(folder_labels_pad)
+        organisation_labels[folder] = list(filter(lambda label: True if label else False, map(str.strip, text.split('\n'))))
+    
+    root_labels_pad = getPadBySlug(pathToSlugPrefix([ organisation.slug ]) + settings.LABEL_PAD)
+
+    if root_labels_pad:
+      text = getPadMarkdown(root_labels_pad)
+      organisation_labels['root'] = list(filter(lambda label: True if label else False, map(str.strip, text.split('\n'))))
+    else:
+      organisation_labels['root'] = []
+
+    labels[organisation.slug] = organisation_labels
   
   store_labels(labels)
 
