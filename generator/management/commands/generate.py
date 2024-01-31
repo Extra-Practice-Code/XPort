@@ -73,6 +73,15 @@ def find_where (collection, attrs):
 
   return None
 
+def get_publication_labels (labels, organisation_slug, folder):
+  if organisation_slug in labels:
+    if folder in labels[organisation_slug]:
+      return labels[organisation_slug][folder]
+    elif 'root' in labels[organisation_slug]:
+      return labels[organisation_slug]['root']
+    
+  return []
+
 """
   Generate static versions of publications
   folders: None,list<foldername>,dict<foldername: mode>
@@ -114,11 +123,13 @@ def generate (organisation_slug, folders=None):
     
     footer_pad = getPadBySlug(pathToSlug([organisation_slug, folder, 'template-snippets', 'footer.html']))
 
+  
+
     context = {
       'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
       'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
       'MENU_ITEMS': MENU_ITEMS,
-      'LABELS': labels[folder] if folder in labels else labels['root'],
+      'LABELS': get_publication_labels(labels, organisation_slug, folder),
       'SNIPPETS': {
         'FOOTER': getPadText(footer_pad) if footer_pad else None
       }
