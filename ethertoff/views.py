@@ -54,7 +54,7 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug, discoverPad, stripLeadingAsterisks
+from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath
 
 from my_project.forms import PadCreateWithTemplate
 
@@ -192,12 +192,29 @@ def padCreate(request, prefix=''):
     Create a pad
     """    
     
+    path = slugToPath(prefix)
+    if len(path) > 0:
+        organisation_slug = path[0]
+        organisation = get_object_or_404(EtherportOrganisation, slug=organisation_slug, members__id=request.user.id)
+
+    else:
+        organisation = get_object_or_404(EtherportOrganisation, members__id=request.user.id)
+        prefix = organisation.slug + settings.PAD_NAMESPACE_SEPARATOR
+
+
+    templatePads = selectPadsByPath([ organisation.slug, 'Templates' ])
+
+    templateChoices = [('none', "No template")] + [
+        (pad.name, pad.display_slug) for pad in templatePads
+    ]
+
     # normally the ‘pads’ context processor should have made sure that these objects exist:
     author = PadAuthor.objects.get(user=request.user)
     group = author.group.all()[0]
     
     if request.method == 'POST':  # Process the form
         form = PadCreateWithTemplate(request.POST)
+        form.fields['template'].choices = templateChoices
         if form.is_valid():
             slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
             slug = slug.strip(":")  # avoids leading and trailing "::"
@@ -217,8 +234,9 @@ def padCreate(request, prefix=''):
     else: 
         # No form to process so create a fresh one
         # prefix should contain the name of the folder
-        form = PadCreateWithTemplate({'group': group.groupID, 'name': wikifyPath(ensureTrailingSlash(prefix) if prefix else '')})
-
+        form = PadCreateWithTemplate({'group': group.groupID, 'name': wikifyPath(prefix if prefix else '', )})
+        form.fields['template'].choices = templateChoices
+        
     con = {
         'form': form,
         'pk': group.pk,
