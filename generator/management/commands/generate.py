@@ -18,6 +18,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.conf import settings
 from django.urls import reverse
+from django.contrib.staticfiles import finders
 
 from ethertoff.utils import pathToSlugPrefix, discoverPad, copyPadToPath, stripLeadingAsterisks, getPadBySlug, pathToSlug, getPadText
 from labels.utils import load_labels
@@ -213,6 +214,11 @@ def generate (organisation_slug, folders=None):
           'collection': collection
         }))
 
+    import shutil
+    PATH_CSS_PAGEDJS = context['SITE_URL'] + '/pagedjs-interface.css'
+    local_path = finders.find('generator/css/interface.css')
+    shutil.copy(local_path, os.path.join(outputdir, 'pagedjs-interface.css'))
+
     output(os.path.join(outputdir, 'index.html'), 'generator/index.html', extend_context(context, {
       'labels': collectionFor('label'),
       'reports': collectionFor('report'),
@@ -224,7 +230,8 @@ def generate (organisation_slug, folders=None):
       'labels': collectionFor('label'),
       'reports': collectionFor('report'),
       'pads': collectionFor('pad'),
-      'chapters': collectionFor('chapter')
+      'chapters': collectionFor('chapter'),
+      'PATH_CSS_PAGEDJS': PATH_CSS_PAGEDJS
     }))
 
     with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:

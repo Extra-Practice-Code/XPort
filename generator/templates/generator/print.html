@@ -6,7 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ index_pad.title|striptags }}</title>
-  <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" />
+  <!-- <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" /> -->
+  <link rel="stylesheet" type="text/css" media="print" href="{{ PATH_CSS_PAGEDJS }}">
   <link rel="stylesheet" type="text/css" media="print" href="{{ PATH_CSS_PRINT }}">
   <script>
     window.PagedConfig = { auto: false };
