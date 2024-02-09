@@ -155,11 +155,17 @@ def generate (organisation_slug, folders=None):
       context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
                                                           
-      file_print_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
-      if file_print_js:                                     
+      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
+      if file_js:                                     
         context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       else:
         context['PATH_JAVASCRIPT'] = None
+
+      file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
+      if file_print_js:
+        context['PATH_JAVASCRIPT_print'] = ETHERTOFF_URL + reverse('javascript-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
+      else:
+        context['PATH_JAVASCRIPT_PRINT'] = None
     else:
       file_css_generated = discoverPad('generated.css', path=[ organisation_slug, folder ])
       if file_css_generated:
@@ -179,14 +185,23 @@ def generate (organisation_slug, folders=None):
         context['PATH_CSS_PRINT'] = None
         warn("Could not find a print.css")
 
-      file_print_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
-      if file_print_js:
-        debug("Copying pad '{}' to '{}'".format(file_print_js, os.path.join(outputdir, 'scripts.js')))
-        copyPadToPath(file_print_js, os.path.join(outputdir, 'scripts.js'), stripLeadingAsterisks)
+      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
+      if file_js:
+        debug("Copying pad '{}' to '{}'".format(file_js, os.path.join(outputdir, 'scripts.js')))
+        copyPadToPath(file_js, os.path.join(outputdir, 'scripts.js'), stripLeadingAsterisks)
         context['PATH_JAVASCRIPT'] = context['SITE_URL'] + '/scripts.js'
       else:
         context['PATH_JAVASCRIPT'] = None
         debug("Could not find a scripts.js")
+
+      file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
+      if file_print_js:
+        debug("Copying pad '{}' to '{}'".format(file_print_js, os.path.join(outputdir, 'scripts-print.js')))
+        copyPadToPath(file_print_js, os.path.join(outputdir, 'scripts-print.js'), stripLeadingAsterisks)
+        context['PATH_JAVASCRIPT_PRINT'] = context['SITE_URL'] + '/scripts-print.js'
+      else:
+        context['PATH_JAVASCRIPT_PRINT'] = None
+        debug("Did not find a scripts-print.js")
 
 
     setCollectionsContext(context)
@@ -225,24 +240,13 @@ def generate (organisation_slug, folders=None):
       'index_pad': index_pad
     }))
 
-
-    file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
-    if file_print_js:
-      debug("Copying pad '{}' to '{}'".format(file_print_js, os.path.join(outputdir, 'scripts-print.js')))
-      copyPadToPath(file_print_js, os.path.join(outputdir, 'scripts-print.js'), stripLeadingAsterisks)
-      context['PATH_JAVASCRIPT_PRINT'] = context['SITE_URL'] + '/scripts-print.js'
-    else:
-      context['PATH_JAVASCRIPT_PRINT'] = None
-      debug("Did not find a scripts-print.js")
-
     output(os.path.join(outputdir, 'print.html'), 'generator/print.html', extend_context(context, {
       'index_pad': index_pad,
       'labels': collectionFor('label'),
       'reports': collectionFor('report'),
       'pads': collectionFor('pad'),
       'chapters': collectionFor('chapter'),
-      'PATH_CSS_PAGEDJS': PATH_CSS_PAGEDJS,
-      'PATH_JAVASCRIPT_PRINT': context['PATH_JAVASCRIPT_PRINT']
+      'PATH_CSS_PAGEDJS': PATH_CSS_PAGEDJS
     }))
 
     with open(os.path.join(outputdir, 'debug.html'), 'w', encoding='utf-8') as w:

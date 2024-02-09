@@ -23,6 +23,7 @@ urlpatterns = [
     path('css-generator-screen/<str:organisation_slug>/<str:folder>', views.css_generator_screen, name='css-generator-screen'),
     path('css-generator-print/<str:organisation_slug>/<str:folder>', views.css_generator_print, name='css-generator-print'),
     path('javascript-generator/<str:organisation_slug>/<str:folder>', views.javascript_generator, name='javascript-generator'),
+    path('javascript-generator-print/<str:organisation_slug>/<str:folder>', views.javascript_generator_print, name='javascript-generator-print'),
     path('create/', views.padCreate, name='pad-create'),
     path('create/<path:prefix>/', views.padCreate, name='pad-create'),
     path('rename-folder/', views.RenameFolderView.as_view(), name='folder-rename'),

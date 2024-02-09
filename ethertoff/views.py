@@ -918,6 +918,11 @@ def css_generator_print (request, organisation_slug, folder=''):
 def javascript_generator (request, organisation_slug, folder=''):
     return padOrEmtpy(request, discoverPad('scripts.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
 
+
+def javascript_generator_print (request, organisation_slug, folder=''):
+    return padOrEmtpy(request, discoverPad('scripts-print.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
+
+
 def labels (request, slug=None):
     labels = load_labels()
     path = slugToPath(slug) if slug else []
