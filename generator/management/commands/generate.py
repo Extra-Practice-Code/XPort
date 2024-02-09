@@ -163,7 +163,7 @@ def generate (organisation_slug, folders=None):
 
       file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
       if file_print_js:
-        context['PATH_JAVASCRIPT_print'] = ETHERTOFF_URL + reverse('javascript-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
+        context['PATH_JAVASCRIPT_PRINT'] = ETHERTOFF_URL + reverse('javascript-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
       else:
         context['PATH_JAVASCRIPT_PRINT'] = None
     else:
