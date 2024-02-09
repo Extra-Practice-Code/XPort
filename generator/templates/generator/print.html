@@ -98,9 +98,6 @@
       </ul>
     </div>
   </div>
-  {% if PATH_JAVASCRIPT %}
-    <script src="{{ PATH_JAVASCRIPT }}"></script>
-  {% endif %}
   <script>
     function sorterByDomPostion (a, b) {
       if (a === b) {
@@ -153,6 +150,11 @@
     }
 
     reorderIndexEntries();
+  </script> 
+  {% if PATH_JAVASCRIPT_PRINT %} %}
+    <script src="{{ PATH_JAVASCRIPT_PRINT }}"></script>
+  {% endif %}
+  <script>
     window.PagedPolyfill.preview();
   </script>
 </body>
