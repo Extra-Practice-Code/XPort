@@ -73,16 +73,16 @@
       </div>
     {% endfor %}
   </div> -->
-  {% for chapter in chapters %}
   <div class="chapters">
+  {% for chapter in chapters %}
     {% if chapter.position == 'after_content' and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
         <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
         {{ chapter.content }}
       </div>
     {% endif %}
+    {% endfor %}
   </div>
-  {% endfor %}
   <div class="indexes">
     <div class="index" data-index="label">
       <h1>Index: labels</h1>
