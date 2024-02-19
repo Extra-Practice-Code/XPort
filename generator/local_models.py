@@ -179,7 +179,8 @@ class Vimeo (Model):
       'thumbnail': fields.SingleImageField(),
       'date': fields.Single(fields.DateField()),
       'title': fields.Single(fields.InlineMarkdownField()),
-      'caption': fields.Single(fields.InlineMarkdownField())
+      'caption': fields.Single(fields.InlineMarkdownField()),
+      'cssclass': fields.Single(fields.StringField())
     }
 
 
