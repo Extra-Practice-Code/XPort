@@ -1,4 +1,4 @@
-<figure data-type="video" class="video--wrapper video--vimeo--wrapper{% if object.cssclass.value %}{{ object.thumbnail }}{% endif %}">
+<figure data-type="video" class="video--wrapper video--vimeo--wrapper{% if object.cssclass.value %} {{ object.cssclass }}{% endif %}">
   {% if object.thumbnail.value %}
   <div class="video--thumbnail video--vimeo--thumbnail">
     <img src="{{ object.thumbnail.value.url }}" />
