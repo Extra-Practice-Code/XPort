@@ -1,7 +1,7 @@
 :root {
     --color: black;
-    --serif: "serif";
-    --sans: "sans-serif";
+    --serif: serif;
+    --sans: sans-serif;
     --body-font: var(--sans);
     --header-font: var(--serif);
     --mono: Monospace;
@@ -367,6 +367,9 @@ body {
     grid-template-columns: [left] 1fr [middle] minmax(800px, 2fr) [right] 1fr;
     min-height: 100vh;
 }
+body.content-extra-wide {
+    grid-template-columns: [left] minmax(5ch, 1fr) [middle] auto [right] minmax(5ch, 1fr);
+}
 #nav-left {
     grid-row: nav;
     grid-column: left / span 2;
@@ -405,10 +408,21 @@ body {
 }
 /* Main content --------------------------------- */
 /* Insertion du pad dans la page */
+body.content-extra-wide #content {
+    width: min(1100px, 90vw);
+}
+
 .write-mode #content,
 .write-public-mode #content {
+    grid-column: left / span 3;
     display: flex;
     flex-direction: column;
+}
+.write-mode #content-left,
+.write-public-mode #content-left,
+.write-mode #content-right,
+.write-public-mode #content-right {
+    display: none;
 }
 iframe#ether {
     /* outline: 1px solid #333; */
@@ -507,26 +521,35 @@ div#next a {
 .manage_list li {
     border-bottom: 1px solid #c6c6fe;
     padding: 0.5em 0 0.5em 0;
+    display: flex;
 }
 #content .manage_list li.pad::before {
     display: inline-block;
-    width: 1ch;
-    margin-left: calc(0.5 * var(--line-height));
-    margin-right: calc(0.5 * var(--line-height));
+    width: 3ch;
+    margin: 0;
     content: ' ';
 }
 #content .manage_list li.folder::before {
     display: inline-block;
     width: 1ch;
-    margin-left: calc(0.5 * var(--line-height));
-    margin-right: calc(0.5 * var(--line-height));
+    margin-left: 1ch;
+    margin-right: 1ch;
     content: '▸';
+}
+#content .manage_list li.folder > a:first-child {
+    margin-left: -3ch;
+    padding-left: 3ch;
+}
+.manage_list li > a:first-child {
+    flex: 1 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .manage_list li:hover {
     background-color: var(--highlight-color);
 }
 .manage_list li .actions {
-    float: right;
+    flex: 0 0 auto;
 }
 .manage_list li .actions .button {
     font-size: 60%;
@@ -548,11 +571,14 @@ div#next a {
 .pad-list--path, .pad-list--actions {
     background: white;
     position: sticky;
-    padding: .5em .2em;
+    padding: .5em .2em .5em 1ch;
 }
 .pad-list--path {
     top: 2em;
     display: flex;
+}
+.pad-list--path a.crumb:hover {
+    text-decoration: underline;
 }
 .pad-list--path--separator::before {
     content: '>';
@@ -602,18 +628,6 @@ div#next a {
     left: 0;
     right: 0;
     padding: 2ch;
-}
-
-.write-mode #content,
-.write-public-mode #content {
-    grid-column: left / span 3;
-}
-
-.write-mode #content-left,
-.write-public-mode #content-left,
-.write-mode #content-right,
-.write-public-mode #content-right {
-    display: none;
 }
 
 #staff-menu .publication-list {
