@@ -125,8 +125,8 @@ def generate (organisation_slug, folders=None):
     footer_pad = getPadBySlug(pathToSlug([organisation_slug, folder, 'template-snippets', 'footer.html']))
 
     context = {
-      'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
-      'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
+      'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder), # if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
+      'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder), # if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
       'MENU_ITEMS': MENU_ITEMS,
       'LABELS': get_publication_labels(labels, organisation_slug, folder),
       'SNIPPETS': {
@@ -138,7 +138,7 @@ def generate (organisation_slug, folders=None):
       info('Found {} as index'.format(index_pad))
       context['PUBLICATION_TITLE'] = str(index_pad.title)
       try:
-        publication_theme = index_pad.meta[settings.THEME_METADATA_KEY]
+        publication_theme = index_pad.metadata[settings.THEME_METADATA_KEY]
       except AttributeError:
         publication_theme = None
     else:
