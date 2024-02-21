@@ -138,7 +138,10 @@ def generate (organisation_slug, folders=None):
       info('Found {} as index'.format(index_pad))
       context['PUBLICATION_TITLE'] = str(index_pad.title)
       try:
-        publication_theme = str(index_pad.metadata[settings.THEME_METADATA_KEY])
+        if index_pad.metadata[settings.THEME_METADATA_KEY].value:
+          publication_theme = index_pad.metadata[settings.THEME_METADATA_KEY].value
+        else:
+          publication_theme = None
       except AttributeError:
         publication_theme = None
     else:
