@@ -63,7 +63,7 @@
 
                 {% for organisation, publications in etherport_organisation_publication.items %}
                     <p>{{ organisation }}</p>
-                    {% for publication in publications %}
+                    {% for publication in publications.values %}
                     <a class="button--nav screen-only" href="{{ publication.url }}">{{ publication.title|striptags }}</a>
                     {% endfor %}
                 {% endfor %}
