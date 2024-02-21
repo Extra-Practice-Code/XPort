@@ -12,7 +12,7 @@ from generator.fields import Single
 from generator.index import make_index
 from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
-from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders
+from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders, discoverThemeResourcePad
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -92,7 +92,7 @@ def generate (organisation_slug, folders=None):
   labels = load_labels()
 
   # List of publications: [{ title: str, path: str, url: str }, ...]
-  publications = []
+  publications = {}
 
   if not folders:
       folders = { folder: 'normal' for folder in discoverPublicationFolders(organisation_slug) }
@@ -124,8 +124,6 @@ def generate (organisation_slug, folders=None):
     
     footer_pad = getPadBySlug(pathToSlug([organisation_slug, folder, 'template-snippets', 'footer.html']))
 
-  
-
     context = {
       'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
       'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder) if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
@@ -139,71 +137,56 @@ def generate (organisation_slug, folders=None):
     if index_pad:
       info('Found {} as index'.format(index_pad))
       context['PUBLICATION_TITLE'] = str(index_pad.title)
+      try:
+        publication_theme = index_pad.meta[settings.THEME_METADATA_KEY]
+      except AttributeError:
+        publication_theme = None
     else:
       info('Did not find and index.')
       context['PUBLICATION_TITLE'] = folder
+      publication_theme = None
 
-    publications.append({
+    publications[folder] = {
       'title': context['PUBLICATION_TITLE'],
       'path': folder,
-      'url': context['SITE_URL']
-    })
+      'url': context['SITE_URL'],
+      'theme': publication_theme
+    }
 
     info('Generating output')
 
     if mode == 'development':
-      context['PATH_CSS_GENERATED'] = ETHERTOFF_URL + reverse('css-generator-screen', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
-      context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('css-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
+      context['PATH_CSS_COMMON'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'common' })
+      context['PATH_CSS_SCREEN'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'screen' })
+      context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'print' })
                                                           
-      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
-      if file_js:                                     
-        context['PATH_JAVASCRIPT'] = ETHERTOFF_URL + reverse('javascript-generator', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
-      else:
-        context['PATH_JAVASCRIPT'] = None
-
-      file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
-      if file_print_js:
-        context['PATH_JAVASCRIPT_PRINT'] = ETHERTOFF_URL + reverse('javascript-generator-print', kwargs={ 'organisation_slug': organisation_slug, 'folder': folder })
-      else:
-        context['PATH_JAVASCRIPT_PRINT'] = None
+      context['PATH_JAVASCRIPT_COMMON'] = ETHERTOFF_URL + reverse('generator-javascript', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'script': 'common' })
+      context['PATH_JAVASCRIPT_SCREEN'] = ETHERTOFF_URL + reverse('generator-javascript', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'script': 'screen' })
+      context['PATH_JAVASCRIPT_PRINT'] = ETHERTOFF_URL + reverse('generator-javascript', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'script': 'print' })
     else:
-      file_css_generated = discoverPad('generated.css', path=[ organisation_slug, folder ])
-      if file_css_generated:
-        debug("Copying pad '{}' to '{}'".format(file_css_generated, os.path.join(outputdir, 'generated.css')))
-        copyPadToPath(file_css_generated, os.path.join(outputdir, 'generated.css'), stripLeadingAsterisks)
-        context['PATH_CSS_GENERATED'] = context['SITE_URL'] + '/generated.css'
-      else:
-        context['PATH_CSS_GENERATED'] = None
-        warn("Could not find a generated.css")
+      for sheet in [ 'common', 'screen', 'print']:
+        sheetname = f'{sheet}.css'
+        sheet_pad = discoverThemeResourcePad(organisation_slug=organisation_slug, publication=folder, resource_name=sheetname, theme=publication_theme)
+        if sheet_pad:
+          debug("Copying pad '{}' to '{}'".format(sheet_pad, os.path.join(outputdir, sheetname)))
+          copyPadToPath(sheet_pad, os.path.join(outputdir, sheetname), stripLeadingAsterisks)
+          context[f'PATH_CSS_{sheet.upper()}'] = context['SITE_URL'] + '/' + sheetname
+        else:
+          context[f'PATH_CSS_{sheet.upper()}'] = None
+          warn("Could not find {}".format(sheetname))
+
       
-      file_css_print = discoverPad('print.css', path=[ organisation_slug, folder ])
-      if file_css_print:
-        debug("Copying pad '{}' to '{}'".format(file_css_print, os.path.join(outputdir, 'print.css')))
-        copyPadToPath(file_css_print, os.path.join(outputdir, 'print.css'), stripLeadingAsterisks)
-        context['PATH_CSS_PRINT'] = context['SITE_URL'] + '/print.css'
-      else:
-        context['PATH_CSS_PRINT'] = None
-        warn("Could not find a print.css")
-
-      file_js = discoverPad('scripts.js', path=[ organisation_slug, folder ])
-      if file_js:
-        debug("Copying pad '{}' to '{}'".format(file_js, os.path.join(outputdir, 'scripts.js')))
-        copyPadToPath(file_js, os.path.join(outputdir, 'scripts.js'), stripLeadingAsterisks)
-        context['PATH_JAVASCRIPT'] = context['SITE_URL'] + '/scripts.js'
-      else:
-        context['PATH_JAVASCRIPT'] = None
-        debug("Could not find a scripts.js")
-
-      file_print_js = discoverPad('scripts-print.js', path=[ organisation_slug, folder ])
-      if file_print_js:
-        debug("Copying pad '{}' to '{}'".format(file_print_js, os.path.join(outputdir, 'scripts-print.js')))
-        copyPadToPath(file_print_js, os.path.join(outputdir, 'scripts-print.js'), stripLeadingAsterisks)
-        context['PATH_JAVASCRIPT_PRINT'] = context['SITE_URL'] + '/scripts-print.js'
-      else:
-        context['PATH_JAVASCRIPT_PRINT'] = None
-        debug("Did not find a scripts-print.js")
-
-
+      for script in [ 'common', 'screen', 'print']:
+        scriptname = f'{script}.js'
+        script_pad = discoverThemeResourcePad(organisation_slug=organisation_slug, publication=folder, resource_name=scriptname, theme=publication_theme)
+        if script_pad:
+          debug("Copying pad '{}' to '{}'".format(script_pad, os.path.join(outputdir, scriptname)))
+          copyPadToPath(script_pad, os.path.join(outputdir, scriptname), stripLeadingAsterisks)
+          context[f'PATH_JAVASCRIPT_{sheet.upper()}'] = context['SITE_URL'] + '/' + scriptname
+        else:
+          context[f'PATH_JAVASCRIPT_{script.upper()}'] = None
+          warn("Could not find {}".format(scriptname))
+      
     setCollectionsContext(context)
 
     models = resolve_links(models)
@@ -229,7 +212,6 @@ def generate (organisation_slug, folders=None):
           'collection': collection
         }))
 
-    import shutil
     PATH_CSS_PAGEDJS = context['SITE_URL'] + '/pagedjs-interface.css'
     local_path = finders.find('generator/css/interface.css')
     shutil.copy(local_path, os.path.join(outputdir, 'pagedjs-interface.css'))

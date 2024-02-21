@@ -212,7 +212,12 @@ THUMBNAIL_PROCESSORS = (
 
 THUMBNAIL_EXTENSION = 'jpg'
 
-PUBLICATION_TEMPLATE_PAD = 'Etherport::Templates::Publication.md'
+PUBLICATION_TEMPLATE_PAD = 'etherport::Templates::Publication.md'
+
+THEME_LOCAL_FOLDERNAME = 'Visual_Styles'
+THEMES_FOLDERNAME = 'Visual_Styles'
+THEME_DEFAULT_PATH = [ 'etherport' , 'Visual_Styles' , 'default' ]
+THEME_METADATA_KEY = 'visual-style'
 
 try:
     LOCAL_SETTINGS

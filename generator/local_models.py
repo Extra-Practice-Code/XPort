@@ -267,7 +267,7 @@ class Report (Model):
 class Pad (Model):
   generateListPage = True
   generateSinglePages = True
-
+  
   def _metadataFields (self):
     return {
       'pad': fields.Single(fields.StringField()),
@@ -276,7 +276,8 @@ class Pad (Model):
       'title': fields.Single(fields.InlineMarkdownField()),
       'index': fields.Single(fields.StringField(default=['false'])),
       'site-url': fields.Single(fields.StringField(default=[None])),
-      'static-url': fields.Single(fields.StringField(default=[None]))
+      'static-url': fields.Single(fields.StringField(default=[None])),
+      settings.THEME_METADATA_KEY: fields.Single(fields.StringField(default=[None])),
     }
   
 

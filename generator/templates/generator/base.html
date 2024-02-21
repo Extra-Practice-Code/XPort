@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block page_title %}{{ PUBLICATION_TITLE|striptags }}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ PATH_CSS_GENERATED }}" type="text/css" media="all">
+    <link rel="stylesheet" href="{{ PATH_CSS_COMMON }}" type="text/css" media="all">
+    <link rel="stylesheet" href="{{ PATH_CSS_SCREEN }}" type="text/css" media="screen">
   </head>
   <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
@@ -25,9 +26,6 @@
       {{ SNIPPETS.FOOTER|safe }}
       {% endif %}
     </footer>
-    {% if PATH_JAVASCRIPT %}
-      <script src="{{ PATH_JAVASCRIPT }}"></script>
-    {% endif %}
     <script>
       var labels = document.querySelectorAll('[data-label][data-direct-link]');
       
@@ -46,5 +44,11 @@
         }
       }
     </script>
+    {% if PATH_JAVASCRIPT_COMMON %}
+      <script src="{{ PATH_JAVASCRIPT_COMMON }}"></script>
+    {% endif %}
+    {% if PATH_JAVASCRIPT_SCREEN %}
+      <script src="{{ PATH_JAVASCRIPT_SCREEN }}"></script>
+    {% endif %}
   </body>
 </html>

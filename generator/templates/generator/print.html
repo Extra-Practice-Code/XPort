@@ -8,6 +8,7 @@
   <title>{{ index_pad.title|striptags }}</title>
   <!-- <link rel="stylesheet" type="text/css" media="all" href="{{ STATIC_URL }}/css/interface.css" /> -->
   <link rel="stylesheet" type="text/css" media="print" href="{{ PATH_CSS_PAGEDJS }}">
+  <link rel="stylesheet" type="text/css" media="all" href="{{ PATH_CSS_COMMON }}">
   <link rel="stylesheet" type="text/css" media="print" href="{{ PATH_CSS_PRINT }}">
   <script>
     window.PagedConfig = { auto: false };
@@ -150,7 +151,10 @@
     }
 
     reorderIndexEntries();
-  </script> 
+  </script>
+  {% if PATH_JAVASCRIPT_COMMON %}
+    <script src="{{ PATH_JAVASCRIPT_COMMON }}"></script>
+  {% endif %}
   {% if PATH_JAVASCRIPT_PRINT %}
     <script src="{{ PATH_JAVASCRIPT_PRINT }}"></script>
   {% endif %}

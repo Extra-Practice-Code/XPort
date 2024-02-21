@@ -59,7 +59,7 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ethertoff.utils import getPadMarkdown, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath, quickCleanPadname
+from ethertoff.utils import getPadText, getPadMarkdown, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath, quickCleanPadname
 
 from my_project.forms import PadCreateWithTemplate
 
@@ -309,8 +309,8 @@ def padRename(request, pk):
             path = getFolderName(pad.display_slug)
 
             if path:
-                path = path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
-                return redirect('manage', path=path)
+                # path = path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
+                return redirect('manage', path_string=path)
             else:
                 return redirect('manage')
 
@@ -837,7 +837,7 @@ def manage(request, path_string=None):
             # in a subfolder. Add a directory entry and do not add the pad.
             key = relativePath.split(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
             if key not in seen_dirs:
-                dirPath = pad.display_slug.rsplit(settings.PAD_NAMESPACE_SEPARATOR, 1)[0]
+                dirPath = prefix + key
                 dir_list.append((key, 'directory', None, dirPath))
                 seen_dirs.append(key)
         else:
@@ -884,12 +884,23 @@ def padOrFallbackPath(request, slug, fallbackPath, mimeType):
         f.close()
         return HttpResponse(contents, content_type=mimeType)
 
+def discoverPadOrEmpty (request, name, path, mimeType, contentFilter):
+    pad = discoverPad(name, path)
+
+    if pad:
+        text = getPadText(pad)
+
+        if filter:
+            text = filter(text)
+
+        return HttpResponse(text, content_type=mimeType)
+    else:
+        return HttpResponse("", content_type=mimeType)
+
 def padOrEmtpy(request, slug, mimeType, filter=None):
     try:
         pad = Pad.objects.get(display_slug=slug)
-        padID = pad.group.groupID + '$' + urllib.parse.quote(pad.name.replace(settings.PAD_NAMESPACE_SEPARATOR, '_'))
-        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-        text = epclient.getText(padID)['text']
+        text = getPadText(pad)
         if filter:
             text = filter(text)
         return HttpResponse(text, content_type=mimeType)

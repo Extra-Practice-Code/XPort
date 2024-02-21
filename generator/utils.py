@@ -12,7 +12,7 @@ from django.conf import settings
 import os.path
 import json
 
-from ethertoff.utils import discoverFolders
+from ethertoff.utils import discoverFolders, pathToSlug, getPadBySlug
 
 import unicodedata
 
@@ -140,3 +140,22 @@ def loadPublications ():
 
 def discoverPublicationFolders (organisation_slug):
   return list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discoverFolders([ organisation_slug ])))
+
+
+def discoverThemeResourcePad (organisation_slug, publication, resource_name, theme=None):
+  candidates = [
+    # Try to find in publication
+    pathToSlug([ organisation_slug, publication, settings.THEME_LOCAL_FOLDERNAME, resource_name]),
+    # Otherwise in theme, if it is set, or in default
+    pathToSlug([ organisation_slug, settings.THEMES_FOLDERNAME, theme, resource_name ]) if theme else pathToSlug(settings.THEME_DEFAULT_PATH + [ resource_name ]),
+  ]
+
+  print(candidates)
+
+  for slug in candidates:
+    pad = getPadBySlug(slug)
+
+    if pad:
+      return pad
+    
+  return None
