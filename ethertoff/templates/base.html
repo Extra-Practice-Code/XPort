@@ -39,7 +39,7 @@
             <span class="screen-only">{{ author.full_name_with_prefix }}</span>
             <a class="button--nav screen-only" href="{% url 'logout' %}{% if pad %}?next={% url 'pad-read' 'r' pad.display_slug %}{% endif %}">Log out</a>
             <a class="button--nav screen" href="{% url 'password_change' %}">Change password</a>
-            <a class="button--nav screen-only" href="{% url 'pad-create' %}">Create Pad</a>
+            <!-- <a class="button--nav screen-only" href="">Create Pad</a> -->
             <a class="button--nav screen-only" href="{% url 'admin:filer-directory_listing-root' %}" target="_blank">File manager</a>
             <a class="button--nav screen-only" href="{% url 'index-labels' %}">Update labels</a>
             <a class="button--nav screen-only" href="{% url 'generate' %}">Generate publications</a>

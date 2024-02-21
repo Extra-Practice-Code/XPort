@@ -59,7 +59,7 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ethertoff.utils import getPadMarkdown, getPadHtml, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath
+from ethertoff.utils import getPadMarkdown, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath, quickCleanPadname
 
 from my_project.forms import PadCreateWithTemplate
 
@@ -218,8 +218,7 @@ def padCreate(request, prefix=''):
         form = PadCreateWithTemplate(request.POST)
         form.fields['template'].choices = templateChoices
         if form.is_valid():
-            slug = re.sub(r'\s+', '_', form.cleaned_data['name'])
-            slug = slug.strip(":")  # avoids leading and trailing "::"
+            slug = quickCleanPadname(form.cleaned_data['name'])
             pad = createPad(slug=slug, server=group.server, group=group)
 
             if pad:

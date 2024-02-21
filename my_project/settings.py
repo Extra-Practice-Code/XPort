@@ -165,7 +165,7 @@ from my_project.markdown_underline_extension import UnderlineExtension
 # from my_project.markdown_raise_figure_classes import RaiseFigureClassesExtension
 # from my_project.markdown_footnote_insertion_marker import FootnoteInsertionPointExtension
 from generator__filer_thumbnails.markdown_make_filer_image_thumbnails import MakeFilerImageThumbnailsExtension
-
+from generator.etherport_objectcaption import ObjectCaptionExtension
 
 MARKDOWN_SETTINGS = {
     'extensions': [
@@ -179,6 +179,7 @@ MARKDOWN_SETTINGS = {
         'meta', 
         'smarty', 
         FigcaptionExtension(),
+        # ObjectCaptionExtension(), Does not work because references are rendered before markdown
         TocExtension(baselevel=2), 
         'attr_list',
         DelExtension(), 
@@ -197,14 +198,6 @@ MARKDOWN_SETTINGS = {
 MARKDOWN_SETTINGS_GENERATOR = MARKDOWN_SETTINGS
 MARKDOWN_SETTINGS_GENERATOR['extensions'].append(MakeFilerImageThumbnailsExtension())
 
-try:
-    LOCAL_SETTINGS
-except NameError:
-    try:
-        from .local_settings import *
-    except ImportError:
-        pass
-
 API_LOCAL_URL = None
 
 TREE_PAD_OPEN_MODE = 'w'
@@ -220,6 +213,16 @@ THUMBNAIL_PROCESSORS = (
 )
 
 THUMBNAIL_EXTENSION = 'jpg'
+
+PUBLICATION_TEMPLATE_PAD = 'Etherport::Templates::Publication.md'
+
+try:
+    LOCAL_SETTINGS
+except NameError:
+    try:
+        from .local_settings import *
+    except ImportError:
+        pass
 
 
 """

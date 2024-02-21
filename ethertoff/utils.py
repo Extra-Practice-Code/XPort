@@ -149,3 +149,6 @@ def stripLeadingAsterisks (padText):
         return '\n'.join([line[1:] for line in lines])
     else:
         return padText
+    
+def quickCleanPadname (raw):
+    return re.sub(r'\s+', '_', raw).strip(':')

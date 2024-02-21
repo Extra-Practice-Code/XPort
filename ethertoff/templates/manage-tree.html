@@ -13,10 +13,10 @@
               <a href="{% url 'manage' path  %}">{{ name }}</a>
             {% endif %}
         {% endfor %}
-        {% if currentPath %}
-          <a href="{% url 'pad-create' currentPath %}" class="button push">+ create pad</a>
+        {% if crumbs|length == 1 %}
+          <a href="{% url 'publication-create' organisation.slug %}" class="button push">+ create publication</a>
         {% else %}
-          <a href="{% url 'pad-create' %}" class="button push">+ create pad</a>
+          <a href="{% url 'pad-create' currentPath %}" class="button push">+ create pad</a>
         {% endif %}
     </section>
     <ul id="pads_list" class="manage_list">

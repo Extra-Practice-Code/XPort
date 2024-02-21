@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extra_styles %}
+      <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
+      <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
+{% endblock %}
+
+{% block title %}
+      <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+      <form action="{% url 'publication-create' organisation_slug %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                  {{ form.name.label_tag }}{{ form.name }}
+                  {{ form.group }}
+            </div>
+            {% if form.name.errors %}
+            <div class="form-row">
+            {% for error in form.name.errors %}
+                  <p>{{ error|escape }}</strong></p>
+            {% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-row--button">
+                  <input class="submit" type="submit" value="{%trans "Create" %}" />
+            </div>
+      </form>
+      <legend></legend>
+{% endblock %}
