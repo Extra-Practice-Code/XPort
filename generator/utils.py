@@ -139,7 +139,7 @@ def loadPublications ():
   return publications
 
 def discoverPublicationFolders (organisation_slug):
-  return list(filter(lambda f: f not in settings.GENERATOR_IGNORE_FOLDERS, discoverFolders([ organisation_slug ])))
+  return list(filter(lambda f: f not in settings.GENERATOR_SYSTEM_FOLDERS, discoverFolders([ organisation_slug ])))
 
 
 def discoverThemeResourcePad (organisation_slug, publication, resource_name, theme=None):

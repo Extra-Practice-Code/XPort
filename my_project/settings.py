@@ -219,6 +219,12 @@ THEMES_FOLDERNAME = 'Visual_Styles'
 THEME_DEFAULT_PATH = [ 'etherport' , 'Visual_Styles' , 'default' ]
 THEME_METADATA_KEY = 'visual-style'
 
+GENERATOR_SYSTEM_FOLDERS = [
+    'Templates',
+    'templates',
+    THEMES_FOLDERNAME
+]
+
 try:
     LOCAL_SETTINGS
 except NameError:
