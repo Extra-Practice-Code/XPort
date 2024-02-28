@@ -25,6 +25,16 @@ CMAGENTA = '\033[95m'
 CCYAN = '\033[96m'
 CEND = '\033[0m'
 
+# \U00000021 "Exclamation mark"
+# \U0000002B "Plus sign"
+# \U0000003F "Question mark"
+# \U00002700-\U000027BF "Dingbats"
+# \U0001F300-\U0001F5FF "Miscellaneous Symbols and Pictographs"
+# \U0001F600-\U0001F64F "Emoticons (Emoji)"
+# \U0001FA70-\U0001FAFF "Symbols and Pictographs Extended-A"
+# \U0001F900-\U0001F9FF "Supplemental Symbols and Pictographs"
+EMOJI_RANGES = r'[\U00002700-\U000027BF\U0001F300-\U0001F5FF\U0001F600-\U0001F64F\U0001FA70-\U0001FAFF\U0001F900-\U0001F9FF]'
+
 def print_in_color(*messages, color=CEND):
   messages = ' '.join(map(str, messages))
   print('{}{}{}'.format(color, messages, CEND))
@@ -80,12 +90,8 @@ def replaceEmojiiWithTheirName (value):
   # \U00000021 "Exclamation mark"
   # \U0000002B "Plus sign"
   # \U0000003F "Question mark"
-  # \U00002700-\U000027BF "Dingbats"
-  # \U0001F300-\U0001F5FF "Miscellaneous Symbols and Pictographs"
-  # \U0001F600-\U0001F64F "Emoticons (Emoji)"
-  # \U0001FA70-\U0001FAFF "Symbols and Pictographs Extended-A"
-  # \U0001F900-\U0001F9FF "Supplemental Symbols and Pictographs"
-  return re.sub('[\U00000021\U0000002B\U0000003F\U00002700-\U000027BF\U0001F300-\U0001F5FF\U0001F600-\U0001F64F\U0001FA70-\U0001FAFF\U0001F900-\U0001F9FF]', lambda m: unicodedata.name(m.group(0)), value)
+  # + EMOJI RANGES
+  return re.sub('\U00000021\U0000002B\U0000003F', lambda m: unicodedata.name(m.group(0)), re.sub(EMOJI_RANGES, lambda m: unicodedata.name(m.group(0)), value))
 
 """
  Limit length of keys on models and replace characters

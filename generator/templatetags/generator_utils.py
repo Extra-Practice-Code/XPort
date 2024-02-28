@@ -3,10 +3,12 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from generator.settings import SITE_URL as GENERATED_SITE_URL, GENERATED_SITE_INDEX
 from generator.links import is_link, is_multi_link, is_reverse_multi_link, is_reverse_single_link, is_single_link
 from generator.collection import getObject
+from generator.utils import EMOJI_RANGES
 
 import re
 import os.path
@@ -168,3 +170,7 @@ def file_picker_url ():
   params['_popup'] = True
   
   return '{}?{}'.format(reverse('admin:filer-directory_listing-last'), urlencode(sorted(params.items())))
+
+@register.filter
+def wrap_emoji (value):
+  return mark_safe(re.sub(EMOJI_RANGES, lambda m: '<span class="emoji">{}</span>'.format(m.group(0)), value))

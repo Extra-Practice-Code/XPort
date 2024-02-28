@@ -53,7 +53,7 @@
       {% if chapter.position.value == 'before_content' and chapter.on_print.value != 'false' %}
         <div class="chapter" data-chapter="{{ chapter }}">
           <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
-          {{ chapter.content }}
+          {{ chapter.content|wrap_emoji }}
         </div>
       {% endif %}
     {% endfor %}
@@ -62,7 +62,7 @@
     {% for report in reports %}
       <div class="report">
         <h1 id="{{ report.key }}">{{ report.report }}</h1>
-        {{ report.content }}
+        {{ report.content|wrap_emoji }}
       </div>
     {% endfor %}
   </div>
@@ -79,7 +79,7 @@
     {% if chapter.position == 'after_content' and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
         <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
-        {{ chapter.content }}
+        {{ chapter.content|wrap_emoji }}
       </div>
     {% endif %}
     {% endfor %}
