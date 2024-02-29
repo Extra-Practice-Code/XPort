@@ -40,7 +40,13 @@
           <li><a href="#{{pad.key}}">{{ pad.title }}</a></li>  
         {% endfor %} -->
         {% for chapter in chapters %}
-          {% if chapter.position.value == 'after_content' and chapter.on_print.value != 'false' %}
+          {% if chapter.position.value == 'after_content' and chapter.on_print.value != 'false' or chapter.position.value == 'before_indexes' and chapter.on_print.value != 'false' %}
+            <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
+          {% endif %}
+        {% endfor %}
+          <li><a href="#generated-index--labels">Index: labels</a></li>
+        {% for chapter in chapters %}
+          {% if chapter.position.value == 'after_indexes' and chapter.on_print.value != 'false' %}
             <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
           {% endif %}
         {% endfor %}
@@ -76,7 +82,7 @@
   </div> -->
   <div class="chapters">
   {% for chapter in chapters %}
-    {% if chapter.position == 'after_content' and chapter.on_print != 'false' or chapter.position == 'before_indexes' and chapter.on_print != 'false' %}
+    {% if chapter.position.value == 'after_content' and chapter.on_print != 'false' or chapter.position.value == 'before_indexes' and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
         <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
         {{ chapter.content|wrap_emoji }}
@@ -85,7 +91,7 @@
     {% endfor %}
   </div>
   <div class="indexes">
-    <div class="index" data-index="label">
+    <div class="index" data-index="label" id="generated-index--labels">
       <h1>Index: labels</h1>
       <ul>
         {% for label in labels %}
@@ -101,13 +107,13 @@
   </div>
   <div class="chapters">
   {% for chapter in chapters %}
-    {% if chapter.position == 'after_indexes' and chapter.on_print != 'false' %}
+    {% if chapter.position.value == 'after_indexes' and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
         <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
         {{ chapter.content|wrap_emoji }}
       </div>
     {% endif %}
-    {% endfor %}
+  {% endfor %}
   </div>
   <script>
     function sorterByDomPostion (a, b) {
@@ -152,7 +158,10 @@
           let newEntries = [],
               entries = li.querySelectorAll('.index-entry');
           entries.forEach(entry => {
-            newEntries.push(li.removeChild(entry));
+            entry = li.removeChild(entry);
+            if (document.querySelector(entry.dataset.linkId)) {
+              newEntries.push(entry);
+            }
           });
           newEntries.sort(sorterByReferencedNodePosition);
           newEntries.forEach(entry => li.appendChild(entry)); // Add them to indexs
