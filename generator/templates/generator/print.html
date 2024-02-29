@@ -96,7 +96,7 @@
       <ul>
         {% for label in labels %}
           <li>
-            {{ label }}
+              <span class="index-term">{{ label }}</span>
             {% for link in label|merged_links %}
               <span class="index-entry" data-link-id="#{{ link.id }}"></span>
             {% endfor %}
