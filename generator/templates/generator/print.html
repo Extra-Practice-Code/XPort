@@ -76,7 +76,7 @@
   </div> -->
   <div class="chapters">
   {% for chapter in chapters %}
-    {% if (chapter.position == 'after_content' of chapter.position == 'before_indexes') and chapter.on_print != 'false' %}
+    {% if (chapter.position == 'after_content' or chapter.position == 'before_indexes') and chapter.on_print != 'false' %}
       <div class="chapter" data-chapter="{{ chapter }}">
         <h1 id="{{ chapter.key }}">{{ chapter.chapter }}</h1>
         {{ chapter.content|wrap_emoji }}
