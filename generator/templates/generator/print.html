@@ -163,8 +163,11 @@
               newEntries.push(entry);
             }
           });
-          newEntries.sort(sorterByReferencedNodePosition);
-          newEntries.forEach(entry => li.appendChild(entry)); // Add them to indexs
+          if (newEntries.length > 0) {
+            newEntries.sort(sorterByReferencedNodePosition);
+            newEntries[newEntries.length - 1].classList.add('generator--index--last-entry');
+            newEntries.forEach(entry => li.appendChild(entry)); // Add them to indexs
+          }
         })
       });
     }
