@@ -44,7 +44,7 @@
             <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
           {% endif %}
         {% endfor %}
-          <li><a href="#generated-index--labels">Index: labels</a></li>
+          <li><a href="#generated-index--labels">Index</a></li>
         {% for chapter in chapters %}
           {% if chapter.position.value == 'after_indexes' and chapter.on_print.value != 'false' %}
             <li><a href="#{{chapter.key}}">{{ chapter.chapter }}</a></li>
