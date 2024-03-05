@@ -6,13 +6,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etherport</title>
   <style>
+    @font-face {
+      font-family: "Rubik";
+      src: url('Rubik-VariableFont_wght.ttf')	format(truetype);
+      font-weight: 100 900;
+    }
+
+    @font-face {
+      font-family: "Rubik";
+      src: url('Rubik-Italic-VariableFont_wght.ttf')	format(truetype);
+      font-weight: 100 900;
+      font-style: italic;
+    }
+
+    :root {
+      --font-size: 16px;
+      --line-height: 24px;
+    }
+
+    details, summary {
+      list-style-position: outside;
+    }
+
     html, body {
-      font-family: sans-serif;
+      color: rgb(26, 24, 24);
+      font-family: "Rubik", sans-serif;
+      font-weight: 360;
+      background: rgb(250, 244, 245);
+    }
+
+    h1, h2, h3, h4, h5, h6, strong, summary {
+      font-weight: 450;
+      font-size: var(--font-size);
+      line-height: var(--line-height);
+    }
+
+    h5 {
+      margin: var(--line-height) 0 0 0;
+    }
+
+    h5 + .read-more-link {
+      margin-top: calc(.5 * var(--line-height));
+    }
+
+    details {
+      margin-top: calc(.5 * var(--line-height));
     }
 
     body {
-      max-width: 60ch;
-      margin: 4ch auto;
+      /*! padding: 4ch; */
+      line-height: var(--line-height);
+      font-size: var(--font-size);
+      width: 100vw;
+      height: 100vh;
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    p {
+      margin: calc(0.5 * var(--line-height)) 0;
     }
 
     a, a:active, a:visited {
@@ -23,26 +75,79 @@
     a:hover {
       text-decoration: none;
     }
+
+    .reference--target {
+      display: none;
+    }
+
+    body {
+      display: flex;
+    }
+
+    .sidepanel {
+      flex: 0 0 400px;
+      padding: 4ch;
+    }
+
+    .label-index {
+      flex: 1 1;
+      overflow: auto;
+      padding: 4ch 6ch 4ch 4ch;
+    }
+
+    details {
+      max-width: 65ch;
+    }
+
+    .read-more-link {
+      float: right;
+      width: 15ch;
+      margin-right: -17.5ch;
+    }
   </style>
 </head>
 <body>
-  <h1>
-    Etherport
-  </h1>
-  <p>
-    Etherport is a collaborative, open-source publishing tool using etherpad.
-  </p>
-  <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/885196752?h=9fdda1707e&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
-  <h2>
-    Organisations on Etherport:
-  </h2>
-  {% for organisation in organisations %}
-  <p>
-    <a href="/publications/{{ organisation.slug }}/">{{ organisation }}</a>
-  </p>
-  {% endfor %}
-  <p>
-    Read the <a href="/publications/inc/Manual">etherport manual</a>.
-  </p>
+  <section class="sidepanel">
+    <h1>
+      Etherport
+    </h1>
+    <p>
+      Etherport is a collaborative, open-source publishing tool using etherpad.
+    </p>
+    <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/885196752?h=9fdda1707e&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+    <h2>
+      Organisations on Etherport:
+    </h2>
+    {% for organisation in organisations %}
+    <p>
+      <a href="/publications/{{ organisation.slug }}/">{{ organisation }}</a>
+    </p>
+    {% endfor %}
+    <p>
+      Read the <a href="/publications/inc/Manual">etherport manual</a>.
+    </p>
+  </section>
+  <section class="label-index">
+    {% for label, organisations in label_index.items %}
+      <details>
+        <summary>{{ label }}</summary>
+        {% for organisation, publications in organisations.items %}
+          {% for publication, articles in publications.items %}
+            {% for article, links in articles.items %}
+              <h5>{{ article }}</h5>
+              {% for link in links %}
+                {% if link.context %}
+                  <a class="read-more-link" href="{{ link.url }}">read further →</a>
+                  {{ link.context|safe }}
+                {% else %}
+                  <a href="{{ link.url }}">{{ article }}</a>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+      </details>
+    {% endfor %}
+  </section>
 </body>
 </html>

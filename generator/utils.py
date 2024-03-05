@@ -18,6 +18,9 @@ import unicodedata
 
 PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
 
+PUBLICATION_LABEL_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-labels-in-publications.json')
+print(PUBLICATION_LABEL_INDEX_PATH)
+
 CRED = '\033[91m'
 CGREEN = '\033[92m'
 CYELLOW = '\033[93m'
@@ -144,8 +147,23 @@ def loadPublications ():
 
   return publications
 
+
 def discoverPublicationFolders (organisation_slug):
   return list(filter(lambda f: f not in settings.GENERATOR_SYSTEM_FOLDERS, discoverFolders([ organisation_slug ])))
+
+
+def loadPublicationLabelIndex ():
+  try:
+    labels = json.load(open(PUBLICATION_LABEL_INDEX_PATH, 'r'))
+  except IOError:
+    labels = {}
+
+  return labels
+
+
+def storePublicationLabelIndex (labels):
+  json.dump(labels, open(PUBLICATION_LABEL_INDEX_PATH, 'w'), ensure_ascii=False)
+
 
 
 def discoverThemeResourcePad (organisation_slug, publication, resource_name, theme=None):

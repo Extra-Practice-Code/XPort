@@ -8,11 +8,12 @@ import shutil
 import generator.local_models
 
 from generator.settings import ETHERTOFF_URL, SITE_URL, MENU_ITEMS, STATIC_URL, GENERATED_SITE_INDEX
+from generator.templatetags.generator_utils import merged_links, unique_contexts
 from generator.fields import Single
 from generator.index import make_index
 from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
-from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders, discoverThemeResourcePad
+from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders, discoverThemeResourcePad, loadPublicationLabelIndex, storePublicationLabelIndex
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -194,6 +195,29 @@ def generate (organisation_slug, folders=None):
 
     models = resolve_links(models)
 
+    info('Updating label index')
+    labelIndex = loadPublicationLabelIndex()
+
+    if organisation_slug not in labelIndex:
+      labelIndex[organisation_slug] = {}
+
+    if folder not in labelIndex[organisation_slug]:
+      labelIndex[organisation_slug][folder] = {}
+
+    for label in collectionFor('label'):
+      if str(label) not in labelIndex[organisation_slug][folder]:
+        labelIndex[organisation_slug][folder][str(label)] = []
+      
+      for link in unique_contexts(merged_links(label)):
+        labelIndex[organisation_slug][folder][str(label)].append({
+          'title': str(link.target),
+          'url': '{}#{}'.format(link.target.url, link.id),
+          'context': link.context
+        })
+
+    storePublicationLabelIndex(labelIndex)
+
+
     for contentType in contentTypes.values():
       collection = contentType.collection
       model = collection.model
@@ -268,7 +292,35 @@ def generate (organisation_slug, folders=None):
   storePublications(organisation_slug, publications)
 
   organisations = EtherportOrganisation.objects.all()
-  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations })
+
+  label_index = {}
+
+  publication_label_index = loadPublicationLabelIndex()
+
+  for organisation_slug, publications in publication_label_index.items():
+    for publication, labels in publications.items():
+      for label, links in labels.items():
+        if label not in label_index:
+          label_index[label] = {}
+
+        if organisation_slug not in label_index[label]:
+          label_index[label][organisation_slug] = {}
+
+        label_index[label][organisation_slug][publication] = {}
+
+        for link in links:
+          if link['title'] not in label_index[label][organisation_slug][publication]:
+            label_index[label][organisation_slug][publication][link['title']] = []
+          label_index[label][organisation_slug][publication][link['title']].append(link)
+        
+
+  local_path = finders.find('generator/fonts/Rubik-Italic-VariableFont_wght.ttf')
+  shutil.copy(local_path, os.path.join(basedir, 'generated', 'Rubik-Italic-VariableFont_wght.ttf'))
+
+  local_path = finders.find('generator/fonts/Rubik-VariableFont_wght.ttf')
+  shutil.copy(local_path, os.path.join(basedir, 'generated', 'Rubik-VariableFont_wght.ttf'))
+
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations, 'label_index': label_index })
 
 
   if not settings.DEBUG:
