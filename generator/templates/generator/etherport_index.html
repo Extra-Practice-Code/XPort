@@ -137,8 +137,8 @@
       {% for organisation_slug, publications in publication_index.items %}
         {% if organisation_slug == organisation.slug %}
           <p>
-          {% for publication in publications %}
-            <a href="{{ publication.url }}">{{ publication.title }}</a>{% if not forloop.last %}<br>{% endif %}
+          {% for name, publication in publications.items %}
+            <a href="{{ publication.url }}/">{{ publication.title|safe }}</a>{% if not forloop.last %}<br>{% endif %}
           {% endfor %}
           </p>
         {% endif %}
