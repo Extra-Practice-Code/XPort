@@ -173,4 +173,7 @@ def file_picker_url ():
 
 @register.filter
 def wrap_emoji (value):
-  return mark_safe(re.sub(EMOJI_RANGES, lambda m: '<span class="generator--wrapped-emoji">{}</span>'.format(m.group(0)), value))
+  if value:
+    return mark_safe(re.sub(EMOJI_RANGES, lambda m: '<span class="generator--wrapped-emoji">{}</span>'.format(m.group(0)), value))
+  else:
+    return value
