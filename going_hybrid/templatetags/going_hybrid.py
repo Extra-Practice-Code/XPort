@@ -10,6 +10,7 @@ register = template.Library()
 @register.inclusion_tag('going-hybrid/snippets/navbar.html', takes_context=True)
 def going_hybrid_navbar (context):
   return {
+    'ORGANISATION': context['ORGANISATION'],
     'SITE_URL': context['SITE_URL'],
     'PUBLICATION_TITLE': context['PUBLICATION_TITLE'],
     'chapters': collectionFor('chapter'),

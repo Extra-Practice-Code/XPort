@@ -89,7 +89,9 @@ def get_publication_labels (labels, organisation_slug, folder):
   folders: None,list<foldername>,dict<foldername: mode>
   
 """
-def generate (organisation_slug, folders=None):
+def generate (organisation, folders=None):
+  organisation_slug = organisation.slug
+
   labels = load_labels()
 
   # List of publications: [{ title: str, path: str, url: str }, ...]
@@ -126,6 +128,11 @@ def generate (organisation_slug, folders=None):
     footer_pad = getPadBySlug(pathToSlug([organisation_slug, folder, 'template-snippets', 'footer.html']))
 
     context = {
+      'ORGANISATION': {
+        'name': organisation.name,
+        'slug': organisation.slug,
+        'url': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME='')
+      },
       'SITE_URL': SITE_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder), # if not index_pad or not index_pad.metadata['site-url'].value else index_pad.metadata['site-url'].value,
       'STATIC_URL': STATIC_URL.format(ORGANISATION_SLUG=organisation_slug, PUBLICATION_NAME=folder), # if not index_pad or not index_pad.metadata['static-url'].value else index_pad.metadata['static-url'].value,
       'MENU_ITEMS': MENU_ITEMS,
@@ -339,4 +346,4 @@ class Command(BaseCommand):
 
     for organisation in organisations:
       info(organisation.name)
-      generate(organisation.slug)
+      generate(organisation=organisation)

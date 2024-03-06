@@ -773,7 +773,7 @@ def generate(request, organisation_slug=None):
         print('Received post')
         form = makeGenerationForm(publication_folders, request.POST)
         if form.is_valid():
-            generateStatic(organisation.slug, {
+            generateStatic(organisation, {
                 field.name: field.value() for field in form if field.value() is not None
             })
             context['generated'] = True

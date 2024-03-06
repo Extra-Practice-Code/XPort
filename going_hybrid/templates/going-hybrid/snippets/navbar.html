@@ -1,4 +1,9 @@
 <ul>
+  <li class="navbar__organisation">
+    <a href="{{ ORGANISATION.url }}">
+      {{ ORGANISATION.name }}
+    </a>
+  </li>
   <li class="navbar--index">
     <a href="{{ SITE_URL }}">{{ PUBLICATION_TITLE }}</a>
   </li>
@@ -9,7 +14,7 @@
   {% endfor %}
   <li {% if page_content.content_type == "report" %}class="selected"{% endif %} class="navbar--reports">
     <a href="{{ SITE_URL }}/reports.html">reports</a>
-    <ul class="navbar--reports--subnav">
+    <ul class="navbar--subnav navbar--reports--subnav">
       {% for report in reports %}
       <li class="navbar--report navbar--report--{{ report.key }}"><a href="{{ report.url }}">{{ report }}</a></li>
       {% endfor %}
@@ -17,7 +22,7 @@
   </li>
   <li class="navbar--pages">
     <a href="{{ SITE_URL }}/pads.html">pages</a>
-    <ul class="navbar--pages--subnav">
+    <ul class="navbar--subnav navbar--pages--subnav">
       {% for page in pages %}
       <li class="navbar--page navbar--page--{{ page.key }}"><a href="{{ page.url }}">{{ page }}</a></li>
       {% endfor %}
@@ -25,7 +30,7 @@
   </li>
   <li class="navbar--labels">
     <a href="{{ SITE_URL }}/labels.html">labels</a>
-    <ul class="navbar--labels--subnav">
+    <ul class="navbar--subnav navbar--labels--subnav">
       {% for label in labels %}
       <li class="navbar--label navbar--label--{{ label.key }}"><a href="{{ label.url }}">{{ label }}</a></li>
       {% endfor %}
