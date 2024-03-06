@@ -117,7 +117,7 @@ def read_pads (prefix=None):
 
     try:
       # source = getPadMarkdown(pad).strip()
-      source = pad_sources[pad.padid]
+      source = pad_sources[pad.publicpadid if pad.is_public else pad.padid]
     except KeyError:
       warn('Could not find pad {}'.format(pad.display_slug))
       continue
