@@ -13,7 +13,7 @@ from generator.fields import Single
 from generator.index import make_index
 from generator.parse import read_pads, resolve_links
 from generator.collection import collectionFor, resetCollections, contentTypes, setCollectionsContext
-from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders, discoverThemeResourcePad, loadPublicationLabelIndex, storePublicationLabelIndex
+from generator.utils import debug, info, render_template_to_string, keyFilter, warn, storePublications, discoverPublicationFolders, discoverThemeResourcePad, loadPublicationLabelIndex, storePublicationLabelIndex, loadPublications
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -302,6 +302,8 @@ def generate (organisation, folders=None):
 
   label_index = {}
 
+  publication_index = loadPublications()
+
   publication_label_index = loadPublicationLabelIndex()
 
   for organisation_slug, publications in publication_label_index.items():
@@ -327,7 +329,7 @@ def generate (organisation, folders=None):
   local_path = finders.find('generator/fonts/Rubik-VariableFont_wght.ttf')
   shutil.copy(local_path, os.path.join(basedir, 'generated', 'Rubik-VariableFont_wght.ttf'))
 
-  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations, 'label_index': label_index })
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations, 'label_index': label_index, 'publication_index': publication_index })
 
 
   if not settings.DEBUG:
