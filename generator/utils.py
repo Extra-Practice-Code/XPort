@@ -19,7 +19,6 @@ import unicodedata
 PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
 
 PUBLICATION_LABEL_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-labels-in-publications.json')
-print(PUBLICATION_LABEL_INDEX_PATH)
 
 CRED = '\033[91m'
 CGREEN = '\033[92m'
