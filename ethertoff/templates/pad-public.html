@@ -35,7 +35,7 @@
         {% endif %}
     {% endfor %}
   </section>
-  <iframe id="ether" src="{{link}}{% if uname %}?userName={{uname}}{% endif %}"> </iframe>
+  <iframe id="ether" src="{{link}}{% if uname %}?userName={{uname}}&folderSlug={{ folderSlug }}{% else %}?folderSlug={{ folderSlug }}{% endif %}"> </iframe>
   {% endif %}
 
 {% endblock %}

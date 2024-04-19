@@ -452,6 +452,7 @@ def pad_write_public(request, pad): # pad_write
             'server': server,
             'error': False,
             'mode' : 'write-public',
+            'folderSlug': pathToSlug(path[:-1]),
             'uname': uname,
             'crumbs': crumbs
         },
@@ -946,7 +947,8 @@ def labels (request, slug=None):
             
             if slug in labels[organisation]:    
                 return_labels = labels[organisation][slug]
-            
+            else:
+                return_labels = labels[organisation]['root']
     return JsonResponse({ 'labels': return_labels })
 
 
