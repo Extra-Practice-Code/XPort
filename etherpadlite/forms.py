@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class PadCreate(forms.Form):
     name = forms.CharField(label=_("Name"))
+    folder = forms.CharField(label=_("Folder"))
     group = forms.CharField(widget=forms.HiddenInput)
 
 

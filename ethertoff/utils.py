@@ -64,6 +64,15 @@ def getPadText (pad):
     return epclient.getText(padId)['text']
 
 
+"""
+    Takes Pad instance as argument and sets the given text.
+"""
+def setPadText (pad, text):
+    epclient = getEtherpadLiteClient(pad.server)
+    padId = getPadId(pad)
+    return epclient.setText(padId, text)
+
+
 def getPadMarkdown (pad):
     padId = getPadId(pad)
     try:
@@ -86,6 +95,16 @@ def getPadLastEdited (pad):
     padId = getPadId(pad)
     return epclient.getLastEdited(padId)
 
+
+"""
+  .format operation. But on the text of a pad.
+"""
+def formatPad (pad, *args, **kwargs):
+    padText = getPadText(pad)
+    padText = padText.format(*args, **kwargs)
+    print(padText)
+    return setPadText(pad, padText)
+    
 
 def slugToPath (slug):
     return slug.split(settings.PAD_NAMESPACE_SEPARATOR)

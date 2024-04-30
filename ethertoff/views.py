@@ -29,6 +29,7 @@ from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
+from django.db.models.functions import Lower
 from django.conf import settings
 from django.contrib.staticfiles import finders
 
@@ -59,7 +60,7 @@ from django.urls import reverse_lazy
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from ethertoff.utils import getPadText, getPadMarkdown, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath, quickCleanPadname
+from ethertoff.utils import getPadText, getPadMarkdown, pathToSlug, discoverPad, stripLeadingAsterisks, slugToPath, selectPadsByPath, quickCleanPadname, formatPad
 
 from my_project.forms import PadCreateWithTemplate
 
@@ -157,27 +158,31 @@ def treatPadName(slug, n):
         ensureExtension(
             filterPadSlug(slug)), n)
 
-def createPad (slug, server, group, n=0):
+def createPad (slug, server, group, templatePad=None, n=0):
     if n < 25:
         try:
             safe_slug = treatPadName(slug, n)
+            # Create pad in database and on the etherpad client
             pad = Pad(
                 name=slugify(safe_slug)[:42], # This is the slug internally used by etherpad
                 display_slug=safe_slug, # This is the slug we get to change afterwards
                 server=group.server,
                 group=group
             )
-
             pad.save()
+            # If a templatePad is provided copy its contents
+            if templatePad:
+                epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
+                epclient.copyPadWithoutHistory(templatePad.padid, pad.padid, True)
             return pad
         except ValueError:
             # Pad already exists on the server
-            return createPad(slug=slug, server=server, group=group, n=n+1)
+            return createPad(slug=slug, server=server, group=group, templatePad=None, n=n+1)
         except IntegrityError:
             # Pad existed in the database, but not on the server
             # delete the created pad
             pad.Destroy()
-            return createPad(slug=slug, server=server, group=group, n=n+1)
+            return createPad(slug=slug, server=server, group=group, templatePad=None, n=n+1)
 
     return False
 
@@ -198,16 +203,12 @@ def padCreate(request, prefix=''):
     if len(path) > 0:
         organisation_slug = path[0]
         organisation = get_object_or_404(EtherportOrganisation, slug=organisation_slug, members__id=request.user.id)
-
     else:
         organisation = get_object_or_404(EtherportOrganisation, members__id=request.user.id)
-        prefix = organisation.slug + settings.PAD_NAMESPACE_SEPARATOR
-
-
-    templatePads = selectPadsByPath([ organisation.slug, 'Templates' ])
+        prefix = organisation.slug
 
     templateChoices = [('none', "No template")] + [
-        (pad.name, pad.display_slug) for pad in templatePads
+        (pad.name, pad.display_slug) for pad in selectPadsByPath([ organisation.slug, 'Templates' ])
     ]
 
     # normally the ‘pads’ context processor should have made sure that these objects exist:
@@ -218,24 +219,32 @@ def padCreate(request, prefix=''):
         form = PadCreateWithTemplate(request.POST)
         form.fields['template'].choices = templateChoices
         if form.is_valid():
-            slug = quickCleanPadname(form.cleaned_data['name'])
-            pad = createPad(slug=slug, server=group.server, group=group)
+            folder = quickCleanPadname(form.cleaned_data['folder'])
+            name = quickCleanPadname(form.cleaned_data['name'])
+            slug = folder + settings.PAD_NAMESPACE_SEPARATOR + name
+            templatePad = None
+
+            if form.cleaned_data['template'] != 'none':
+                try:
+                    templatePad = Pad.objects.get(name=form.cleaned_data['template'])
+                except Pad.DoesNotExist:
+                    pass
+
+            pad = createPad(slug=slug, server=group.server, group=group, templatePad=templatePad)
+
+            if templatePad:
+                formatPad(pad, title=form.cleaned_data['name'])
 
             if pad:
-                if form.cleaned_data['template'] != 'none':
-                    try:
-                        templatePad = Pad.objects.get(name=form.cleaned_data['template'])
-                        epclient = EtherpadLiteClient(pad.server.apikey, settings.API_LOCAL_URL if settings.API_LOCAL_URL else pad.server.apiurl)
-                        epclient.copyPadWithoutHistory(templatePad.padid, pad.padid, True)
-
-                    except Pad.DoesNotExist:
-                        pass
-                    
                 return HttpResponseRedirect(reverse('pad-write', args=(pad.display_slug,) ))
     else: 
         # No form to process so create a fresh one
         # prefix should contain the name of the folder
-        form = PadCreateWithTemplate({'group': group.groupID, 'name': wikifyPath(prefix if prefix else '', )})
+        form = PadCreateWithTemplate({
+            'group': group.groupID,
+            'folder': prefix.strip(settings.PAD_NAMESPACE_SEPARATOR) if prefix else '',
+            'name': ''
+        })
         form.fields['template'].choices = templateChoices
         
     con = {
@@ -258,11 +267,15 @@ def padDelete(request, pk):
     """
     pad = get_object_or_404(Pad, pk=pk)
 
+
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
+        # TODO prevent do authorization check on pads.
+        prefix = getFolderName(pad.display_slug)
+        
         if 'confirm' in request.POST:
             pad.delete()
-        return HttpResponseRedirect('/manage/')
+        return HttpResponseRedirect('/manage/{}'.format(prefix))
 
     con = {
         'action': reverse('pad-delete', kwargs={'pk': pk}),
@@ -298,28 +311,37 @@ def renamePad(pad, slug, n=0):
 @login_required(login_url='/etherpad')
 def padRename(request, pk):
     pad = get_object_or_404(Pad, pk=pk)
-
+    
     if request.method == 'POST':
         form = ethertoffForms.RenamePadForm(request.POST)
         if form.is_valid():
-            slug = re.sub(r'\s+', '_', form.cleaned_data['new_name'])
-            slug = slug.strip(":")  # avoids leading and trailing "::"
+            folder = quickCleanPadname(form.cleaned_data['new_folder'])
+            name = quickCleanPadname(form.cleaned_data['new_name'])
+            slug = folder + settings.PAD_NAMESPACE_SEPARATOR + name
             renamePad(pad, slug)
 
-            path = getFolderName(pad.display_slug)
-
-            if path:
+            if folder:
                 # path = path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
-                return redirect('manage', path_string=path)
+                return redirect('manage', path_string=folder)
             else:
                 return redirect('manage')
 
     else:
-        print(pad.pk)
+        # Get folder and name for this display slug
+        parts = pad.display_slug.rsplit(settings.PAD_NAMESPACE_SEPARATOR, 1)
+
+        if len(parts) > 1:
+            folder, name = parts
+        else:
+            folder = ''
+            name = parts[0]
+
         form = ethertoffForms.RenamePadForm({
             'pk': pad.pk,
-            'old_name': pad.display_slug,
-            'new_name': pad.display_slug,
+            'old_folder': folder,
+            'old_name': name,
+            'new_folder': folder,
+            'new_name': name,
         })
 
     context = {
@@ -824,7 +846,7 @@ def manage(request, path_string=None):
     
     prefix = settings.PAD_NAMESPACE_SEPARATOR.join(path) + settings.PAD_NAMESPACE_SEPARATOR
     
-    pads = Pad.objects.filter(display_slug__startswith=prefix).order_by('name')
+    pads = Pad.objects.filter(display_slug__startswith=prefix).order_by(Lower('display_slug'))
     
     dir_list = []
     seen_dirs = []
@@ -853,6 +875,7 @@ def manage(request, path_string=None):
         'dir_list': dir_list,
         'currentPath': prefix,
         'crumbs': crumbs,
+        'has_visual_styles': 'Visual_Styles' in seen_dirs,
         'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
     })
     
@@ -920,18 +943,17 @@ def offsetprint(request):
 def css_slide(request):
     return padOrFallbackPath(request, 'slidy.css', 'css/slidy.css', 'text/css')
 
-def css_generator_screen (request, organisation_slug, folder=''):
-    return padOrEmtpy(request, discoverPad('generated.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
+# def css_generator_screen (request, organisation_slug, folder=''):
+#     return padOrEmtpy(request, discoverPad('generated.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
 
-def css_generator_print (request, organisation_slug, folder=''):
-    return padOrEmtpy(request, discoverPad('print.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
+# def css_generator_print (request, organisation_slug, folder=''):
+#     return padOrEmtpy(request, discoverPad('print.css', [ organisation_slug ] + folder.split('/')), 'text/css', filter=stripLeadingAsterisks)
     
-def javascript_generator (request, organisation_slug, folder=''):
-    return padOrEmtpy(request, discoverPad('scripts.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
+# def javascript_generator (request, organisation_slug, folder=''):
+#     return padOrEmtpy(request, discoverPad('scripts.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
 
-
-def javascript_generator_print (request, organisation_slug, folder=''):
-    return padOrEmtpy(request, discoverPad('scripts-print.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
+# def javascript_generator_print (request, organisation_slug, folder=''):
+#     return padOrEmtpy(request, discoverPad('scripts-print.js', [ organisation_slug ] + folder.split('/')), 'text/javascript', filter=stripLeadingAsterisks)
 
 
 def labels (request, slug=None):
@@ -951,7 +973,9 @@ def labels (request, slug=None):
                 return_labels = labels[organisation]['root']
     return JsonResponse({ 'labels': return_labels })
 
-
+"""
+    Get canonical URL for a file in the django file manager through its primary key
+"""
 def get_canoninical (request, pk):
     if request.user.is_authenticated:
         filerFile = get_object_or_404(File, pk=pk)
@@ -963,6 +987,10 @@ def get_canoninical (request, pk):
     else:
         return HttpResponse('Unauthorized', status=401)
 
+
+"""
+    Get mimetype for a file in the django file manager through its primary key
+"""
 def get_mimetype (request, pk):
     if request.user.is_authenticated:
         filerFile = get_object_or_404(File, pk=pk)

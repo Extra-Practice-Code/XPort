@@ -22,3 +22,8 @@ class PublicationForm(forms.Form):
 
         if len(pads) > 0:
             self.add_error('name', ValidationError(_('%(name)s already exists'), params={'name': name} ))
+
+
+class VisualStylesForm (forms.Form):
+    css = forms.BooleanField(initial=True, label=_("Make pads for CSS"), required=False)
+    javascript = forms.BooleanField(label=_("Make pads for javascript"), required=False)

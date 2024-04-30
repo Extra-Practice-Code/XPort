@@ -20,6 +20,10 @@
           <a href="{% url 'publication-create' organisation.slug %}" class="button push">+ create publication</a>
         {% else %}
           <a href="{% url 'pad-create' currentPath %}" class="button push">+ create pad</a>
+          {% if crumbs|length == 2 and not has_visual_styles %}
+            &nbsp;
+            <a href="{% url 'visual-styles-create' currentPath %}" class="button">+ add visual styles</a>
+          {% endif %}
         {% endif %}
     </section>
     <ul id="pads_list" class="manage_list">

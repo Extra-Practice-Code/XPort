@@ -15,6 +15,8 @@ class RenameFolderForm(forms.Form):
 
 class RenamePadForm(forms.Form):
     pk = forms.HiddenInput()
+    old_folder = forms.CharField(label=_("Old Folder"), required=False)
     old_name = forms.CharField(label=_("Old name"), required=False)
+    new_folder = forms.CharField(label=_("New Folder"), required=False)
     new_name = forms.CharField(label=_("New name"))
 
