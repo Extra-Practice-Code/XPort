@@ -13,8 +13,12 @@
 
 {% block content %}
     {% if generated %}
-        <p style="background-color: white">Site regenerated</p>
-        <p>View <a href="{% generated_site_url organisation.slug %}">home page</a></p>
+        <p style="background-color: white">The following sites were regenerated:</p>
+        <ul>
+        {% for folder, props in result.items %}
+            <li><a href="{{ props.url }}">{{ props.name }} (mode: {{ props.mode }})</a></li>    
+        {% endfor %}
+        </ul>
     {% else %}
         <div id="loading">
             <div class="meter red">
@@ -40,8 +44,8 @@
                     <label class="label--inline">
                         mode:
                         <select name="{{ field.name }}" id="publication_mode_{{ forloop.counter0 }}" class="select--inline" {% if not field.value %} disabled{% endif %}>
-                            <option value="normal" {% if field.value == "normal" %}selected{% endif %}>normal</option>
-                            <option value="development" {% if field.value == "development" %}selected{% endif %}>development</option>
+                            <option value="design" {% if field.value == "design" %}selected{% endif %}>design</option>
+                            <option value="archive" {% if field.value == "archive" %}selected{% endif %}>archive</option>
                         </select>
                     </label>
                 </li>

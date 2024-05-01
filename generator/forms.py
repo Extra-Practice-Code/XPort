@@ -1,6 +1,6 @@
 from django import forms
 
-publicationModeChoices = ['normal', 'development']
+publicationModeChoices = ['design', 'archive']
 
 def makeGenerationForm (publications, post=None, initial={}):
     class GenerationForm (forms.Form):

@@ -812,15 +812,17 @@ def generate(request, organisation_slug=None):
         print('Received post')
         form = makeGenerationForm(publication_folders, request.POST)
         if form.is_valid():
-            generateStatic(organisation, {
+            result = generateStatic(organisation, {
                 field.name: field.value() for field in form if field.value() is not None
             })
             context['generated'] = True
+            context['result'] = result
+            print(result)
         else:
             print('Form not valid?')
             print(form.errors)
     else:
-        form = makeGenerationForm(publication_folders, initial={ publication: 'normal' for publication in publication_folders})
+        form = makeGenerationForm(publication_folders, initial={ publication: 'design' for publication in publication_folders})
 
     context['form'] = form
     context['organisation'] = organisation

@@ -91,6 +91,7 @@ def get_publication_labels (labels, organisation_slug, folder):
 """
 def generate (organisation, folders=None):
   organisation_slug = organisation.slug
+  result = {}
 
   labels = load_labels()
 
@@ -166,7 +167,7 @@ def generate (organisation, folders=None):
 
     info('Generating output')
 
-    if mode == 'development':
+    if mode == 'development' or mode == 'design':
       context['PATH_CSS_COMMON'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'common' })
       context['PATH_CSS_SCREEN'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'screen' })
       context['PATH_CSS_PRINT'] = ETHERTOFF_URL + reverse('generator-css', kwargs={ 'organisation_slug': organisation_slug, 'publication': folder, 'sheet': 'print' })
@@ -283,6 +284,12 @@ def generate (organisation, folders=None):
       # Put new version of the site in place
       shutil.move(outputdir, finaldir)
 
+    result[folder] = {
+      'name': context['PUBLICATION_TITLE'],
+      'mode': mode,
+      'url': context['SITE_URL']
+    }
+
 
   if not os.path.exists(os.path.join(basedir, 'generated', organisation_slug)):
     os.makedirs(os.path.join(basedir, 'generated', organisation_slug))
@@ -338,6 +345,7 @@ def generate (organisation, folders=None):
 
   info('Done')
 
+  return result
 
 class Command(BaseCommand):
   args = ''
