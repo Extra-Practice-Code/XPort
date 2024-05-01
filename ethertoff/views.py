@@ -94,6 +94,16 @@ Create a regex for our include template tag
 """
 include_regex = re.compile("{%\s?include\s?\"([\w._-]+)\"\s?%}")
 
+import string
+import random
+def randstring (length):
+    output = ''
+
+    while len(output) < length:
+        output += random.choice(string.ascii_letters)
+
+    return output
+
 # Perhaps move to the model?
 def makePadPublic (pad, n=0):
     if not pad.is_public:
@@ -161,11 +171,17 @@ def treatPadName(slug, n):
 def createPad (slug, server, group, templatePad=None, n=0):
     if n < 25:
         try:
-            safe_slug = treatPadName(slug, n)
+            if len(slug) > 42:
+                # Add random string to avoid pad collisions
+                # Alternative approach hash the pathname.
+                padIdName = treatPadName(slug[-30:] + '-' + randstring(10), n)
+            else:
+                padIdName = slug
+
             # Create pad in database and on the etherpad client
             pad = Pad(
-                name=slugify(safe_slug)[:42], # This is the slug internally used by etherpad
-                display_slug=safe_slug, # This is the slug we get to change afterwards
+                name=slugify(padIdName)[:42], # This is the slug internally used by etherpad
+                display_slug=treatPadName(slug, n), # This is the slug we get to change afterwards
                 server=group.server,
                 group=group
             )
