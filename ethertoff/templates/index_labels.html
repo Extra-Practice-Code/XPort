@@ -9,24 +9,36 @@
 
 {% block content %}
   {% if indexed %}
-  <p style="background-color: white">Tags indexed</p>
-  <p>Found:</p>
-  <ul>
-    {% for tag in tags %}
-      <li>{{ tag }}</li>
-    {% endfor %}
-  </ul>
+  <p style="background-color: white">Labels indexed</p>
+  <p>Found the following labels.</p>
+  {% for organisation, publications in label_index.items %}
+  <h3>{{ organisation }}</h3>
+  {% for publication, labels in publications.items %}
+    <strong>
+      {{ publication }}
+    </strong>
+    <ul>
+      {% for label in labels %}
+        <li>{{ label }}</li>
+      {% endfor %}
+    </ul>
+    <br>
+  {% endfor %}
+  {% endfor %}
   {% else %}
   <div id="loading">
       <div class="meter red">
           <span style="width: 25%"></span>
       </div>
-      <p>Indexing tags, please don’t stop or refresh this page:</p>
+      <p>Indexing labels, please don’t stop or refresh this page:</p>
       <p>This might take a while.</p>
   </div>
   <form action="" method="post">
       {% csrf_token %}
-      <input style="" type="submit" class="submit" value="Index"/>
+      <p>
+        Index labels to import changes made to Labels.md pads.
+      </p>
+      <input style="" type="submit" class="submit" value="Start label indexing"/>
   </form>
   <script>
       $("input[type=submit]").click(function() {

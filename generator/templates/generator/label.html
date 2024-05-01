@@ -1,11 +1,12 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
+{% block extrabodyclass %}page--{{ object.contentType }} page--{{ object.contentType }}--{{ object.slug }}{% endblock %}
 {% block content %}
   <h6>{{ object.contentType }}</h6>
   <h1>{{ object }}</h1>
   {% with object|merged_links|length as num_objects%}
-    <p class="label--link-count">Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
+    <p class="label--link-count object--link-count">Linked to {{ num_objects }} item{{ num_objects|pluralize }}</p>
     {% if object.content %}
       {{ object.content }}
     {% endif %}

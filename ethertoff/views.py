@@ -814,14 +814,19 @@ def generate(request, organisation_slug=None):
 
 @login_required(login_url='/accounts/login')
 def index_labels (request):
-    tpl_params = {}
+    context = {}
+    label_index = indexLabels()
+
     if request.method == 'POST':
-        tpl_params['indexed'] = True
-        tpl_params['labels'] = indexLabels()
+        context['indexed'] = True
+        # Make a dictionary of organisations linked to this user
+        # and recognized labels
+        # Loop through all organisations attached to the user
+        context['label_index'] = { organisation.name: label_index[organisation.slug] for organisation in request.user.etherportOrganisations.all() }
     else:
-        tpl_params['indexed'] = False
-        tpl_params['labels'] = []
-    return render(request, "index_labels.html", tpl_params)
+        context['indexed'] = False
+        context['label_index'] = []
+    return render(request, "index_labels.html", context)
 
 
 @login_required(login_url='/accounts/login')

@@ -66,7 +66,7 @@
   </div>
   <div class="reports">
     {% for report in reports %}
-      <div class="report">
+      <div class="report" data-report="{{ report }}">
         <h1 id="{{ report.key }}">{{ report.report }}</h1>
         {{ report.content|wrap_emoji }}
       </div>

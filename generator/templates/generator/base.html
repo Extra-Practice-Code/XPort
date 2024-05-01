@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ PATH_CSS_COMMON }}" type="text/css" media="all">
     <link rel="stylesheet" href="{{ PATH_CSS_SCREEN }}" type="text/css" media="screen">
   </head>
-  <body {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
+  <body class="{% block extrabodyclass %}{% endblock %}" {% if page_content.content_type %}data-content-type="{{ page_content.content_type}}"{% endif %} {% if page_content.model %}data-content-model="{{ page_content.model.key }}"{% endif %}>
     <header>
       <nav id="nav">
         {% going_hybrid_navbar %}

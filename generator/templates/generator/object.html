@@ -1,6 +1,7 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} > {{ object.plural|title }} > {{ object }}{% endblock %}
+{% block extrabodyclass %}page--{{ object.contentType }} page--{{ object.contentType }}--{{ object.slug }}{% endblock %}
 {% block content %}
   <h6>{{ object.contentType }}</h6>
   <h1>{{ object }}</h1>

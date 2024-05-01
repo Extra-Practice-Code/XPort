@@ -1,7 +1,7 @@
-<section class="going-hybrid--labels">
+<section class="etherport--labels">
   <ul>
     {% for label in labels %}
-    <li><a href="{{ label.url }}">{{ label }}</a></li>
+    <li class="etherport--label--{{ label.key }}"><a href="{{ label.url }}">{{ label }}</a></li>
     {% endfor %}
   </ul>
 </section>

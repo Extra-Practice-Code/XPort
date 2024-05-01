@@ -1,6 +1,7 @@
 {% extends "generator/base.html" %}
 {% load generator_utils %}
 {% block page_title %}{{ block.super }} | {{ title }}{% endblock %}
+{% block extrabodyclass %}page--list page--list--{{ page_content.content_type }}{% endblock %}
 {% block content %}
   <h1>{{ title }}</h1>
   <ul>
