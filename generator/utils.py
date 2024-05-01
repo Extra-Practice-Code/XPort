@@ -171,12 +171,10 @@ def discoverThemeResourcePad (organisation_slug, publication, resource_name, the
     pathToSlug([ organisation_slug, publication, settings.THEME_LOCAL_FOLDERNAME, resource_name]),
     # Otherwise in theme, if it is set, or in default
     pathToSlug([ organisation_slug, settings.THEMES_FOLDERNAME, theme, resource_name ]) if theme else None,
-    pathToSlug([ organisation_slug, settings.THEMES_FOLDERNAME, theme, resource_name ]),
+    pathToSlug([ organisation_slug, settings.THEMES_FOLDERNAME, resource_name ]),
     # Fall back to etherport default styles
     pathToSlug(settings.THEME_DEFAULT_PATH + [ resource_name ])
   ]
-
-  print(candidates)
 
   for slug in candidates:
     if slug:
