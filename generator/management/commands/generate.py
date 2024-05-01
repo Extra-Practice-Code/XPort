@@ -193,7 +193,7 @@ def generate (organisation, folders=None):
         if script_pad:
           debug("Copying pad '{}' to '{}'".format(script_pad, os.path.join(outputdir, scriptname)))
           copyPadToPath(script_pad, os.path.join(outputdir, scriptname), stripLeadingAsterisks)
-          context[f'PATH_JAVASCRIPT_{sheet.upper()}'] = context['SITE_URL'] + '/' + scriptname
+          context[f'PATH_JAVASCRIPT_{script.upper()}'] = context['SITE_URL'] + '/' + scriptname
         else:
           context[f'PATH_JAVASCRIPT_{script.upper()}'] = None
           warn("Could not find {}".format(scriptname))
