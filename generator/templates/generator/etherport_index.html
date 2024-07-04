@@ -41,6 +41,10 @@
       line-height: var(--line-height);
     }
 
+    h1 {
+      font-size: 125%;
+    }
+
     h5 {
       margin: var(--line-height) 0 0 0;
     }
@@ -95,6 +99,16 @@
       padding: 4ch 6ch 4ch 4ch;
     }
 
+    .panel.organisations li {
+      list-style-type: none;
+    }
+
+    .panel.organisations ul,
+    .panel.organisations li {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
     details {
       max-width: 65ch;
     }
@@ -111,6 +125,9 @@
     <h1>
       Etherport
     </h1>
+    <p>
+      Etherport is a place for experimental, multi-voiced, and non-linear cultural event reports.
+    </p>
     <h2>
       Can I use Etherport?
     </h2>
@@ -119,33 +136,40 @@
     </p>
     <h2>How was Etherport developed?</h2>
     <p>
-      Etherport is based on the tool patchwork <a href="http://osp.kitchen/tools/ethertoff/">Ethertoff</a>, which includes <a href="https://etherpad.org/">Etherpad</a> (text editor), <a href="https://www.djangoproject.com/">Django</a> (framework), and <a href="https://pagedjs.org/">Paged.js</a> (paged media polyfill). It was developed by <a href="http://osp.kitchen/">Open Source Publishing</a> and the <a href="https://networkcultures.org/">Institute of Network Cultures</a> in the context of the research project <a href="https://networkcultures.org/goinghybrid/">Going Hybrid</a>.</p>
-      
+      Etherport is based on the tool patchwork <a href="http://osp.kitchen/tools/ethertoff/">Ethertoff</a>, which includes <a href="https://etherpad.org/">Etherpad</a> (text editor), <a href="https://www.djangoproject.com/">Django</a> (framework), and <a href="https://pagedjs.org/">Paged.js</a> (paged media polyfill). It was developed by <a href="http://osp.kitchen/">Open Source Publishing</a> and the <a href="https://networkcultures.org/">Institute of Network Cultures</a> in the context of the research project <a href="https://networkcultures.org/goinghybrid/">Going Hybrid</a>.
+    </p>  
     <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/885196752?h=9fdda1707e&title=0&byline=0&portrait=0" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
     <p>
       Read the <a href="/publications/inc/Manual">etherport manual</a>.
     </p>
+    <p>
+      <a href="{{ ETHERTOFF_URL }}/accounts/login/">Login</a>
+    </p>
   </section>
-  <section class="panel">
+  <section class="panel organisations">
     <h2>
-      On Etherport:
+      Organisations on Etherport:
     </h2>
     {% for organisation in organisations %}
-      <h3>
-        <a href="/publications/{{ organisation.slug }}/">{{ organisation }}</a>
-      </h3>
-      {% for organisation_slug, publications in publication_index.items %}
-        {% if organisation_slug == organisation.slug %}
-          <p>
-          {% for name, publication in publications.items %}
-            <a href="{{ publication.url }}/">{{ publication.title|safe }}</a>{% if not forloop.last %}<br>{% endif %}
-          {% endfor %}
-          </p>
-        {% endif %}
-      {% endfor %}
+      {% if organisation.publications|length > 0 and organisation.slug != 'etherport' %}
+        <details>
+          <summary>{{ organisation }}</summary>
+          <ul>
+            {% for name, publication in organisation.publications.items %}
+              <li>
+                <a href="{{ publication.url }}/">{{ publication.title|safe }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="/publications/{{ organisation.slug }}/">Organisation page</a>
+        </details>
+      {% endif %}
     {% endfor %}
   </section>
-  <section class="panel">
+  <section class="panel tags">
+    <h2>
+      Tags used on Etherport:
+    </h2>
     {% for label, organisations in label_index.items %}
       <details>
         <summary>{{ label }}</summary>

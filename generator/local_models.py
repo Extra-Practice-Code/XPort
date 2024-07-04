@@ -1,12 +1,10 @@
 from generator.utils import debug
 from generator import fields
-from generator.models import Model, keyFilter
-from generator.links import linkMultiReverse, multiLinkMultiReverse, multiLinkReverse
+from generator.models import Model
+from generator.links import multiLinkMultiReverse
 from generator.collection import contentType, InstantiatingCollection
 import re
 import requests
-from django.urls import reverse
-from django.core.files.images import ImageFile
 from django.conf import settings
 import os
 import os.path
@@ -292,7 +290,7 @@ class Chapter (Model):
     return {
       'chapter': fields.Single(fields.StringField()),
       'status': fields.Single(fields.StringField(default=['published'])),
-      'order': fields.Single(fields.IntField()),
+      'order': fields.Single(fields.IntField(default=[99999])),
       'position': fields.Single(fields.StringField(default=['before_content'])),
       'on_print': fields.Single(fields.StringField(default=['true'])),
       'on_web': fields.Single(fields.StringField(default=['true'])),

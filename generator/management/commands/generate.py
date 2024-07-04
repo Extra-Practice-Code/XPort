@@ -313,6 +313,9 @@ def generate (organisation, folders=None):
 
   publication_label_index = loadPublicationLabelIndex()
 
+  for organisation in organisations:
+    organisation.publications = publication_index[organisation.slug] if organisation.slug in publication_index else []
+
   for organisation_slug, publications in publication_label_index.items():
     for publication, labels in publications.items():
       for label, links in labels.items():
