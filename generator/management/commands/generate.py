@@ -339,7 +339,7 @@ def generate (organisation, folders=None):
   local_path = finders.find('generator/fonts/Rubik-VariableFont_wght.ttf')
   shutil.copy(local_path, os.path.join(basedir, 'generated', 'Rubik-VariableFont_wght.ttf'))
 
-  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations, 'label_index': label_index, 'publication_index': publication_index })
+  output(os.path.join(basedir, 'generated', 'index.html'), 'generator/etherport_index.html', { 'organisations': organisations, 'label_index': label_index, 'publication_index': publication_index, 'ETHERTOFF_URL': ETHERTOFF_URL })
 
 
   if not settings.DEBUG:
