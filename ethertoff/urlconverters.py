@@ -17,7 +17,7 @@ class DirectoryConverter:
     
 
 class PadConverter:
-    regex = "[\w\:\-\.\_\?\\\"]+"
+    regex = "[\w\:\-\.\_\?\,\!\&\\\"]+"
     Pad = ethertoff_pad()
 
     def to_python (self, value):

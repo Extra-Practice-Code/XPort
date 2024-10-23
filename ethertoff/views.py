@@ -144,7 +144,7 @@ def filterPadSlug(slug):
     # Replace spaces by '_'
     slug = re.sub(r'\s', '_', slug)
     # Replace forbidden characters
-    slug = re.sub(r'[/]', '', slug)
+    slug = re.sub(r'[^\w\:\;\-\.\_\?\,\!\&\\\"]', '', slug)
 
     return slug 
 
