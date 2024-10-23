@@ -59,7 +59,7 @@ def make_index (models):
   buff = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'
   buff += '<h1>Debug / data overview</h1>'
   for contentType in knownContentTypes():
-    buff += '<details open><summary><strong>{}</strong></summary>'.format(contentType)
+    buff += '<details><summary><strong>{}</strong></summary>'.format(contentType)
     collection = collectionFor(contentType)
     for obj in collection.models:
       buff += '<details id="{}">'.format(obj._id)

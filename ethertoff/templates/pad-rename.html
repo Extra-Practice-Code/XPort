@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-      <form action="{% url 'pad-rename' pk=pk %}" method="post">
+      <form action="{% url 'pad-rename' pad %}" method="post">
             {% csrf_token %}
             <div class="form-row">
                   {{ form.old_folder.label_tag }}{{ form.old_folder.value }}

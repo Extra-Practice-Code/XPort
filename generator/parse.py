@@ -55,18 +55,24 @@ def addContextForReferences (html, links):
 
       if link:
         context = copy.copy(findContextParent(reference))
-        # Make a copy, remove link elements, keep a span
-        # for the marked link
+        # Make a copy, remove the original Link
         if context:
-          for a in context.select('a'):
-            if 'data-link-id' in a and a['data-link-id'] == link_id:
-              span = soup.new_tag('span')
-              span['data-link-marked'] = 'true'
-              span['class'] = 'inline-reference'
-              span.string = a.string
-              a.replace_with(span)
-            # else:
-            #   a.unwrap()
+          for link_in_context in context.select(f'a[data-link-id="{ link_id }"]'):
+            span = soup.new_tag('span')
+            span['data-link-marked'] = 'true'
+            span['class'] = 'inline-reference'
+            span.extend(link_in_context.contents)
+            # span.string = link_in_context.string
+            link_in_context.replace_with(span)
+          # for a in context.select('a'):
+          #   if 'data-link-id' in a and a['data-link-id'] == link_id:
+          #     span = soup.new_tag('span')
+          #     span['data-link-marked'] = 'true'
+          #     span['class'] = 'inline-reference'
+          #     span.string = a.string
+          #     a.replace_with(span)
+          #   else:
+          #     a.unwrap()
               
           link.context = mark_safe(str(context))
 

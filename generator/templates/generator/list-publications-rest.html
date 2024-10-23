@@ -1,23 +1,18 @@
-{% extends "base.html" %}
-{% load wikify %}
-{% block bodyclasses %}content-extra-wide{% endblock %}
-{% block title %}
-  <h2>Pads</h2>
-{% endblock %}
-{% block content %}
-    <section class="pad-list--path">
-        {% for name, url in crumbs %}
-            {% if not forloop.last %}
-              <a class="crumb" href="{{ url }}">{{ name|striptags }}</a>
-              <span class="pad-list--path--separator"></span>
-            {% else %}
-              {{ name|striptags }}
+<section class="pad-list--path">
+        {% for name, path in crumbs %}
+            {% if path %}
+              {% if not forloop.last %}
+                <a class="crumb" href="{% url 'manage' path  %}">{{ name }}</a>
+                <span class="pad-list--path--separator"></span>
+              {% else %}
+                {{ name }}
+              {% endif %}
             {% endif %}
         {% endfor %}
         {% if crumbs|length == 1 %}
           <a href="{% url 'publication-create' organisation.slug %}" class="button push">+ create publication</a>
         {% else %}
-          <a href="{% url 'generator-pad-create' currentPath %}" class="button push">+ create pad</a>
+          <a href="{% url 'pad-create' currentPath %}" class="button push">+ create pad</a>
           {% if crumbs|length == 2 and not has_visual_styles %}
             &nbsp;
             <a href="{% url 'visual-styles-create' currentPath %}" class="button">+ add visual styles</a>
@@ -30,12 +25,12 @@
               <li class="pad"><a data-uid="{{ object.display_slug }}" href="{% url 'pad' mode=PAD_OPEN_MODE slug=object.display_slug %}" class="pad-link">{{ key|dewikify }}{% if object.is_public %} (public){% endif %}</a>
                 <section class="actions">
                   {% if object.is_public %}
-                      <a href="{% url 'pad-private' object %}" class="button button--private" title="Make this pad private. Private pads can only be accessed and modified with an account.">make private</a>
+                      <a href="{% url 'pad-private' object.pk %}" class="button button--private">make private</a>
                   {% else %}
-                      <a href="{% url 'pad-public' object %}" class="button button--public" title="Make this pad public. Public pads can also be accessed and modified without an account.">make public</a>
+                      <a href="{% url 'pad-public' object.pk %}" class="button button--public">make public</a>
                   {% endif %}
-                  <a href="{% url 'pad-rename' object %}" class="button button--rename">rename</a>
-                  <a href="{% url 'pad-delete' object %}" class="button button--delete">delete</a>
+                  <a href="{% url 'pad-rename' object.pk %}" class="button button--rename">rename</a>
+                  <a href="{% url 'pad-delete' object.pk %}" class="button button--delete">delete</a>
                 </section>
               </li>
             {% else %}
@@ -47,4 +42,3 @@
             {% endif %}
         {% endfor %}
     </ul>
-{% endblock %}

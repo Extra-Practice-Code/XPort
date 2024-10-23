@@ -11,7 +11,6 @@ EMPTY_LINE_RE = re.compile(r'^\s*$')
 ESCAPED_UNDERSCORES = re.compile(r'(?<!\\)\\_')
 
 def filter_empty_lines_markdown_export (lines):
-  print(lines)
   while EMPTY_LINE_RE.match(lines[0]):
     lines.pop(0)
 
@@ -22,10 +21,6 @@ def filter_empty_lines_markdown_export (lines):
     lines[i] = ESCAPED_UNDERSCORES.subn('_', lines[i])[0]
     line = lines[i]
     next_line = lines[i+1]
-
-    if '\\' in line:
-       print('*****\n', line, ESCAPED_UNDERSCORES.subn('_', lines[i])[0])
-
 
     if META_RE.match(line) or (i > 0 and META_RE.match(line)):
       if EMPTY_LINE_RE.match(next_line):

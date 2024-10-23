@@ -1,6 +1,6 @@
 from django.conf import settings
 from etherpadlite.models import Pad
-from ethertoff.models import EtherportOrganisation
+from going_hybrid.models import EtherportOrganisation
 from ethertoff.utils import getPadMarkdown, discoverFolders, getPadBySlug, pathToSlugPrefix
 import os.path
 import json

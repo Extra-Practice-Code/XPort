@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extra_styles %}
+      <link rel="stylesheet" href="{% url 'css-screen' %}" type="text/css" media="screen">
+      <link rel="stylesheet" href="{% url 'css-print' %}" type="text/css" media="print">
+{% endblock %}
+
+{% block title %}
+      <h1>{{ title|striptags }}</h1>
+{% endblock %}
+
+{% block content %}
+      {% if result.success %}
+        <p>
+          Publication was generated.
+        </p>
+        <p>
+          Public url: <a href="{{ result.url }}">{{ result.url }}</a>.
+        </p>
+        <p>
+          <a href="{{ publication_manage_url }}">Back to {{ result.name }}</a>.
+        </p>
+      {% else %}
+        An error occured during the generation of the publication.
+      {% endif %}
+      <details{% if not result.success %} open{% endif %}>
+        <summary>Logs</summary>
+        <iframe style="height: 50vh; overflow-y: auto; width: 100%" srcdoc="<pre>{{ result.log }}</pre>"></iframe>
+      </details>
+{% endblock %}

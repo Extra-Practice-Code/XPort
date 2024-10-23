@@ -1,4 +1,4 @@
-from generator.utils import debug
+from generator.utils import debug, warn
 from generator import fields
 from generator.models import Model
 from generator.links import multiLinkMultiReverse
@@ -130,7 +130,7 @@ class Video (Model):
           f.close()
           
       else:
-          print('Image Couldn\'t be retrieved')
+          warn('Image Couldn\'t be retrieved')
     
     # with open(os.path.join(thumbnail_path, 'rb')) as f:
     # file = ImageFile(f)

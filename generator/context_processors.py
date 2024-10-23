@@ -1,5 +1,5 @@
 from generator.utils import loadPublications
-from ethertoff.models import EtherportOrganisation
+from going_hybrid.models import EtherportOrganisation
 
 def publications (request):
     if request.user.is_authenticated:

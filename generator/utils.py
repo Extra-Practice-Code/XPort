@@ -12,9 +12,14 @@ from django.conf import settings
 import os.path
 import json
 
-from ethertoff.utils import discoverFolders, pathToSlug, getPadBySlug
+from ethertoff.utils import discoverFolders, pathToSlug, getPadBySlug, getPadText
+
+from generator import PUBLICATION_STATE_UNPUBLISHED
+from going_hybrid.models import EtherportOrganisation, loadPublications, getPublicationData
 
 import unicodedata
+
+import logging
 
 PUBLICATION_INDEX_PATH = os.path.join(settings.BACKUP_DIR, 'index-publications.json')
 
@@ -37,23 +42,27 @@ CEND = '\033[0m'
 # \U0001F900-\U0001F9FF "Supplemental Symbols and Pictographs"
 EMOJI_RANGES = r'[\U00002700-\U000027BF\U0001F300-\U0001F5FF\U0001F600-\U0001F64F\U0001FA70-\U0001FAFF\U0001F900-\U0001F9FF]'
 
-def print_in_color(*messages, color=CEND):
+def log_in_color(*messages, color=CEND):
   messages = ' '.join(map(str, messages))
   print('{}{}{}'.format(color, messages, CEND))
 
 def info(*messages):
-  if SHOW_LOG_MESSAGES:
-    print(' '.join(map(str, messages)))
+  for m in messages:
+    logging.getLogger('generator').info(m)
+  # if SHOW_LOG_MESSAGES:
+  #   print(' '.join(map(str, messages)))
 
-def debug(*messages, color=CCYAN):
-  if SHOW_DEBUG_MESSAGES:
-    print_in_color(*messages, color=color)
+def debug(*messages):
+  for m in messages:
+    logging.getLogger('generator').debug(m)
 
 def warn(*messages):
-  print_in_color(*messages, color=CYELLOW)
+  for m in messages:
+    logging.getLogger('generator').warning(m)
 
 def error(*messages):
-  print_in_color(*messages, color=CRED)
+  for m in messages:
+    logging.getLogger('generator').error(m)
 
 
 def regroup (iterable, key):
@@ -137,14 +146,7 @@ def storePublications (organisation_slug, organisation_publications):
   json.dump(publications, open(PUBLICATION_INDEX_PATH, 'w'), ensure_ascii=False)
 
 
-# [{ title: str, path: str, url: str }, ...]
-def loadPublications ():
-  try:
-    publications = json.load(open(PUBLICATION_INDEX_PATH, 'r'))
-  except IOError:
-    publications = {}
 
-  return publications
 
 
 def discoverPublicationFolders (organisation_slug):
@@ -184,3 +186,43 @@ def discoverThemeResourcePad (organisation_slug, publication, resource_name, the
         return pad
     
   return None
+
+
+def copyPadToPath (pad, path, f=None):
+  debug(f"Copying pad '{pad}' to '{path}'")
+
+  with open(path, 'w', encoding='utf-8') as w:
+    pad_text = getPadText(pad)
+    if f:
+        pad_text = f(pad_text)
+    w.write(pad_text)
+
+
+"""
+  Returns dictionary with the 
+"""
+def discoverUserPublications (user, publication_index=None):
+  if publication_index is None:
+      publication_index = loadPublications()
+
+  return [{
+      'organisation': organisation,
+      'publications': discoverOrganisationPublications(organisation, publication_index)
+    } for organisation in EtherportOrganisation.objects.filter(members__id=user.id) ]
+
+
+# Get data for all publications within an organisation
+def discoverOrganisationPublications (organisation, publication_index=None):
+  if publication_index is None:
+      publication_index = loadPublications()
+
+  return sorted(
+    map(
+      lambda publication_slug: getPublicationData(
+        organisation.slug,
+        publication_slug,
+        publication_index
+      ), discoverPublicationFolders(organisation.slug)
+    ), key=lambda p: p['title'].lower())
+
+

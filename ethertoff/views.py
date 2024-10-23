@@ -42,7 +42,8 @@ from django.contrib.auth.forms import UserCreationForm
 from etherpadlite.models import Pad, PadAuthor
 from etherpadlite import config
 
-from ethertoff.models import EtherportOrganisation
+
+from going_hybrid.models import EtherportOrganisation
 from ethertoff.management.commands.index import snif
 from ethertoff.templatetags.wikify import wikifyPath, ensureTrailingSlash
 
@@ -75,6 +76,9 @@ try:
     BACKUP_DIR = settings.BACKUP_DIR
 except ImportError:
     BACKUP_DIR = None
+
+from ethertoff.breadcrumbs import breadcrumbs
+
 
 """
 Set up an HTMLParser for the sole purpose of unescaping
@@ -134,6 +138,7 @@ def makePadPrivate(pad):
         pad.save()
         return pad
 
+# @Fixme, enforce sluggification
 # Filter out forbidden
 def filterPadSlug(slug):
     # Replace spaces by '_'
@@ -278,10 +283,10 @@ def padCreate(request, prefix=''):
 
 
 @login_required(login_url='/etherpad')
-def padDelete(request, pk):
+def padDelete(request, pad):
     """Delete a given pad
     """
-    pad = get_object_or_404(Pad, pk=pk)
+    # pad = get_object_or_404(Pad, pk=pk)
 
 
     # Any form submissions will send us back to the profile
@@ -294,9 +299,10 @@ def padDelete(request, pk):
         return HttpResponseRedirect('/manage/{}'.format(prefix))
 
     con = {
-        'action': reverse('pad-delete', kwargs={'pk': pk}),
+        'action': reverse('pad-delete', args=[pad]),
+        'cancel': reverse('manage', args=[pad.path[-1]]),
         'question': _('Really delete the pad {}?'.format(str(pad))),
-        'title': _('Deleting {}'.format(str(pad))),
+        'title': _('Deleting {} > {}'.format(' > '.join(map(str, pad.path)), str(pad))),
         'label': _('Delete')
     }
     con.update(csrf(request))
@@ -325,9 +331,10 @@ def renamePad(pad, slug, n=0):
 
 
 @login_required(login_url='/etherpad')
-def padRename(request, pk):
-    pad = get_object_or_404(Pad, pk=pk)
-    
+def padRename(request, pad):
+    # pad = get_object_or_404(Pad, pk=pk)
+    # @FIXME check authorization
+
     if request.method == 'POST':
         form = ethertoffForms.RenamePadForm(request.POST)
         if form.is_valid():
@@ -362,8 +369,8 @@ def padRename(request, pk):
 
     context = {
         'form': form,
-        'pk': pad.pk,
-        'title': _('Rename pad {}').format(str(pad))
+        'pad': pad,
+        'title': _('Rename pad {} > {}').format(' > '.join(map(str, pad.path)), str(pad))
     }
 
     context.update(csrf(request))
@@ -406,10 +413,10 @@ class RenameFolderView(FormView):
         return super().form_valid(form)
 
 @login_required(login_url='/etherpad')
-def padPublic(request, pk):
+def padPublic(request, pad):
     """Delete a given pad
     """
-    pad = get_object_or_404(Pad, pk=pk)
+    # pad = get_object_or_404(Pad, pk=pk)
 
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
@@ -418,9 +425,10 @@ def padPublic(request, pk):
         return HttpResponseRedirect('/manage/')
 
     con = {
-        'action': reverse('pad-public', kwargs={'pk': pk}),
+        'action': reverse('pad-public', args=[pad]),
+        'cancel': reverse('manage', args=[pad.path[-1]]),
         'question': _('Really make {} public?'.format(str(pad))),
-        'title': _('Making {} public'.format(str(pad))),
+        'title': _('Making {} > {} public'.format(' > '.join(map(str, pad.path)), str(pad))),
         'label': _('Make public')
     }
     con.update(csrf(request))
@@ -432,10 +440,10 @@ def padPublic(request, pk):
 
 
 @login_required(login_url='/etherpad')
-def padPrivate(request, pk):
+def padPrivate(request, pad):
     """Delete a given pad
     """
-    pad = get_object_or_404(Pad, pk=pk)
+    # pad = get_object_or_404(Pad, pk=pk)
 
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
@@ -444,9 +452,10 @@ def padPrivate(request, pk):
         return HttpResponseRedirect('/manage/')
 
     con = {
-        'action': reverse('pad-private', kwargs={'pk': pk}),
+        'action': reverse('pad-private', args=[pad]),
+        'cancel': reverse('manage', args=[pad.path[-1]]),
         'question': _('Really make {} private?'.format(str(pad))),
-        'title': _('Making {} private'.format(str(pad))),
+        'title': _('Making {} > {} private'.format(' > '.join(map(str, pad.path)), str(pad))),
         'label': _('Make private')
     }
     con.update(csrf(request))
@@ -456,11 +465,12 @@ def padPrivate(request, pk):
         con
     )
 
-def pad(request, pk=None, slug=None, mode=None):
-    if slug:
-        pad = get_object_or_404(Pad, display_slug=slug)
-    else:
-        pad = get_object_or_404(Pad, pk=pk)
+def pad(request, pad):
+    # print(slug, len(slug))
+    # if slug:
+    #     pad = get_object_or_404(Pad, display_slug=slug.toSlug())
+    # # else:
+    # #     pad = get_object_or_404(Pad, pk=pk)
 
     if pad.is_public:
         return pad_write_public(request, pad)
@@ -471,8 +481,8 @@ def pad_write_public(request, pad): # pad_write
     padLink = pad.server.url + 'p/' + pad.publicpadid
     server = urlparse(pad.server.url)
     
-    path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
-    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
+    path = slugToPath(settings.PAD_NAMESPACE_SEPARATOR)
+    crumbs = breadcrumbs(request, path)
 
     if request.user.is_authenticated:
         author = PadAuthor.objects.get(user=request.user)
@@ -508,8 +518,9 @@ def pad_write(request, pad):
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
 
-    path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
-    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
+    # path = pad.display_slug.split(settings.PAD_NAMESPACE_SEPARATOR)
+    # crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
+    crumbs = breadcrumbs(request, pad.path, pad)
 
     if author not in pad.group.authors.all():
         response = render(
@@ -570,7 +581,7 @@ def pad_write(request, pad):
             'uname': "{}".format(author.user),
             'error': False,
             'mode' : 'write',
-            'folderSlug': pathToSlug(path[:-1]),
+            'folderSlug': pad.path[-1].toSlug(),
             'crumbs': crumbs
         },
     )
@@ -891,7 +902,7 @@ def manage(request, path_string=None):
             dir_list.append((key, 'pad', pad, pad.display_slug))
             
 
-    crumbs = [(path[i], settings.PAD_NAMESPACE_SEPARATOR.join(path[:i+1])) for i in range(len(path))]
+    crumbs = [(path[i], reverse('manage', args=[pathToSlug(path[:i+1])])) for i in range(len(path))]
 
     return render(request, "manage-tree.html", {
         'organisation': organisation,
@@ -901,12 +912,10 @@ def manage(request, path_string=None):
         'has_visual_styles': 'Visual_Styles' in seen_dirs,
         'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
     })
-    
+
+@login_required(login_url='/accounts/login')  
 def all(request):
-    if request.user.is_authenticated:
-        return manage(request)
-    else:
-        return all_public(request)
+    return manage(request)
 
 def all_public(request):
     # On this install do not show public pads

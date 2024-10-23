@@ -225,6 +225,13 @@ GENERATOR_SYSTEM_FOLDERS = [
     THEMES_FOLDERNAME
 ]
 
+# Could it be a template?
+BREADCRUMB_GENERATOR = None #'generator.breadcrumbs.generate'
+
+# ETHERTOFF_DIRECTORY_CLASS = 'ethertoff.models.EthertoffDirectory'
+ETHERTOFF_PATH_CLASS = 'going_hybrid.models.EtherportPath'
+# ETHERTOFF_PAD_CLASS = 'ethertoff.models.Pad'
+
 try:
     LOCAL_SETTINGS
 except NameError:

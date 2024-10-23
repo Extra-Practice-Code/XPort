@@ -5,6 +5,7 @@ import os.path
 import re
 from etherpadlite.models import Pad
 
+
 # Natural sort a list of pads
 # https://stackoverflow.com/a/11150413
 def naturalSort(pads): 
@@ -44,14 +45,6 @@ def discoverPad(padname, path=[]):
     return discoverPad(padname, path=path)
   else:
     return None
-
-
-def copyPadToPath (pad, path, f=None):
-  with open(path, 'w', encoding='utf-8') as w:
-    pad_text = getPadText(pad)
-    if f:
-        pad_text = f(pad_text)
-    w.write(pad_text)
 
 
 """
@@ -102,7 +95,6 @@ def getPadLastEdited (pad):
 def formatPad (pad, *args, **kwargs):
     padText = getPadText(pad)
     padText = padText.format(*args, **kwargs)
-    print(padText)
     return setPadText(pad, padText)
     
 
@@ -171,3 +163,40 @@ def stripLeadingAsterisks (padText):
     
 def quickCleanPadname (raw):
     return re.sub(r'\s+', '_', raw).strip(':')
+
+
+# From easy thumbnails
+def dynamic_import(import_string):
+    """
+    Dynamically import a module or object.
+    """
+    # Use rfind rather than rsplit for Python 2.3 compatibility.
+    lastdot = import_string.rfind('.')
+    if lastdot == -1:
+        return __import__(import_string, {}, {}, [])
+    module_name, attr = import_string[:lastdot], import_string[lastdot + 1:]
+    parent_module = __import__(module_name, {}, {}, [attr])
+    return getattr(parent_module, attr)
+
+# Wrappers around class instantiating.
+# Allowing to change them through settings.
+# Would a proxy be an option?
+def ethertoff_path (*args, **kwargs):
+    if not hasattr(settings, 'ETHERTOFF_PATH_CLASS'):
+        settings.ETHERTOFF_PATH_CLASS = 'ethertoff.models.EthertoffPath'
+
+    return dynamic_import(settings.ETHERTOFF_PATH_CLASS)
+
+
+def ethertoff_directory (*args, **kwargs):
+    if not hasattr(settings, 'ETHERTOFF_DIRECTORY_CLASS'):
+        settings.ETHERTOFF_DIRECTORY_CLASS = 'ethertoff.models.EthertoffDirectory'
+
+    return dynamic_import(settings.ETHERTOFF_DIRECTORY_CLASS)
+
+
+def ethertoff_pad (*args, **kwargs):
+    if not hasattr(settings, 'ETHERTOFF_PAD_CLASS'):
+        settings.ETHERTOFF_PAD_CLASS = 'ethertoff.models.EthertoffPad'
+
+    return dynamic_import(settings.ETHERTOFF_PAD_CLASS)

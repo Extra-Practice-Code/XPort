@@ -1,14 +1,11 @@
 
 from generator import links
-from generator.utils import debug, error, make_id, warn, keyFilter, render_template_to_string
+from generator.utils import debug, make_id, warn, keyFilter, render_template_to_string
 import re
 from collections import OrderedDict
 from generator.collection import UnknownContentTypeError, collectionFor, knownContentType
 import os.path
-from generator.settings import SITE_URL
 from generator.fields import Field, Single
-# from .internallinks import resolveInternalLinks
-# from .links import Link, MultiLink, ReverseLink, ReverseMultiLink, is_link
 
 from functools import partial
 

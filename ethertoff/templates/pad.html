@@ -32,14 +32,12 @@
   </div>
   {% else %}
   <section class="pad-list--path">
-    {% for name, path in crumbs %}
-        {% if path %}
-          {% if not forloop.last %}
-            <a class="crumb" href="{% url 'manage' path  %}">{{ name }}</a>
-            <span class="pad-list--path--separator"></span>
-          {% else %}
-            {{ name }}
-          {% endif %}
+    {% for name, url in crumbs %}
+        {% if not forloop.last %}
+          <a class="crumb" href="{{ url }}">{{ name|striptags }}</a>
+          <span class="pad-list--path--separator"></span>
+        {% else %}
+          {{ name|striptags }}
         {% endif %}
     {% endfor %}
   </section>

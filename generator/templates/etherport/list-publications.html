@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load wikify %}
+{% block bodyclasses %}content-extra-wide{% endblock %}
+{% block title %}
+  <h2>Publications</h2>
+{% endblock %}
+{% block content %}
+    {% for user_organisation in user_organisations %}
+        <details open class="organisation" id="{{ user_organisation.organisation.slug }}">
+            <summary>{{ user_organisation.organisation.name }} ({{ user_organisation.publications|length }})</summary>
+            <ul class="publication-list">
+                {% for publication in user_organisation.publications %}
+                    <li class="publication--tile">
+                        <h3>
+                            <a href="{% url 'manage' publication.ethertoff_slug %}">
+                                {{ publication.title|striptags }}
+                            </a>
+                        </h3>
+                        {% if publication.state == publication_states.public %}
+                            <p class="publication--tile--status">
+                                <strong>State:</strong> published<br />
+                                <strong>Public url:</strong> <a href="{{ publication.url}}">{{ publication.url}}</a>.
+                            </p>
+                            <div class="publication--tile--actions">
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.public }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Regenerate" title="Regenerate the public version of this publication." />
+                                </form>
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.hidden }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Hide" title="Hide the public version of this publication. It will remain accessible, but is not listed on the organisation page or etherport index." />
+                                </form>
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.unpublished }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Unpublish" title="Remove the public version of this publication. The pads will be kept." />
+                                </form>
+                            </div>
+                        {% elif publication.state == publication_states.hidden %}
+                            <p class="publication--tile--status">
+                                <strong>State:</strong> hidden (not listed on the organisation page and indexes)<br />
+                                <strong>Public url:</strong> <a href="{{ publication.url}}">{{ publication.url}}</a>
+                            </p>
+                            <div class="publication--tile--actions">
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.hidden }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Regenerate" title="Regenerate this publication as hidden. It will remain accessible, but is not listed on the organisation page or etherport index."/>
+                                </form>
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.public }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Make public"  title="Generate a public version of this publication. It will be listed on the organisation page and on the etherport index." />
+                                </form>
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.unpublished }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Unpublish" title="Remove the public version of this publication. The pads will be kept." />
+                                </form>
+                            </div>
+                        {% else %}
+                            <p class="publication--tile--status">
+                                <strong>State:</strong> unpublished (it is not publicly accessible)
+                            </p>
+                            <div class="publication--tile--actions">
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.public }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Generate as public" title="Generate a public version of this publication. It will be listed on the organisation page and on the etherport index." />
+                                </form>
+                                <form action="{% url 'generator-generate' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="publication_slug" value="{{ publication.path }}" />
+                                    <input type="hidden" name="organisation_slug" value="{{ user_organisation.organisation.slug }}" />
+                                    <input type="hidden" name="next_state" value="{{ publication_states.hidden }}" />
+                                    <input type="hidden" name="mode" value="design" />
+                                    <input type="submit" class="button" value="Generate as hidden" title="Generate a hidden public version of this publication. It will become publicly accessible, but is not listed on the organisation page or etherport index."/>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+    {% endfor %}
+{% endblock %}

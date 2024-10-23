@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ethertoff.models import EtherportOrganisation
+from going_hybrid.models import EtherportOrganisation
 from etherpadlite.models import PadGroup
 from ethertoff.adminUtils import get_default_user_group, get_default_pad_server
 

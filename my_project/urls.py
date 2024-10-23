@@ -23,9 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     url(r'^filer/', include('filer.urls')),
+    path('', include("generator.urls")),
     path('', include("ethertoff.urls")),
-    path('', include("going_hybrid.urls")),
-    path('', include("generator.urls"))
+    path('', include("going_hybrid.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #urlpatterns = [

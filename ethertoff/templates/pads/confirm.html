@@ -6,7 +6,7 @@
 
 <form action="{{action}}" method="post">{% csrf_token %}
   <p>{{question}}</p>
-  <a href="{% url 'manage' %}">cancel</a>
+  <a href="{{ cancel }}">cancel</a>
   <input class="submit" type="submit" name="confirm" value="{{ label }}" />
 </form>
 

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from ethertoff.models import EtherportOrganisation
+from going_hybrid.models import EtherportOrganisation
 from ethertoff.views import createPad
 from ethertoff.utils import discoverPad, formatPad, getPadBySlug, slugToPath, pathToSlug, setPadText
 from etherpadlite.models import Pad, PadAuthor
