@@ -345,7 +345,7 @@ def padRename(request, pad):
 
             if folder:
                 # path = path.replace(settings.PAD_NAMESPACE_SEPARATOR, '/')
-                return redirect('manage', args=[folder])
+                return redirect('manage', folder)
             else:
                 return redirect('manage')
 
