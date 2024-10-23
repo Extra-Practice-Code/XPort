@@ -256,7 +256,7 @@ def padCreate(request, directory):
         'pk': group.pk,
         'slug': organisation.slug,
         'directory': directory,
-        'title': _('Create pad in: {}').format(' > '.join(map(str, directory.path)))
+        'title': _('Create pad in: {}').format(' > '.join(map(str, directory.path) + [str(directory)]))
     }
     # con.update(csrf(request))
     return render(
