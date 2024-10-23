@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-      <form action="{% url 'pad-create' slug %}" method="post">
+      <form action="{% url 'generator-pad-create' directory %}" method="post">
             {% csrf_token %}
             <div class="form-row">
                   {{ form.name.label_tag }}{{ form.name }}

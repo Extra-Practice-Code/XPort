@@ -17,7 +17,7 @@
         {% if crumbs|length == 1 %}
           <a href="{% url 'publication-create' organisation.slug %}" class="button push">+ create publication</a>
         {% else %}
-          <a href="{% url 'generator-pad-create' currentPath %}" class="button push">+ create pad</a>
+          <a href="{% url 'generator-pad-create' directory %}" class="button push">+ create pad</a>
           {% if crumbs|length == 2 and not has_visual_styles %}
             &nbsp;
             <a href="{% url 'visual-styles-create' currentPath %}" class="button">+ add visual styles</a>

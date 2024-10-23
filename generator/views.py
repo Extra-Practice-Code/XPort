@@ -130,6 +130,7 @@ def manage(request, directory=None):
         'organisation': organisation,
         'dir_list': dir_list,
         'currentPath': prefix,
+        'directory': directory,
         'crumbs': breadcrumbs(request, directory.path, directory),
         'has_visual_styles': 'Visual_Styles' in seen_dirs,
         'PAD_OPEN_MODE': settings.TREE_PAD_OPEN_MODE
@@ -202,7 +203,7 @@ def padCreate(request, directory):
     #     return
     
     organisation = get_object_or_404(EtherportOrganisation, slug=directory.path[0].slug, members__id=request.user.id)
-    publication = getPublicationData(organisation.slug, directory.path[1].slug)
+    publication = getPublicationData(organisation.slug, directory.path[1].slug if len(directory.path) > 2 else directory.slug)
 
     templateChoices = [('none', "No template")] + [
         (pad.name, '>'.join(slugToPath(pad.display_slug)[2:])) for pad in selectPadsByPath([ organisation.slug, 'Templates' ])
@@ -216,9 +217,14 @@ def padCreate(request, directory):
         form = PadCreateWithTemplate(request.POST)
         form.fields['template'].choices = templateChoices
         if form.is_valid():
+            slug = directory.toPrefix()
             folder = quickCleanPadname(form.cleaned_data['folder'])
+            if folder and folder != '':
+                slug += folder +  settings.PAD_NAMESPACE_SEPARATOR 
+
             name = quickCleanPadname(form.cleaned_data['name'])
-            slug = folder + settings.PAD_NAMESPACE_SEPARATOR + name
+            slug += name
+
             templatePad = None
 
             if form.cleaned_data['template'] != 'none':
@@ -233,7 +239,7 @@ def padCreate(request, directory):
                 formatPad(pad, title=form.cleaned_data['name'])
 
             if pad:
-                return redirect('pad-write', args=(pad.display_slug,) )
+                return redirect('pad-write', pad.display_slug)
     else: 
         # No form to process so create a fresh one
         # prefix should contain the name of the folder
@@ -249,6 +255,7 @@ def padCreate(request, directory):
         'form': form,
         'pk': group.pk,
         'slug': organisation.slug,
+        'directory': directory,
         'title': _('Create pad in: {}').format(' > '.join(map(str, directory.path)))
     }
     # con.update(csrf(request))
