@@ -368,7 +368,7 @@ def generate_etherport_index ():
   # filter out publications which aren't public
   publication_index = { 
     organisation_slug: { 
-      publication_slug: publication for publication_slug, publication in publications.items() if publication['state'] == PUBLICATION_STATE_PUBLIC 
+      publication_slug: publication for publication_slug, publication in publications.items() if 'state' in publication and publication['state'] == PUBLICATION_STATE_PUBLIC 
     } for organisation_slug, publications in loadPublications().items() 
   }
   publication_label_index = loadPublicationLabelIndex()
@@ -417,7 +417,7 @@ def generate_organisation_index (organisation_slug):
   all_publications = loadPublications()
 
   # Filter out publications which aren't public
-  publications = { slug: publication for slug, publication in all_publications[organisation_slug].items() if publication['state'] == PUBLICATION_STATE_PUBLIC }
+  publications = { slug: publication for slug, publication in all_publications[organisation_slug].items() if 'state' in publication and publication['state'] == PUBLICATION_STATE_PUBLIC }
 
   css_publication_list = discoverPad('publication-list.css', path=[ organisation_slug ])
   if css_publication_list:

@@ -42,6 +42,8 @@ SYSTEM_PADS = [
     'generated.css'
 ]
 
+DEBUG = False
+
 try:
     LOCAL_SETTINGS
 except NameError:
