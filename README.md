@@ -35,19 +35,19 @@ Infrastructures entrelacées, an exhibition by the collective Artivistic at SKOL
 
 - - -
 
-## Installation instructions
 
-Ethertoff is a python application using the Django framework. It needs to be
-able to connect to an instance of etherpad-lite. These instructions assume the
-etherpad-lite will be installed on the same server.
+## Installing ethertoff on a server
 
-These instructions will install ethertoff  python application you'll need a wsgi-server (gunicorn). Normally you do not expose this to the internet but place nginx in between, also it is advised to let nginx serve the static & media files. The gunicorn.sh starts the server.
+Ethertoff is a python application using the Django framework. It needs to be able to connect to an instance of etherpad-lite. 
+
+These instructions will install ethertoff alongside the wsgi-server gunicorn, behind nginx as a reverse proxy. It will also install etherpad-lite on the same server.
+
+<!-- These instructions will install ethertoff and a wsgi-server (gunicorn). Normally you do not expose this to the internet but place nginx in between, also it is advised to let nginx serve the static & media files. The gunicorn.sh starts the server.
 
 To make it easy to start and stop the application it is deployed as a systemd
 service.
-for this you need a service unit file. The file describes how the service should be started and when. In this case it starts the gunicorn.sh script with the correct user & group.
+for this you need a service unit file. The file describes how the service should be started and when. In this case it starts the gunicorn.sh script with the correct user & group. -->
 
-## Installing ethertoff on a server
 
 ### Assumptions
 
@@ -62,7 +62,7 @@ This installation guide makes a few assumptions.
 - nginx will be used as reverse proxy
 - MariaDB will be used as the database
 
-Both etherport and etherpad need a database. Both support various databases (sqlite, MariaDB, postgre, ...). Etherpad advices against using sqlite. Given the few write operations etherport does sqlite would not be a real problem. But. If you install a more performant database you can use it for etherport too.
+Both etherport and etherpad need a database. Both support various databases (sqlite, MariaDB, postgre, ...). For performance issues etherpad advices against using sqlite. <!-- Given the few write operations etherport does sqlite would not be a real problem. But. If you install a more performant database you can use it for etherport too. -->
 
 ### Installing depencies
 
@@ -73,7 +73,7 @@ sudo apt install nginx ufw fail2ban mariadb-server build-essential libmariadb-de
 
 ### Cloning the repository, installing dependencies
 
-The bash script below will create a user (and group) `ethertoff`,clone the repository and install dependencies.
+The commands below will create a user (and group) `ethertoff`,clone the repository in `/srv/ethertoff` and install dependencies.
 
 ```bash
 SYS_USER_ETHERTOFF='ethertoff'              # Username of created group
@@ -88,11 +88,11 @@ sudo adduser --system --home $SYS_LOCATION_ETHERTOFF --group $SYS_USER_ETHERTOFF
 # Move to created folder
 cd $SYS_LOCATION_ETHERTOFF
 
-# Copy local_settings.py.example to local_settings.py
-sudo -u $SYS_USER_ETHERTOFF cp tools.ethertoff/my_project/local_settings.py.example tools.ethertoff/my_project/local_settings.py
-
 # Clone repo
 sudo -u $SYS_USER_ETHERTOFF git clone -b $GIT_BRANCH_ETHERTOFF --depth 1 $GIT_URL_ETHERTOFF
+
+# Copy local_settings.py.example to local_settings.py
+sudo -u $SYS_USER_ETHERTOFF cp tools.ethertoff/my_project/local_settings.py.example tools.ethertoff/my_project/local_settings.py
 
 # Create a virtual environment and install dependencies
 sudo -u $SYS_USER_ETHERTOFF virtualenv -p python3 venv
@@ -104,7 +104,7 @@ sudo -u $SYS_USER_ETHERTOFF mkdir logs
 
 ### Database tables
 
-The following commands create a user and table for ethertoff, identified by the defined password.
+Run the following commands in a shell to create a user and table for ethertoff in the database.
 
 ```bash
 DB_NAME_ETHERTOFF='django'
@@ -358,6 +358,8 @@ sudo -u $SYS_USER_ETHERPAD git clone -b $GIT_BRANCH_ETHERPAD --depth 1 $GIT_URL_
 
 
 ### DB Structure
+
+Run the following commands in a shell to create a user and table for etherpad in the database
 
 ```bash
 DB_NAME_ETHERPAD='etherpad'
