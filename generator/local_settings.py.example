@@ -1,0 +1,13 @@
+# Link to indivdual publication
+SITE_URL = 'https://etherport.org/publications/{ORGANISATION_SLUG}/{PUBLICATION_NAME}'
+
+# Url of etherport
+GENERATED_SITE_INDEX = 'https://etherport.org/publications'
+
+# Url of static files
+STATIC_URL = GENERATED_SITE_INDEX + '/static/'
+
+# Url to Ethertoff itself
+ETHERTOFF_URL = 'https://etherport.org'
+
+SHOW_DEBUG_MESSAGES = False
