@@ -633,3 +633,26 @@ scp seat-for-the-sea:data.json ./
 ./manage.py loaddata data.json
 ```
 
+## Add plugins
+
+Adjust settings of etherpad with settings for etherport plugin.
+
+```
+  "ep_ethertoff_label_inserter": {
+    "ethertoff_api_url": "<url_of_your_install>/api"
+  },
+
+  "ep_ethertoff_filemanager_upload": {
+    "ethertoff_api_url": "<url_of_your_install>/api",
+    "ethertoff_admin_url": "<url_of_your_install>/admin",
+    "ethertoff_media_baseurl": "<url_of_your_install>"
+  }
+```
+
+Edit: `/srv/etherpad/etherpad-lite/settings.json`
+
+To install:
+- https://gitlab.constantvzw.org/osp/tools.ethertoff.ep_ethertoff_label_inserter
+- https://gitlab.constantvzw.org/osp/tools.ethertoff.ep_ethertoff_batch_export
+- https://gitlab.constantvzw.org/osp/tools.ethertoff.ep_ethertoff_filemanager_upload
+- https://gitlab.constantvzw.org/osp/tools.ethertoff.ep_markdown
