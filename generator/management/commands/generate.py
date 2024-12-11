@@ -446,7 +446,8 @@ def generate_publication (organisation, folder, mode, next_state):
     labels = load_labels()
 
     # List of publications: [{ title: str, path: str, url: str }, ...]
-    publications = loadPublications()[organisation.slug]
+    all_publications = loadPublications()
+    publications = all_publications[organisation.slug] if organisation.slug in all_publications else {}
 
     backupdir = os.path.join(GENERATOR_OUTPUT_BASEDIR, 'generated.old', organisation.slug, folder)
     outputdir = os.path.join(GENERATOR_OUTPUT_BASEDIR, 'generated', organisation.slug, folder)
