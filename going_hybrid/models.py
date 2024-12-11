@@ -31,7 +31,7 @@ def getPublicationData (organisation_slug, publication_slug, publication_index=N
     if publication_index is None:
       publication_index = loadPublications()
 
-    if publication_slug in publication_index[organisation_slug]:
+    if organisation_slug in publication_index and publication_slug in publication_index[organisation_slug]:
         publicationData = publication_index[organisation_slug][publication_slug]
         publicationData['slug'] = publication_slug
         # @FIXME ethertoff_slug is ambiguous. 
