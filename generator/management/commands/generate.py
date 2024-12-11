@@ -227,8 +227,7 @@ def generate (organisation, folders=None):
       for link in unique_contexts(merged_links(label)):
         labelIndex[organisation_slug][folder][str(label)].append({
           'title': str(link.target),
-          'url': '{}#{}'.format(link.target.url, link.id),
-          'context': link.context
+          'url': '{}#{}'.format(link.target.url, link.id)
         })
 
     storePublicationLabelIndex(labelIndex)
@@ -594,8 +593,7 @@ def generate_publication (organisation, folder, mode, next_state):
           for link in unique_contexts(merged_links(label)):
             labelIndex[organisation.slug][folder][str(label)].append({
               'title': str(link.target),
-              'url': '{}#{}'.format(link.target.url, link.id),
-              'context': link.context
+              'url': '{}#{}'.format(link.target.url, link.id)
             })
 
       storePublicationLabelIndex(labelIndex)
