@@ -9,7 +9,7 @@
         <details open class="organisation" id="{{ user_organisation.organisation.slug }}">
             <summary>{{ user_organisation.organisation.name }} ({{ user_organisation.publications|length }})</summary>
             <nav class="organisation--actions">
-                <a href="{% url 'manage' user_organisation.organisation.slug %}::templates"  class="button push">Content templates</a>
+                <a href="{% url 'manage' user_organisation.organisation.slug %}::Templates"  class="button push">Content templates</a>
                 <div class="spacer"></div>
                 <a href="{% url 'publication-create' user_organisation.organisation.slug %}" class="button push button--new-publication">+ new publication</a>
             </nav>
