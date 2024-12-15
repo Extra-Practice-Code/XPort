@@ -662,6 +662,18 @@ div#next a {
     display: none;
 }
 
+#content .organisation--actions {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    margin: calc(.5 * var(--line-height)) 0;
+}
+
+
+#content .organisation--actions .spacer {
+    flex-grow: 1;    
+}
+
 #content .publication--tile {
     display: grid;
     grid-template-columns: 1fr 1fr;

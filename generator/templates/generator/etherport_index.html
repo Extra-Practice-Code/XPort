@@ -161,25 +161,25 @@
               </li>
             {% endfor %}
           </ul>
-          <a href="/publications/{{ organisation.slug }}/">Organisation page</a>
+          <!-- <a href="/publications/{{ organisation.slug }}/">Organisation page</a> -->
         </details>
       {% endif %}
     {% endfor %}
   </section>
   <section class="panel tags">
     <h2>
-      Tags used on Etherport:
+      Labels used on Etherport:
     </h2>
+    <p>
+      This index lists which labels are used on etherport and where.
+    </p>
     {% for label, organisations in label_index.items %}
       <details>
         <summary>{{ label }}</summary>
         {% for organisation, publications in organisations.items %}
           {% for publication, articles in publications.items %}
             {% for article, links in articles.items %}
-              <h5>{{ article }}</h5>
-              {% for link in links %}
-                <a href="{{ link.url }}">{{ forloop.counter }}</a>
-              {% endfor %}
+              <a href="{{ links.0.url }}">{{ article }} (in <em>{{ publication }}</em>)</a>
             {% endfor %}
           {% endfor %}
         {% endfor %}
