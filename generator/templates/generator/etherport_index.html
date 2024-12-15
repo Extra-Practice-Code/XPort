@@ -178,9 +178,12 @@
         <summary>{{ label }}</summary>
         {% for organisation, publications in organisations.items %}
           {% for publication, articles in publications.items %}
-            {% for article, links in articles.items %}
-              <a href="{{ links.0.url }}">{{ article }} (in <em>{{ publication }}</em>)</a>
-            {% endfor %}
+            <h5>{{ publication }}</h5>
+            <ul>
+              {% for article, links in articles.items %}
+                <li><a href="{{ links.0.url }}">{{ article }}</a></li>
+              {% endfor %}
+            </ul>
           {% endfor %}
         {% endfor %}
       </details>
