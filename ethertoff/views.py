@@ -481,8 +481,7 @@ def pad_write_public(request, pad): # pad_write
     padLink = pad.server.url + 'p/' + pad.publicpadid
     server = urlparse(pad.server.url)
     
-    path = slugToPath(settings.PAD_NAMESPACE_SEPARATOR)
-    crumbs = breadcrumbs(request, path)
+    crumbs = breadcrumbs(request, pad.path, pad) 
 
     if request.user.is_authenticated:
         author = PadAuthor.objects.get(user=request.user)
@@ -500,7 +499,7 @@ def pad_write_public(request, pad): # pad_write
             'server': server,
             'error': False,
             'mode' : 'write-public',
-            'folderSlug': pathToSlug(path[:-1]),
+            'folderSlug': pad.path[-1].toSlug(),
             'uname': uname,
             'crumbs': crumbs
         },
