@@ -265,6 +265,7 @@ class Report (Model):
 class Pad (Model):
   generateListPage = True
   generateSinglePages = True
+  listPageTemplate = 'generator/list-pad.html'
   
   def _metadataFields (self):
     return {
